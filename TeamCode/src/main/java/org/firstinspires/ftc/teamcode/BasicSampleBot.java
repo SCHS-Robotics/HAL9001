@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 public class BasicSampleBot extends Robot {
 
-    public ColorspaceCalib calib;
+    public TestVisionSystem calib;
     /**
      * Constructor for robot.
      *
@@ -34,7 +34,7 @@ public class BasicSampleBot extends Robot {
 
         startGui(new Button(1, Button.BooleanInputs.noButton));
         enableViewport(new Button(1, Button.BooleanInputs.noButton));
-        calib = new ColorspaceCalib(this);
+        calib = new TestVisionSystem(this);
         putSubSystem("Tank", calib);
     }
 }
