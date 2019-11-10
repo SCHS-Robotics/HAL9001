@@ -7,8 +7,6 @@
 
 package com.SCHSRobotics.HAL9001.system.subsystems;
 
-import android.util.Log;
-
 import com.SCHSRobotics.HAL9001.system.menus.DisplayMenu;
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem;

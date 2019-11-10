@@ -1,6 +1,7 @@
 package com.SCHSRobotics.HAL9001.util.misc;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeManagerImpl;
 
 /**

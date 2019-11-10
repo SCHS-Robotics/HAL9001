@@ -10,13 +10,11 @@ package com.SCHSRobotics.HAL9001.util.calib;
 import android.util.Log;
 
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
-import com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem;
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.VisionSubSystem;
 import com.SCHSRobotics.HAL9001.util.exceptions.ViewportDisabledException;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 
-import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
