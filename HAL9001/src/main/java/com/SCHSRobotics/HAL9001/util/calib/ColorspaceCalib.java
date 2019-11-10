@@ -9,17 +9,18 @@ package com.SCHSRobotics.HAL9001.util.calib;
 import com.SCHSRobotics.HAL9001.system.menus.DisplayMenu;
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem;
+import com.SCHSRobotics.HAL9001.system.source.BaseRobot.VisionSubSystem;
 import com.SCHSRobotics.HAL9001.util.annotations.TeleopConfig;
 import com.SCHSRobotics.HAL9001.util.exceptions.ChannelDoesNotExistException;
 import com.SCHSRobotics.HAL9001.util.exceptions.GuiNotPresentException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
+import com.SCHSRobotics.HAL9001.util.exceptions.ViewportDisabledException;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigParam;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 import com.SCHSRobotics.HAL9001.util.misc.Toggle;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.firstinspires.ftc.robotcore.external.Function;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.core.Core;
@@ -34,7 +35,7 @@ import java.util.Map;
 /**
  * A calibration subsystem used to find good colorspace ranges for color detection algorithms.
  */
-public class ColorspaceCalib extends SubSystem implements CameraBridgeViewBase.CvCameraViewListener2 {
+public class ColorspaceCalib extends VisionSubSystem {
 
     //The upper and lower limits for the x, y, z values for the color spaces.
     private int x_lower, y_lower, z_lower, x_upper, y_upper, z_upper;
@@ -86,6 +87,10 @@ public class ColorspaceCalib extends SubSystem implements CameraBridgeViewBase.C
             throw new GuiNotPresentException("ColorspaceCalib requires a GUI to correctly run");
         }
 
+        if(!robot.isViewportEnabled()) {
+            throw new ViewportDisabledException("The camera viewport must be enabled for this program to run");
+        }
+
         displayMenu = new DisplayMenu(robot.gui);
         robot.gui.addMenu("Colorspace Ranges",displayMenu);
 
@@ -104,6 +109,10 @@ public class ColorspaceCalib extends SubSystem implements CameraBridgeViewBase.C
 
         if(!robot.usesGUI()){
             throw new GuiNotPresentException("ColorspaceCalib requires a GUI to correctly run");
+        }
+
+        if(!robot.isViewportEnabled()) {
+            throw new ViewportDisabledException("The camera viewport must be enabled for this program to run");
         }
 
         displayMenu = new DisplayMenu(robot.gui);
@@ -131,6 +140,10 @@ public class ColorspaceCalib extends SubSystem implements CameraBridgeViewBase.C
             throw new GuiNotPresentException("ColorspaceCalib requires a GUI to correctly run");
         }
 
+        if(!robot.isViewportEnabled()) {
+            throw new ViewportDisabledException("The camera viewport must be enabled for this program to run");
+        }
+
         displayMenu = new DisplayMenu(robot.gui);
         robot.gui.addMenu("Colorspace Ranges",displayMenu);
 
@@ -153,6 +166,10 @@ public class ColorspaceCalib extends SubSystem implements CameraBridgeViewBase.C
 
         if(!robot.usesGUI()){
             throw new GuiNotPresentException("ColorspaceCalib requires a GUI to correctly run");
+        }
+
+        if(!robot.isViewportEnabled()) {
+            throw new ViewportDisabledException("The camera viewport must be enabled for this program to run");
         }
 
         displayMenu = new DisplayMenu(robot.gui);
@@ -178,6 +195,10 @@ public class ColorspaceCalib extends SubSystem implements CameraBridgeViewBase.C
 
         if(!robot.usesGUI()){
             throw new GuiNotPresentException("ColorspaceCalib requires a GUI to correctly run");
+        }
+
+        if(!robot.isViewportEnabled()) {
+            throw new ViewportDisabledException("The camera viewport must be enabled for this program to run");
         }
 
         displayMenu = new DisplayMenu(robot.gui);
@@ -212,6 +233,10 @@ public class ColorspaceCalib extends SubSystem implements CameraBridgeViewBase.C
             throw new GuiNotPresentException("ColorspaceCalib requires a GUI to correctly run");
         }
 
+        if(!robot.isViewportEnabled()) {
+            throw new ViewportDisabledException("The camera viewport must be enabled for this program to run");
+        }
+
         displayMenu = new DisplayMenu(robot.gui);
         robot.gui.addMenu("Colorspace Ranges",displayMenu);
 
@@ -244,6 +269,10 @@ public class ColorspaceCalib extends SubSystem implements CameraBridgeViewBase.C
             throw new GuiNotPresentException("ColorspaceCalib requires a GUI to correctly run");
         }
 
+        if(!robot.isViewportEnabled()) {
+            throw new ViewportDisabledException("The camera viewport must be enabled for this program to run");
+        }
+
         displayMenu = new DisplayMenu(robot.gui);
         robot.gui.addMenu("Colorspace Ranges",displayMenu);
 
@@ -273,6 +302,10 @@ public class ColorspaceCalib extends SubSystem implements CameraBridgeViewBase.C
 
         if(!robot.usesGUI()){
             throw new GuiNotPresentException("ColorspaceCalib requires a GUI to correctly run");
+        }
+
+        if(!robot.isViewportEnabled()) {
+            throw new ViewportDisabledException("The camera viewport must be enabled for this program to run");
         }
 
         displayMenu = new DisplayMenu(robot.gui);
@@ -308,6 +341,10 @@ public class ColorspaceCalib extends SubSystem implements CameraBridgeViewBase.C
             throw new GuiNotPresentException("ColorspaceCalib requires a GUI to correctly run");
         }
 
+        if(!robot.isViewportEnabled()) {
+            throw new ViewportDisabledException("The camera viewport must be enabled for this program to run");
+        }
+
         displayMenu = new DisplayMenu(robot.gui);
         robot.gui.addMenu("Colorspace Ranges",displayMenu);
 
@@ -336,11 +373,14 @@ public class ColorspaceCalib extends SubSystem implements CameraBridgeViewBase.C
             Map<String, Object> settingsData = robot.pullNonGamepad(this);
             colorSpace = (ColorSpace) settingsData.get("Colorspace");
         }
+
+        startVision();
     }
 
     @Override
     public void handle() {
 
+        displayMenu.addData("test",isEnabled());
         displayMenu.addData("x_upper",x_upper);
         displayMenu.addData("x_lower",x_lower);
         displayMenu.addData("y_upper",y_upper);
@@ -408,30 +448,18 @@ public class ColorspaceCalib extends SubSystem implements CameraBridgeViewBase.C
     @Override
     public void stop() {}
 
-    @Override
-    public void onCameraViewStarted(int width, int height) {
-
-    }
-
-    @Override
-    public void onCameraViewStopped() {
-
-    }
-
     /**
      * Blacks out pixels outside of the color space range and displays image on phones.
      */
     @Override
-    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-
-        inputFrame.gray().release();
+    public Mat onCameraFrame(Mat inputFrame) {
 
         Mat converted = new Mat();
         Mat rgb = new Mat();
 
-        Imgproc.cvtColor(inputFrame.rgba(),rgb, Imgproc.COLOR_RGBA2RGB);
+        Imgproc.cvtColor(inputFrame,rgb, Imgproc.COLOR_RGBA2RGB);
 
-        inputFrame.rgba().release();
+        inputFrame.release();
 
         if(imageType == ImageType.COLOR){
 
@@ -537,7 +565,6 @@ public class ColorspaceCalib extends SubSystem implements CameraBridgeViewBase.C
      */
     @Override
     protected void initVars() {
-
         x_lower = 0;
         y_lower = 0;
         z_lower = 0;

@@ -20,7 +20,7 @@ public class PIDController {
 
     //PID(f) coefficients and component values.
     private double kp,ki,kd,kf,P,I,D,F;
-    
+
     //PID target value.
     private double setpoint;
     
@@ -287,7 +287,7 @@ public class PIDController {
                 lastState = current;
                 lastUpdate = System.currentTimeMillis();
 
-                return Range.clip(P + I + D + F,clampLower,clampUpper);
+                return Math.abs(error) > deadband ? Range.clip(P + I + D + F,clampLower,clampUpper) : 0;
             case P_ON_M:
                 P = Range.clip(P-kp*(current - lastState),pClampLower,pClampUpper);
                 I = Range.clip(I + ki * error * dT, iClampLower, iClampUpper);
@@ -295,7 +295,7 @@ public class PIDController {
                 lastState = current;
                 lastUpdate = System.currentTimeMillis();
 
-                return Range.clip(P + I + D,clampLower,clampUpper);
+                return Math.abs(error) > deadband ? Range.clip(P + I + D,clampLower,clampUpper) : 0;
             default:
                 P = kp * error;
                 I = Range.clip(I + ki * error * dT, iClampLower, iClampUpper);

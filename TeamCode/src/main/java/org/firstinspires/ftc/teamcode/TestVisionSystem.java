@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
-import com.SCHSRobotics.HAL9001.system.source.BaseRobot.VisionSubsystem;
+import com.SCHSRobotics.HAL9001.system.source.BaseRobot.VisionSubSystem;
 
 import org.opencv.core.Mat;
 
-public class TestVisionSystem extends VisionSubsystem {
+public class TestVisionSystem extends VisionSubSystem {
 
     public TestVisionSystem(Robot robot) {
         super(robot);

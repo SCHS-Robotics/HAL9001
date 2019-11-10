@@ -7,6 +7,8 @@
 
 package com.SCHSRobotics.HAL9001.system.subsystems;
 
+import android.util.Log;
+
 import com.SCHSRobotics.HAL9001.system.menus.DisplayMenu;
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem;
@@ -598,20 +600,20 @@ public class MechanumDrive extends SubSystem {
      * Sets the motors to the reverse direction.
      */
     public void reverseDirection() {
-        topLeft.setDirection(DcMotor.Direction.FORWARD);
-        topRight.setDirection(DcMotor.Direction.REVERSE);
-        botLeft.setDirection(DcMotor.Direction.FORWARD);
-        botRight.setDirection(DcMotor.Direction.REVERSE);
+        topLeft.setDirection(DcMotor.Direction.REVERSE);
+        topRight.setDirection(DcMotor.Direction.FORWARD);
+        botLeft.setDirection(DcMotor.Direction.REVERSE);
+        botRight.setDirection(DcMotor.Direction.FORWARD);
     }
 
     /**
      * Sets the motors to the forward direction.
      */
     public void forwardDirection() {
-        topLeft.setDirection(DcMotor.Direction.REVERSE);
-        topRight.setDirection(DcMotor.Direction.FORWARD);
-        botLeft.setDirection(DcMotor.Direction.REVERSE);
-        botRight.setDirection(DcMotor.Direction.FORWARD);
+        topLeft.setDirection(DcMotor.Direction.FORWARD);
+        topRight.setDirection(DcMotor.Direction.REVERSE);
+        botLeft.setDirection(DcMotor.Direction.FORWARD);
+        botRight.setDirection(DcMotor.Direction.REVERSE);
     }
 
     /**
@@ -1026,6 +1028,7 @@ public class MechanumDrive extends SubSystem {
             case STANDARD:
                 vcpy.rotate(-(PI / 4));
                 setPower(vcpy.x - correction, vcpy.y + correction, vcpy.y - correction, vcpy.x + correction);
+
                 break;
             case FIELD_CENTRIC_TTA:
             case FIELD_CENTRIC:
@@ -1217,11 +1220,12 @@ public class MechanumDrive extends SubSystem {
             imu.initialize(new BNO055IMU.Parameters());
             while(!imu.isGyroCalibrated() && robot.opModeIsActive()){sleep(1);}
         }
+        else if(usesGyro) {
+            double angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+            turnPID.init(angle, angle);
+            stabilityPID.init(angle, angle);
+        }
         usesGyro = useGyro;
-
-        double angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
-        turnPID.init(angle, angle);
-        stabilityPID.init(angle, angle);
     }
 
     /**
@@ -1280,7 +1284,7 @@ public class MechanumDrive extends SubSystem {
                     new ConfigParam(SPEED_MODE, Button.BooleanInputs.noButton),
                     new ConfigParam(TURN_SPEED_MODE, Button.BooleanInputs.noButton),
                     new ConfigParam("UseGyro", ConfigParam.booleanMap, false),
-                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), "1"),
+                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), "1.0"),
             };
         }
         else {
@@ -1306,11 +1310,11 @@ public class MechanumDrive extends SubSystem {
                     new ConfigParam("turnLeftPower", ConfigParam.numberMap(0, 1, 0.05), "0.3"),
                     new ConfigParam("turnRightPower", ConfigParam.numberMap(0, 1, 0.05), "0.3"),
                     new ConfigParam("UseGyro", ConfigParam.booleanMap, false),
-                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), "1"),
-                    new ConfigParam("ConstantSpeedMultiplier", ConfigParam.numberMap(0, 10, 0.05), "1"),
-                    new ConfigParam("SlowModeMultiplier", ConfigParam.numberMap(0, 10, 0.05), "1"),
-                    new ConfigParam("ConstantTurnSpeedMultiplier", ConfigParam.numberMap(0, 10, 0.05), "1"),
-                    new ConfigParam("SlowTurnModeMultiplier", ConfigParam.numberMap(0, 10, 0.05), "1")
+                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), "1.0"),
+                    new ConfigParam("ConstantSpeedMultiplier", ConfigParam.numberMap(0, 10, 0.05), "1.0"),
+                    new ConfigParam("SlowModeMultiplier", ConfigParam.numberMap(0, 10, 0.05), "1.0"),
+                    new ConfigParam("ConstantTurnSpeedMultiplier", ConfigParam.numberMap(0, 10, 0.05), "1.0"),
+                    new ConfigParam("SlowTurnModeMultiplier", ConfigParam.numberMap(0, 10, 0.05), "1.0")
             };
         }
     }
@@ -1334,7 +1338,7 @@ public class MechanumDrive extends SubSystem {
                         put(DriveType.MATTHEW.name(), DriveType.MATTHEW);
                     }}, DriveType.STANDARD.name()),
                     new ConfigParam("UseGyro", ConfigParam.booleanMap, false),
-                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), "1"),
+                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), "1.0"),
             };
         }
         else {
@@ -1349,8 +1353,8 @@ public class MechanumDrive extends SubSystem {
                         put(DriveType.MATTHEW.name(), DriveType.MATTHEW);
                     }}, DriveType.STANDARD.name()),
                     new ConfigParam("UseGyro", ConfigParam.booleanMap, false),
-                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), "1"),
-                    new ConfigParam("ConstantSpeedMultiplier", ConfigParam.numberMap(0, 1, 0.05), 1)
+                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), "1.0"),
+                    new ConfigParam("ConstantSpeedMultiplier", ConfigParam.numberMap(0, 1, 0.05), "1.0")
             };
         }
     }

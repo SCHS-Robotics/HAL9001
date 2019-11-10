@@ -3,6 +3,12 @@
 //
 apply plugin: 'com.android.library'
 
+ext {
+    PUBLISH_GROUP_ID = 'org.hal9001'
+    PUBLISH_ARTIFACT_ID = 'hal9001'
+    PUBLISH_VERSION = '1.0.2'
+}
+
 android {
 
     defaultConfig {
@@ -22,6 +28,10 @@ repositories {
     flatDir {
         dirs '../libs'
     }
+    maven {
+        url 'https://dl.bintray.com/openftc/maven'
+    }
 }
 
 apply from: 'build.release.gradle'
+apply from: '../release-aar.gradle'

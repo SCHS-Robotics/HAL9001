@@ -11,10 +11,11 @@ import android.util.Log;
 
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem;
+import com.SCHSRobotics.HAL9001.system.source.BaseRobot.VisionSubSystem;
+import com.SCHSRobotics.HAL9001.util.exceptions.ViewportDisabledException;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 
-import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.CvType;
@@ -24,7 +25,6 @@ import org.opencv.core.MatOfPoint3f;
 import org.opencv.core.Point3;
 import org.opencv.core.Size;
 import org.opencv.core.TermCriteria;
-import org.opencv.features2d.Features2d;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * A class for calibrating the phone camera in real-ish (surreal?) time.
  */
-public class CameraCalib extends SubSystem implements CameraBridgeViewBase.CvCameraViewListener2 {
+public class CameraCalib extends VisionSubSystem {
 
     //The customizable gamepad holding all the controls for the calibration class.
     private CustomizableGamepad inputs;
@@ -66,6 +66,11 @@ public class CameraCalib extends SubSystem implements CameraBridgeViewBase.CvCam
      */
     public CameraCalib(Robot robot, Size chessboardSize) {
         super(robot);
+
+        if(!robot.isViewportEnabled()) {
+            throw new ViewportDisabledException("The camera viewport must be enabled for this program to run");
+        }
+
         inputs = new CustomizableGamepad(robot);
         inputs.addButton(CAPTURE, new Button(1, Button.BooleanInputs.x));
         inputs.addButton(DELETE_CAPTURE, new Button(1, Button.BooleanInputs.b));
@@ -108,7 +113,7 @@ public class CameraCalib extends SubSystem implements CameraBridgeViewBase.CvCam
 
     @Override
     public void start() {
-
+        startVision();
     }
 
     @Override
@@ -144,23 +149,12 @@ public class CameraCalib extends SubSystem implements CameraBridgeViewBase.CvCam
     }
 
     @Override
-    public void onCameraViewStarted(int width, int height) {
-        this.width = width;
-        this.height = height;
-    }
-
-    @Override
-    public void onCameraViewStopped() {
-
-    }
-
-    @Override
-    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-
-        inputFrame.rgba().release();
+    public Mat onCameraFrame(Mat inputFrame) {
         Mat gray = new Mat();
-        Imgproc.resize(inputFrame.gray(),gray,new Size(width/2,height/2));
-        inputFrame.gray().release();
+
+        Imgproc.cvtColor(inputFrame,gray,Imgproc.COLOR_RGBA2GRAY);
+        Imgproc.resize(gray,gray,new Size(width/2,height/2));
+        inputFrame.release();
 
         if(!calibrationBegun) {
             MatOfPoint2f corners = new MatOfPoint2f();

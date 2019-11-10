@@ -158,7 +158,7 @@ public class Grapher {
         Mat plot = new Mat();
         plotter.render(plot);
 
-        Imgproc.resize(plot,plot,new Size(1280,720));
+        Imgproc.resize(plot,plot,new Size(240,320));
 
         plotter.clear();
 

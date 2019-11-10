@@ -18,7 +18,6 @@ import com.SCHSRobotics.HAL9001.util.misc.Grapher;
 import com.SCHSRobotics.HAL9001.util.misc.Toggle;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
-import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -369,7 +368,7 @@ public class AnglePIDTunerSystem extends SubSystem implements CameraBridgeViewBa
         inputFrame.gray().release();
         inputFrame.rgba().release();
 
-        return grapher.getNextFrame(setPoint-imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle);
+        return grapher.getNextFrame(pidTuner.getError(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle));
     }
 
     @Override

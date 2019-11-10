@@ -1,10 +1,6 @@
 package com.SCHSRobotics.HAL9001.util.misc;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
-import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeManagerImpl;
 
 /**
@@ -44,7 +40,6 @@ public class AutoTransitioner extends Thread {
                 Thread.sleep(50); //Sleep 50 seconds to minimize performance impact to the rest of your program
             }
         } catch (InterruptedException ex) {
-            Log.e(FtcRobotControllerActivity.TAG, "AutoTransitioner shutdown, thread interrupted");
         }
     }
 

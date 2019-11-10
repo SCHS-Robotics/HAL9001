@@ -9,13 +9,13 @@ package com.SCHSRobotics.HAL9001.system.source.BaseRobot;
 
 import org.opencv.core.Mat;
 
-public abstract class VisionSubsystem extends SubSystem {
+public abstract class VisionSubSystem extends SubSystem {
 
     private static int globalId = 0;
     private int priority;
     private boolean enabled;
 
-    public VisionSubsystem(Robot robot) {
+    public VisionSubSystem(Robot robot) {
         super(robot);
         priority = globalId;
         globalId++;

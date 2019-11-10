@@ -33,7 +33,6 @@ public class BasicSampleTeleop extends BaseTeleop {
     //Not necessary to have this (you can delete it), basically if you want to do something special on start you would put it here
     @Override
     protected void onStart() {
-        robot.vision.startVision();
     }
 
     //Not necessary to have this (you can delete it), basically if you want to do something special in a loop after pressing start you would put it here

@@ -8,8 +8,6 @@
 package com.SCHSRobotics.HAL9001.system.source.BaseRobot;
 
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.SCHSRobotics.HAL9001.system.menus.ConfigMenu;
@@ -79,21 +77,21 @@ public abstract class Robot {
     private boolean useViewport, pipelineSet, cameraStarted;
     private final int cameraMonitorViewId;
 
-    private List<VisionSubsystem> visionSubsystems;
+    private List<VisionSubSystem> visionSubSystems;
 
     /**
      * Constructor for robot.
      *
      * @param opMode - The opmode the robot is currently running.
      */
-    public Robot(@NonNull OpMode opMode)
+    public Robot( OpMode opMode)
     {
         this.opMode = opMode;
         telemetry = opMode.telemetry;
         hardwareMap = opMode.hardwareMap;
 
         subSystems = new HashMap<>();
-        visionSubsystems = new ArrayList<>();
+        visionSubSystems = new ArrayList<>();
 
         useGui = false;
         useConfig = false;
@@ -112,12 +110,12 @@ public abstract class Robot {
      * @param name - The name of the subsystem.
      * @param subSystem - The subsystem object.
      */
-    protected final void putSubSystem(@NonNull String name, @NonNull SubSystem subSystem)
+    protected final void putSubSystem( String name,  SubSystem subSystem)
     {
         subSystems.put(name, subSystem);
 
-        if(subSystem instanceof VisionSubsystem) {
-            visionSubsystems.add((VisionSubsystem) subSystem);
+        if(subSystem instanceof VisionSubSystem) {
+            visionSubSystems.add((VisionSubSystem) subSystem);
         }
 
         if(subSystem.usesConfig) {
@@ -167,7 +165,7 @@ public abstract class Robot {
      *
      * @param cycleButton - The button used to cycle through multiple menus in GUI.
      */
-    protected final void startGui(@NonNull Button cycleButton) {
+    protected final void startGui( Button cycleButton) {
         if(!useGui) {
             gui = new GUI(this, cycleButton);
             useGui = true;
@@ -177,7 +175,7 @@ public abstract class Robot {
         }
     }
 
-    protected final void enableViewport(@NonNull Button cycleButton) {
+    protected final void enableViewport( Button cycleButton) {
         if(!cycleButton.isBoolean) {
             throw new NotBooleanInputException("Vision cycle button must be a boolean input");
         }
@@ -189,6 +187,10 @@ public abstract class Robot {
             visionCycler.removeButton(VISION_CYCLE);
             visionCycler.addButton(VISION_CYCLE, cycleButton);
         }
+    }
+
+    public final boolean isViewportEnabled() {
+        return useViewport;
     }
 
     /**
@@ -480,7 +482,7 @@ public abstract class Robot {
      * @param name - The name of the subsystem.
      * @return - The subsystem with the given identifier in the hashmap.
      */
-    public final SubSystem getSubSystem(@NonNull String name)
+    public final SubSystem getSubSystem( String name)
     {
         return subSystems.get(name);
     }
@@ -492,7 +494,7 @@ public abstract class Robot {
      * @param subSystem - The new subsystem.
      * @return - The new subsystem that was passed in as a parameter.
      */
-    public final SubSystem eOverrideSubSystem(@NonNull String name, @NonNull SubSystem subSystem)
+    public final SubSystem eOverrideSubSystem( String name,  SubSystem subSystem)
     {
         subSystems.put(name, subSystem);
         return subSystem;
@@ -513,7 +515,7 @@ public abstract class Robot {
      * @param subsystem - The subsystem to pull the gamepad controls for.
      * @return - A customizable gamepad containing the configured controls for that subsystem.
      */
-    public final CustomizableGamepad pullControls(@NonNull SubSystem subsystem) {
+    public final CustomizableGamepad pullControls( SubSystem subsystem) {
         return pullControls(subsystem.getClass().getSimpleName());
     }
 
@@ -523,7 +525,7 @@ public abstract class Robot {
      * @param subsystem - The name of the subsystem to pull the gamepad controls for.
      * @return - A customizable gamepad containing the configured controls for that subsystem.
      */
-    public final CustomizableGamepad pullControls(@NonNull String subsystem) {
+    public final CustomizableGamepad pullControls( String subsystem) {
         List<ConfigParam> configParams = teleopConfig.get(subsystem);
         CustomizableGamepad gamepad = new CustomizableGamepad(this);
         for(ConfigParam param : configParams) {
@@ -540,7 +542,7 @@ public abstract class Robot {
      * @param subsystem - The subsystem to pull the gamepad controls for.
      * @return - A map relating the name of each non-gamepad option to that option's value.
      */
-    public final Map<String,Object> pullNonGamepad(@NonNull SubSystem subsystem) {
+    public final Map<String,Object> pullNonGamepad( SubSystem subsystem) {
         return pullNonGamepad(subsystem.getClass().getSimpleName());
     }
 
@@ -550,7 +552,7 @@ public abstract class Robot {
      * @param subsystem - The name of the subsystem to pull the gamepad controls for.
      * @return - A map relating the name of each non-gamepad option to that option's value.
      */
-    public final Map<String,Object> pullNonGamepad(@NonNull String subsystem) {
+    public final Map<String,Object> pullNonGamepad( String subsystem) {
 
         List<ConfigParam> configParamsTeleop = new ArrayList<>();
         List<ConfigParam> configParamsAuto = new ArrayList<>();
@@ -639,7 +641,7 @@ public abstract class Robot {
      * @param filePath - The path of the file to write to.
      * @param data - The data to write to the file/
      */
-    private void writeFile(@NonNull String filePath, @Nullable String data) {
+    private void writeFile( String filePath,  String data) {
 
         FileOutputStream fos;
 
@@ -681,7 +683,7 @@ public abstract class Robot {
 
     private boolean enableVisionRequested() {
         boolean anythingEnabled = false;
-        for(VisionSubsystem visionSubsystem : visionSubsystems) {
+        for(VisionSubSystem visionSubsystem : visionSubSystems) {
             anythingEnabled |= visionSubsystem.isEnabled();
         }
         return anythingEnabled;
@@ -694,9 +696,9 @@ public abstract class Robot {
             Mat returnMat = new Mat();
             int activeMatIdx = -1;
             int minPriority = Integer.MAX_VALUE;
-            for(VisionSubsystem visionSubsystem : visionSubsystems) {
+            for(VisionSubSystem visionSubsystem : visionSubSystems) {
                 if(visionSubsystem.getPriority() < minPriority && visionSubsystem.isEnabled()) {
-                    activeMatIdx = visionSubsystems.indexOf(visionSubsystem);
+                    activeMatIdx = visionSubSystems.indexOf(visionSubsystem);
                     minPriority = visionSubsystem.getPriority();
                 }
             }
@@ -705,9 +707,9 @@ public abstract class Robot {
                 returnMat = Mat.zeros(320,240, CvType.CV_8UC3);
             }
             else {
-                for(VisionSubsystem visionSubsystem : visionSubsystems) {
+                for(VisionSubSystem visionSubsystem : visionSubSystems) {
                     if(visionSubsystem.isEnabled()) {
-                        if(visionSubsystems.indexOf(visionSubsystem) == activeMatIdx) {
+                        if(visionSubSystems.indexOf(visionSubsystem) == activeMatIdx) {
                             returnMat = visionSubsystem.onCameraFrame(input.clone());
                         }
                         else {
@@ -722,7 +724,7 @@ public abstract class Robot {
 
         @Override
         public void onViewportTapped() {
-            for(VisionSubsystem visionSubsystem : visionSubsystems) {
+            for(VisionSubSystem visionSubsystem : visionSubSystems) {
                 visionSubsystem.onViewportTapped();
             }
         }
