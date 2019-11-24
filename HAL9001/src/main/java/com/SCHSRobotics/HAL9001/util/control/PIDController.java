@@ -36,7 +36,7 @@ public class PIDController {
     //A boolean specifying if the controller is currently active.
     private boolean active;
 
-    private double deadband;
+    public double deadband;
 
     /**
      * Specifies the type of control system we want active.
@@ -97,6 +97,7 @@ public class PIDController {
         this.kf = 0;
         this.errorFunction = errorFunction;
         this.type = type;
+        deadband = 0;
     }
 
     /**
@@ -154,6 +155,7 @@ public class PIDController {
         this.kf = kf;
         this.errorFunction = errorFunction;
         this.type = type;
+        deadband = 0;
     }
 
     /**
@@ -177,7 +179,6 @@ public class PIDController {
         D = 0;
         F = 0;
         active = true;
-        deadband = 0;
     }
 
     /**
@@ -309,5 +310,25 @@ public class PIDController {
     
     public double getError(double current) {
         return errorFunction.apply(setpoint, current);
+    }
+
+    public double getKp() {
+        return kp;
+    }
+
+    public double getKi() {
+        return ki;
+    }
+
+    public double getKd() {
+        return kd;
+    }
+
+    public double getKf() {
+        return kf;
+    }
+
+    public double[] getTunings() {
+        return type == Type.FEED_FORWARD ? new double[] {kp, ki, kd, kf} : new double[] {kp, ki, kd};
     }
 }

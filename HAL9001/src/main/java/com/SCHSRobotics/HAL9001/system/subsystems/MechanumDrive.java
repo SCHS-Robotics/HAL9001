@@ -1305,14 +1305,14 @@ public class MechanumDrive extends SubSystem {
                     new ConfigParam(TTA_STICK, Button.VectorInputs.noButton),
                     new ConfigParam(SPEED_MODE, Button.BooleanInputs.noButton),
                     new ConfigParam(TURN_SPEED_MODE, Button.BooleanInputs.noButton),
-                    new ConfigParam("turnLeftPower", ConfigParam.numberMap(0, 1, 0.05), "0.3"),
-                    new ConfigParam("turnRightPower", ConfigParam.numberMap(0, 1, 0.05), "0.3"),
+                    new ConfigParam("turnLeftPower", ConfigParam.numberMap(0, 1, 0.05), 0.3),
+                    new ConfigParam("turnRightPower", ConfigParam.numberMap(0, 1, 0.05), 0.3),
                     new ConfigParam("UseGyro", ConfigParam.booleanMap, false),
-                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), "1.0"),
-                    new ConfigParam("ConstantSpeedMultiplier", ConfigParam.numberMap(0, 10, 0.05), "1.0"),
-                    new ConfigParam("SlowModeMultiplier", ConfigParam.numberMap(0, 10, 0.05), "1.0"),
-                    new ConfigParam("ConstantTurnSpeedMultiplier", ConfigParam.numberMap(0, 10, 0.05), "1.0"),
-                    new ConfigParam("SlowTurnModeMultiplier", ConfigParam.numberMap(0, 10, 0.05), "1.0")
+                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), 1.0),
+                    new ConfigParam("ConstantSpeedMultiplier", ConfigParam.numberMap(0, 10, 0.05), 1.0),
+                    new ConfigParam("SlowModeMultiplier", ConfigParam.numberMap(0, 10, 0.05), 1.0),
+                    new ConfigParam("ConstantTurnSpeedMultiplier", ConfigParam.numberMap(0, 10, 0.05), 1.0),
+                    new ConfigParam("SlowTurnModeMultiplier", ConfigParam.numberMap(0, 10, 0.05), 1.0)
             };
         }
     }
@@ -1336,7 +1336,7 @@ public class MechanumDrive extends SubSystem {
                         put(DriveType.MATTHEW.name(), DriveType.MATTHEW);
                     }}, DriveType.STANDARD.name()),
                     new ConfigParam("UseGyro", ConfigParam.booleanMap, false),
-                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), "1.0"),
+                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), 1.0),
             };
         }
         else {
@@ -1351,8 +1351,8 @@ public class MechanumDrive extends SubSystem {
                         put(DriveType.MATTHEW.name(), DriveType.MATTHEW);
                     }}, DriveType.STANDARD.name()),
                     new ConfigParam("UseGyro", ConfigParam.booleanMap, false),
-                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), "1.0"),
-                    new ConfigParam("ConstantSpeedMultiplier", ConfigParam.numberMap(0, 1, 0.05), "1.0")
+                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), 1.0),
+                    new ConfigParam("ConstantSpeedMultiplier", ConfigParam.numberMap(0, 1, 0.05), 1.0)
             };
         }
     }

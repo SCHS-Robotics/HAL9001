@@ -7,11 +7,15 @@
 
 package com.SCHSRobotics.HAL9001.util.calib;
 
-import com.SCHSRobotics.HAL9001.system.menus.DisplayMenu;
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
-import com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem;
+import com.SCHSRobotics.HAL9001.system.source.BaseRobot.VisionSubSystem;
+import com.SCHSRobotics.HAL9001.system.subsystems.MechanumDrive;
+import com.SCHSRobotics.HAL9001.system.subsystems.OmniWheelDrive;
+import com.SCHSRobotics.HAL9001.system.subsystems.QuadWheelDrive;
+import com.SCHSRobotics.HAL9001.system.subsystems.TankDrive;
 import com.SCHSRobotics.HAL9001.util.control.PIDController;
 import com.SCHSRobotics.HAL9001.util.exceptions.GuiNotPresentException;
+import com.SCHSRobotics.HAL9001.util.misc.BaseParam;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 import com.SCHSRobotics.HAL9001.util.misc.Grapher;
@@ -21,13 +25,12 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.core.Mat;
 
 /**
  * A subsystem used to tune turn-to-angle PID controllers.
  */
-public class AnglePIDTunerSystem extends SubSystem implements CameraBridgeViewBase.CvCameraViewListener2 {
+public class AnglePIDTunerSystem extends VisionSubSystem {
 
     //The PID controller used to control the robot's angle.
     private PIDController pidTuner;
@@ -40,7 +43,7 @@ public class AnglePIDTunerSystem extends SubSystem implements CameraBridgeViewBa
     //The gyroscope used to track the robot's angle.
     private BNO055IMU imu;
     //The menu used to display the current kp, ki, and kd values.
-    private DisplayMenu display;
+    //private DisplayMenu display;
     //The last time in milliseconds that the PID coefficients were changed.
     private long lastActivatedTimestamp;
     //The PID coefficients.
@@ -54,42 +57,17 @@ public class AnglePIDTunerSystem extends SubSystem implements CameraBridgeViewBa
     //The names of all the buttons used to change the PID coefficients.
     private final String SLOWMODE = "slowMode", P_INCREMENT = "PUp", P_DECREMENT = "PDown", I_INCREMENT = "IUp", I_DECREMENT = "IDown", D_INCREMENT = "DUp", D_DECREMENT = "DDown";
     //The type of drive system the robot is using.
-    public enum DriveType {
-        TWOWHEEL, FOURWHEEL
+    public enum DriveTrain {
+        TANK, FOUR_WHEEL, MECHANUM, OMNIWHEEL
     }
-    private DriveType driveType;
+    private DriveTrain driveType;
 
-    /**
-     * Constructor for AnglePIDTunerSystem.
-     *
-     * @param robot - The robot the subsystem belongs to.
-     * @param setPoint - The controller's setpoint.
-     *
-     * @throws GuiNotPresentException - Throws this exception if the GUI was not started before this subsystem was created.
-     */
-    public AnglePIDTunerSystem(Robot robot, double setPoint) {
-        super(robot);
+    private AngleUnit units;
 
-        inputs = new CustomizableGamepad(robot);
-
-        inputs.addButton(P_INCREMENT,new Button(1, Button.BooleanInputs.dpad_up));
-        inputs.addButton(P_DECREMENT,new Button(1, Button.BooleanInputs.dpad_down));
-        inputs.addButton(I_INCREMENT,new Button(1, Button.BooleanInputs.bool_left_stick_y_up));
-        inputs.addButton(I_DECREMENT,new Button(1, Button.BooleanInputs.bool_left_stick_y_down));
-        inputs.addButton(D_INCREMENT,new Button(1, Button.BooleanInputs.bool_right_stick_y_up));
-        inputs.addButton(D_DECREMENT,new Button(1, Button.BooleanInputs.bool_right_stick_y_down));
-        inputs.addButton(SLOWMODE,new Button(1, Button.BooleanInputs.x));
-
-        pidTuner = new PIDController(kp,ki,kd);
-        pidTuner.setSetpoint(setPoint);
-
-        if(!robot.usesGUI()) {
-            throw new GuiNotPresentException("The GUI must be started to use the PID tuning program");
-        }
-
-        display = new DisplayMenu(robot.gui);
-        robot.gui.addMenu("display",display);
-    }
+    private TankDrive tankDrive;
+    private QuadWheelDrive quadWheelDrive;
+    private MechanumDrive mechanumDrive;
+    private OmniWheelDrive omniWheelDrive;
 
     /**
      * Constructor for AnglePIDTunerSystem.
@@ -99,8 +77,18 @@ public class AnglePIDTunerSystem extends SubSystem implements CameraBridgeViewBa
      *
      * @throws GuiNotPresentException - Throws this exception if the GUI was not started before this subsystem was created.
      */
-    public AnglePIDTunerSystem(Robot robot, PIDController pidController, double setPoint) {
+    public AnglePIDTunerSystem(Robot robot, BaseParam driveParams, PIDController pidController, double setPoint, AngleUnit angleUnit) {
         super(robot);
+
+        slowModeToggle = new Toggle(Toggle.ToggleTypes.flipToggle, false);
+
+        increment = 0.1;
+        lastActivatedTimestamp = 0;
+        delayMs = 200;
+
+        units = angleUnit;
+
+        grapher = new Grapher(10,angleUnit == AngleUnit.DEGREES ? 360 : 2*Math.PI);
 
         inputs = new CustomizableGamepad(robot);
 
@@ -111,205 +99,53 @@ public class AnglePIDTunerSystem extends SubSystem implements CameraBridgeViewBa
         inputs.addButton(D_INCREMENT,new Button(1, Button.BooleanInputs.bool_right_stick_y_up));
         inputs.addButton(D_DECREMENT,new Button(1, Button.BooleanInputs.bool_right_stick_y_down));
         inputs.addButton(SLOWMODE,new Button(1, Button.BooleanInputs.x));
-
-        this.setPoint = setPoint;
 
         pidTuner = pidController;
-        pidTuner.setSetpoint(setPoint);
-        pidTuner.setTunings(kp,ki,kd);
+        pidTuner.init(setPoint, 0);
 
+        kp = pidTuner.getKp();
+        ki = pidTuner.getKi();
+        kd = pidTuner.getKd();
 
-        if(!robot.usesGUI()) {
+        /*if(!robot.usesGUI()) {
             throw new GuiNotPresentException("The GUI must be started to use the PID tuning program");
         }
 
         display = new DisplayMenu(robot.gui);
         robot.gui.addMenu("display",display);
-    }
+        robot.gui.setActiveMenu("display");*/
 
-    /**
-     * Constructor for AnglePIDTunerSystem
-     *
-     * @param robot - The robot the subsystem belongs to.
-     * @param setPoint - The controller's setpoint.
-     * @param type - The type of PID controller being used.
-     *
-     * @throws GuiNotPresentException - Throws this exception if the GUI was not started before this subsystem was created.
-     */
-    public AnglePIDTunerSystem(Robot robot, double setPoint, PIDController.Type type) {
-        super(robot);
+        driveType = driveParams instanceof TankDrive.Params ? DriveTrain.TANK : driveParams instanceof QuadWheelDrive ? DriveTrain.FOUR_WHEEL : driveParams instanceof MechanumDrive.Params ? DriveTrain.MECHANUM : DriveTrain.OMNIWHEEL;
 
-        inputs = new CustomizableGamepad(robot);
-
-        inputs.addButton(P_INCREMENT,new Button(1, Button.BooleanInputs.dpad_up));
-        inputs.addButton(P_DECREMENT,new Button(1, Button.BooleanInputs.dpad_down));
-        inputs.addButton(I_INCREMENT,new Button(1, Button.BooleanInputs.bool_left_stick_y_up));
-        inputs.addButton(I_DECREMENT,new Button(1, Button.BooleanInputs.bool_left_stick_y_down));
-        inputs.addButton(D_INCREMENT,new Button(1, Button.BooleanInputs.bool_right_stick_y_up));
-        inputs.addButton(D_DECREMENT,new Button(1, Button.BooleanInputs.bool_right_stick_y_down));
-        inputs.addButton(SLOWMODE,new Button(1, Button.BooleanInputs.x));
-
-        this.setPoint = setPoint;
-
-        pidTuner = new PIDController(kp,ki,kd,type);
-        pidTuner.setSetpoint(setPoint);
-
-        if(!robot.usesGUI()) {
-            throw new GuiNotPresentException("The GUI must be started to use the PID tuning program");
+        switch(driveType) {
+            case TANK: tankDrive = new TankDrive(robot,(TankDrive.Params) driveParams); break;
+            case FOUR_WHEEL: quadWheelDrive = new QuadWheelDrive(robot, (QuadWheelDrive.Params) driveParams); break;
+            case MECHANUM: mechanumDrive = new MechanumDrive(robot, (MechanumDrive.Params) driveParams); break;
+            case OMNIWHEEL: omniWheelDrive = new OmniWheelDrive(robot, (OmniWheelDrive.Params) driveParams); break;
         }
-
-        display = new DisplayMenu(robot.gui);
-        robot.gui.addMenu("display",display);
-    }
-
-    /**
-     * Constructor for AnglePIDTunerSystem.
-     *
-     * @param robot - The robot the subsystem belongs to.
-     * @param setPoint - The controller's setpoint.
-     * @param type - The type of PID controller being used.
-     * @param iClampLower - The lower value for the clamp on the integral term.
-     * @param iClampUpper - The upper value for the clamp on the integral term.
-     *
-     * @throws GuiNotPresentException - Throws this exception if the GUI was not started before this subsystem was created.
-     */
-    public AnglePIDTunerSystem(Robot robot, double setPoint, PIDController.Type type, double iClampLower, double iClampUpper) {
-        super(robot);
-
-        inputs = new CustomizableGamepad(robot);
-
-        inputs.addButton(P_INCREMENT,new Button(1, Button.BooleanInputs.dpad_up));
-        inputs.addButton(P_DECREMENT,new Button(1, Button.BooleanInputs.dpad_down));
-        inputs.addButton(I_INCREMENT,new Button(1, Button.BooleanInputs.bool_left_stick_y_up));
-        inputs.addButton(I_DECREMENT,new Button(1, Button.BooleanInputs.bool_left_stick_y_down));
-        inputs.addButton(D_INCREMENT,new Button(1, Button.BooleanInputs.bool_right_stick_y_up));
-        inputs.addButton(D_DECREMENT,new Button(1, Button.BooleanInputs.bool_right_stick_y_down));
-        inputs.addButton(SLOWMODE,new Button(1, Button.BooleanInputs.x));
-
-        this.setPoint = setPoint;
-
-        pidTuner = new PIDController(kp,ki,kd,type);
-        pidTuner.setSetpoint(setPoint);
-        pidTuner.setIClamp(iClampLower,iClampUpper);
-
-        if(!robot.usesGUI()) {
-            throw new GuiNotPresentException("The GUI must be started to use the PID tuning program");
-        }
-
-        display = new DisplayMenu(robot.gui);
-        robot.gui.addMenu("display",display);
-    }
-
-    /**
-     * Constructor for AnglePIDTunerSystem.
-     *
-     * @param robot - The robot the subsystem belongs to.
-     * @param setPoint - The controller's setpoint.
-     * @param type - The type of PID controller being used.
-     * @param iClampLower - The lower value for the clamp on the integral term.
-     * @param iClampUpper - The upper value for the clamp on the integral term.
-     * @param outputClampLower - The lower value for the clamp on the controller's output.
-     * @param outputClampUpper - The upper value for the clamp on the controller's output.
-     *
-     * @throws GuiNotPresentException - Throws this exception if the GUI was not started before this subsystem was created.
-     */
-    public AnglePIDTunerSystem(Robot robot, double setPoint, PIDController.Type type, double iClampLower, double iClampUpper, double outputClampLower, double outputClampUpper) {
-        super(robot);
-
-        inputs = new CustomizableGamepad(robot);
-
-        inputs.addButton(P_INCREMENT,new Button(1, Button.BooleanInputs.dpad_up));
-        inputs.addButton(P_DECREMENT,new Button(1, Button.BooleanInputs.dpad_down));
-        inputs.addButton(I_INCREMENT,new Button(1, Button.BooleanInputs.bool_left_stick_y_up));
-        inputs.addButton(I_DECREMENT,new Button(1, Button.BooleanInputs.bool_left_stick_y_down));
-        inputs.addButton(D_INCREMENT,new Button(1, Button.BooleanInputs.bool_right_stick_y_up));
-        inputs.addButton(D_DECREMENT,new Button(1, Button.BooleanInputs.bool_right_stick_y_down));
-        inputs.addButton(SLOWMODE,new Button(1, Button.BooleanInputs.x));
-
-        this.setPoint = setPoint;
-
-        pidTuner = new PIDController(kp,ki,kd,type);
-        pidTuner.setSetpoint(setPoint);
-        pidTuner.setIClamp(iClampLower,iClampUpper);
-        pidTuner.setOutputClamp(outputClampLower,outputClampUpper);
-
-        if(!robot.usesGUI()) {
-            throw new GuiNotPresentException("The GUI must be started to use the PID tuning program");
-        }
-
-        display = new DisplayMenu(robot.gui);
-        robot.gui.addMenu("display",display);
-    }
-
-    /**
-     * Constuctor for AnglePIDTunerSystem.
-     *
-     * @param robot - The robot the subsystem belongs to.
-     * @param setPoint - The controller's setpoint.
-     * @param type - The type of PID controller being used.
-     * @param iClampLower - The lower value for the clamp on the integral term.
-     * @param iClampUpper - The upper value for the clamp on the integral term.
-     * @param outputClampLower - The lower value for the clamp on the controller's output.
-     * @param outputClampUpper - The upper value for the clamp on the controller's output.
-     * @param PonMClampLower - The lower value for the clamp on the controller's proportional term in PonM mode.
-     * @param PonMClampUpper - The upper value for the clamp on the controller's proportional term in PonM mode.
-     *
-     * @throws GuiNotPresentException - Throws this exception if the GUI was not started before this subsystem was created.
-     */
-    public AnglePIDTunerSystem(Robot robot, double setPoint, PIDController.Type type, double iClampLower, double iClampUpper, double outputClampLower, double outputClampUpper, double PonMClampLower, double PonMClampUpper) {
-        super(robot);
-
-        inputs = new CustomizableGamepad(robot);
-
-        inputs.addButton(P_INCREMENT,new Button(1, Button.BooleanInputs.dpad_up));
-        inputs.addButton(P_DECREMENT,new Button(1, Button.BooleanInputs.dpad_down));
-        inputs.addButton(I_INCREMENT,new Button(1, Button.BooleanInputs.bool_left_stick_y_up));
-        inputs.addButton(I_DECREMENT,new Button(1, Button.BooleanInputs.bool_left_stick_y_down));
-        inputs.addButton(D_INCREMENT,new Button(1, Button.BooleanInputs.bool_right_stick_y_up));
-        inputs.addButton(D_DECREMENT,new Button(1, Button.BooleanInputs.bool_right_stick_y_down));
-        inputs.addButton(SLOWMODE,new Button(1, Button.BooleanInputs.x));
-
-        this.setPoint = setPoint;
-
-        pidTuner = new PIDController(kp,ki,kd,type);
-        pidTuner.setSetpoint(setPoint);
-        pidTuner.setIClamp(iClampLower,iClampUpper);
-        pidTuner.setOutputClamp(outputClampLower,outputClampUpper);
-        pidTuner.setPonMClamp(PonMClampLower,PonMClampUpper);
-
-        if(!robot.usesGUI()) {
-            throw new GuiNotPresentException("The GUI must be started to use the PID tuning program");
-        }
-
-        display = new DisplayMenu(robot.gui);
-        robot.gui.addMenu("display",display);
     }
 
     @Override
     public void init() {
 
         imu = robot.hardwareMap.get(BNO055IMU.class,"imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        imu.initialize(parameters);
+        imu.initialize(new BNO055IMU.Parameters());
+        while(robot.opModeIsActive() && !imu.isGyroCalibrated()) {
+            robot.telemetry.addLine("Calibrating IMU...");
+            robot.telemetry.update();
+        }
+        robot.telemetry.addLine("IMU Calibrated!");
+        robot.telemetry.update();
     }
 
     @Override
     public void init_loop() {
 
-        display.clear();
-        if(!imu.isGyroCalibrated()) {
-            display.addLine("Calibrating IMU...");
-        }
-        else {
-            display.addLine("IMU Calibrated!");
-        }
     }
 
     @Override
     public void start() {
-
+        startVision();
     }
 
     @Override
@@ -342,47 +178,59 @@ public class AnglePIDTunerSystem extends SubSystem implements CameraBridgeViewBa
             lastActivatedTimestamp = System.currentTimeMillis();
             pidTuner.setTunings(kp,ki,kd);
 
-            display.addData("kp",kp);
-            display.addData("ki",ki);
-            display.addData("kd",kd);
+            double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, units).firstAngle;
+
+            turn(pidTuner.getCorrection(currentAngle));
+
+            robot.telemetry.addData("kp",kp);
+            robot.telemetry.addData("ki",ki);
+            robot.telemetry.addData("kd",kd);
+            robot.telemetry.addData("current angle",currentAngle);
+            robot.telemetry.addData("error",pidTuner.getError(currentAngle));
+            robot.telemetry.update();
         }
     }
 
     @Override
     public void stop() {
+        stopVision();
+        stopMotors();
     }
 
     @Override
-    public void onCameraViewStarted(int width, int height) {
+    public Mat onCameraFrame(Mat input) {
+        input.release();
 
+        return grapher.getNextFrame(pidTuner.getError(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, units).firstAngle));
     }
 
-    @Override
-    public void onCameraViewStopped() {
-
+    private void turn(double power) {
+        if(driveType == DriveTrain.TANK) {
+            tankDrive.turn(power);
+        }
+        else if(driveType == DriveTrain.FOUR_WHEEL) {
+            quadWheelDrive.turn(power);
+        }
+        else if(driveType == DriveTrain.MECHANUM) {
+            mechanumDrive.turn(power);
+        }
+        else {
+            omniWheelDrive.turn(power);
+        }
     }
 
-    @Override
-    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-
-        inputFrame.gray().release();
-        inputFrame.rgba().release();
-
-        return grapher.getNextFrame(pidTuner.getError(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle));
-    }
-
-    @Override
-    protected void initVars() {
-        slowModeToggle = new Toggle(Toggle.ToggleTypes.flipToggle, false);
-
-        increment = 0.1;
-        lastActivatedTimestamp = 0;
-        delayMs = 200;
-
-        kp = 0;
-        ki = 0;
-        kd = 0;
-
-        grapher = new Grapher(10,2*Math.PI);
+    private void stopMotors() {
+        if(driveType == DriveTrain.TANK) {
+            tankDrive.stopMovement();
+        }
+        else if(driveType == DriveTrain.FOUR_WHEEL) {
+            quadWheelDrive.stopMovement();
+        }
+        else if(driveType == DriveTrain.MECHANUM) {
+            mechanumDrive.stopAllMotors();
+        }
+        else {
+            omniWheelDrive.stopAllMotors();
+        }
     }
 }
