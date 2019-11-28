@@ -192,7 +192,7 @@ public class EncoderDistanceCalib extends SubSystem {
         endingEncoderPos.put("Left", ((TankDrive) driveSubSystem).getLeftMotorEncoderPos());
         endingEncoderPos.put("Right", ((TankDrive) driveSubSystem).getRightMotorEncoderPos());
         robot.gui.addMenu("Getting Menu", new EncoderDistanceCalibMenu(robot.gui, unit, switchSpeedButton, this));
-        robot.gui.setActiveMenu("Getting menu");
+        robot.gui.setActiveMenu("Getting Menu");
         state = State.DISPLAYING;
     }
 
@@ -209,7 +209,7 @@ public class EncoderDistanceCalib extends SubSystem {
         endingEncoderPos.put("TopLeft", ((MechanumDrive) driveSubSystem).getTopLeftEncoderPos());
         endingEncoderPos.put("TopRight", ((MechanumDrive) driveSubSystem).getTopRightEncoderPos());
         robot.gui.addMenu("Getting Menu", new EncoderDistanceCalibMenu(robot.gui, unit, switchSpeedButton, this));
-        robot.gui.setActiveMenu("Getting menu");
+        robot.gui.setActiveMenu("Getting Menu");
         state = State.DISPLAYING;
     }
 
@@ -226,7 +226,7 @@ public class EncoderDistanceCalib extends SubSystem {
         endingEncoderPos.put("TopLeft", ((MechanumDrive) driveSubSystem).getTopLeftEncoderPos());
         endingEncoderPos.put("TopRight", ((MechanumDrive) driveSubSystem).getTopRightEncoderPos());
         robot.gui.addMenu("Getting Menu", new EncoderDistanceCalibMenu(robot.gui, unit, switchSpeedButton, this));
-        robot.gui.setActiveMenu("Getting menu");
+        robot.gui.setActiveMenu("Getting Menu");
         state = State.DISPLAYING;
     }
 
@@ -243,7 +243,7 @@ public class EncoderDistanceCalib extends SubSystem {
         endingEncoderPos.put("TopLeft", ((QuadWheelDrive) driveSubSystem).getTopLeftMotorEncoderPos());
         endingEncoderPos.put("TopRight", ((QuadWheelDrive) driveSubSystem).getTopRightMotorEncoderPos());
         robot.gui.addMenu("Getting Menu", new EncoderDistanceCalibMenu(robot.gui, unit, switchSpeedButton, this));
-        robot.gui.setActiveMenu("Getting menu");
+        robot.gui.setActiveMenu("Getting Menu");
         state = State.DISPLAYING;
     }
 
@@ -257,5 +257,4 @@ public class EncoderDistanceCalib extends SubSystem {
         state = State.DISPLAYING;
         robot.gui.removeMenu("Getting Menu");
     }
-
 }

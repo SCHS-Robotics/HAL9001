@@ -28,7 +28,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
@@ -50,6 +52,8 @@ import java.util.Map;
 public abstract class Robot {
 
     private static final String VISION_CYCLE = "VisionCycler";
+
+    private static Size cameraSize;
 
     //A map relating the name of each subsystem in the robot to that subsystem's corresponding autonomous config
     public static Map<String, List<ConfigParam>> autonomousConfig = new HashMap<>();
@@ -84,7 +88,7 @@ public abstract class Robot {
      *
      * @param opMode - The opmode the robot is currently running.
      */
-    public Robot( OpMode opMode)
+    public Robot(OpMode opMode)
     {
         this.opMode = opMode;
         telemetry = opMode.telemetry;
@@ -101,6 +105,7 @@ public abstract class Robot {
 
         visionCycler = new CustomizableGamepad(this);
 
+        cameraSize = new Size(320, 240);
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId","id", hardwareMap.appContext.getPackageName());
     }
 
@@ -110,7 +115,7 @@ public abstract class Robot {
      * @param name - The name of the subsystem.
      * @param subSystem - The subsystem object.
      */
-    protected final void putSubSystem( String name,  SubSystem subSystem)
+    protected final void putSubSystem(String name,  SubSystem subSystem)
     {
         subSystems.put(name, subSystem);
 
@@ -165,7 +170,7 @@ public abstract class Robot {
      *
      * @param cycleButton - The button used to cycle through multiple menus in GUI.
      */
-    protected final void startGui( Button cycleButton) {
+    protected final void startGui(Button cycleButton) {
         if(!useGui) {
             gui = new GUI(this, cycleButton);
             useGui = true;
@@ -175,7 +180,7 @@ public abstract class Robot {
         }
     }
 
-    protected final void enableViewport( Button cycleButton) {
+    protected final void enableViewport(Button cycleButton) {
         if(!cycleButton.isBoolean) {
             throw new NotBooleanInputException("Vision cycle button must be a boolean input");
         }
@@ -290,16 +295,16 @@ public abstract class Robot {
         }
 
         if(useViewport) {
-            camera = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+            camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         }
         else {
-            camera = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
+            camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
         }
 
         if(enableVisionRequested()) {
             camera.openCameraDevice();
             camera.setPipeline(new Pipeline());
-            camera.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
+            camera.startStreaming((int) Math.round(cameraSize.width),(int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
             pipelineSet = true;
             cameraStarted = true;
         }
@@ -340,13 +345,13 @@ public abstract class Robot {
         if(enableVision && !pipelineSet) {
             camera.openCameraDevice();
             camera.setPipeline(new Pipeline());
-            camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            camera.startStreaming((int) Math.round(cameraSize.width),(int) Math.round(cameraSize.height),OpenCvCameraRotation.UPRIGHT);
             pipelineSet = true;
             cameraStarted = true;
         }
         else if(enableVision && !cameraStarted) {
             camera.openCameraDevice();
-            camera.startStreaming(320,240,OpenCvCameraRotation.UPRIGHT);
+            camera.startStreaming((int) Math.round(cameraSize.width),(int) Math.round(cameraSize.height),OpenCvCameraRotation.UPRIGHT);
             cameraStarted = true;
         }
         else if(!enableVision && pipelineSet) {
@@ -385,13 +390,13 @@ public abstract class Robot {
         if(enableVision && !pipelineSet) {
             camera.openCameraDevice();
             camera.setPipeline(new Pipeline());
-            camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            camera.startStreaming((int) Math.round(cameraSize.width),(int) Math.round(cameraSize.height),OpenCvCameraRotation.UPRIGHT);
             pipelineSet = true;
             cameraStarted = true;
         }
         else if(enableVision && !cameraStarted) {
             camera.openCameraDevice();
-            camera.startStreaming(320,240,OpenCvCameraRotation.UPRIGHT);
+            camera.startStreaming((int) Math.round(cameraSize.width),(int) Math.round(cameraSize.height),OpenCvCameraRotation.UPRIGHT);
             cameraStarted = true;
         }
         else if(!enableVision && pipelineSet) {
@@ -430,13 +435,13 @@ public abstract class Robot {
         if(enableVision && !pipelineSet) {
             camera.openCameraDevice();
             camera.setPipeline(new Pipeline());
-            camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            camera.startStreaming((int) Math.round(cameraSize.width),(int) Math.round(cameraSize.height),OpenCvCameraRotation.UPRIGHT);
             pipelineSet = true;
             cameraStarted = true;
         }
         else if(enableVision && !cameraStarted) {
             camera.openCameraDevice();
-            camera.startStreaming(320,240,OpenCvCameraRotation.UPRIGHT);
+            camera.startStreaming((int) Math.round(cameraSize.width),(int) Math.round(cameraSize.height),OpenCvCameraRotation.UPRIGHT);
             cameraStarted = true;
         }
         else if(!enableVision && pipelineSet) {
@@ -689,6 +694,10 @@ public abstract class Robot {
         return anythingEnabled;
     }
 
+    protected void setCameraSize(int width, int height) {
+        cameraSize = new Size(width, height);
+    }
+
     private class Pipeline extends OpenCvPipeline {
 
         @Override
@@ -704,7 +713,7 @@ public abstract class Robot {
             }
 
             if(activeMatIdx == -1) {
-                returnMat = Mat.zeros(320,240, CvType.CV_8UC3);
+                returnMat = Mat.zeros((int) Math.round(cameraSize.width),(int) Math.round(cameraSize.height), CvType.CV_8UC3);
             }
             else {
                 for(VisionSubSystem visionSubsystem : visionSubSystems) {
