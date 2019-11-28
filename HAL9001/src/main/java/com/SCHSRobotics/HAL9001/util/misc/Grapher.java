@@ -44,6 +44,8 @@ public class Grapher {
     //A boolean specifying if the grapher should allow negative y values.
     private boolean negativeY;
 
+    private Size frameSize;
+
     /**
      * Constructor for Grapher.
      *
@@ -51,22 +53,7 @@ public class Grapher {
      * @param maxY - The graph's maximum displayable y value. This is essentially the height of the graph window.
      */
     public Grapher(double maxX, double maxY) {
-        this.maxX = maxX;
-        this.maxY = maxY;
-
-        t = 0;
-        timeStep = 0;
-        firstLoop = true;
-
-        xData = new Mat();
-        yData = new Mat();
-
-        xData.convertTo(xData, CvType.CV_64F);
-        yData.convertTo(xData, CvType.CV_64F);
-
-        negativeY = true;
-
-        snapshotNumber = 0;
+        this(maxX, maxY, false);
     }
 
     /**
@@ -93,6 +80,12 @@ public class Grapher {
         this.negativeY = negativeY;
 
         snapshotNumber = 0;
+
+        frameSize = new Size(240,320);
+    }
+
+    public void setFrameSize(Size size) {
+        frameSize = size;
     }
 
     /**
@@ -158,7 +151,7 @@ public class Grapher {
         Mat plot = new Mat();
         plotter.render(plot);
 
-        Imgproc.resize(plot,plot,new Size(240,320));
+        Imgproc.resize(plot,plot,frameSize);
 
         plotter.clear();
 
