@@ -2,16 +2,11 @@ package org.firstinspires.ftc.teamcode;
 
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
 import com.SCHSRobotics.HAL9001.system.subsystems.MechanumDrive;
-import com.SCHSRobotics.HAL9001.util.calib.AnglePIDTunerSystem;
-import com.SCHSRobotics.HAL9001.util.control.PIDController;
-import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class BasicSampleBot extends Robot {
 
-    public AnglePIDTunerSystem calib;
+    public MechanumDrive drive;
     /**
      * Constructor for robot.
      *
@@ -37,10 +32,11 @@ public class BasicSampleBot extends Robot {
          */
 
         //startGui(new Button(1, Button.BooleanInputs.noButton));
-        enableViewport(new Button(1, Button.BooleanInputs.noButton));
-        PIDController controller = new PIDController(0.01,0,0);
-        controller.setDeadband(5);
-        calib = new AnglePIDTunerSystem(this, new MechanumDrive.Params("forwardLeftMotor","forwardRightMotor","backLeftMotor","backRightMotor"), controller,45, AngleUnit.DEGREES);
-        putSubSystem("Tank", calib);
+        //enableViewport(new Button(1, Button.BooleanInputs.noButton));
+        //PIDController controller = new PIDController(0.01,0,0);
+        //controller.setDeadband(5);
+        //calib = new AnglePIDTunerSystem(this, new MechanumDrive.Params("forwardLeftMotor","forwardRightMotor","backLeftMotor","backRightMotor"), controller,45, AngleUnit.DEGREES);
+        drive = new MechanumDrive(this, "topLeft","topRight","botLeft","botRight");
+        putSubSystem("Tank", drive);
     }
 }

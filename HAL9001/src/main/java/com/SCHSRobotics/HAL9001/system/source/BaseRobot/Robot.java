@@ -83,6 +83,9 @@ public abstract class Robot {
 
     private List<VisionSubSystem> visionSubSystems;
 
+    private static boolean errorThrown = false;
+    private static Exception thrownException;
+
     /**
      * Constructor for robot.
      *
@@ -290,7 +293,11 @@ public abstract class Robot {
                 telemetry.clearAll();
                 telemetry.addData("ERROR!!!", ex.getMessage());
                 telemetry.update();
-                Log.e(this.getClass().getSimpleName(), ex.getMessage(), ex);
+                if(!errorThrown) {
+                    Log.e(this.getClass().getSimpleName(), ex.getMessage(), ex);
+                    thrownException = ex;
+                    errorThrown = true;
+                }
             }
         }
 
@@ -315,49 +322,57 @@ public abstract class Robot {
      */
     public final void init_loop() {
 
-        this.gamepad1 = opMode.gamepad1;
-        this.gamepad2 = opMode.gamepad2;
+        if(!errorThrown) {
+            this.gamepad1 = opMode.gamepad1;
+            this.gamepad2 = opMode.gamepad2;
 
-        if(useGui) {
-            gui.drawCurrentMenuInit();
+            if (useGui) {
+                gui.drawCurrentMenuInit();
 
-            if(useConfig) {
-                if(((ConfigMenu) gui.getMenu("config")).isDone) {
-                    gui.removeMenu("config");
-                    useConfig = false;
+                if (useConfig) {
+                    if (((ConfigMenu) gui.getMenu("config")).isDone) {
+                        gui.removeMenu("config");
+                        useConfig = false;
+                    }
                 }
             }
-        }
 
-        for (SubSystem subSystem : subSystems.values()) {
+            for (SubSystem subSystem : subSystems.values()) {
 
-            try {
-                subSystem.init_loop();
+                try {
+                    subSystem.init_loop();
+                } catch (Exception ex) {
+                    telemetry.clearAll();
+                    telemetry.addData("ERROR!!!", ex.getMessage());
+                    telemetry.update();
+                    if (!errorThrown) {
+                        Log.e(this.getClass().getSimpleName(), ex.getMessage(), ex);
+                        thrownException = ex;
+                        errorThrown = true;
+                    }
+                }
             }
-            catch (Exception ex) {
-                telemetry.clearAll();
-                telemetry.addData("ERROR!!!", ex.getMessage());
-                telemetry.update();
-                Log.e(this.getClass().getSimpleName(), ex.getMessage(), ex);
+            boolean enableVision = enableVisionRequested();
+            if (enableVision && !pipelineSet) {
+                camera.openCameraDevice();
+                camera.setPipeline(new Pipeline());
+                camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
+                pipelineSet = true;
+                cameraStarted = true;
+            } else if (enableVision && !cameraStarted) {
+                camera.openCameraDevice();
+                camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
+                cameraStarted = true;
+            } else if (!enableVision && pipelineSet) {
+                camera.stopStreaming();
+                camera.closeCameraDevice();
+                cameraStarted = false;
             }
         }
-        boolean enableVision = enableVisionRequested();
-        if(enableVision && !pipelineSet) {
-            camera.openCameraDevice();
-            camera.setPipeline(new Pipeline());
-            camera.startStreaming((int) Math.round(cameraSize.width),(int) Math.round(cameraSize.height),OpenCvCameraRotation.UPRIGHT);
-            pipelineSet = true;
-            cameraStarted = true;
-        }
-        else if(enableVision && !cameraStarted) {
-            camera.openCameraDevice();
-            camera.startStreaming((int) Math.round(cameraSize.width),(int) Math.round(cameraSize.height),OpenCvCameraRotation.UPRIGHT);
-            cameraStarted = true;
-        }
-        else if(!enableVision && pipelineSet) {
-            camera.stopStreaming();
-            camera.closeCameraDevice();
-            cameraStarted = false;
+        else {
+            telemetry.clearAll();
+            telemetry.addData("ERROR!!!", thrownException.getMessage());
+            telemetry.update();
         }
     }
 
@@ -365,44 +380,53 @@ public abstract class Robot {
      * Runs this method when the user presses the start button.
      */
     public final void onStart() {
-        this.gamepad1 = opMode.gamepad1;
-        this.gamepad2 = opMode.gamepad2;
 
-        if(useGui) {
-            if(gui.isMenuPresent("config")) {
-                gui.removeMenu("config");
-            }
-            gui.onStart();
-        }
+        if(!errorThrown) {
+            this.gamepad1 = opMode.gamepad1;
+            this.gamepad2 = opMode.gamepad2;
 
-        for(SubSystem subSystem : subSystems.values()) {
-            try {
-                subSystem.start();
+            if (useGui) {
+                if (gui.isMenuPresent("config")) {
+                    gui.removeMenu("config");
+                }
+                gui.onStart();
             }
-            catch (Exception ex) {
-                telemetry.clearAll();
-                telemetry.addData("ERROR!!!", ex.getMessage());
-                telemetry.update();
-                Log.e(this.getClass().getSimpleName(), ex.getMessage(), ex);
+
+            for (SubSystem subSystem : subSystems.values()) {
+                try {
+                    subSystem.start();
+                } catch (Exception ex) {
+                    telemetry.clearAll();
+                    telemetry.addData("ERROR!!!", ex.getMessage());
+                    telemetry.update();
+                    if(!errorThrown) {
+                        Log.e(this.getClass().getSimpleName(), ex.getMessage(), ex);
+                        thrownException = ex;
+                        errorThrown = true;
+                    }
+                }
+            }
+            boolean enableVision = enableVisionRequested();
+            if (enableVision && !pipelineSet) {
+                camera.openCameraDevice();
+                camera.setPipeline(new Pipeline());
+                camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
+                pipelineSet = true;
+                cameraStarted = true;
+            } else if (enableVision && !cameraStarted) {
+                camera.openCameraDevice();
+                camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
+                cameraStarted = true;
+            } else if (!enableVision && pipelineSet) {
+                camera.stopStreaming();
+                camera.closeCameraDevice();
+                cameraStarted = false;
             }
         }
-        boolean enableVision = enableVisionRequested();
-        if(enableVision && !pipelineSet) {
-            camera.openCameraDevice();
-            camera.setPipeline(new Pipeline());
-            camera.startStreaming((int) Math.round(cameraSize.width),(int) Math.round(cameraSize.height),OpenCvCameraRotation.UPRIGHT);
-            pipelineSet = true;
-            cameraStarted = true;
-        }
-        else if(enableVision && !cameraStarted) {
-            camera.openCameraDevice();
-            camera.startStreaming((int) Math.round(cameraSize.width),(int) Math.round(cameraSize.height),OpenCvCameraRotation.UPRIGHT);
-            cameraStarted = true;
-        }
-        else if(!enableVision && pipelineSet) {
-            camera.stopStreaming();
-            camera.closeCameraDevice();
-            cameraStarted = false;
+        else {
+            telemetry.clearAll();
+            telemetry.addData("ERROR!!!", thrownException.getMessage());
+            telemetry.update();
         }
     }
 
@@ -411,43 +435,49 @@ public abstract class Robot {
      */
     public final void driverControlledUpdate()
     {
-        this.gamepad1 = opMode.gamepad1;
-        this.gamepad2 = opMode.gamepad2;
+        if(!errorThrown) {
+            this.gamepad1 = opMode.gamepad1;
+            this.gamepad2 = opMode.gamepad2;
 
-        if(useGui) {
-            gui.drawCurrentMenu();
-        }
+            if (useGui) {
+                gui.drawCurrentMenu();
+            }
 
-        for (SubSystem subSystem : subSystems.values())
-        {
-            try {
-                subSystem.handle();
+            for (SubSystem subSystem : subSystems.values()) {
+                try {
+                    subSystem.handle();
+                } catch (Exception ex) {
+                    telemetry.clearAll();
+                    telemetry.addData("ERROR!!!", ex.getMessage());
+                    telemetry.update();
+                    if(!errorThrown) {
+                        Log.e(this.getClass().getSimpleName(), ex.getMessage(), ex);
+                        thrownException = ex;
+                        errorThrown = true;
+                    }
+                }
             }
-            catch (Exception ex)
-            {
-                telemetry.clearAll();
-                telemetry.addData("ERROR!!!", ex.getMessage());
-                telemetry.update();
-                Log.e(this.getClass().getSimpleName(), ex.getMessage(), ex);
+            boolean enableVision = enableVisionRequested();
+            if (enableVision && !pipelineSet) {
+                camera.openCameraDevice();
+                camera.setPipeline(new Pipeline());
+                camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
+                pipelineSet = true;
+                cameraStarted = true;
+            } else if (enableVision && !cameraStarted) {
+                camera.openCameraDevice();
+                camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
+                cameraStarted = true;
+            } else if (!enableVision && pipelineSet) {
+                camera.stopStreaming();
+                camera.closeCameraDevice();
+                cameraStarted = false;
             }
         }
-        boolean enableVision = enableVisionRequested();
-        if(enableVision && !pipelineSet) {
-            camera.openCameraDevice();
-            camera.setPipeline(new Pipeline());
-            camera.startStreaming((int) Math.round(cameraSize.width),(int) Math.round(cameraSize.height),OpenCvCameraRotation.UPRIGHT);
-            pipelineSet = true;
-            cameraStarted = true;
-        }
-        else if(enableVision && !cameraStarted) {
-            camera.openCameraDevice();
-            camera.startStreaming((int) Math.round(cameraSize.width),(int) Math.round(cameraSize.height),OpenCvCameraRotation.UPRIGHT);
-            cameraStarted = true;
-        }
-        else if(!enableVision && pipelineSet) {
-            camera.stopStreaming();
-            camera.closeCameraDevice();
-            cameraStarted = false;
+        else {
+            telemetry.clearAll();
+            telemetry.addData("ERROR!!!", thrownException.getMessage());
+            telemetry.update();
         }
     }
 
@@ -456,28 +486,35 @@ public abstract class Robot {
      */
     public final void stopAllComponents(){
 
-        if(useGui) {
-            gui.stop();
-        }
-
-        for (SubSystem subSystem : subSystems.values())
-        {
-            try
-            {
-                subSystem.stop();
+        if(!errorThrown) {
+            if (useGui) {
+                gui.stop();
             }
-            catch (Exception ex)
-            {
-                telemetry.clearAll();
-                telemetry.addData("ERROR!!!", ex.getMessage());
-                telemetry.update();
-                Log.e(this.getClass().getSimpleName(), ex.getMessage(), ex);
+
+            for (SubSystem subSystem : subSystems.values()) {
+                try {
+                    subSystem.stop();
+                } catch (Exception ex) {
+                    telemetry.clearAll();
+                    telemetry.addData("ERROR!!!", ex.getMessage());
+                    telemetry.update();
+                    if (!errorThrown) {
+                        Log.e(this.getClass().getSimpleName(), ex.getMessage(), ex);
+                        thrownException = ex;
+                        errorThrown = true;
+                    }
+                }
+            }
+
+            if (cameraStarted) {
+                camera.stopStreaming();
+                camera.closeCameraDevice();
             }
         }
-
-        if(cameraStarted) {
-            camera.stopStreaming();
-            camera.closeCameraDevice();
+        else {
+            telemetry.clearAll();
+            telemetry.addData("ERROR!!!", thrownException.getMessage());
+            telemetry.update();
         }
     }
 
@@ -487,7 +524,7 @@ public abstract class Robot {
      * @param name - The name of the subsystem.
      * @return - The subsystem with the given identifier in the hashmap.
      */
-    public final SubSystem getSubSystem( String name)
+    public final SubSystem getSubSystem(String name)
     {
         return subSystems.get(name);
     }
@@ -499,7 +536,7 @@ public abstract class Robot {
      * @param subSystem - The new subsystem.
      * @return - The new subsystem that was passed in as a parameter.
      */
-    public final SubSystem eOverrideSubSystem( String name,  SubSystem subSystem)
+    public final SubSystem eOverrideSubSystem(String name,  SubSystem subSystem)
     {
         subSystems.put(name, subSystem);
         return subSystem;
@@ -520,7 +557,7 @@ public abstract class Robot {
      * @param subsystem - The subsystem to pull the gamepad controls for.
      * @return - A customizable gamepad containing the configured controls for that subsystem.
      */
-    public final CustomizableGamepad pullControls( SubSystem subsystem) {
+    public final CustomizableGamepad pullControls(SubSystem subsystem) {
         return pullControls(subsystem.getClass().getSimpleName());
     }
 
@@ -530,7 +567,7 @@ public abstract class Robot {
      * @param subsystem - The name of the subsystem to pull the gamepad controls for.
      * @return - A customizable gamepad containing the configured controls for that subsystem.
      */
-    public final CustomizableGamepad pullControls( String subsystem) {
+    public final CustomizableGamepad pullControls(String subsystem) {
         List<ConfigParam> configParams = teleopConfig.get(subsystem);
         CustomizableGamepad gamepad = new CustomizableGamepad(this);
         for(ConfigParam param : configParams) {
@@ -547,7 +584,7 @@ public abstract class Robot {
      * @param subsystem - The subsystem to pull the gamepad controls for.
      * @return - A map relating the name of each non-gamepad option to that option's value.
      */
-    public final Map<String,Object> pullNonGamepad( SubSystem subsystem) {
+    public final Map<String,Object> pullNonGamepad(SubSystem subsystem) {
         return pullNonGamepad(subsystem.getClass().getSimpleName());
     }
 
@@ -557,7 +594,7 @@ public abstract class Robot {
      * @param subsystem - The name of the subsystem to pull the gamepad controls for.
      * @return - A map relating the name of each non-gamepad option to that option's value.
      */
-    public final Map<String,Object> pullNonGamepad( String subsystem) {
+    public final Map<String,Object> pullNonGamepad(String subsystem) {
 
         List<ConfigParam> configParamsTeleop = new ArrayList<>();
         List<ConfigParam> configParamsAuto = new ArrayList<>();
@@ -646,7 +683,7 @@ public abstract class Robot {
      * @param filePath - The path of the file to write to.
      * @param data - The data to write to the file/
      */
-    private void writeFile( String filePath,  String data) {
+    private void writeFile(String filePath,  String data) {
 
         FileOutputStream fos;
 
