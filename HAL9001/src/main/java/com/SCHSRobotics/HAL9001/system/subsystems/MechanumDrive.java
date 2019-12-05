@@ -40,6 +40,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -86,12 +87,19 @@ public class MechanumDrive extends SubSystem {
     private boolean useDisplayMenu;
     //A displaymenu used to display data to the screen.
     private DisplayMenu displayMenu;
-
     //Specifies the type of drive the user will use.
     public enum DriveType {
         STANDARD, FIELD_CENTRIC, MATTHEW, ARCADE, STANDARD_TTA, FIELD_CENTRIC_TTA, ARCADE_TTA
     }
     private DriveType driveType;
+
+    public enum ReverseType {
+        REVERSE_LEFT, REVERSE_RIGHT, REVERSE_FRONT, REVERSE_BACK
+    }
+    private ReverseType reverseType;
+
+    private DcMotorEx.RunMode runMode;
+    private DcMotorEx.ZeroPowerBehavior zeroPowerBehavior;
 
     /**
      * A constructor for the mechanum drive that takes parameters as input.
@@ -101,6 +109,9 @@ public class MechanumDrive extends SubSystem {
      */
     public MechanumDrive(Robot robot, Params params) {
         super(robot);
+
+        runMode = params.runMode;
+        zeroPowerBehavior = params.zeroPowerBehavior;
 
         driveType = params.driveType;
 
@@ -130,8 +141,25 @@ public class MechanumDrive extends SubSystem {
         botLeft = (DcMotorEx) robot.hardwareMap.dcMotor.get(params.config[2]);
         botRight = (DcMotorEx) robot.hardwareMap.dcMotor.get(params.config[3]);
 
+        topLeft.setMode(params.runMode);
+        topRight.setMode(params.runMode);
+        botLeft.setMode(params.runMode);
+        botRight.setMode(params.runMode);
+
+        topLeft.setZeroPowerBehavior(zeroPowerBehavior);
+        topRight.setZeroPowerBehavior(zeroPowerBehavior);
+        botLeft.setZeroPowerBehavior(zeroPowerBehavior);
+        botRight.setZeroPowerBehavior(zeroPowerBehavior);
+
         resetAllEncoders();
-        forwardDirection();
+
+        reverseType = params.reverseType;
+        switch(reverseType) {
+            case REVERSE_LEFT: reverseLeft(); break;
+            case REVERSE_RIGHT: reverseRight(); break;
+            case REVERSE_FRONT: reverseFront(); break;
+            case REVERSE_BACK: reverseBack(); break;
+        }
 
         if (params.changeVelocityPID) {
             topLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(params.vkp, params.vki, params.vkd, params.vkf));
@@ -215,6 +243,9 @@ public class MechanumDrive extends SubSystem {
         //2*PI*0.05 is theoretical circumference of a gobilda mechanum wheel.
         this.encodersPerMeter = params.encodersPerMeter > 0 ? params.encodersPerMeter : topLeft.getMotorType().getTicksPerRev()/(2*PI*0.05);
 
+        speedModeToggle = new Toggle(Toggle.ToggleTypes.flipToggle, false);
+        turnSpeedModeToggle = new Toggle(Toggle.ToggleTypes.flipToggle, false);
+
         stabilityPID = params.stabilityPID;
         turnPID = params.turnPID;
 
@@ -293,14 +324,37 @@ public class MechanumDrive extends SubSystem {
             inputs = robot.pullControls(this);
             Map<String, Object> settingsData = robot.pullNonGamepad(this);
 
-            imuNumber = (int) settingsData.get("ImuNumber");
+            imuNumber = (int) Math.round((double) settingsData.get("ImuNumber"));
 
             setDriveMode((DriveType) settingsData.get("DriveType"));
             setUseGyro((boolean) settingsData.get("UseGyro"), imuNumber);
 
+            DcMotor.RunMode runMode = (DcMotor.RunMode) settingsData.get("MotorRunMode");
+            topLeft.setMode(runMode);
+            topRight.setMode(runMode);
+            botLeft.setMode(runMode);
+            botRight.setMode(runMode);
+
+            DcMotor.ZeroPowerBehavior zeroPower = (DcMotor.ZeroPowerBehavior) settingsData.get("MotorZeroPower");
+            topLeft.setZeroPowerBehavior(zeroPower);
+            topRight.setZeroPowerBehavior(zeroPower);
+            botLeft.setZeroPowerBehavior(zeroPower);
+            botRight.setZeroPowerBehavior(zeroPower);
+
+            reverseType = (ReverseType) settingsData.get("ReverseType");
+
+            assert reverseType != null : "Oh No! The program just broke and reverseType is null! What did you do?!?";
+
+            switch(reverseType) {
+                case REVERSE_LEFT: reverseLeft(); break;
+                case REVERSE_RIGHT: reverseRight(); break;
+                case REVERSE_FRONT: reverseFront(); break;
+                case REVERSE_BACK: reverseBack(); break;
+            }
+
             if(!useSpecific) {
-                turnLeftPower = (int) settingsData.get("turnLeftPower");
-                turnRightPower = (int) settingsData.get("turnRightPower");
+                turnLeftPower = (double) settingsData.get("turnLeftPower");
+                turnRightPower = (double) settingsData.get("turnRightPower");
                 constantSpeedMultiplier = (double) settingsData.get("ConstantSpeedMultiplier");
                 slowModeMultiplier = (double) settingsData.get("SlowModeMultiplier");
                 constantTurnSpeedMultiplier = (double) settingsData.get("ConstantTurnSpeedMultiplier");
@@ -310,10 +364,31 @@ public class MechanumDrive extends SubSystem {
         else if (usesConfig && robot.isAutonomous()) {
             Map<String, Object> settingsData = robot.pullNonGamepad(this);
 
-            imuNumber = (int) settingsData.get("ImuNumber");
+            imuNumber = (int) Math.round((double) settingsData.get("ImuNumber"));
 
             setDriveMode((DriveType) settingsData.get("DriveType"));
             setUseGyro((boolean) settingsData.get("UseGyro"), imuNumber);
+
+            DcMotor.RunMode runMode = (DcMotor.RunMode) settingsData.get("MotorRunMode");
+            topLeft.setMode(runMode);
+            topRight.setMode(runMode);
+            botLeft.setMode(runMode);
+            botRight.setMode(runMode);
+
+            DcMotor.ZeroPowerBehavior zeroPower = (DcMotor.ZeroPowerBehavior) settingsData.get("MotorZeroPower");
+            topLeft.setZeroPowerBehavior(zeroPower);
+            topRight.setZeroPowerBehavior(zeroPower);
+            botLeft.setZeroPowerBehavior(zeroPower);
+            botRight.setZeroPowerBehavior(zeroPower);
+
+            assert reverseType != null : "Oh No! The program just broke and reverseType is null! What did you do?!?";
+
+            switch(reverseType) {
+                case REVERSE_LEFT: reverseLeft(); break;
+                case REVERSE_RIGHT: reverseRight(); break;
+                case REVERSE_FRONT: reverseFront(); break;
+                case REVERSE_BACK: reverseBack(); break;
+            }
 
             if(!useSpecific) {
                 constantSpeedMultiplier = (double) settingsData.get("ConstantSpeedMultiplier");
@@ -597,7 +672,7 @@ public class MechanumDrive extends SubSystem {
     /**
      * Sets the motors to the reverse direction.
      */
-    public void reverseDirection() {
+    public void reverseLeft() {
         topLeft.setDirection(DcMotor.Direction.REVERSE);
         topRight.setDirection(DcMotor.Direction.FORWARD);
         botLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -607,13 +682,26 @@ public class MechanumDrive extends SubSystem {
     /**
      * Sets the motors to the forward direction.
      */
-    public void forwardDirection() {
+    public void reverseRight() {
         topLeft.setDirection(DcMotor.Direction.FORWARD);
         topRight.setDirection(DcMotor.Direction.REVERSE);
         botLeft.setDirection(DcMotor.Direction.FORWARD);
         botRight.setDirection(DcMotor.Direction.REVERSE);
     }
 
+    public void reverseFront() {
+        topLeft.setDirection(DcMotor.Direction.REVERSE);
+        topRight.setDirection(DcMotor.Direction.REVERSE);
+        botLeft.setDirection(DcMotor.Direction.FORWARD);
+        botRight.setDirection(DcMotor.Direction.FORWARD);
+    }
+
+    public void reverseBack() {
+        topLeft.setDirection(DcMotor.Direction.FORWARD);
+        topRight.setDirection(DcMotor.Direction.FORWARD);
+        botLeft.setDirection(DcMotor.Direction.REVERSE);
+        botRight.setDirection(DcMotor.Direction.REVERSE);
+    }
     /**
      * Drive method for driving for a certain amount of time with matthew drive.
      *
@@ -1254,6 +1342,110 @@ public class MechanumDrive extends SubSystem {
         botRight.setPower(powers[3]);
     }
 
+    public void setTopLeftPower(double power) {
+        topLeft.setPower(power);
+    }
+
+    public void setTopRightPower(double power) {
+        topRight.setPower(power);
+    }
+
+    public void setBotLeftPower(double power) {
+        botLeft.setPower(power);
+    }
+
+    public void setBotRightPower(double power) {
+        botRight.setPower(power);
+    }
+
+    public void setTopLeftMode(DcMotor.RunMode mode) {
+        topLeft.setMode(mode);
+    }
+
+    public void setTopRightMode(DcMotor.RunMode mode) {
+        topRight.setMode(mode);
+    }
+
+    public void setBotLeftMode(DcMotor.RunMode mode) {
+        botLeft.setMode(mode);
+    }
+
+    public void setBotRightMode(DcMotor.RunMode mode) {
+        botRight.setMode(mode);
+    }
+
+    public void setTopLeftZeroMode(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
+        topLeft.setZeroPowerBehavior(zeroPowerBehavior);
+    }
+
+    public void setTopRightZeroMode(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
+        topRight.setZeroPowerBehavior(zeroPowerBehavior);
+    }
+
+    public void setBotLeftZeroMode(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
+        botLeft.setZeroPowerBehavior(zeroPowerBehavior);
+    }
+
+    public void setBotRightZeroMode(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
+        botRight.setZeroPowerBehavior(zeroPowerBehavior);
+    }
+
+    public double getCurrentAngle(AngleUnit angleUnit) {
+        return usesGyro ? imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,angleUnit).firstAngle : 0;
+    }
+
+    public double getCurrentAngle() {
+        return getCurrentAngle(AngleUnit.RADIANS);
+    }
+
+    public double getCurrentPitch(AngleUnit angleUnit) {
+        return usesGyro ? imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,angleUnit).secondAngle : 0;
+    }
+
+    public double getCurrentPitch() {
+        return getCurrentPitch(AngleUnit.RADIANS);
+    }
+
+    public double getCurrentRoll(AngleUnit angleUnit) {
+        return usesGyro ? imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,angleUnit).secondAngle : 0;
+    }
+
+    public double getCurrentRoll() {
+        return getCurrentRoll(AngleUnit.RADIANS);
+    }
+
+    public Orientation getOrientation(AngleUnit angleUnit, AxesOrder order, AxesReference reference) {
+        return usesGyro ? imu.getAngularOrientation(reference,order,angleUnit) : new Orientation();
+    }
+
+    public Orientation getOrientation(AngleUnit angleUnit, AxesOrder order) {
+        return getOrientation(angleUnit,order,AxesReference.INTRINSIC);
+    }
+
+    public Orientation getOrientation(AngleUnit angleUnit, AxesReference reference) {
+        return getOrientation(angleUnit,AxesOrder.ZYX,reference);
+    }
+
+    public Orientation getOrientation(AxesOrder order, AxesReference reference) {
+        return getOrientation(AngleUnit.RADIANS, order, reference);
+    }
+
+    public Orientation getOrientation(AngleUnit angleUnit) {
+        return getOrientation(angleUnit,AxesOrder.ZYX,AxesReference.INTRINSIC);
+    }
+
+    public Orientation getOrientation(AxesOrder order) {
+        return getOrientation(AngleUnit.RADIANS,order,AxesReference.INTRINSIC);
+    }
+
+    public Orientation getOrientation(AxesReference reference) {
+        return getOrientation(AngleUnit.RADIANS,AxesOrder.ZYX,reference);
+    }
+
+    public Orientation getOrientation() {
+        return getOrientation(AngleUnit.RADIANS,AxesOrder.ZYX,AxesReference.INTRINSIC);
+    }
+
     /**
      * Teleop configuration settings.
      *
@@ -1281,8 +1473,22 @@ public class MechanumDrive extends SubSystem {
                     new ConfigParam(TTA_STICK, Button.VectorInputs.noButton),
                     new ConfigParam(SPEED_MODE, Button.BooleanInputs.noButton),
                     new ConfigParam(TURN_SPEED_MODE, Button.BooleanInputs.noButton),
+                    new ConfigParam("ReverseType", new LinkedHashMap<String,Object>() {{
+                        put(ReverseType.REVERSE_LEFT.name(),ReverseType.REVERSE_LEFT);
+                        put(ReverseType.REVERSE_RIGHT.name(),ReverseType.REVERSE_RIGHT);
+                        put(ReverseType.REVERSE_FRONT.name(),ReverseType.REVERSE_FRONT);
+                        put(ReverseType.REVERSE_BACK.name(),ReverseType.REVERSE_BACK);
+                    }},ReverseType.REVERSE_RIGHT),
                     new ConfigParam("UseGyro", ConfigParam.booleanMap, false),
                     new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), "1.0"),
+                    new ConfigParam("MotorRunMode", new LinkedHashMap<String, Object>() {{
+                        put(DcMotor.RunMode.RUN_USING_ENCODER.name(),DcMotor.RunMode.RUN_USING_ENCODER);
+                        put(DcMotor.RunMode.RUN_WITHOUT_ENCODER.name(),DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    }},DcMotor.RunMode.RUN_USING_ENCODER.name()),
+                    new ConfigParam("MotorZeroPower", new LinkedHashMap<String, Object>() {{
+                        put(DcMotor.ZeroPowerBehavior.BRAKE.name(),DcMotor.ZeroPowerBehavior.BRAKE);
+                        put(DcMotor.ZeroPowerBehavior.FLOAT.name(),DcMotor.ZeroPowerBehavior.FLOAT);
+                    }},DcMotor.ZeroPowerBehavior.BRAKE.name())
             };
         }
         else {
@@ -1307,12 +1513,26 @@ public class MechanumDrive extends SubSystem {
                     new ConfigParam(TURN_SPEED_MODE, Button.BooleanInputs.noButton),
                     new ConfigParam("turnLeftPower", ConfigParam.numberMap(0, 1, 0.05), 0.3),
                     new ConfigParam("turnRightPower", ConfigParam.numberMap(0, 1, 0.05), 0.3),
+                    new ConfigParam("ReverseType", new LinkedHashMap<String,Object>() {{
+                        put(ReverseType.REVERSE_LEFT.name(),ReverseType.REVERSE_LEFT);
+                        put(ReverseType.REVERSE_RIGHT.name(),ReverseType.REVERSE_RIGHT);
+                        put(ReverseType.REVERSE_FRONT.name(),ReverseType.REVERSE_FRONT);
+                        put(ReverseType.REVERSE_BACK.name(),ReverseType.REVERSE_BACK);
+                    }},ReverseType.REVERSE_RIGHT),
                     new ConfigParam("UseGyro", ConfigParam.booleanMap, false),
                     new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), 1.0),
                     new ConfigParam("ConstantSpeedMultiplier", ConfigParam.numberMap(0, 10, 0.05), 1.0),
                     new ConfigParam("SlowModeMultiplier", ConfigParam.numberMap(0, 10, 0.05), 1.0),
                     new ConfigParam("ConstantTurnSpeedMultiplier", ConfigParam.numberMap(0, 10, 0.05), 1.0),
-                    new ConfigParam("SlowTurnModeMultiplier", ConfigParam.numberMap(0, 10, 0.05), 1.0)
+                    new ConfigParam("SlowTurnModeMultiplier", ConfigParam.numberMap(0, 10, 0.05), 1.0),
+                    new ConfigParam("MotorRunMode", new LinkedHashMap<String, Object>() {{
+                        put(DcMotor.RunMode.RUN_USING_ENCODER.name(),DcMotor.RunMode.RUN_USING_ENCODER);
+                        put(DcMotor.RunMode.RUN_WITHOUT_ENCODER.name(),DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    }},DcMotor.RunMode.RUN_USING_ENCODER.name()),
+                    new ConfigParam("MotorZeroPower", new LinkedHashMap<String, Object>() {{
+                        put(DcMotor.ZeroPowerBehavior.BRAKE.name(),DcMotor.ZeroPowerBehavior.BRAKE);
+                        put(DcMotor.ZeroPowerBehavior.FLOAT.name(),DcMotor.ZeroPowerBehavior.FLOAT);
+                    }},DcMotor.ZeroPowerBehavior.BRAKE.name())
             };
         }
     }
@@ -1337,6 +1557,14 @@ public class MechanumDrive extends SubSystem {
                     }}, DriveType.STANDARD.name()),
                     new ConfigParam("UseGyro", ConfigParam.booleanMap, false),
                     new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), 1.0),
+                    new ConfigParam("MotorRunMode", new LinkedHashMap<String, Object>() {{
+                        put(DcMotor.RunMode.RUN_USING_ENCODER.name(),DcMotor.RunMode.RUN_USING_ENCODER);
+                        put(DcMotor.RunMode.RUN_WITHOUT_ENCODER.name(),DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    }},DcMotor.RunMode.RUN_USING_ENCODER.name()),
+                    new ConfigParam("MotorZeroPower", new LinkedHashMap<String, Object>() {{
+                        put(DcMotor.ZeroPowerBehavior.BRAKE.name(),DcMotor.ZeroPowerBehavior.BRAKE);
+                        put(DcMotor.ZeroPowerBehavior.FLOAT.name(),DcMotor.ZeroPowerBehavior.FLOAT);
+                    }},DcMotor.ZeroPowerBehavior.BRAKE.name())
             };
         }
         else {
@@ -1352,7 +1580,15 @@ public class MechanumDrive extends SubSystem {
                     }}, DriveType.STANDARD.name()),
                     new ConfigParam("UseGyro", ConfigParam.booleanMap, false),
                     new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), 1.0),
-                    new ConfigParam("ConstantSpeedMultiplier", ConfigParam.numberMap(0, 1, 0.05), 1.0)
+                    new ConfigParam("ConstantSpeedMultiplier", ConfigParam.numberMap(0, 1, 0.05), 1.0),
+                    new ConfigParam("MotorRunMode", new LinkedHashMap<String, Object>() {{
+                        put(DcMotor.RunMode.RUN_USING_ENCODER.name(),DcMotor.RunMode.RUN_USING_ENCODER);
+                        put(DcMotor.RunMode.RUN_WITHOUT_ENCODER.name(),DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    }},DcMotor.RunMode.RUN_USING_ENCODER.name()),
+                    new ConfigParam("MotorZeroPower", new LinkedHashMap<String, Object>() {{
+                        put(DcMotor.ZeroPowerBehavior.BRAKE.name(),DcMotor.ZeroPowerBehavior.BRAKE);
+                        put(DcMotor.ZeroPowerBehavior.FLOAT.name(),DcMotor.ZeroPowerBehavior.FLOAT);
+                    }},DcMotor.ZeroPowerBehavior.BRAKE.name())
             };
         }
     }
@@ -1387,13 +1623,16 @@ public class MechanumDrive extends SubSystem {
         private double constantTurnSpeedMultiplier, turnSpeedModeMultiplier;
         //Boolean values specifying whether or not degrees should be used for the stability and turn PID controllers.
         private boolean useDegreesStability, useDegreesTurn;
+        private DcMotorEx.RunMode runMode;
+        private DcMotorEx.ZeroPowerBehavior zeroPowerBehavior;
+        private ReverseType reverseType;
 
         /**
          * A constructor for the parameters object. Sets default parameter values.
          *
-         * @param topLeft - The top left motor config name.
+         * @param topLeft  - The top left motor config name.
          * @param topRight - The top right motor config name.
-         * @param botLeft - The bottom left motor config name.
+         * @param botLeft  - The bottom left motor config name.
          * @param botRight - The bottom right motor config name.
          */
         public Params(String topLeft, String topRight, String botLeft, String botRight) {
@@ -1409,12 +1648,12 @@ public class MechanumDrive extends SubSystem {
             driveStick = new Button(1, Button.VectorInputs.right_stick);
             driveStickLeft = new Button(1, Button.VectorInputs.noButton);
             driveStickRight = new Button(1, Button.VectorInputs.noButton);
-            turnStick = new Button(1,Button.DoubleInputs.left_stick_x);
-            turnLeft = new Button(1,Button.BooleanInputs.noButton);
-            turnRight = new Button(1,Button.BooleanInputs.noButton);
-            ttaStick = new Button(1,Button.VectorInputs.noButton);
-            speedMode = new Button(1,Button.BooleanInputs.noButton);
-            turnSpeedMode = new Button(1,Button.BooleanInputs.noButton);
+            turnStick = new Button(1, Button.DoubleInputs.left_stick_x);
+            turnLeft = new Button(1, Button.BooleanInputs.noButton);
+            turnRight = new Button(1, Button.BooleanInputs.noButton);
+            ttaStick = new Button(1, Button.VectorInputs.noButton);
+            speedMode = new Button(1, Button.BooleanInputs.noButton);
+            turnSpeedMode = new Button(1, Button.BooleanInputs.noButton);
 
             imuNumber = 1;
 
@@ -1425,8 +1664,8 @@ public class MechanumDrive extends SubSystem {
 
             changeVelocityPID = false;
 
-            turnPID = new PIDController(0,0,0);
-            stabilityPID = new PIDController(0,0,0);
+            turnPID = new PIDController(0, 0, 0);
+            stabilityPID = new PIDController(0, 0, 0);
 
             encodersPerMeter = -1;
 
@@ -1438,6 +1677,11 @@ public class MechanumDrive extends SubSystem {
 
             useDegreesStability = false;
             useDegreesTurn = false;
+
+            runMode = DcMotorEx.RunMode.RUN_USING_ENCODER;
+            zeroPowerBehavior = DcMotorEx.ZeroPowerBehavior.BRAKE;
+
+            reverseType = ReverseType.REVERSE_RIGHT;
         }
 
         /**
@@ -1457,11 +1701,10 @@ public class MechanumDrive extends SubSystem {
          *
          * @param driveStick - The vector input used to control the robot.
          * @return - This instance of Params.
-         *
          * @throws NotVectorInputException - Throws this if the input button is not a vector input.
          */
         public Params setDriveStick(Button driveStick) {
-            if(!driveStick.isVector) {
+            if (!driveStick.isVector) {
                 throw new NotVectorInputException("DriveStick must be a vector input");
             }
             this.driveStick = driveStick;
@@ -1473,11 +1716,10 @@ public class MechanumDrive extends SubSystem {
          *
          * @param driveStickLeft - The vector input used to control the left side of the robot.
          * @return - This instance of Params.
-         *
          * @throws NotVectorInputException - Throws this if input button is not a vector input.
          */
         public Params setDriveStickLeft(Button driveStickLeft) {
-            if(!driveStickLeft.isVector) {
+            if (!driveStickLeft.isVector) {
                 throw new NotVectorInputException("DriveStickLeft must be a vector input.");
             }
             this.driveStickLeft = driveStickLeft;
@@ -1489,11 +1731,10 @@ public class MechanumDrive extends SubSystem {
          *
          * @param driveStickRight - The vector input used to control the right side of the robot.
          * @return - This instance of Params.
-         *
          * @throws NotVectorInputException - Throws this if input button is not a vector input.
          */
         public Params setDriveStickRight(Button driveStickRight) {
-            if(!driveStickRight.isVector) {
+            if (!driveStickRight.isVector) {
                 throw new NotVectorInputException("DriveStickRight must be a vector input.");
             }
             this.driveStickRight = driveStickRight;
@@ -1505,11 +1746,10 @@ public class MechanumDrive extends SubSystem {
          *
          * @param turnStick - The double input used to control the robot's turning speed.
          * @return - This instance of Params.
-         *
          * @throws NotDoubleInputException - Throws this if the input button is not a double input.
          */
         public Params setTurnStick(Button turnStick) {
-            if(!turnStick.isDouble) {
+            if (!turnStick.isDouble) {
                 throw new NotDoubleInputException("TurnStick must be a double input.");
             }
             this.turnStick = turnStick;
@@ -1521,11 +1761,10 @@ public class MechanumDrive extends SubSystem {
          *
          * @param ttaStick - The vector input used to control what angle the robot turns to.
          * @return - This instance of Params.
-         *
          * @throws NotVectorInputException - Throws this is the input button is not a vector input.
          */
         public Params setTTAStick(Button ttaStick) {
-            if(!driveStickRight.isVector) {
+            if (!driveStickRight.isVector) {
                 throw new NotVectorInputException("TTA Stick must be a vector input.");
             }
             this.ttaStick = ttaStick;
@@ -1535,18 +1774,17 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets left turn button input. Must be a boolean input.
          *
-         * @param turnLeft - The button used to make the robot turn left.
+         * @param turnLeft  - The button used to make the robot turn left.
          * @param turnSpeed - The speed at which the robot should turn left when the button is pressed.
          * @return - This instance of Params.
-         *
          * @throws NotBooleanInputException - Throws this if the input button is not a boolean input.
          */
         public Params setTurnLeftButton(Button turnLeft, double turnSpeed) {
-            if(!turnLeft.isBoolean) {
+            if (!turnLeft.isBoolean) {
                 throw new NotBooleanInputException("TurnLeft button must be a boolean input.");
             }
             this.turnLeft = turnLeft;
-            turnLeftPower = Range.clip(turnSpeed,0,1);
+            turnLeftPower = Range.clip(turnSpeed, 0, 1);
             return this;
         }
 
@@ -1556,15 +1794,14 @@ public class MechanumDrive extends SubSystem {
          * @param turnRight - The button used to make the robot turn right.
          * @param turnSpeed - The speec at which the robot should turn right when the button is pressed.
          * @return - This instance of Params.
-         *
          * @throws NotBooleanInputException - Throws this if the input button is not a boolean input.
          */
         public Params setTurnRightButton(Button turnRight, double turnSpeed) {
-            if(!turnRight.isBoolean) {
+            if (!turnRight.isBoolean) {
                 throw new NotBooleanInputException("TurnRight button must be a boolean input");
             }
             this.turnRight = turnRight;
-            turnRightPower = Range.clip(turnSpeed,0,1);
+            turnRightPower = Range.clip(turnSpeed, 0, 1);
             return this;
         }
 
@@ -1575,7 +1812,7 @@ public class MechanumDrive extends SubSystem {
          * @return This instance of Params.
          */
         public Params setSpeedModeButton(Button speedMode) {
-            if(!speedMode.isBoolean) {
+            if (!speedMode.isBoolean) {
                 throw new NotBooleanInputException("SpeedMode button must be a boolean input");
             }
             this.speedMode = speedMode;
@@ -1589,7 +1826,7 @@ public class MechanumDrive extends SubSystem {
          * @return - This instance of Params.
          */
         public Params setTurnSpeedModeButton(Button turnSpeedMode) {
-            if(!speedMode.isBoolean) {
+            if (!speedMode.isBoolean) {
                 throw new NotBooleanInputException("TurnSpeedMode button must be a boolean input");
             }
             this.turnSpeedMode = turnSpeedMode;
@@ -1601,11 +1838,10 @@ public class MechanumDrive extends SubSystem {
          *
          * @param imuNumber - The imu's number. Must be either 1 or 2.
          * @return - This instance of Params.
-         *
          * @throws NotAnAlchemistException - Throws this if the imu number is not 1 or 2. Can't make something out of nothing.
          */
         public Params setImuNumber(int imuNumber) {
-            if(imuNumber != 1 && imuNumber != 2) {
+            if (imuNumber != 1 && imuNumber != 2) {
                 throw new NotAnAlchemistException("IMU number must be either 1 or 2");
             }
             this.imuNumber = imuNumber;
@@ -1627,9 +1863,9 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the coefficients for the turnPID controller.
          *
-         * @param kp - Proportional gain.
-         * @param ki - Integral gain.
-         * @param kd - Derivative gain.
+         * @param kp         - Proportional gain.
+         * @param ki         - Integral gain.
+         * @param kd         - Derivative gain.
          * @param useDegrees - A boolean specifying if the units are in degrees.
          * @return - This instance of Params.
          */
@@ -1639,11 +1875,11 @@ public class MechanumDrive extends SubSystem {
             turnPID = new PIDController(kp, ki, kd, (Double target, Double current) -> {
                 BiFunction<Double, Double, Double> mod = (Double x, Double m) -> (x % m + m) % m;
 
-                double m = useDegrees ? 360 : 2*PI;
+                double m = useDegrees ? 360 : 2 * PI;
 
                 //cw - ccw +
-                double cw = -mod.apply(mod.apply(current,m) - mod.apply(target,m), m);
-                double ccw = mod.apply(mod.apply(target,m) - mod.apply(current,m), m);
+                double cw = -mod.apply(mod.apply(current, m) - mod.apply(target, m), m);
+                double ccw = mod.apply(mod.apply(target, m) - mod.apply(current, m), m);
 
                 return Math.abs(ccw) < Math.abs(cw) ? ccw : cw;
             });
@@ -1663,7 +1899,7 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the PID controller used for turning to specific angles.
          *
-         * @param turnPID - The PID to use for turning to specific angles.
+         * @param turnPID    - The PID to use for turning to specific angles.
          * @param useDegrees - Whether the PID controller uses degrees.
          * @return This instance of Params.
          */
@@ -1689,9 +1925,9 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the coefficients for the stabilityPID controller.
          *
-         * @param kp - Proportional gain.
-         * @param ki - Integral gain.
-         * @param kd - Derivative gain.
+         * @param kp         - Proportional gain.
+         * @param ki         - Integral gain.
+         * @param kd         - Derivative gain.
          * @param useDegrees - A boolean specifying if the units are in degrees.
          * @return - This instance of Params.
          */
@@ -1701,11 +1937,11 @@ public class MechanumDrive extends SubSystem {
             stabilityPID = new PIDController(kp, ki, kd, (Double target, Double current) -> {
                 BiFunction<Double, Double, Double> mod = (Double x, Double m) -> (x % m + m) % m;
 
-                double m = useDegrees ? 360 : 2*PI;
+                double m = useDegrees ? 360 : 2 * PI;
 
                 //cw - ccw +
-                double cw = -mod.apply(mod.apply(current,m) - mod.apply(target,m), m);
-                double ccw = mod.apply(mod.apply(target,m) - mod.apply(current,m), m);
+                double cw = -mod.apply(mod.apply(current, m) - mod.apply(target, m), m);
+                double ccw = mod.apply(mod.apply(target, m) - mod.apply(current, m), m);
 
                 return Math.abs(ccw) < Math.abs(cw) ? ccw : cw;
             });
@@ -1726,7 +1962,7 @@ public class MechanumDrive extends SubSystem {
          * Sets the PID controller that will be used for stability control.
          *
          * @param stabilityPID - The PID controller that will be used for stability control.
-         * @param useDegrees - Whether or not the PID controller uses degrees.
+         * @param useDegrees   - Whether or not the PID controller uses degrees.
          * @return This instance of SpecificParams.
          */
         public Params setStabilityPID(PIDController stabilityPID, boolean useDegrees) {
@@ -1806,6 +2042,20 @@ public class MechanumDrive extends SubSystem {
          */
         public Params setTurnSpeedModeMultiplier(double turnSpeedModeMultiplier) {
             this.turnSpeedModeMultiplier = turnSpeedModeMultiplier;
+            return this;
+        }
+
+        public Params setMotorRunMode(DcMotor.RunMode runMode) {
+            this.runMode = runMode;
+            return this;
+        }
+
+        public Params setZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior) {
+            zeroPowerBehavior = behavior;
+            return this;
+        }
+        public Params setReverseType(ReverseType reverseType) {
+            this.reverseType = reverseType;
             return this;
         }
     }
