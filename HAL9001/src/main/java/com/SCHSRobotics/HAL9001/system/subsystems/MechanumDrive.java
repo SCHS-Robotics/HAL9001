@@ -343,8 +343,6 @@ public class MechanumDrive extends SubSystem {
 
             reverseType = (ReverseType) settingsData.get("ReverseType");
 
-            assert reverseType != null : "Oh No! The program just broke and reverseType is null! What did you do?!?";
-
             switch(reverseType) {
                 case REVERSE_LEFT: reverseLeft(); break;
                 case REVERSE_RIGHT: reverseRight(); break;
@@ -381,7 +379,7 @@ public class MechanumDrive extends SubSystem {
             botLeft.setZeroPowerBehavior(zeroPower);
             botRight.setZeroPowerBehavior(zeroPower);
 
-            assert reverseType != null : "Oh No! The program just broke and reverseType is null! What did you do?!?";
+            reverseType = (ReverseType) settingsData.get("ReverseType");
 
             switch(reverseType) {
                 case REVERSE_LEFT: reverseLeft(); break;
@@ -1564,7 +1562,13 @@ public class MechanumDrive extends SubSystem {
                     new ConfigParam("MotorZeroPower", new LinkedHashMap<String, Object>() {{
                         put(DcMotor.ZeroPowerBehavior.BRAKE.name(),DcMotor.ZeroPowerBehavior.BRAKE);
                         put(DcMotor.ZeroPowerBehavior.FLOAT.name(),DcMotor.ZeroPowerBehavior.FLOAT);
-                    }},DcMotor.ZeroPowerBehavior.BRAKE.name())
+                    }},DcMotor.ZeroPowerBehavior.BRAKE.name()),
+                    new ConfigParam("ReverseType", new LinkedHashMap<String,Object>() {{
+                        put(ReverseType.REVERSE_LEFT.name(),ReverseType.REVERSE_LEFT);
+                        put(ReverseType.REVERSE_RIGHT.name(),ReverseType.REVERSE_RIGHT);
+                        put(ReverseType.REVERSE_FRONT.name(),ReverseType.REVERSE_FRONT);
+                        put(ReverseType.REVERSE_BACK.name(),ReverseType.REVERSE_BACK);
+                    }},ReverseType.REVERSE_RIGHT)
             };
         }
         else {
@@ -1588,7 +1592,13 @@ public class MechanumDrive extends SubSystem {
                     new ConfigParam("MotorZeroPower", new LinkedHashMap<String, Object>() {{
                         put(DcMotor.ZeroPowerBehavior.BRAKE.name(),DcMotor.ZeroPowerBehavior.BRAKE);
                         put(DcMotor.ZeroPowerBehavior.FLOAT.name(),DcMotor.ZeroPowerBehavior.FLOAT);
-                    }},DcMotor.ZeroPowerBehavior.BRAKE.name())
+                    }},DcMotor.ZeroPowerBehavior.BRAKE.name()),
+                    new ConfigParam("ReverseType", new LinkedHashMap<String,Object>() {{
+                        put(ReverseType.REVERSE_LEFT.name(),ReverseType.REVERSE_LEFT);
+                        put(ReverseType.REVERSE_RIGHT.name(),ReverseType.REVERSE_RIGHT);
+                        put(ReverseType.REVERSE_FRONT.name(),ReverseType.REVERSE_FRONT);
+                        put(ReverseType.REVERSE_BACK.name(),ReverseType.REVERSE_BACK);
+                    }},ReverseType.REVERSE_RIGHT)
             };
         }
     }
