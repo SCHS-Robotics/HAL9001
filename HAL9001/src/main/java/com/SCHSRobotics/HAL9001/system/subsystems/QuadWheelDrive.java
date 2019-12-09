@@ -27,8 +27,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import java.util.ArrayList;
 import java.util.Map;
 
-import static java.lang.Thread.sleep;
-
 /**
  * A customizable tankdrive subsystem.
  */
@@ -104,7 +102,7 @@ public class QuadWheelDrive extends SubSystem {
     }
 
     @Override
-    public void init() throws InterruptedException
+    public void init()
     {
         normalDirection();
         resetEncoders();
@@ -270,19 +268,15 @@ public class QuadWheelDrive extends SubSystem {
      *
      * @param timeMs - time to drive for in milliseconds.
      * @param power - power to drive at positive power for forward, negative for backwards.
-     *
-     * @throws InterruptedException - Throws this exception if the program is unexpectedly interrupted.
+
      */
-    public void driveTime(double timeMs, double power) throws InterruptedException{
+    public void driveTime(long timeMs, double power) {
         if(timeMs < 0) {
             throw new DumpsterFireException("HAL is cool, but can't travel back in time. Time must be positive.");
         }
 
-        double startTime = System.currentTimeMillis();
         drive(power);
-        while (System.currentTimeMillis() - startTime <= timeMs) {
-            sleep(1);
-        }
+        waitTime(timeMs);
         stopMovement();
     }
 
@@ -291,18 +285,15 @@ public class QuadWheelDrive extends SubSystem {
      *
      * @param timeMs - time to turn for in milliseconds.
      * @param power - power to turn at. positive for counterClockwise and negative for clockwise.
-     *
-     * @throws InterruptedException - Throws this exception if the program is unexpectedly interrupted.
      */
-    public void turnTime(double timeMs, double power) throws InterruptedException{
-
+    public void turnTime(long timeMs, double power) {
         if(timeMs < 0) {
             throw new DumpsterFireException("HAL is cool, but can't travel back in time. Time must be positive.");
         }
 
         double startTime = System.currentTimeMillis();
         turn(power);
-        while(System.currentTimeMillis() - startTime <= timeMs){sleep(1);}
+        waitTime(timeMs);
         stopMovement();
     }
 
@@ -311,17 +302,14 @@ public class QuadWheelDrive extends SubSystem {
      *
      * @param timeMs - time to turn and drive for in milliseconds.
      * @param input - Vector that determines direction and rotational speed. (x component is linear speed y is rotational speed)
-     *
-     * @throws InterruptedException - Throws this exception if the program is unexpectedly interrupted.
      */
-    public void turnAndMoveTime(double timeMs, Vector input) throws InterruptedException{
+    public void turnAndMoveTime(long timeMs, Vector input) {
         if(timeMs < 0) {
             throw new DumpsterFireException("HAL is cool, but can't travel back in time. Time must be positive.");
         }
 
-        double startTime = System.currentTimeMillis();
         turnAndMove(input);
-        while(System.currentTimeMillis() - startTime <= timeMs){sleep(1);}
+        waitTime(timeMs);
         stopMovement();
     }
 
@@ -330,10 +318,8 @@ public class QuadWheelDrive extends SubSystem {
      *
      * @param encoderDistance - Encoder distance to travel.
      * @param power - Double from (-1)-(1) of intensity of the movement positive for forward and negative for reverse.
-     *
-     * @throws InterruptedException - Throws this exception if the program is unexpectedly interrupted.
      */
-    public void driveEncoders(int encoderDistance, double power) throws InterruptedException{
+    public void driveEncoders(int encoderDistance, double power) {
         if(power == 0 && encoderDistance != 0) {
             throw new InvalidMoveCommandException("Power cannot be zero with a non zero target");
         }
@@ -344,7 +330,7 @@ public class QuadWheelDrive extends SubSystem {
 
         int startEncoderPos = topLeft.getCurrentPosition();
         drive(power);
-        while(Math.abs(topLeft.getCurrentPosition() - startEncoderPos) <= encoderDistance) {sleep(1);}
+        waitWhile(() -> Math.abs(topLeft.getCurrentPosition() - startEncoderPos) <= encoderDistance);
         stopMovement();
     }
 
@@ -353,10 +339,8 @@ public class QuadWheelDrive extends SubSystem {
      *
      * @param encoderDistance - Encoder distance to travel.
      * @param power - double from (-1)-(1) of intensity of turn in the turn move(positive for counterclockwise negative for clockwise).
-     *
-     * @throws InterruptedException - Throws this exception if the program is unexpectedly interrupted.
      */
-    public void turnEncoders(int encoderDistance, double power) throws InterruptedException{
+    public void turnEncoders(int encoderDistance, double power) {
 
         if(encoderDistance < 0) {
             throw new DumpsterFireException("Where you're going, you don't need roads! (distance must be positive)");
@@ -366,12 +350,12 @@ public class QuadWheelDrive extends SubSystem {
         int rightStartEncoderPos = topRight.getCurrentPosition();
         if(power > 0) {
             turn(power);
-            while (Math.abs(topLeft.getCurrentPosition() - leftStartEncoderPos) <= encoderDistance) {sleep(1);}
+            waitWhile(() -> Math.abs(topLeft.getCurrentPosition() - leftStartEncoderPos) <= encoderDistance);
             stopMovement();
         }
         if (power < 0){
             turn(power);
-            while (Math.abs(topRight.getCurrentPosition() - rightStartEncoderPos) <= encoderDistance){sleep(1);}
+            waitWhile(() -> Math.abs(topRight.getCurrentPosition() - rightStartEncoderPos) <= encoderDistance);
             stopMovement();
         }
     }
@@ -381,10 +365,8 @@ public class QuadWheelDrive extends SubSystem {
      *
      * @param encoderDistance - Encoder distance to travel.
      * @param input - Vector that determines direction and rotational speed. (x component is linear speed y is rotational speed)
-     *
-     * @throws InterruptedException - Throws this exception if the program is unexpectedly interrupted.
      */
-    public void turnAndMoveEncoders(int encoderDistance, Vector input) throws InterruptedException{
+    public void turnAndMoveEncoders(int encoderDistance, Vector input) {
 
         if(encoderDistance < 0) {
             throw new DumpsterFireException("Where you're going, you don't need roads! (distance must be positive)");
@@ -393,7 +375,7 @@ public class QuadWheelDrive extends SubSystem {
         int leftStartEncoderPos = topLeft.getCurrentPosition();
         int rightStartEncoderPos = topRight.getCurrentPosition();
         turnAndMove(input);
-        while(Math.abs((topLeft.getCurrentPosition() - leftStartEncoderPos)/2 + (topRight.getCurrentPosition() - rightStartEncoderPos)/2) <= encoderDistance) {sleep(1);}
+        waitWhile(() -> Math.abs((topLeft.getCurrentPosition() - leftStartEncoderPos)/2 + (topRight.getCurrentPosition() - rightStartEncoderPos)/2) <= encoderDistance);
         stopMovement();
     }
 

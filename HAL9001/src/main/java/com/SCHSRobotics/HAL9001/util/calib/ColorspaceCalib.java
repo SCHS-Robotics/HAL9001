@@ -15,6 +15,7 @@ import com.SCHSRobotics.HAL9001.util.exceptions.GuiNotPresentException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
 import com.SCHSRobotics.HAL9001.util.exceptions.ViewportDisabledException;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
+import com.SCHSRobotics.HAL9001.util.misc.ConfigData;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigParam;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 import com.SCHSRobotics.HAL9001.util.misc.Toggle;
@@ -26,9 +27,6 @@ import org.opencv.core.CvException;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * A calibration subsystem used to find good colorspace ranges for color detection algorithms.
@@ -368,8 +366,8 @@ public class ColorspaceCalib extends VisionSubSystem {
     public void start() {
         if(usesConfig) {
             inputs = robot.pullControls(this);
-            Map<String, Object> settingsData = robot.pullNonGamepad(this);
-            colorSpace = (ColorSpace) settingsData.get("Colorspace");
+            ConfigData data = robot.pullNonGamepad2(this);
+            colorSpace = data.getData("Colorspace", ColorSpace.class);
         }
 
         startVision();
@@ -623,19 +621,7 @@ public class ColorspaceCalib extends VisionSubSystem {
                 new ConfigParam(Z_DECREMENT, Button.BooleanInputs.bool_right_stick_y_down),
                 new ConfigParam(SLOWMODE,Button.BooleanInputs.x),
                 new ConfigParam(CHANGELIMIT, Button.BooleanInputs.a),
-                new ConfigParam("Colorspace",new LinkedHashMap<String,Object>() {{
-                        put(ColorSpace.RGB.name(), ColorSpace.RGB);
-                        put(ColorSpace.BGR.name(), ColorSpace.BGR);
-                        put(ColorSpace.HSV.name(), ColorSpace.HSV);
-                        put(ColorSpace.HSV_FULL.name(), ColorSpace.HSV_FULL);
-                        put(ColorSpace.HLS.name(), ColorSpace.HLS);
-                        put(ColorSpace.HLS_FULL.name(), ColorSpace.HSV_FULL);
-                        put(ColorSpace.Lab.name(), ColorSpace.Lab);
-                        put(ColorSpace.YUV.name(), ColorSpace.YUV);
-                        put(ColorSpace.LUV.name(), ColorSpace.LUV);
-                        put(ColorSpace.YCrCb.name(), ColorSpace.YCrCb);
-                        put(ColorSpace.XYZ.name(), ColorSpace.XYZ);
-                }}, ColorSpace.RGB.name())
+                new ConfigParam("Colorspace",ColorSpace.RGB)
         };
     }
 }

@@ -24,8 +24,6 @@ import com.SCHSRobotics.HAL9001.util.misc.Button;
 
 import java.util.LinkedHashMap;
 
-import static java.lang.Thread.sleep;
-
 /**
  * Finds the number of encoder ticks per meter that can be used in the encoder.
  * 
@@ -151,7 +149,7 @@ public class EncoderDistanceCalib extends SubSystem {
     }
 
     @Override
-    public void handle() throws InterruptedException {
+    public void handle() {
         if(state == State.RUNNING) {
             switch (driveTrain) {
                 case TANK_DRIVE:
@@ -183,12 +181,10 @@ public class EncoderDistanceCalib extends SubSystem {
 
     /**
      * Drive forward for 2 seconds using tank drive.
-     *
-     * @throws InterruptedException - Throws this exception when the program is interrupted unexpectedly.
      */
-    private void usingTankDrive() throws InterruptedException {
+    private void usingTankDrive() {
         ((TankDrive) driveSubSystem).driveTime(2000, 1);
-        sleep(100);
+        waitTime(100);
         endingEncoderPos.put("Left", ((TankDrive) driveSubSystem).getLeftMotorEncoderPos());
         endingEncoderPos.put("Right", ((TankDrive) driveSubSystem).getRightMotorEncoderPos());
         robot.gui.addMenu("Getting Menu", new EncoderDistanceCalibMenu(robot.gui, unit, switchSpeedButton, this));
@@ -198,12 +194,10 @@ public class EncoderDistanceCalib extends SubSystem {
 
     /**
      * Drive forward for 2 seconds using mechanum drive.
-     *
-     * @throws InterruptedException - Throws this exception when the program is interrupted unexpectedly.
      */
-    private void usingMechanumDrive() throws InterruptedException {
+    private void usingMechanumDrive() {
         ((MechanumDrive) driveSubSystem).driveTime(new Vector(0,1), 2000);
-        sleep(100);
+        waitTime(100);
         endingEncoderPos.put("BotLeft", ((MechanumDrive) driveSubSystem).getBotLeftEncoderPos());
         endingEncoderPos.put("BotRight", ((MechanumDrive) driveSubSystem).getBotRightEncoderPos());
         endingEncoderPos.put("TopLeft", ((MechanumDrive) driveSubSystem).getTopLeftEncoderPos());
@@ -215,12 +209,10 @@ public class EncoderDistanceCalib extends SubSystem {
 
     /**
      * Drive forward for 2 seconds using omniwheel drive.
-     *
-     * @throws InterruptedException - Throws this exception when the program is interrupted unexpectedly.
      */
-    private void usingOmniWheelDrive() throws InterruptedException{
+    private void usingOmniWheelDrive() {
         ((OmniWheelDrive) driveSubSystem).driveTime(new Vector(0,1), 2000);
-        sleep(100);
+        waitTime(100);
         endingEncoderPos.put("BotLeft", ((MechanumDrive) driveSubSystem).getBotLeftEncoderPos());
         endingEncoderPos.put("BotRight", ((MechanumDrive) driveSubSystem).getBotRightEncoderPos());
         endingEncoderPos.put("TopLeft", ((MechanumDrive) driveSubSystem).getTopLeftEncoderPos());
@@ -232,12 +224,10 @@ public class EncoderDistanceCalib extends SubSystem {
 
     /**
      * Drive forward for 2 seconds using quad wheel drive.
-     *
-     * @throws InterruptedException - Throws this exception when the program is interrupted unexpectedly.
      */
-    private void usingQuadWheelDrive() throws InterruptedException {
+    private void usingQuadWheelDrive() {
         ((QuadWheelDrive) driveSubSystem).driveTime(2000, 1);
-        sleep(100);
+        waitTime(100);
         endingEncoderPos.put("BotLeft", ((QuadWheelDrive) driveSubSystem).getBotLeftMotorEncoderPos());
         endingEncoderPos.put("BotRight", ((QuadWheelDrive) driveSubSystem).getBotRightMotorEncoderPos());
         endingEncoderPos.put("TopLeft", ((QuadWheelDrive) driveSubSystem).getTopLeftMotorEncoderPos());

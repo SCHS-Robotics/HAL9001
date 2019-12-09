@@ -28,6 +28,7 @@ import com.SCHSRobotics.HAL9001.util.math.Units;
 import com.SCHSRobotics.HAL9001.util.math.Vector;
 import com.SCHSRobotics.HAL9001.util.misc.BaseParam;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
+import com.SCHSRobotics.HAL9001.util.misc.ConfigData;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigParam;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 import com.SCHSRobotics.HAL9001.util.misc.Toggle;
@@ -42,11 +43,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import static java.lang.Math.PI;
-import static java.lang.Thread.sleep;
 
 /**
  * A built in mechanum drive class with 7 drive modes.
@@ -287,7 +284,7 @@ public class MechanumDrive extends SubSystem {
     }
 
     @Override
-    public void init() throws InterruptedException {
+    public void init() {
 
         if(useDisplayMenu) {
             displayMenu.addLine("Calibrating...");
@@ -299,9 +296,7 @@ public class MechanumDrive extends SubSystem {
 
         if (usesGyro && !usesConfig) {
             imu.initialize(new BNO055IMU.Parameters());
-            while (!imu.isGyroCalibrated() && !robot.isStarted()) {
-                sleep(1);
-            }
+            waitUntil(() -> imu.isGyroCalibrated());
         }
 
         if(useDisplayMenu) {
@@ -319,29 +314,29 @@ public class MechanumDrive extends SubSystem {
     }
 
     @Override
-    public void start() throws InterruptedException {
+    public void start() {
         if (usesConfig && robot.isTeleop()) {
             inputs = robot.pullControls(this);
-            Map<String, Object> settingsData = robot.pullNonGamepad(this);
+            ConfigData data = robot.pullNonGamepad2(this);
 
-            imuNumber = (int) Math.round((double) settingsData.get("ImuNumber"));
+            imuNumber = (int) Math.round(data.getData("ImuNumber",Double.class));
 
-            setDriveMode((DriveType) settingsData.get("DriveType"));
-            setUseGyro((boolean) settingsData.get("UseGyro"), imuNumber);
+            setDriveMode(data.getData("DriveType", DriveType.class));
+            setUseGyro(data.getData("UseGyro",Boolean.class), imuNumber);
 
-            DcMotor.RunMode runMode = (DcMotor.RunMode) settingsData.get("MotorRunMode");
+            DcMotor.RunMode runMode = data.getData("MotorRunMode",DcMotor.RunMode.class);
             topLeft.setMode(runMode);
             topRight.setMode(runMode);
             botLeft.setMode(runMode);
             botRight.setMode(runMode);
 
-            DcMotor.ZeroPowerBehavior zeroPower = (DcMotor.ZeroPowerBehavior) settingsData.get("MotorZeroPower");
+            DcMotor.ZeroPowerBehavior zeroPower = data.getData("MotorZeroPower",DcMotor.ZeroPowerBehavior.class);
             topLeft.setZeroPowerBehavior(zeroPower);
             topRight.setZeroPowerBehavior(zeroPower);
             botLeft.setZeroPowerBehavior(zeroPower);
             botRight.setZeroPowerBehavior(zeroPower);
 
-            reverseType = (ReverseType) settingsData.get("ReverseType");
+            reverseType = data.getData("ReverseType",ReverseType.class);
 
             switch(reverseType) {
                 case REVERSE_LEFT: reverseLeft(); break;
@@ -351,35 +346,35 @@ public class MechanumDrive extends SubSystem {
             }
 
             if(!useSpecific) {
-                turnLeftPower = (double) settingsData.get("turnLeftPower");
-                turnRightPower = (double) settingsData.get("turnRightPower");
-                constantSpeedMultiplier = (double) settingsData.get("ConstantSpeedMultiplier");
-                slowModeMultiplier = (double) settingsData.get("SlowModeMultiplier");
-                constantTurnSpeedMultiplier = (double) settingsData.get("ConstantTurnSpeedMultiplier");
-                slowTurnModeMultiplier = (double) settingsData.get("SlowTurnModeMultiplier");
+                turnLeftPower = data.getData("turnLeftPower",Double.class);
+                turnRightPower = data.getData("turnRightPower",Double.class);
+                constantSpeedMultiplier = data.getData("ConstantSpeedMultiplier",Double.class);
+                slowModeMultiplier = data.getData("SlowModeMultiplier",Double.class);
+                constantTurnSpeedMultiplier = data.getData("ConstantTurnSpeedMultiplier",Double.class);
+                slowTurnModeMultiplier = data.getData("SlowTurnModeMultiplier",Double.class);
             }
         }
         else if (usesConfig && robot.isAutonomous()) {
-            Map<String, Object> settingsData = robot.pullNonGamepad(this);
+            ConfigData data = robot.pullNonGamepad2(this);
 
-            imuNumber = (int) Math.round((double) settingsData.get("ImuNumber"));
+            imuNumber = (int) Math.round(data.getData("ImuNumber",Double.class));
 
-            setDriveMode((DriveType) settingsData.get("DriveType"));
-            setUseGyro((boolean) settingsData.get("UseGyro"), imuNumber);
+            setDriveMode(data.getData("DriveType", DriveType.class));
+            setUseGyro(data.getData("UseGyro",Boolean.class), imuNumber);
 
-            DcMotor.RunMode runMode = (DcMotor.RunMode) settingsData.get("MotorRunMode");
+            DcMotor.RunMode runMode = data.getData("MotorRunMode",DcMotor.RunMode.class);
             topLeft.setMode(runMode);
             topRight.setMode(runMode);
             botLeft.setMode(runMode);
             botRight.setMode(runMode);
 
-            DcMotor.ZeroPowerBehavior zeroPower = (DcMotor.ZeroPowerBehavior) settingsData.get("MotorZeroPower");
+            DcMotor.ZeroPowerBehavior zeroPower = data.getData("MotorZeroPower",DcMotor.ZeroPowerBehavior.class);
             topLeft.setZeroPowerBehavior(zeroPower);
             topRight.setZeroPowerBehavior(zeroPower);
             botLeft.setZeroPowerBehavior(zeroPower);
             botRight.setZeroPowerBehavior(zeroPower);
 
-            reverseType = (ReverseType) settingsData.get("ReverseType");
+            reverseType = data.getData("ReverseType",ReverseType.class);
 
             switch(reverseType) {
                 case REVERSE_LEFT: reverseLeft(); break;
@@ -389,13 +384,12 @@ public class MechanumDrive extends SubSystem {
             }
 
             if(!useSpecific) {
-                constantSpeedMultiplier = (double) settingsData.get("ConstantSpeedMultiplier");
+                constantSpeedMultiplier = data.getData("ConstantSpeedMultiplier",Double.class);
             }
         }
         else if(usesGyro) {
-            double angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
-            turnPID.init(angle, angle);
-            stabilityPID.init(angle, angle);
+            turnPID.init(0,0);
+            stabilityPID.init(0,0);
         }
     }
 
@@ -441,10 +435,10 @@ public class MechanumDrive extends SubSystem {
             case STANDARD:
             //Standard vector drive where the front of the robot is fixed.
             case FIELD_CENTRIC:
-                correction = usesGyro ? stabilityPID.getCorrection(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle) : 0;
+                correction = usesGyro ? stabilityPID.getCorrection(getCurrentAngle(useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS)) : 0;
 
                 if ((turnPower != 0 || turnLeft || turnRight) && usesGyro) {
-                    stabilityPID.setSetpoint(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS).firstAngle);
+                    stabilityPID.setSetpoint(getCurrentAngle(useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS));
                     correction = 0;
                 }
                 if (!turnLeft && !turnRight) {
@@ -460,8 +454,8 @@ public class MechanumDrive extends SubSystem {
             case STANDARD_TTA:
             //Standard vector drive where the front of the robot is fixed and the turn control is a joystick that gives the robot an angle to turn to.
             case FIELD_CENTRIC_TTA:
-                double angleStability = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS).firstAngle;
-                double angleTurn = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, useDegreesTurn ? AngleUnit.DEGREES : AngleUnit.RADIANS).firstAngle;
+                double angleStability = getCurrentAngle(useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS);
+                double angleTurn = getCurrentAngle(useDegreesTurn ? AngleUnit.DEGREES : AngleUnit.RADIANS);
 
                 correction = stabilityPID.getCorrection(angleStability);
                 turnCorrection = turnPID.getCorrection(angleTurn);
@@ -471,16 +465,6 @@ public class MechanumDrive extends SubSystem {
                     stabilityPID.setSetpoint(angleStability);
                     correction = 0;
                     turnCorrection = 0;
-                }
-
-                if(Math.abs(turnPID.getError(angleTurn)) < 0.05) {
-                    turnPID.setSetpoint(angleTurn);
-                    turnCorrection = 0;
-                }
-
-                if(Math.abs(stabilityPID.getError(angleStability)) < 0.05) {
-                    stabilityPID.setSetpoint(angleStability);
-                    correction = 0;
                 }
 
                 if (!turnLeft && !turnRight) {
@@ -497,10 +481,10 @@ public class MechanumDrive extends SubSystem {
 
             //Arcade drive.
             case ARCADE:
-                correction = usesGyro ? stabilityPID.getCorrection(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS).firstAngle) : 0;
+                correction = usesGyro ? stabilityPID.getCorrection(getCurrentAngle(useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS)) : 0;
 
                 if ((turnPower != 0 || turnLeft || turnRight) && usesGyro) {
-                    stabilityPID.setSetpoint(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS).firstAngle);
+                    stabilityPID.setSetpoint(getCurrentAngle(useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS));
                     correction = 0;
                 }
 
@@ -531,8 +515,8 @@ public class MechanumDrive extends SubSystem {
 
             //Arcade drive with turn to angle functionality.
             case ARCADE_TTA:
-                double angleStabilityArcade = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS).firstAngle;
-                double angleTurnArcade = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, useDegreesTurn ? AngleUnit.DEGREES : AngleUnit.RADIANS).firstAngle;
+                double angleStabilityArcade = getCurrentAngle(useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS);
+                double angleTurnArcade = getCurrentAngle(useDegreesTurn ? AngleUnit.DEGREES : AngleUnit.RADIANS);
 
                 correction = stabilityPID.getCorrection(angleStabilityArcade);
                 turnCorrection = turnPID.getCorrection(angleTurnArcade);
@@ -543,17 +527,6 @@ public class MechanumDrive extends SubSystem {
                     correction = 0;
                     turnCorrection = 0;
                 }
-
-                if(Math.abs(turnPID.getError(angleTurnArcade)) < 0.05) {
-                    turnPID.setSetpoint(angleTurnArcade);
-                    turnCorrection = 0;
-                }
-
-                if(Math.abs(stabilityPID.getError(angleStabilityArcade)) < 0.05) {
-                    stabilityPID.setSetpoint(angleStabilityArcade);
-                    correction = 0;
-                }
-
 
                 if(!turnLeft && !turnRight) {
                     if(input.isZeroVector()) {
@@ -706,16 +679,10 @@ public class MechanumDrive extends SubSystem {
      * @param leftVector  - The vector for controlling the left side of the robot.
      * @param rightVector - The vector for controlling the right side of the robot.
      * @param timeMs      - The total time to run in ms.
-     * @throws InterruptedException - Throws this exception when the program is unexpectedly interrupted.
      */
-    public void driveTime(Vector leftVector, Vector rightVector, double timeMs) throws InterruptedException {
+    public void driveTime(Vector leftVector, Vector rightVector, long timeMs) {
         drive(leftVector, rightVector);
-
-        long startTime = System.currentTimeMillis();
-        while (System.currentTimeMillis() - startTime < timeMs && robot.opModeIsActive()) {
-            sleep(1);
-        }
-
+        waitTime(timeMs);
         stopAllMotors();
     }
 
@@ -727,9 +694,8 @@ public class MechanumDrive extends SubSystem {
      * @param distanceLeft  - The distance for the left side of the robot to travel.
      * @param distanceRight - The distance for the right side of the robot to travel.
      * @param unit          - The unit that the distance is being provided in.
-     * @throws InterruptedException - Throws this exception when the program is unexpectedly interrupted.
      */
-    public void turnAndMoveDistance(Vector leftVector, Vector rightVector, double distanceLeft, double distanceRight, Units unit) throws InterruptedException {
+    public void turnAndMoveDistance(Vector leftVector, Vector rightVector, double distanceLeft, double distanceRight, Units unit) {
         EncoderToDistanceProcessor processor = new EncoderToDistanceProcessor(encodersPerMeter);
         turnAndMoveEncoders(leftVector, rightVector, processor.getEncoderAmount(distanceLeft,unit), processor.getEncoderAmount(distanceRight,unit));
     }
@@ -741,9 +707,8 @@ public class MechanumDrive extends SubSystem {
      * @param rightVector - The right motor vector.
      * @param encodersLeft - The amount of encoders that the left side of the robot should travel.
      * @param encodersRight - The amount of encoders that the right side of the robot should travel.
-     * @throws InterruptedException - Throws this exception when the program is unexpectedly interrupted.
      */
-    public void turnAndMoveEncoders(Vector leftVector, Vector rightVector, double encodersLeft, double encodersRight) throws InterruptedException {
+    public void turnAndMoveEncoders(Vector leftVector, Vector rightVector, double encodersLeft, double encodersRight) {
             if ((leftVector.isZeroVector() && encodersLeft != 0) || (rightVector.isZeroVector() && encodersRight != 0)) {
                 throw new InvalidMoveCommandException("You can't move anywhere if you aren't trying to move ;)");
             }
@@ -795,7 +760,6 @@ public class MechanumDrive extends SubSystem {
                     topRight.setPower(0);
                     botRight.setPower(0);
                 }
-                sleep(1);
             }
 
         stopAllMotors();
@@ -807,16 +771,10 @@ public class MechanumDrive extends SubSystem {
      * @param leftVector - The left motor vector.
      * @param rightVector - The right motor vector.
      * @param timeMs - The time to turn and move in milliseconds.
-     * @throws InterruptedException - Throws this exception when the program is unexpectedly interrupted.
      */
-    public void turnAndMoveTime(Vector leftVector, Vector rightVector, double timeMs) throws InterruptedException {
+    public void turnAndMoveTime(Vector leftVector, Vector rightVector, long timeMs) {
         turnAndMove(leftVector,rightVector);
-
-        long startTime = System.currentTimeMillis();
-        while (robot.opModeIsActive() && System.currentTimeMillis()-startTime < timeMs) {
-            sleep(1);
-        }
-
+        waitTime(timeMs);
         stopAllMotors();
     }
 
@@ -837,9 +795,8 @@ public class MechanumDrive extends SubSystem {
      * @param turnPower - The power to turn at.
      * @param distance - The distance to travel.
      * @param unit - The unit of distance.
-     * @throws InterruptedException - Throws this exception when the program is unexpectedly interrupted.
      */
-    public void turnAndMoveDistance(Vector v, double turnPower, double distance, Units unit) throws InterruptedException {
+    public void turnAndMoveDistance(Vector v, double turnPower, double distance, Units unit) {
         EncoderToDistanceProcessor processor = new EncoderToDistanceProcessor(encodersPerMeter);
         turnAndMoveEncoders(v,turnPower,processor.getEncoderAmount(distance,unit));
     }
@@ -850,15 +807,12 @@ public class MechanumDrive extends SubSystem {
      * @param v - The velocity vector of the robot.
      * @param turnPower - The power to turn at.
      * @param encoders - The amount of encoder ticks to travel.
-     * @throws InterruptedException - Throws this exception when the program is unexpectedly interrupted.
      */
-    public void turnAndMoveEncoders(Vector v, double turnPower, double encoders) throws InterruptedException {
-        resetAllEncoders();
-
+    public void turnAndMoveEncoders(Vector v, double turnPower, double encoders) {
+        int[] initVals = getEncoderPos();
         turnAndMove(v, turnPower);
-        while(robot.opModeIsActive() && (Math.abs(topLeft.getCurrentPosition()) + Math.abs(topLeft.getCurrentPosition()) + Math.abs(topLeft.getCurrentPosition()) + Math.abs(topLeft.getCurrentPosition()))/4.0 < Math.abs(encoders)) {
-            sleep(1);
-        }
+        waitWhile(() -> (Math.abs(getTopLeftEncoderPos()-initVals[0]) + Math.abs(getTopRightEncoderPos() - initVals[1]) + Math.abs(getBotLeftEncoderPos() - initVals[2]) + Math.abs(getBotRightEncoderPos() - initVals[3]))/4.0 < encoders);
+        stopAllMotors();
     }
 
     /**
@@ -867,15 +821,11 @@ public class MechanumDrive extends SubSystem {
      * @param v - The robot's velocity vector.
      * @param turnPower - The power to turn at.
      * @param timeMs - The amount of time to run in milliseconds.
-     * @throws InterruptedException - Throws this exception when the program is unexpectedly interrupted.
      */
-    public void turnAndMoveTime(Vector v, double turnPower, double timeMs) throws InterruptedException {
+    public void turnAndMoveTime(Vector v, double turnPower, long timeMs)  {
         turnAndMove(v, turnPower);
-
-        long startTime = System.currentTimeMillis();
-        while(robot.opModeIsActive() && System.currentTimeMillis() - startTime < timeMs) {
-            sleep(1);
-        }
+        waitTime(timeMs);
+        stopAllMotors();
     }
 
     /**
@@ -914,7 +864,7 @@ public class MechanumDrive extends SubSystem {
                 break;
             case FIELD_CENTRIC:
             case FIELD_CENTRIC_TTA:
-                vcpy.rotate(-((PI / 4) + imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle));
+                vcpy.rotate(-((PI / 4) + getCurrentAngle()));
                 setPower(vcpy.x + turnPower, vcpy.y - turnPower, vcpy.y + turnPower, vcpy.x - turnPower);
                 break;
         }
@@ -957,19 +907,12 @@ public class MechanumDrive extends SubSystem {
      * @param v                - Makes the robot move a certain distance. Use this for any non-matthew drive mode.
      * @param timeMs           - The amount of time in ms the robot should move.
      * @param stabilityControl - Whether the robot should use stability control.
-     * @throws InterruptedException - Throws this exception if the program is unexpectedly interrupted.
      */
-    public void driveTime(Vector v, double timeMs, boolean stabilityControl) throws InterruptedException {
+    public void driveTime(Vector v, long timeMs, boolean stabilityControl) {
         if (stabilityControl) {
-            stabilityPID.setSetpoint(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS).firstAngle);
+            stabilityPID.setSetpoint(getCurrentAngle(useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS));
         }
-
-        long startTime = System.currentTimeMillis();
-        while (robot.opModeIsActive() && System.currentTimeMillis() - startTime < timeMs) {
-            drive(v, stabilityControl);
-            sleep(1);
-        }
-
+        waitTime(timeMs, () -> drive(v,stabilityControl));
         stopAllMotors();
     }
 
@@ -978,9 +921,8 @@ public class MechanumDrive extends SubSystem {
      *
      * @param v      - The direction and power that the robot should move at.
      * @param timeMs - The time in ms that the robot should move for.
-     * @throws InterruptedException - Throws this exception if the program is unexpectedly interrupted.
      */
-    public void driveTime(Vector v, double timeMs) throws InterruptedException {
+    public void driveTime(Vector v, long timeMs) {
         driveTime(v, timeMs, false);
     }
 
@@ -991,9 +933,8 @@ public class MechanumDrive extends SubSystem {
      * @param distance         - The distance the robot should travel.
      * @param unit             - The unit of distance the robot should travel.
      * @param stabilityControl - Whether the robot should use stability control.
-     * @throws InterruptedException - Throws this exception if the program is unexpectedly interrupted.
      */
-    public void driveDistance(Vector v, double distance, Units unit, boolean stabilityControl) throws InterruptedException {
+    public void driveDistance(Vector v, double distance, Units unit, boolean stabilityControl) {
         EncoderToDistanceProcessor processor = new EncoderToDistanceProcessor(encodersPerMeter);
         driveEncoders(v,processor.getEncoderAmount(distance,unit),stabilityControl);
     }
@@ -1004,9 +945,8 @@ public class MechanumDrive extends SubSystem {
      * @param v        - The input velocity vector.
      * @param distance - The distance the robot should travel.
      * @param unit     - The units of distance.
-     * @throws InterruptedException - This error is thrown when the program is interrupted unexpectedly.
      */
-    public void driveDistance(Vector v, double distance, Units unit) throws InterruptedException {
+    public void driveDistance(Vector v, double distance, Units unit) {
         driveDistance(v, distance, unit, false);
     }
 
@@ -1016,9 +956,8 @@ public class MechanumDrive extends SubSystem {
      * @param v - The input velocity vector.
      * @param encoders - The amount of encoder ticks to travel.
      * @param stabilityControl - Whether or not to use the stability PID.
-     * @throws InterruptedException - This error is thrown when the program is interrupted unexpectedly.
      */
-    public void driveEncoders(Vector v, double encoders, boolean stabilityControl) throws InterruptedException {
+    public void driveEncoders(Vector v, double encoders, boolean stabilityControl) {
         if (v.isZeroVector() && encoders != 0) {
             throw new InvalidMoveCommandException("You can't move anywhere if you aren't trying to move ;)");
         }
@@ -1028,13 +967,13 @@ public class MechanumDrive extends SubSystem {
 
         Vector displacement = new Vector(encoders, v.theta, Vector.CoordinateType.POLAR);
 
-        resetAllEncoders();
-
         double thresh1;
         double thresh2;
 
+        int[] initVals = getEncoderPos();
+
         if (stabilityControl) {
-            stabilityPID.setSetpoint(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS).firstAngle);
+            stabilityPID.setSetpoint(getCurrentAngle(useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS));
         }
 
         switch (driveType) {
@@ -1046,10 +985,8 @@ public class MechanumDrive extends SubSystem {
                 thresh1 = Math.abs(displacement.x);
                 thresh2 = Math.abs(displacement.y);
 
-                while (robot.opModeIsActive() && (Math.abs(topLeft.getCurrentPosition()) < thresh1 && Math.abs(topRight.getCurrentPosition()) < thresh2 && Math.abs(botLeft.getCurrentPosition()) < thresh2 && Math.abs(botRight.getCurrentPosition()) < thresh1)) {
-                    drive(v, stabilityControl);
-                    sleep(1);
-                }
+                waitWhile(() -> Math.abs(getTopLeftEncoderPos() - initVals[0]) < thresh1 && Math.abs(getTopRightEncoderPos() - initVals[1]) < thresh2 && Math.abs(getBotLeftEncoderPos() - initVals[2]) < thresh2 && Math.abs(getBotRightEncoderPos() - initVals[3]) < thresh1,
+                        () -> drive(v,stabilityControl));
                 break;
             case FIELD_CENTRIC_TTA:
             case FIELD_CENTRIC:
@@ -1057,25 +994,21 @@ public class MechanumDrive extends SubSystem {
                     throw new WrongDrivetypeException("Field Centric Drive Must uses the IMU but the IMU was never set up");
                 }
 
-                displacement.rotate(-((PI / 4) + imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle));
+                displacement.rotate(-((PI / 4) + getCurrentAngle()));
 
                 thresh1 = Math.abs(displacement.x);
                 thresh2 = Math.abs(displacement.y);
 
-                while (robot.opModeIsActive() && (Math.abs(topLeft.getCurrentPosition()) < thresh1 && Math.abs(topRight.getCurrentPosition()) < thresh2 && Math.abs(botLeft.getCurrentPosition()) < thresh2 && Math.abs(botRight.getCurrentPosition()) < thresh1)) {
-                    drive(v, stabilityControl);
-                    sleep(1);
-                }
+                waitWhile(() -> Math.abs(getTopLeftEncoderPos() - initVals[0]) < thresh1 && Math.abs(getTopRightEncoderPos() - initVals[1]) < thresh2 && Math.abs(getBotLeftEncoderPos() - initVals[2]) < thresh2 && Math.abs(getBotRightEncoderPos() - initVals[3]) < thresh1,
+                        () -> drive(v,stabilityControl));
                 break;
             case ARCADE_TTA:
             case ARCADE:
 
                 double thresh = encoders * Math.sqrt(2) / 2;
 
-                while (robot.opModeIsActive() && (Math.abs(topLeft.getCurrentPosition()) < thresh && Math.abs(topRight.getCurrentPosition()) < thresh && Math.abs(botLeft.getCurrentPosition()) < thresh && Math.abs(botRight.getCurrentPosition()) < thresh)) {
-                    drive(v, stabilityControl);
-                    sleep(1);
-                }
+                waitWhile(() -> Math.abs(getTopLeftEncoderPos() - initVals[0]) < thresh && Math.abs(getTopRightEncoderPos() - initVals[1]) < thresh && Math.abs(getBotLeftEncoderPos() - initVals[2]) < thresh && Math.abs(getBotRightEncoderPos() - initVals[3]) < thresh,
+                        () -> drive(v,stabilityControl));
                 break;
         }
 
@@ -1087,9 +1020,8 @@ public class MechanumDrive extends SubSystem {
      *
      * @param v - The input velocity vector.
      * @param encoders - The amount of encoder ticks to travel.
-     * @throws InterruptedException - This error is thrown when the program is interrupted unexpectedly.
      */
-    public void driveEncoders(Vector v, double encoders) throws InterruptedException {
+    public void driveEncoders(Vector v, double encoders) {
         driveEncoders(v,encoders,false);
     }
 
@@ -1105,7 +1037,7 @@ public class MechanumDrive extends SubSystem {
 
         vcpy.scalarMultiply(constantSpeedMultiplier * Math.sqrt(2));
 
-        double correction = stabilityControl && usesGyro ? stabilityPID.getCorrection(imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX, useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS).firstAngle) : 0;
+        double correction = stabilityControl && usesGyro ? stabilityPID.getCorrection(getCurrentAngle(useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS)) : 0;
 
         switch (driveType) {
             case STANDARD_TTA:
@@ -1119,7 +1051,7 @@ public class MechanumDrive extends SubSystem {
                 if(!usesGyro) {
                     throw new WrongDrivetypeException("Field Centric Drive Must uses the IMU but the IMU was never set up");
                 }
-                vcpy.rotate(-((PI / 4) + imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS).firstAngle));
+                vcpy.rotate(-((PI / 4) + getCurrentAngle()));
                 setPower(vcpy.x - correction, vcpy.y + correction, vcpy.y - correction, vcpy.x + correction);
                 break;
             case ARCADE_TTA:
@@ -1154,14 +1086,10 @@ public class MechanumDrive extends SubSystem {
      *
      * @param turnPower - The power to turn at.
      * @param timeMs - The time to turn in milliseconds.
-     * @throws InterruptedException - This error is thrown when the program is interrupted unexpectedly.
      */
-    public void turnTime(double turnPower, double timeMs) throws InterruptedException {
+    public void turnTime(double turnPower, long timeMs){
         turn(turnPower);
-        long startTime = System.currentTimeMillis();
-        while(robot.opModeIsActive() && System.currentTimeMillis() - startTime < timeMs) {
-            sleep(1);
-        }
+        waitTime(timeMs);
         stopAllMotors();
     }
 
@@ -1171,9 +1099,8 @@ public class MechanumDrive extends SubSystem {
      * @param turnPower - The power to turn at.
      * @param distance - The distance to turn.
      * @param unit - The unit of distance.
-     * @throws InterruptedException - This error is thrown when the program is interrupted unexpectedly.
      */
-    public void turnDistance(double turnPower, double distance, Units unit) throws InterruptedException {
+    public void turnDistance(double turnPower, double distance, Units unit) {
         EncoderToDistanceProcessor processor = new EncoderToDistanceProcessor(encodersPerMeter);
         double encoders = Math.abs(processor.getEncoderAmount(distance,unit));
         turnEncoders(turnPower,encoders);
@@ -1184,19 +1111,15 @@ public class MechanumDrive extends SubSystem {
      *
      * @param turnPower - The power to turn at.
      * @param encoders - The number of encoder ticks to turn.
-     * @throws InterruptedException - This error is thrown when the program is interrupted unexpectedly.
      */
-    public void turnEncoders(double turnPower, double encoders) throws InterruptedException {
+    public void turnEncoders(double turnPower, double encoders) {
         if (encoders < 0) {
             throw new DumpsterFireException("Where you're going, you don't need roads! (encoders must be positive)");
         }
 
-        resetAllEncoders();
-
+        int[] initVals = getEncoderPos();
         turn(turnPower);
-        while(robot.opModeIsActive() && (Math.abs(topLeft.getCurrentPosition()) < encoders && Math.abs(topRight.getCurrentPosition()) < encoders && Math.abs(botLeft.getCurrentPosition()) < encoders && Math.abs(botRight.getCurrentPosition()) < encoders)) {
-            sleep(1);
-        }
+        waitWhile(() -> (Math.abs(getTopLeftEncoderPos() - initVals[0]) + Math.abs(getTopRightEncoderPos() - initVals[1]) + Math.abs(getBotLeftEncoderPos() - initVals[2]) + Math.abs(getBotRightEncoderPos() - initVals[3]))/4.0 < encoders);
         stopAllMotors();
     }
 
@@ -1217,20 +1140,26 @@ public class MechanumDrive extends SubSystem {
      *
      * @param angle - The angle to turn to.
      * @param tolerance - The tolerance that the angle must be within.
-     *
-     * @throws InterruptedException - Throws this exception if the program is unexpectedly interrupted.
      */
-    public void turnTo(double angle, double tolerance) throws InterruptedException {
+    public void turnTo(double angle, double tolerance) {
         if(!usesGyro) {
             throw new GuiNotPresentException("turnTo must use a gyroscope");
         }
+        double prevDeadband = turnPID.deadband;
+        turnPID.setDeadband(tolerance);
         turnPID.setSetpoint(angle);
-        while(robot.opModeIsActive() && (Math.abs(angle-imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,useDegreesTurn ? AngleUnit.DEGREES : AngleUnit.RADIANS).firstAngle) < tolerance)) {
-            double correction = turnPID.getCorrection(imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,useDegreesTurn ? AngleUnit.DEGREES : AngleUnit.RADIANS).firstAngle);
+        double correction = 1;
+        //TODO replace with waitTime statement
+        while(robot.opModeIsActive() && correction != 0) {
+            correction = turnPID.getCorrection(getCurrentAngle(useDegreesTurn ? AngleUnit.DEGREES : AngleUnit.RADIANS));
             turn(correction);
-            sleep(1);
         }
+        turnPID.setDeadband(prevDeadband);
         stopAllMotors();
+    }
+
+    public void turnTo(double angle) {
+        turnTo(angle, turnPID.deadband);
     }
 
     /**
@@ -1282,10 +1211,8 @@ public class MechanumDrive extends SubSystem {
      * Updates the mechanum drive's mode.
      *
      * @param driveType - The driving mode that the drivetrain will be set to.
-     *
-     * @throws InterruptedException - Throws this exception if the program is interrupted unexpectedly.
      */
-    public void setDriveMode(DriveType driveType) throws InterruptedException {
+    public void setDriveMode(DriveType driveType) {
         boolean useGyro = driveType == DriveType.STANDARD_TTA || driveType == DriveType.FIELD_CENTRIC || driveType == DriveType.FIELD_CENTRIC_TTA || driveType == DriveType.ARCADE_TTA;
         setUseGyro(useGyro, imuNumber);
         this.driveType = driveType;
@@ -1296,13 +1223,12 @@ public class MechanumDrive extends SubSystem {
      *
      * @param useGyro - Whether or not to use the gyroscope.
      * @param imuNumber - The imu number referring to which IMU is being used as a gyro. It must be either 1 or 2.
-     * @throws InterruptedException
      */
-    public void setUseGyro(boolean useGyro, int imuNumber) throws InterruptedException {
+    public void setUseGyro(boolean useGyro, int imuNumber) {
         if(!usesGyro && useGyro) {
             imu = robot.hardwareMap.get(BNO055IMU.class,imuNumber == 1 ? "imu" : "imu 1");
             imu.initialize(new BNO055IMU.Parameters());
-            while(!imu.isGyroCalibrated() && robot.opModeIsActive()){sleep(1);}
+            waitUntil(() -> imu.isGyroCalibrated());
         }
         else if(usesGyro) {
             double angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
@@ -1329,7 +1255,7 @@ public class MechanumDrive extends SubSystem {
      * @param botLeftPower - The top left motor power.
      * @param botRightPower - The bottom right motor power.
      */
-    private void setPower(double topLeftPower, double topRightPower, double botLeftPower, double botRightPower) {
+    public void setPower(double topLeftPower, double topRightPower, double botLeftPower, double botRightPower) {
         double[] powers = new double[] {topLeftPower, topRightPower, botLeftPower, botRightPower};
         double max = ArrayMath.max(ArrayMath.abs(powers));
         ArrayMath.divide(powers, max > 1 ? max : 1);
@@ -1453,15 +1379,7 @@ public class MechanumDrive extends SubSystem {
     public static ConfigParam[] teleopConfig() {
         if(useSpecific) {
             return new ConfigParam[]{
-                    new ConfigParam("DriveType", new LinkedHashMap<String, Object>() {{
-                        put(DriveType.STANDARD.name(), DriveType.STANDARD);
-                        put(DriveType.STANDARD_TTA.name(), DriveType.STANDARD_TTA);
-                        put(DriveType.FIELD_CENTRIC.name(), DriveType.FIELD_CENTRIC);
-                        put(DriveType.FIELD_CENTRIC_TTA.name(), DriveType.FIELD_CENTRIC_TTA);
-                        put(DriveType.ARCADE.name(), DriveType.ARCADE);
-                        put(DriveType.ARCADE_TTA.name(), DriveType.ARCADE_TTA);
-                        put(DriveType.MATTHEW.name(), DriveType.MATTHEW);
-                    }}, DriveType.STANDARD.name()),
+                    new ConfigParam("DriveType", DriveType.STANDARD),
                     new ConfigParam(DRIVESTICK, Button.VectorInputs.right_stick),
                     new ConfigParam(LEFT_DRIVESTICK, Button.VectorInputs.noButton),
                     new ConfigParam(RIGHT_DRIVESTICK, Button.VectorInputs.noButton),
@@ -1471,35 +1389,19 @@ public class MechanumDrive extends SubSystem {
                     new ConfigParam(TTA_STICK, Button.VectorInputs.noButton),
                     new ConfigParam(SPEED_MODE, Button.BooleanInputs.noButton),
                     new ConfigParam(TURN_SPEED_MODE, Button.BooleanInputs.noButton),
-                    new ConfigParam("ReverseType", new LinkedHashMap<String,Object>() {{
-                        put(ReverseType.REVERSE_LEFT.name(),ReverseType.REVERSE_LEFT);
-                        put(ReverseType.REVERSE_RIGHT.name(),ReverseType.REVERSE_RIGHT);
-                        put(ReverseType.REVERSE_FRONT.name(),ReverseType.REVERSE_FRONT);
-                        put(ReverseType.REVERSE_BACK.name(),ReverseType.REVERSE_BACK);
-                    }},ReverseType.REVERSE_RIGHT),
+                    new ConfigParam("ReverseType", ReverseType.REVERSE_RIGHT),
                     new ConfigParam("UseGyro", ConfigParam.booleanMap, false),
-                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), "1.0"),
-                    new ConfigParam("MotorRunMode", new LinkedHashMap<String, Object>() {{
-                        put(DcMotor.RunMode.RUN_USING_ENCODER.name(),DcMotor.RunMode.RUN_USING_ENCODER);
-                        put(DcMotor.RunMode.RUN_WITHOUT_ENCODER.name(),DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    }},DcMotor.RunMode.RUN_USING_ENCODER.name()),
-                    new ConfigParam("MotorZeroPower", new LinkedHashMap<String, Object>() {{
-                        put(DcMotor.ZeroPowerBehavior.BRAKE.name(),DcMotor.ZeroPowerBehavior.BRAKE);
-                        put(DcMotor.ZeroPowerBehavior.FLOAT.name(),DcMotor.ZeroPowerBehavior.FLOAT);
-                    }},DcMotor.ZeroPowerBehavior.BRAKE.name())
+                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), 1),
+                    new ConfigParam("MotorRunMode", new DcMotor.RunMode[] {
+                            DcMotor.RunMode.RUN_USING_ENCODER,
+                            DcMotor.RunMode.RUN_WITHOUT_ENCODER},
+                            DcMotor.RunMode.RUN_USING_ENCODER),
+                    new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE)
             };
         }
         else {
             return new ConfigParam[]{
-                    new ConfigParam("DriveType", new LinkedHashMap<String, Object>() {{
-                        put(DriveType.STANDARD.name(), DriveType.STANDARD);
-                        put(DriveType.STANDARD_TTA.name(), DriveType.STANDARD_TTA);
-                        put(DriveType.FIELD_CENTRIC.name(), DriveType.FIELD_CENTRIC);
-                        put(DriveType.FIELD_CENTRIC_TTA.name(), DriveType.FIELD_CENTRIC_TTA);
-                        put(DriveType.ARCADE.name(), DriveType.ARCADE);
-                        put(DriveType.ARCADE_TTA.name(), DriveType.ARCADE_TTA);
-                        put(DriveType.MATTHEW.name(), DriveType.MATTHEW);
-                    }}, DriveType.STANDARD.name()),
+                    new ConfigParam("DriveType", DriveType.STANDARD),
                     new ConfigParam(DRIVESTICK, Button.VectorInputs.right_stick),
                     new ConfigParam(LEFT_DRIVESTICK, Button.VectorInputs.noButton),
                     new ConfigParam(RIGHT_DRIVESTICK, Button.VectorInputs.noButton),
@@ -1511,26 +1413,18 @@ public class MechanumDrive extends SubSystem {
                     new ConfigParam(TURN_SPEED_MODE, Button.BooleanInputs.noButton),
                     new ConfigParam("turnLeftPower", ConfigParam.numberMap(0, 1, 0.05), 0.3),
                     new ConfigParam("turnRightPower", ConfigParam.numberMap(0, 1, 0.05), 0.3),
-                    new ConfigParam("ReverseType", new LinkedHashMap<String,Object>() {{
-                        put(ReverseType.REVERSE_LEFT.name(),ReverseType.REVERSE_LEFT);
-                        put(ReverseType.REVERSE_RIGHT.name(),ReverseType.REVERSE_RIGHT);
-                        put(ReverseType.REVERSE_FRONT.name(),ReverseType.REVERSE_FRONT);
-                        put(ReverseType.REVERSE_BACK.name(),ReverseType.REVERSE_BACK);
-                    }},ReverseType.REVERSE_RIGHT),
+                    new ConfigParam("ReverseType", ReverseType.REVERSE_RIGHT),
                     new ConfigParam("UseGyro", ConfigParam.booleanMap, false),
-                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), 1.0),
+                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), 1),
                     new ConfigParam("ConstantSpeedMultiplier", ConfigParam.numberMap(0, 10, 0.05), 1.0),
                     new ConfigParam("SlowModeMultiplier", ConfigParam.numberMap(0, 10, 0.05), 1.0),
                     new ConfigParam("ConstantTurnSpeedMultiplier", ConfigParam.numberMap(0, 10, 0.05), 1.0),
                     new ConfigParam("SlowTurnModeMultiplier", ConfigParam.numberMap(0, 10, 0.05), 1.0),
-                    new ConfigParam("MotorRunMode", new LinkedHashMap<String, Object>() {{
-                        put(DcMotor.RunMode.RUN_USING_ENCODER.name(),DcMotor.RunMode.RUN_USING_ENCODER);
-                        put(DcMotor.RunMode.RUN_WITHOUT_ENCODER.name(),DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    }},DcMotor.RunMode.RUN_USING_ENCODER.name()),
-                    new ConfigParam("MotorZeroPower", new LinkedHashMap<String, Object>() {{
-                        put(DcMotor.ZeroPowerBehavior.BRAKE.name(),DcMotor.ZeroPowerBehavior.BRAKE);
-                        put(DcMotor.ZeroPowerBehavior.FLOAT.name(),DcMotor.ZeroPowerBehavior.FLOAT);
-                    }},DcMotor.ZeroPowerBehavior.BRAKE.name())
+                    new ConfigParam("MotorRunMode", new DcMotor.RunMode[] {
+                            DcMotor.RunMode.RUN_USING_ENCODER,
+                            DcMotor.RunMode.RUN_WITHOUT_ENCODER},
+                            DcMotor.RunMode.RUN_USING_ENCODER),
+                    new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE)
             };
         }
     }
@@ -1544,61 +1438,29 @@ public class MechanumDrive extends SubSystem {
     public static ConfigParam[] autonomousConfig() {
         if(useSpecific) {
             return new ConfigParam[]{
-                    new ConfigParam("DriveType", new LinkedHashMap<String, Object>() {{
-                        put(DriveType.STANDARD.name(), DriveType.STANDARD);
-                        put(DriveType.STANDARD_TTA.name(), DriveType.STANDARD_TTA);
-                        put(DriveType.FIELD_CENTRIC.name(), DriveType.FIELD_CENTRIC);
-                        put(DriveType.FIELD_CENTRIC_TTA.name(), DriveType.FIELD_CENTRIC_TTA);
-                        put(DriveType.ARCADE.name(), DriveType.ARCADE);
-                        put(DriveType.ARCADE_TTA.name(), DriveType.ARCADE_TTA);
-                        put(DriveType.MATTHEW.name(), DriveType.MATTHEW);
-                    }}, DriveType.STANDARD.name()),
+                    new ConfigParam("DriveType", DriveType.STANDARD),
                     new ConfigParam("UseGyro", ConfigParam.booleanMap, false),
-                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), 1.0),
-                    new ConfigParam("MotorRunMode", new LinkedHashMap<String, Object>() {{
-                        put(DcMotor.RunMode.RUN_USING_ENCODER.name(),DcMotor.RunMode.RUN_USING_ENCODER);
-                        put(DcMotor.RunMode.RUN_WITHOUT_ENCODER.name(),DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    }},DcMotor.RunMode.RUN_USING_ENCODER.name()),
-                    new ConfigParam("MotorZeroPower", new LinkedHashMap<String, Object>() {{
-                        put(DcMotor.ZeroPowerBehavior.BRAKE.name(),DcMotor.ZeroPowerBehavior.BRAKE);
-                        put(DcMotor.ZeroPowerBehavior.FLOAT.name(),DcMotor.ZeroPowerBehavior.FLOAT);
-                    }},DcMotor.ZeroPowerBehavior.BRAKE.name()),
-                    new ConfigParam("ReverseType", new LinkedHashMap<String,Object>() {{
-                        put(ReverseType.REVERSE_LEFT.name(),ReverseType.REVERSE_LEFT);
-                        put(ReverseType.REVERSE_RIGHT.name(),ReverseType.REVERSE_RIGHT);
-                        put(ReverseType.REVERSE_FRONT.name(),ReverseType.REVERSE_FRONT);
-                        put(ReverseType.REVERSE_BACK.name(),ReverseType.REVERSE_BACK);
-                    }},ReverseType.REVERSE_RIGHT)
+                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), 1),
+                    new ConfigParam("MotorRunMode", new DcMotor.RunMode[] {
+                            DcMotor.RunMode.RUN_USING_ENCODER,
+                            DcMotor.RunMode.RUN_WITHOUT_ENCODER},
+                            DcMotor.RunMode.RUN_USING_ENCODER),
+                    new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE),
+                    new ConfigParam("ReverseType", ReverseType.REVERSE_RIGHT)
             };
         }
         else {
             return new ConfigParam[]{
-                    new ConfigParam("DriveType", new LinkedHashMap<String, Object>() {{
-                        put(DriveType.STANDARD.name(), DriveType.STANDARD);
-                        put(DriveType.STANDARD_TTA.name(), DriveType.STANDARD_TTA);
-                        put(DriveType.FIELD_CENTRIC.name(), DriveType.FIELD_CENTRIC);
-                        put(DriveType.FIELD_CENTRIC_TTA.name(), DriveType.FIELD_CENTRIC_TTA);
-                        put(DriveType.ARCADE.name(), DriveType.ARCADE);
-                        put(DriveType.ARCADE_TTA.name(), DriveType.ARCADE_TTA);
-                        put(DriveType.MATTHEW.name(), DriveType.MATTHEW);
-                    }}, DriveType.STANDARD.name()),
+                    new ConfigParam("DriveType", DriveType.STANDARD),
                     new ConfigParam("UseGyro", ConfigParam.booleanMap, false),
-                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), 1.0),
+                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), 1),
                     new ConfigParam("ConstantSpeedMultiplier", ConfigParam.numberMap(0, 1, 0.05), 1.0),
-                    new ConfigParam("MotorRunMode", new LinkedHashMap<String, Object>() {{
-                        put(DcMotor.RunMode.RUN_USING_ENCODER.name(),DcMotor.RunMode.RUN_USING_ENCODER);
-                        put(DcMotor.RunMode.RUN_WITHOUT_ENCODER.name(),DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    }},DcMotor.RunMode.RUN_USING_ENCODER.name()),
-                    new ConfigParam("MotorZeroPower", new LinkedHashMap<String, Object>() {{
-                        put(DcMotor.ZeroPowerBehavior.BRAKE.name(),DcMotor.ZeroPowerBehavior.BRAKE);
-                        put(DcMotor.ZeroPowerBehavior.FLOAT.name(),DcMotor.ZeroPowerBehavior.FLOAT);
-                    }},DcMotor.ZeroPowerBehavior.BRAKE.name()),
-                    new ConfigParam("ReverseType", new LinkedHashMap<String,Object>() {{
-                        put(ReverseType.REVERSE_LEFT.name(),ReverseType.REVERSE_LEFT);
-                        put(ReverseType.REVERSE_RIGHT.name(),ReverseType.REVERSE_RIGHT);
-                        put(ReverseType.REVERSE_FRONT.name(),ReverseType.REVERSE_FRONT);
-                        put(ReverseType.REVERSE_BACK.name(),ReverseType.REVERSE_BACK);
-                    }},ReverseType.REVERSE_RIGHT)
+                    new ConfigParam("MotorRunMode", new DcMotor.RunMode[] {
+                            DcMotor.RunMode.RUN_USING_ENCODER,
+                            DcMotor.RunMode.RUN_WITHOUT_ENCODER},
+                            DcMotor.RunMode.RUN_USING_ENCODER),
+                    new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE),
+                    new ConfigParam("ReverseType", ReverseType.REVERSE_RIGHT)
             };
         }
     }
@@ -1880,6 +1742,14 @@ public class MechanumDrive extends SubSystem {
          * @return - This instance of Params.
          */
         public Params setTurnPIDCoeffs(double kp, double ki, double kd, boolean useDegrees) {
+            return setTurnPIDCoeffs(kp,ki,kd,0.05,useDegrees);
+        }
+
+        public Params setTurnPIDCoeffs(double kp, double ki, double kd, double deadband) {
+            return setTurnPIDCoeffs(kp,ki,kd,deadband,false);
+        }
+
+        public Params setTurnPIDCoeffs(double kp, double ki, double kd, double deadband, boolean useDegrees){
             useGyro = true;
             useDegreesTurn = useDegrees;
             turnPID = new PIDController(kp, ki, kd, (Double target, Double current) -> {
@@ -1893,6 +1763,7 @@ public class MechanumDrive extends SubSystem {
 
                 return Math.abs(ccw) < Math.abs(cw) ? ccw : cw;
             });
+            turnPID.setDeadband(deadband);
             return this;
         }
 
@@ -1932,6 +1803,14 @@ public class MechanumDrive extends SubSystem {
             return setStabilityPIDCoeffs(kp, ki, kd, false);
         }
 
+        public Params setStabilityPIDCoeffs(double kp, double ki, double kd, boolean useDegrees) {
+            return setStabilityPIDCoeffs(kp,ki,kd,0,useDegrees);
+        }
+
+        public Params setStabilityPIDCoeffs(double kp, double ki, double kd, double deadband) {
+            return setStabilityPIDCoeffs(kp,ki,kd,deadband,false);
+        }
+
         /**
          * Sets the coefficients for the stabilityPID controller.
          *
@@ -1941,7 +1820,7 @@ public class MechanumDrive extends SubSystem {
          * @param useDegrees - A boolean specifying if the units are in degrees.
          * @return - This instance of Params.
          */
-        public Params setStabilityPIDCoeffs(double kp, double ki, double kd, boolean useDegrees) {
+        public Params setStabilityPIDCoeffs(double kp, double ki, double kd, double deadband, boolean useDegrees) {
             useGyro = true;
             useDegreesStability = useDegrees;
             stabilityPID = new PIDController(kp, ki, kd, (Double target, Double current) -> {
@@ -1955,6 +1834,7 @@ public class MechanumDrive extends SubSystem {
 
                 return Math.abs(ccw) < Math.abs(cw) ? ccw : cw;
             });
+            stabilityPID.setDeadband(deadband);
             return this;
         }
 
@@ -2233,6 +2113,14 @@ public class MechanumDrive extends SubSystem {
             return setTurnPIDCoeffs(kp, ki, kd, false);
         }
 
+        public SpecificParams setTurnPIDCoeffs(double kp, double ki, double kd, boolean useDegrees) {
+            return setTurnPIDCoeffs(kp,ki,kd,0.05,useDegrees);
+        }
+
+        public SpecificParams setTurnPIDCoeffs(double kp, double ki, double kd, double deadband) {
+            return setTurnPIDCoeffs(kp,ki,kd,deadband,false);
+        }
+
         /**
          * Sets the coefficients for the turnPID controller.
          *
@@ -2242,7 +2130,7 @@ public class MechanumDrive extends SubSystem {
          * @param useDegrees - A boolean specifying if the units are in degrees.
          * @return - This instance of Params.
          */
-        public SpecificParams setTurnPIDCoeffs(double kp, double ki, double kd, boolean useDegrees) {
+        public SpecificParams setTurnPIDCoeffs(double kp, double ki, double kd, double deadband, boolean useDegrees) {
             useDegreesTurn = useDegrees;
             turnPID = new PIDController(kp, ki, kd, (Double target, Double current) -> {
                 BiFunction<Double, Double, Double> mod = (Double x, Double m) -> (x % m + m) % m;
@@ -2255,6 +2143,7 @@ public class MechanumDrive extends SubSystem {
 
                 return Math.abs(ccw) < Math.abs(cw) ? ccw : cw;
             });
+            turnPID.setDeadband(deadband);
             return this;
         }
 
@@ -2293,6 +2182,14 @@ public class MechanumDrive extends SubSystem {
             return setStabilityPIDCoeffs(kp, ki, kd, false);
         }
 
+        public SpecificParams setStabilityPIDCoeffs(double kp, double ki, double kd, boolean useDegrees) {
+            return setStabilityPIDCoeffs(kp,ki,kd,0,useDegrees);
+        }
+
+        public SpecificParams setStabilityPIDCoeffs(double kp, double ki, double kd, double deadband) {
+            return setStabilityPIDCoeffs(kp,ki,kd,deadband,false);
+        }
+
         /**
          * Sets the coefficients for the stability PID controller.
          *
@@ -2302,7 +2199,7 @@ public class MechanumDrive extends SubSystem {
          * @param useDegrees - A boolean specifying if the units are in degrees.
          * @return - This instance of SpecificParams.
          */
-        public SpecificParams setStabilityPIDCoeffs(double kp, double ki, double kd, boolean useDegrees) {
+        public SpecificParams setStabilityPIDCoeffs(double kp, double ki, double kd, double deadband, boolean useDegrees) {
             useDegreesStability = useDegrees;
             stabilityPID = new PIDController(kp, ki, kd, (Double target, Double current) -> {
                 BiFunction<Double, Double, Double> mod = (Double x, Double m) -> (x % m + m) % m;
@@ -2315,6 +2212,7 @@ public class MechanumDrive extends SubSystem {
 
                 return Math.abs(ccw) < Math.abs(cw) ? ccw : cw;
             });
+            stabilityPID.setDeadband(deadband);
             return this;
         }
 

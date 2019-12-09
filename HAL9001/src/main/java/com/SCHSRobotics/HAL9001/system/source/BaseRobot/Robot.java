@@ -18,6 +18,7 @@ import com.SCHSRobotics.HAL9001.util.annotations.TeleopConfig;
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
+import com.SCHSRobotics.HAL9001.util.misc.ConfigData;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigParam;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -578,12 +579,52 @@ public abstract class Robot {
         return gamepad;
     }
 
+    public final ConfigData pullNonGamepad2(SubSystem subsystem) {
+        return pullNonGamepad2(subsystem.getClass().getSimpleName());
+    }
+
+    public final ConfigData pullNonGamepad2(String subsystem) {
+        List<ConfigParam> configParamsTeleop = new ArrayList<>();
+        List<ConfigParam> configParamsAuto = new ArrayList<>();
+
+        if(teleopConfig.keySet().contains(subsystem)) {
+            configParamsTeleop = teleopConfig.get(subsystem);
+        }
+        if(autonomousConfig.keySet().contains(subsystem)) {
+            configParamsAuto = autonomousConfig.get(subsystem);
+        }
+
+        if(configParamsAuto == null) {
+            configParamsAuto = new ArrayList<>();
+        }
+        if(configParamsTeleop == null) {
+            configParamsTeleop = new ArrayList<>();
+        }
+
+        Map<String,Object> output = new HashMap<>();
+
+        for (ConfigParam param : configParamsAuto) {
+            if (!param.usesGamepad) {
+                output.put(param.name, param.vals.get(param.options.indexOf(param.currentOption)));
+            }
+        }
+
+        for (ConfigParam param : configParamsTeleop) {
+            if (!param.usesGamepad) {
+                output.put(param.name, param.vals.get(param.options.indexOf(param.currentOption)));
+            }
+        }
+
+        return new ConfigData(output);
+    }
+
     /**
      * Pulls a map of all non-gamepad-related config settings from the global config. The map format is (option name) -> (option value)
      *
      * @param subsystem - The subsystem to pull the gamepad controls for.
      * @return - A map relating the name of each non-gamepad option to that option's value.
      */
+    @Deprecated
     public final Map<String,Object> pullNonGamepad(SubSystem subsystem) {
         return pullNonGamepad(subsystem.getClass().getSimpleName());
     }
@@ -594,6 +635,7 @@ public abstract class Robot {
      * @param subsystem - The name of the subsystem to pull the gamepad controls for.
      * @return - A map relating the name of each non-gamepad option to that option's value.
      */
+    @Deprecated
     public final Map<String,Object> pullNonGamepad(String subsystem) {
 
         List<ConfigParam> configParamsTeleop = new ArrayList<>();

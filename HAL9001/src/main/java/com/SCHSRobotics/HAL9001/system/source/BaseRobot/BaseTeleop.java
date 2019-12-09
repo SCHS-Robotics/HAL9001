@@ -9,7 +9,6 @@ package com.SCHSRobotics.HAL9001.system.source.BaseRobot;
 
 import android.util.Log;
 
-import com.SCHSRobotics.HAL9001.util.functional_interfaces.BiFunction;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 /**
@@ -97,32 +96,5 @@ public abstract class BaseTeleop extends LinearOpMode {
      */
     protected final Robot getRobot(){
         return robot;
-    }
-
-    /**
-     * Waits for a specified number of milliseconds.
-     *
-     * @param millis - The number of milliseconds to wait.
-     */
-    protected final void waitFor(long millis) {
-        long stopTime = System.currentTimeMillis() + millis;
-        while (opModeIsActive() && System.currentTimeMillis() < stopTime) {
-            sleep(1);
-        }
-    }
-
-    /**
-     * Waits for a boolean function with two inputs to return true. param1 and 2 must be updated from separate thread.
-     *
-     * @param condition - An arbitrary function taking two inputs and outputting a boolean.
-     * @param param1 - The function's first parameter.
-     * @param param2 - The function's second parameter.
-     * @param <T> - The first parameter's object type.
-     * @param <X> - The second parameter's object type.
-     */
-    protected final <T,X> void waitFor(BiFunction<T,X,Boolean> condition, T param1, X param2) {
-        while (opModeIsActive() && !condition.apply(param1,param2)) {
-            sleep(1);
-        }
     }
 }

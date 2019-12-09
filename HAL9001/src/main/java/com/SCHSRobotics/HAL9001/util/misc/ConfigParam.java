@@ -292,11 +292,41 @@ public class ConfigParam {
     public ConfigParam(String name, Map<String,Object> map, Object defaultOption) {
         this.name = name;
 
-        this.options = new ArrayList<>(map.keySet());
+        options = new ArrayList<>(map.keySet());
         this.defaultOption = defaultOption.toString();
         currentOption = this.defaultOption;
 
         vals = new ArrayList<>(map.values());
+
+        isBoolButton = false;
+        isDoubleButton = false;
+
+        usesGamepad = false;
+    }
+
+    public ConfigParam(String name, Enum<?> defaultOption) {
+        this.name = name;
+
+        options = Arrays.asList(Arrays.toString(defaultOption.getDeclaringClass().getEnumConstants()).replaceAll("^.|.$", "").split(", "));
+        this.defaultOption = defaultOption.name();
+        currentOption = this.defaultOption;
+
+        vals = Arrays.asList(defaultOption.getDeclaringClass().getEnumConstants());
+
+        isBoolButton = false;
+        isDoubleButton = false;
+
+        usesGamepad = false;
+    }
+
+    public ConfigParam(String name, Enum<?>[] enums, Enum<?> defaultOption) {
+        this.name = name;
+
+        options = Arrays.asList(Arrays.toString(enums).replaceAll("^.|.$", "").split(", "));
+        this.defaultOption = defaultOption.name();
+        currentOption = this.defaultOption;
+
+        vals = Arrays.asList(enums);
 
         isBoolButton = false;
         isDoubleButton = false;
@@ -370,6 +400,15 @@ public class ConfigParam {
             numMap.put(Double.toString(((double) Math.round(i*multiplier))/multiplier), ((double) Math.round(i*multiplier))/multiplier);
         }
         numMap.put(Double.toString(end),end);
+        return numMap;
+    }
+
+    public static LinkedHashMap<String,Object> numberMap(int start, int end, int increment) {
+        LinkedHashMap<String,Object> numMap = new LinkedHashMap<>();
+        for (int i = start; i < end ; i+= increment) {
+            numMap.put(Integer.toString(i), i);
+        }
+        numMap.put(Integer.toString(end),end);
         return numMap;
     }
 

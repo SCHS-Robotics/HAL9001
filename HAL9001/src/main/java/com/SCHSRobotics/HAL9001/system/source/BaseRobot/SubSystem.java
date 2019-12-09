@@ -7,6 +7,10 @@
 
 package com.SCHSRobotics.HAL9001.system.source.BaseRobot;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.robotcore.external.Supplier;
+
 /**
  * An abstract class representing a subsystem on the robot.
  */
@@ -35,36 +39,72 @@ public abstract class SubSystem {
 
     /**
      * An abstract method containing the code that the subsystem runs when being initialized.
-     *
-     * @throws InterruptedException - Throws this exception if the program is unexpectedly interrupted.
      */
-    public abstract void init() throws InterruptedException;
+    public abstract void init();
 
     /**
      * An abstract method that contains code that runs in a loop on init.
-     *
-     * @throws InterruptedException - Throws this exception if the program is unexpectedly interrupted.
      */
-    public abstract void init_loop() throws InterruptedException;
+    public abstract void init_loop();
 
     /**
      * An abstract method containing the code that the subsystem runs when being start.
-     *
-     * @throws InterruptedException - Throws this exception if the program is unexpectedly interrupted.
      */
-    public abstract void start() throws InterruptedException;
+    public abstract void start();
 
     /**
      * An abstract method containing the code that the subsystem runs every loop in a teleop program.
-     *
-     * @throws InterruptedException - Throws this exception if the program is unexpectedly interrupted.
      */
-    public abstract void handle() throws InterruptedException;
+    public abstract void handle();
 
     /**
      * An abstract method containing the code that the subsystem runs when the program is stopped.
-     *
-     * @throws InterruptedException - Throws this exception if the program is unexpectedly interrupted.
      */
-    public abstract void stop() throws InterruptedException;
+    public abstract void stop();
+
+    /**
+     * Waits for a specified number of milliseconds.
+     *
+     * @param millis - The number of milliseconds to wait.
+     */
+    protected final void waitTime(long millis) {
+        long stopTime = System.currentTimeMillis() + millis;
+        while (robot.opModeIsActive() && System.currentTimeMillis() < stopTime) {
+            ((LinearOpMode) robot.getOpMode()).sleep(1);
+        }
+    }
+
+    protected final void waitTime(long millis, Runnable runner) {
+        long stopTime = System.currentTimeMillis() + millis;
+        while (robot.opModeIsActive() && System.currentTimeMillis() < stopTime) {
+            runner.run();
+            ((LinearOpMode) robot.getOpMode()).sleep(1);
+        }
+    }
+
+    protected final void waitUntil(Supplier<Boolean> condition) {
+        while (robot.opModeIsActive() && !condition.get()) {
+            ((LinearOpMode) robot.getOpMode()).sleep(1);
+        }
+    }
+
+    protected final void waitUntil(Supplier<Boolean> condition, Runnable runner) {
+        while (robot.opModeIsActive() && !condition.get()) {
+            runner.run();
+            ((LinearOpMode) robot.getOpMode()).sleep(1);
+        }
+    }
+
+    protected final void waitWhile(Supplier<Boolean> condition) {
+        while (robot.opModeIsActive() && condition.get()) {
+            ((LinearOpMode) robot.getOpMode()).sleep(1);
+        }
+    }
+
+    protected final void waitWhile(Supplier<Boolean> condition, Runnable runner) {
+        while (robot.opModeIsActive() && condition.get()) {
+            runner.run();
+            ((LinearOpMode) robot.getOpMode()).sleep(1);
+        }
+    }
 }
