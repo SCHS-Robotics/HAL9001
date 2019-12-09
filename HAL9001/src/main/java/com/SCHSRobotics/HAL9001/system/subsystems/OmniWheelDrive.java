@@ -212,7 +212,7 @@ public class OmniWheelDrive extends SubSystem {
         turnLeftPower = params.turnLeftPower;
         turnRightPower = params.turnRightPower;
 
-        constantSpeedMultiplier = params.constantSpeedMultipler;
+        constantSpeedMultiplier = params.constantSpeedMultiplier;
         slowModeMultiplier = params.slowModeMultiplier;
         currentSpeedModeMultiplier = 1;
 
@@ -2033,7 +2033,7 @@ public class OmniWheelDrive extends SubSystem {
         //An array of length 4 containing the motor config. [0] = topLeft, [1] = topRight, [2] = bottomLeft, [3] = bottomRight.
         private String[] config;
         //Constants used in various parts of OmniWheel drive.
-        private double encodersPerMeter, turnLeftPower, turnRightPower, constantSpeedMultipler, slowModeMultiplier, constantTurnSpeedMultiplier, slowTurnModeMultiplier;
+        private double encodersPerMeter, turnLeftPower, turnRightPower, constantSpeedMultiplier, slowModeMultiplier, constantTurnSpeedMultiplier, slowTurnModeMultiplier;
         //Velocity PID coefficients.
         private double vkp, vki, vkd, vkf;
         //A boolean specifying if the velocity PID was changed.
@@ -2075,7 +2075,7 @@ public class OmniWheelDrive extends SubSystem {
             turnLeftPower = 0.5;
             turnRightPower = 0.5;
 
-            constantSpeedMultipler = 1;
+            constantSpeedMultiplier = 1;
             slowModeMultiplier = 1;
 
             constantTurnSpeedMultiplier = 1;
@@ -2118,11 +2118,11 @@ public class OmniWheelDrive extends SubSystem {
         /**
          * Set the constant speed multiplier.
          *
-         * @param constantSpeedMultipler - The constant speed multiplier. Always multiplied by velocity.
+         * @param constantSpeedMultiplier - The constant speed multiplier. Always multiplied by velocity.
          * @return - This instance of SpecificParams.
          */
-        public SpecificParams setConstantSpeedMultipler(double constantSpeedMultipler) {
-            this.constantSpeedMultipler = constantSpeedMultipler;
+        public SpecificParams setConstantSpeedMultiplier(double constantSpeedMultiplier) {
+            this.constantSpeedMultiplier = constantSpeedMultiplier;
             return this;
         }
 
