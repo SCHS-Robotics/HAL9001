@@ -31,9 +31,9 @@ public class VelocitySmoother {
     public VelocitySmoother(double accelMax) {
         this.aMax = accelMax;
         this.functionAlreadyInUse = false;
-        this.velocityProfile = (Double time)-> (dP*(3*Math.pow((time-xShift)/t0,2)-2*Math.pow((time-xShift)/t0,3))+yShift);
-        this.accelerationProfile = (Double time) -> (((6*dP)/Math.pow(t0,2))*(time-xShift)-((6*dP)/Math.pow(t0,3))*Math.pow(time-xShift,2));
-        this.jerkProfile = (Double shift, Double time) -> ((6*dP)/Math.pow(t0,2) - ((12*dP)/Math.pow(t0,3))*(time-shift));
+        //.velocityProfile = (Double time)-> (dP*(3*Math.pow((time-xShift)/t0,2)-2*Math.pow((time-xShift)/t0,3))+yShift);
+        //this.accelerationProfile = (Double time) -> (((6*dP)/Math.pow(t0,2))*(time-xShift)-((6*dP)/Math.pow(t0,3))*Math.pow(time-xShift,2));
+        //this.jerkProfile = (Double shift, Double time) -> ((6*dP)/Math.pow(t0,2) - ((12*dP)/Math.pow(t0,3))*(time-shift));
         this.dP = 0;
         this.t0 = 1;
         this.xShift = 0;

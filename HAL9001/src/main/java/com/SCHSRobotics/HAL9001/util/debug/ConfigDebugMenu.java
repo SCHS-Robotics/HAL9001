@@ -75,7 +75,12 @@ public class ConfigDebugMenu extends ScrollingListMenu {
     //The GuiLine use to enter config names. It is saved here so that if the back button is pressed the config name can be edited.
     private GuiLine nameLine;
     //A custom version of the modulo function that allows negative numbers to wrap around.
-    private BiFunction<Integer,Integer,Integer> customMod = (Integer x, Integer m) -> (x % m + m) % m;
+    private BiFunction<Integer,Integer,Integer> customMod = new BiFunction<Integer, Integer, Integer>() {
+        @Override
+        public Integer apply(Integer x, Integer m) {
+            return (x % m + m) % m;
+        }
+    };
     //The path to the robot folder.
     private String robotFilepath;
 

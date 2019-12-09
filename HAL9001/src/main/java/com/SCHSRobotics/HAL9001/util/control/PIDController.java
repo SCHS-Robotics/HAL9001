@@ -54,7 +54,12 @@ public class PIDController {
      * @param kd - Derivative control coefficient
      */
     public PIDController(double kp, double ki, double kd) {
-        this(kp,ki,kd,(Double target, Double current) -> (target - current), Type.STANDARD);
+        this(kp, ki, kd, new BiFunction<Double, Double, Double>() {
+            @Override
+            public Double apply(Double target, Double current) {
+                return target-current;
+            }
+        }, Type.STANDARD);
     }
 
     /**
@@ -78,7 +83,12 @@ public class PIDController {
      * @param type - Type of control system to use.
      */
     public PIDController(double kp, double ki, double kd, Type type) {
-        this(kp,ki,kd,(Double target, Double current) -> (target - current),type);
+        this(kp,ki,kd,new BiFunction<Double, Double, Double>() {
+            @Override
+            public Double apply(Double target, Double current) {
+                return target-current;
+            }
+        },type);
     }
     
     /**
@@ -123,7 +133,12 @@ public class PIDController {
      * @param type - The type of the PID(F) controller.
      */
     public PIDController(double kp, double ki, double kd, double kf, Type type) {
-        this(kp,ki,kd,kf,(Double target, Double current) -> (target - current),type);
+        this(kp,ki,kd,kf,new BiFunction<Double, Double, Double>() {
+            @Override
+            public Double apply(Double target, Double current) {
+                return target-current;
+            }
+        },type);
     }
     
     /**
@@ -135,7 +150,12 @@ public class PIDController {
      * @param kf - Feedforward control coefficient.
      */
     public PIDController(double kp, double ki, double kd, double kf) {
-        this(kp,ki,kd,kf,(Double target, Double current) -> (target - current), Type.FEED_FORWARD);
+        this(kp,ki,kd,kf,new BiFunction<Double, Double, Double>() {
+            @Override
+            public Double apply(Double target, Double current) {
+                return target-current;
+            }
+        }, Type.FEED_FORWARD);
     }
     
     /**

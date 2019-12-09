@@ -73,7 +73,12 @@ public class ConfigMenu extends ScrollingListMenu {
     //The GuiLine containing the name of the config file being created by the menu. Used for back button functionality while creating new configs.
     private GuiLine nameLine;
     //A custom implementation of the modulo function where negative numbers wrap around to m-1.
-    private BiFunction<Integer,Integer,Integer> customMod = (Integer x, Integer m) -> (x % m + m) % m;
+    private BiFunction<Integer,Integer,Integer> customMod = new BiFunction<Integer, Integer, Integer>() {
+        @Override
+        public Integer apply(Integer x, Integer m) {
+            return (x % m + m) % m;
+        }
+    };
     //A boolean to track if the menu is being run in standalone mode.
     private boolean standAloneMode;
     //A boolean value tracking whether the menu is finished configuring.

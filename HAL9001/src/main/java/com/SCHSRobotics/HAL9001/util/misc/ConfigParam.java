@@ -231,7 +231,7 @@ public class ConfigParam {
         this.defaultOption = defaultOption;
         currentOption = this.defaultOption;
 
-        vals = new ArrayList<>(options);
+        vals = new ArrayList<Object>(options);
 
         isBoolButton = false;
         isDoubleButton = false;
@@ -252,7 +252,7 @@ public class ConfigParam {
         this.defaultOption = defaultOption;
         currentOption = this.defaultOption;
 
-        vals = new ArrayList<>(Arrays.asList(options));
+        vals = new ArrayList<Object>(Arrays.asList(options));
 
         isBoolButton = false;
         isDoubleButton = false;
@@ -311,7 +311,7 @@ public class ConfigParam {
         this.defaultOption = defaultOption.name();
         currentOption = this.defaultOption;
 
-        vals = Arrays.asList(defaultOption.getDeclaringClass().getEnumConstants());
+        vals = new ArrayList<Object>(Arrays.asList(defaultOption.getDeclaringClass().getEnumConstants()));
 
         isBoolButton = false;
         isDoubleButton = false;
@@ -326,7 +326,7 @@ public class ConfigParam {
         this.defaultOption = defaultOption.name();
         currentOption = this.defaultOption;
 
-        vals = Arrays.asList(enums);
+        vals = new ArrayList<Object>(Arrays.asList(enums));
 
         isBoolButton = false;
         isDoubleButton = false;

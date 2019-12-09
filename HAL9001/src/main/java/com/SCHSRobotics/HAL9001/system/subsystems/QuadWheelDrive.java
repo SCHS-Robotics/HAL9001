@@ -24,6 +24,8 @@ import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 import com.SCHSRobotics.HAL9001.util.misc.Toggle;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.Supplier;
+
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -319,7 +321,7 @@ public class QuadWheelDrive extends SubSystem {
      * @param encoderDistance - Encoder distance to travel.
      * @param power - Double from (-1)-(1) of intensity of the movement positive for forward and negative for reverse.
      */
-    public void driveEncoders(int encoderDistance, double power) {
+    public void driveEncoders(final int encoderDistance, double power) {
         if(power == 0 && encoderDistance != 0) {
             throw new InvalidMoveCommandException("Power cannot be zero with a non zero target");
         }
@@ -328,9 +330,14 @@ public class QuadWheelDrive extends SubSystem {
             throw new DumpsterFireException("Where you're going, you don't need roads! (distance must be positive)");
         }
 
-        int startEncoderPos = topLeft.getCurrentPosition();
+        final int startEncoderPos = topLeft.getCurrentPosition();
         drive(power);
-        waitWhile(() -> Math.abs(topLeft.getCurrentPosition() - startEncoderPos) <= encoderDistance);
+        waitWhile(new Supplier<Boolean>() {
+            @Override
+            public Boolean get() {
+                return Math.abs(topLeft.getCurrentPosition() - startEncoderPos) <= encoderDistance;
+            }
+        });
         stopMovement();
     }
 
@@ -340,22 +347,32 @@ public class QuadWheelDrive extends SubSystem {
      * @param encoderDistance - Encoder distance to travel.
      * @param power - double from (-1)-(1) of intensity of turn in the turn move(positive for counterclockwise negative for clockwise).
      */
-    public void turnEncoders(int encoderDistance, double power) {
+    public void turnEncoders(final int encoderDistance, double power) {
 
         if(encoderDistance < 0) {
             throw new DumpsterFireException("Where you're going, you don't need roads! (distance must be positive)");
         }
 
-        int leftStartEncoderPos = topLeft.getCurrentPosition();
-        int rightStartEncoderPos = topRight.getCurrentPosition();
+        final int leftStartEncoderPos = topLeft.getCurrentPosition();
+        final int rightStartEncoderPos = topRight.getCurrentPosition();
         if(power > 0) {
             turn(power);
-            waitWhile(() -> Math.abs(topLeft.getCurrentPosition() - leftStartEncoderPos) <= encoderDistance);
+            waitWhile(new Supplier<Boolean>() {
+                @Override
+                public Boolean get() {
+                    return Math.abs(topLeft.getCurrentPosition() - leftStartEncoderPos) <= encoderDistance;
+                }
+            });
             stopMovement();
         }
         if (power < 0){
             turn(power);
-            waitWhile(() -> Math.abs(topRight.getCurrentPosition() - rightStartEncoderPos) <= encoderDistance);
+            waitWhile(new Supplier<Boolean>() {
+                @Override
+                public Boolean get() {
+                    return Math.abs(topRight.getCurrentPosition() - rightStartEncoderPos) <= encoderDistance;
+                }
+            });
             stopMovement();
         }
     }
@@ -366,16 +383,21 @@ public class QuadWheelDrive extends SubSystem {
      * @param encoderDistance - Encoder distance to travel.
      * @param input - Vector that determines direction and rotational speed. (x component is linear speed y is rotational speed)
      */
-    public void turnAndMoveEncoders(int encoderDistance, Vector input) {
+    public void turnAndMoveEncoders(final int encoderDistance, Vector input) {
 
         if(encoderDistance < 0) {
             throw new DumpsterFireException("Where you're going, you don't need roads! (distance must be positive)");
         }
 
-        int leftStartEncoderPos = topLeft.getCurrentPosition();
-        int rightStartEncoderPos = topRight.getCurrentPosition();
+        final int leftStartEncoderPos = topLeft.getCurrentPosition();
+        final int rightStartEncoderPos = topRight.getCurrentPosition();
         turnAndMove(input);
-        waitWhile(() -> Math.abs((topLeft.getCurrentPosition() - leftStartEncoderPos)/2 + (topRight.getCurrentPosition() - rightStartEncoderPos)/2) <= encoderDistance);
+        waitWhile(new Supplier<Boolean>() {
+            @Override
+            public Boolean get() {
+                return Math.abs((topLeft.getCurrentPosition() - leftStartEncoderPos)/2 + (topRight.getCurrentPosition() - rightStartEncoderPos)/2) <= encoderDistance;
+            }
+        });
         stopMovement();
     }
 

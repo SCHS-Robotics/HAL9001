@@ -38,6 +38,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Supplier;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -296,7 +297,12 @@ public class MechanumDrive extends SubSystem {
 
         if (usesGyro && !usesConfig) {
             imu.initialize(new BNO055IMU.Parameters());
-            waitUntil(() -> imu.isGyroCalibrated());
+            waitUntil(new Supplier<Boolean>() {
+                @Override
+                public Boolean get() {
+                    return imu.isGyroCalibrated();
+                }
+            });
         }
 
         if(useDisplayMenu) {
@@ -808,10 +814,15 @@ public class MechanumDrive extends SubSystem {
      * @param turnPower - The power to turn at.
      * @param encoders - The amount of encoder ticks to travel.
      */
-    public void turnAndMoveEncoders(Vector v, double turnPower, double encoders) {
-        int[] initVals = getEncoderPos();
+    public void turnAndMoveEncoders(Vector v, double turnPower, final double encoders) {
+        final int[] initVals = getEncoderPos();
         turnAndMove(v, turnPower);
-        waitWhile(() -> (Math.abs(getTopLeftEncoderPos()-initVals[0]) + Math.abs(getTopRightEncoderPos() - initVals[1]) + Math.abs(getBotLeftEncoderPos() - initVals[2]) + Math.abs(getBotRightEncoderPos() - initVals[3]))/4.0 < encoders);
+        waitWhile(new Supplier<Boolean>() {
+            @Override
+            public Boolean get() {
+                return (Math.abs(getTopLeftEncoderPos() - initVals[0]) + Math.abs(getTopRightEncoderPos() - initVals[1]) + Math.abs(getBotLeftEncoderPos() - initVals[2]) + Math.abs(getBotRightEncoderPos() - initVals[3]))/4.0 < encoders;
+            }
+        });
         stopAllMotors();
     }
 
@@ -912,7 +923,14 @@ public class MechanumDrive extends SubSystem {
         if (stabilityControl) {
             stabilityPID.setSetpoint(getCurrentAngle(useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS));
         }
-        waitTime(timeMs, () -> drive(v,stabilityControl));
+        final Vector vcpy = v.clone();
+        final boolean stabilityCtrl = stabilityControl;
+        waitTime(timeMs, new Runnable() {
+            @Override
+            public void run() {
+                drive(vcpy, stabilityCtrl);
+            }
+        });
         stopAllMotors();
     }
 
@@ -967,10 +985,13 @@ public class MechanumDrive extends SubSystem {
 
         Vector displacement = new Vector(encoders, v.theta, Vector.CoordinateType.POLAR);
 
-        double thresh1;
-        double thresh2;
+        final Vector vcpy = v.clone();
+        final boolean stabilityCtrl = stabilityControl;
 
-        int[] initVals = getEncoderPos();
+        final double thresh1;
+        final double thresh2;
+
+        final int[] initVals = getEncoderPos();
 
         if (stabilityControl) {
             stabilityPID.setSetpoint(getCurrentAngle(useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS));
@@ -985,8 +1006,18 @@ public class MechanumDrive extends SubSystem {
                 thresh1 = Math.abs(displacement.x);
                 thresh2 = Math.abs(displacement.y);
 
-                waitWhile(() -> Math.abs(getTopLeftEncoderPos() - initVals[0]) < thresh1 && Math.abs(getTopRightEncoderPos() - initVals[1]) < thresh2 && Math.abs(getBotLeftEncoderPos() - initVals[2]) < thresh2 && Math.abs(getBotRightEncoderPos() - initVals[3]) < thresh1,
-                        () -> drive(v,stabilityControl));
+                waitWhile(new Supplier<Boolean>() {
+                              @Override
+                              public Boolean get() {
+                                  return Math.abs(getTopLeftEncoderPos() - initVals[0]) < thresh1 && Math.abs(getTopRightEncoderPos() - initVals[1]) < thresh2 && Math.abs(getBotLeftEncoderPos() - initVals[2]) < thresh2 && Math.abs(getBotRightEncoderPos() - initVals[3]) < thresh1;
+                              }
+                          },
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                drive(vcpy, stabilityCtrl);
+                            }
+                        });
                 break;
             case FIELD_CENTRIC_TTA:
             case FIELD_CENTRIC:
@@ -999,19 +1030,38 @@ public class MechanumDrive extends SubSystem {
                 thresh1 = Math.abs(displacement.x);
                 thresh2 = Math.abs(displacement.y);
 
-                waitWhile(() -> Math.abs(getTopLeftEncoderPos() - initVals[0]) < thresh1 && Math.abs(getTopRightEncoderPos() - initVals[1]) < thresh2 && Math.abs(getBotLeftEncoderPos() - initVals[2]) < thresh2 && Math.abs(getBotRightEncoderPos() - initVals[3]) < thresh1,
-                        () -> drive(v,stabilityControl));
+                waitWhile(new Supplier<Boolean>() {
+                              @Override
+                              public Boolean get() {
+                                  return Math.abs(getTopLeftEncoderPos() - initVals[0]) < thresh1 && Math.abs(getTopRightEncoderPos() - initVals[1]) < thresh2 && Math.abs(getBotLeftEncoderPos() - initVals[2]) < thresh2 && Math.abs(getBotRightEncoderPos() - initVals[3]) < thresh1;
+                              }
+                          },
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                drive(vcpy, stabilityCtrl);
+                            }
+                        });
                 break;
             case ARCADE_TTA:
             case ARCADE:
 
-                double thresh = encoders * Math.sqrt(2) / 2;
+                final double thresh = encoders * Math.sqrt(2) / 2;
 
-                waitWhile(() -> Math.abs(getTopLeftEncoderPos() - initVals[0]) < thresh && Math.abs(getTopRightEncoderPos() - initVals[1]) < thresh && Math.abs(getBotLeftEncoderPos() - initVals[2]) < thresh && Math.abs(getBotRightEncoderPos() - initVals[3]) < thresh,
-                        () -> drive(v,stabilityControl));
+                waitWhile(new Supplier<Boolean>() {
+                              @Override
+                              public Boolean get() {
+                                  return Math.abs(getTopLeftEncoderPos() - initVals[0]) < thresh && Math.abs(getTopRightEncoderPos() - initVals[1]) < thresh && Math.abs(getBotLeftEncoderPos() - initVals[2]) < thresh && Math.abs(getBotRightEncoderPos() - initVals[3]) < thresh;
+                              }
+                          },
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                drive(vcpy, stabilityCtrl);
+                            }
+                        });
                 break;
         }
-
         stopAllMotors();
     }
 
@@ -1112,14 +1162,19 @@ public class MechanumDrive extends SubSystem {
      * @param turnPower - The power to turn at.
      * @param encoders - The number of encoder ticks to turn.
      */
-    public void turnEncoders(double turnPower, double encoders) {
+    public void turnEncoders(double turnPower, final double encoders) {
         if (encoders < 0) {
             throw new DumpsterFireException("Where you're going, you don't need roads! (encoders must be positive)");
         }
 
-        int[] initVals = getEncoderPos();
+        final int[] initVals = getEncoderPos();
         turn(turnPower);
-        waitWhile(() -> (Math.abs(getTopLeftEncoderPos() - initVals[0]) + Math.abs(getTopRightEncoderPos() - initVals[1]) + Math.abs(getBotLeftEncoderPos() - initVals[2]) + Math.abs(getBotRightEncoderPos() - initVals[3]))/4.0 < encoders);
+        waitWhile(new Supplier<Boolean>() {
+            @Override
+            public Boolean get() {
+                return (Math.abs(getTopLeftEncoderPos() - initVals[0]) + Math.abs(getTopRightEncoderPos() - initVals[1]) + Math.abs(getBotLeftEncoderPos() - initVals[2]) + Math.abs(getBotRightEncoderPos() - initVals[3]))/4.0 < encoders;
+            }
+        });
         stopAllMotors();
     }
 
@@ -1228,7 +1283,12 @@ public class MechanumDrive extends SubSystem {
         if(!usesGyro && useGyro) {
             imu = robot.hardwareMap.get(BNO055IMU.class,imuNumber == 1 ? "imu" : "imu 1");
             imu.initialize(new BNO055IMU.Parameters());
-            waitUntil(() -> imu.isGyroCalibrated());
+            waitUntil(new Supplier<Boolean>() {
+                @Override
+                public Boolean get() {
+                    return imu.isGyroCalibrated();
+                }
+            });
         }
         else if(usesGyro) {
             double angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
@@ -1749,19 +1809,27 @@ public class MechanumDrive extends SubSystem {
             return setTurnPIDCoeffs(kp,ki,kd,deadband,false);
         }
 
-        public Params setTurnPIDCoeffs(double kp, double ki, double kd, double deadband, boolean useDegrees){
+        public Params setTurnPIDCoeffs(double kp, double ki, double kd, double deadband, final boolean useDegrees){
             useGyro = true;
             useDegreesTurn = useDegrees;
-            turnPID = new PIDController(kp, ki, kd, (Double target, Double current) -> {
-                BiFunction<Double, Double, Double> mod = (Double x, Double m) -> (x % m + m) % m;
+            turnPID = new PIDController(kp, ki, kd, new BiFunction<Double,Double,Double>() {
+                @Override
+                public Double apply(Double target, Double current) {
+                    BiFunction<Double, Double, Double> mod = new BiFunction<Double, Double, Double>() {
+                        @Override
+                        public Double apply(Double x, Double m) {
+                            return (x % m + m) % m;
+                        }
+                    };
 
-                double m = useDegrees ? 360 : 2 * PI;
+                    double m = useDegrees ? 360 : 2 * PI;
 
-                //cw - ccw +
-                double cw = -mod.apply(mod.apply(current, m) - mod.apply(target, m), m);
-                double ccw = mod.apply(mod.apply(target, m) - mod.apply(current, m), m);
+                    //cw - ccw +
+                    double cw = -mod.apply(mod.apply(current, m) - mod.apply(target, m), m);
+                    double ccw = mod.apply(mod.apply(target, m) - mod.apply(current, m), m);
 
-                return Math.abs(ccw) < Math.abs(cw) ? ccw : cw;
+                    return Math.abs(ccw) < Math.abs(cw) ? ccw : cw;
+                }
             });
             turnPID.setDeadband(deadband);
             return this;
@@ -1820,19 +1888,27 @@ public class MechanumDrive extends SubSystem {
          * @param useDegrees - A boolean specifying if the units are in degrees.
          * @return - This instance of Params.
          */
-        public Params setStabilityPIDCoeffs(double kp, double ki, double kd, double deadband, boolean useDegrees) {
+        public Params setStabilityPIDCoeffs(double kp, double ki, double kd, double deadband, final boolean useDegrees) {
             useGyro = true;
             useDegreesStability = useDegrees;
-            stabilityPID = new PIDController(kp, ki, kd, (Double target, Double current) -> {
-                BiFunction<Double, Double, Double> mod = (Double x, Double m) -> (x % m + m) % m;
+            stabilityPID = new PIDController(kp, ki, kd, new BiFunction<Double,Double,Double>() {
+                @Override
+                public Double apply(Double target, Double current) {
+                    BiFunction<Double, Double, Double> mod = new BiFunction<Double, Double, Double>() {
+                        @Override
+                        public Double apply(Double x, Double m) {
+                            return (x % m + m) % m;
+                        }
+                    };
 
-                double m = useDegrees ? 360 : 2 * PI;
+                    double m = useDegrees ? 360 : 2 * PI;
 
-                //cw - ccw +
-                double cw = -mod.apply(mod.apply(current, m) - mod.apply(target, m), m);
-                double ccw = mod.apply(mod.apply(target, m) - mod.apply(current, m), m);
+                    //cw - ccw +
+                    double cw = -mod.apply(mod.apply(current, m) - mod.apply(target, m), m);
+                    double ccw = mod.apply(mod.apply(target, m) - mod.apply(current, m), m);
 
-                return Math.abs(ccw) < Math.abs(cw) ? ccw : cw;
+                    return Math.abs(ccw) < Math.abs(cw) ? ccw : cw;
+                }
             });
             stabilityPID.setDeadband(deadband);
             return this;
@@ -2130,18 +2206,26 @@ public class MechanumDrive extends SubSystem {
          * @param useDegrees - A boolean specifying if the units are in degrees.
          * @return - This instance of Params.
          */
-        public SpecificParams setTurnPIDCoeffs(double kp, double ki, double kd, double deadband, boolean useDegrees) {
+        public SpecificParams setTurnPIDCoeffs(double kp, double ki, double kd, double deadband, final boolean useDegrees) {
             useDegreesTurn = useDegrees;
-            turnPID = new PIDController(kp, ki, kd, (Double target, Double current) -> {
-                BiFunction<Double, Double, Double> mod = (Double x, Double m) -> (x % m + m) % m;
+            turnPID = new PIDController(kp, ki, kd, new BiFunction<Double,Double,Double>() {
+                @Override
+                public Double apply(Double target, Double current) {
+                    BiFunction<Double, Double, Double> mod = new BiFunction<Double, Double, Double>() {
+                        @Override
+                        public Double apply(Double x, Double m) {
+                            return (x % m + m) % m;
+                        }
+                    };
 
-                double m = useDegrees ? 360 : 2*PI;
+                    double m = useDegrees ? 360 : 2 * PI;
 
-                //cw - ccw +
-                double cw = -mod.apply(mod.apply(current,m) - mod.apply(target,m), m);
-                double ccw = mod.apply(mod.apply(target,m) - mod.apply(current,m), m);
+                    //cw - ccw +
+                    double cw = -mod.apply(mod.apply(current, m) - mod.apply(target, m), m);
+                    double ccw = mod.apply(mod.apply(target, m) - mod.apply(current, m), m);
 
-                return Math.abs(ccw) < Math.abs(cw) ? ccw : cw;
+                    return Math.abs(ccw) < Math.abs(cw) ? ccw : cw;
+                }
             });
             turnPID.setDeadband(deadband);
             return this;
@@ -2199,18 +2283,26 @@ public class MechanumDrive extends SubSystem {
          * @param useDegrees - A boolean specifying if the units are in degrees.
          * @return - This instance of SpecificParams.
          */
-        public SpecificParams setStabilityPIDCoeffs(double kp, double ki, double kd, double deadband, boolean useDegrees) {
+        public SpecificParams setStabilityPIDCoeffs(double kp, double ki, double kd, double deadband, final boolean useDegrees) {
             useDegreesStability = useDegrees;
-            stabilityPID = new PIDController(kp, ki, kd, (Double target, Double current) -> {
-                BiFunction<Double, Double, Double> mod = (Double x, Double m) -> (x % m + m) % m;
+            stabilityPID = new PIDController(kp, ki, kd, new BiFunction<Double,Double,Double>() {
+                @Override
+                public Double apply(Double target, Double current) {
+                    BiFunction<Double, Double, Double> mod = new BiFunction<Double, Double, Double>() {
+                        @Override
+                        public Double apply(Double x, Double m) {
+                            return (x % m + m) % m;
+                        }
+                    };
 
-                double m = useDegrees ? 360 : 2*PI;
+                    double m = useDegrees ? 360 : 2 * PI;
 
-                //cw - ccw +
-                double cw = -mod.apply(mod.apply(current,m) - mod.apply(target,m), m);
-                double ccw = mod.apply(mod.apply(target,m) - mod.apply(current,m), m);
+                    //cw - ccw +
+                    double cw = -mod.apply(mod.apply(current, m) - mod.apply(target, m), m);
+                    double ccw = mod.apply(mod.apply(target, m) - mod.apply(current, m), m);
 
-                return Math.abs(ccw) < Math.abs(cw) ? ccw : cw;
+                    return Math.abs(ccw) < Math.abs(cw) ? ccw : cw;
+                }
             });
             stabilityPID.setDeadband(deadband);
             return this;

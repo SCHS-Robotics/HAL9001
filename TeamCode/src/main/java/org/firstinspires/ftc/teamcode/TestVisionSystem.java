@@ -17,27 +17,27 @@ public class TestVisionSystem extends VisionSubSystem {
     }
 
     @Override
-    public void init() throws InterruptedException {
+    public void init() {
         retina = Retina.create(new Size(240,320),false, Bioinspired.RETINA_COLOR_BAYER,true);
     }
 
     @Override
-    public void init_loop() throws InterruptedException {
+    public void init_loop() {
 
     }
 
     @Override
-    public void start() throws InterruptedException {
+    public void start() {
         startVision();
     }
 
     @Override
-    public void handle() throws InterruptedException {
+    public void handle() {
 
     }
 
     @Override
-    public void stop() throws InterruptedException {
+    public void stop() {
 
     }
 
