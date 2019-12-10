@@ -51,10 +51,10 @@ public class GUI {
     /**
      * Constructor for GUI.
      *
-     * @param robot - The robot using the instance of GUI.
-     * @param flipMenu - The button used to cycle between multiple stored menus.
+     * @param robot The robot using the instance of GUI.
+     * @param flipMenu The button used to cycle between multiple stored menus.
      *
-     * @throws NotBooleanInputException - Throws an exception if button does not return boolean values.
+     * @throws NotBooleanInputException Throws an exception if button does not return boolean values.
      */
     public GUI(Robot robot, Button flipMenu) {
         this.robot = robot;
@@ -84,16 +84,25 @@ public class GUI {
 
     /**
      * Runs the init() function for every menu contained in the GUI.
+     *
+     * @throws NullPointerException Throws this exception if the active menu requested does not exist.
      */
-    public final void start(){
+    public final void start() {
         if(menus.size() > 0){
-            cursor = menus.get(menuKeys.get(activeMenuIdx)).cursor;
+            Menu menu = menus.get(menuKeys.get(activeMenuIdx));
+            if(menu == null) {
+                throw new NullPointerException("Requested Active Menu does not exist.");
+            }
+            cursor = menu.cursor;
         }
         for(Menu m : menus.values()) {
             m.init();
         }
     }
 
+    /**
+     * Runs the onStart() function for every menu contained in the GUI.
+     */
     public final void onStart() {
         for(Menu m : menus.values()) {
             m.onStart();
@@ -224,13 +233,20 @@ public class GUI {
      * Sets the active menu.
      *
      * @param menuName - The name of the menu to be set as the active menu.
+     * @throws NullPointerException Throws this exception when the requested active menu does not exist.
      */
     public void setActiveMenu(String menuName){
 
         this.activeMenu = menus.get(menuName);
         this.activeMenuIdx = menuKeys.indexOf(menuName);
-        menus.get(menuName).open();
-        cursor = menus.get(menuName).cursor;
+        Menu menu = menus.get(menuName);
+        if(menu == null) {
+            throw new NullPointerException("Requested active menu does not exist.");
+        }
+        else {
+            menu.open();
+            cursor = menu.cursor;
+        }
     }
 
     /**

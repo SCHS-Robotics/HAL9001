@@ -19,14 +19,13 @@ import com.SCHSRobotics.HAL9001.util.exceptions.NotDoubleInputException;
 import com.SCHSRobotics.HAL9001.util.math.Vector;
 import com.SCHSRobotics.HAL9001.util.misc.BaseParam;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
+import com.SCHSRobotics.HAL9001.util.misc.ConfigData;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigParam;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 import com.SCHSRobotics.HAL9001.util.misc.Toggle;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Supplier;
-
-import java.util.Map;
 
 /**
  * A customizable tankdrive subsystem.
@@ -249,6 +248,8 @@ public class TankDrive extends SubSystem {
      *
      * @param timeMs - time to drive for in milliseconds.
      * @param power - power to drive at. Positive for forward and negative for backwards.
+     *
+     * @throws DumpsterFireException Throws this exception if you try and move for negative time.
      */
     public void driveTime(long timeMs, double power) {
 
@@ -265,6 +266,8 @@ public class TankDrive extends SubSystem {
      *
      * @param timeMs - time to turn for in milliseconds.
      * @param power - power to turn at.
+     *
+     * @throws DumpsterFireException Throws this exception if you try and move for negative time.
      */
     public void turnTime(long timeMs, double power) {
         if(timeMs < 0) {
@@ -280,7 +283,9 @@ public class TankDrive extends SubSystem {
      * Drives and turns for a set time (positive power for counterclockwise or forward negative power for clockwise or backwards).
      *
      * @param timeMs - time to turn and drive for in milliseconds.
-     * @param input - Sets direction and rotational speed. (X is left and right, Y is forward and backwards)
+     * @param input - Sets direction and rotational speed. (X is left and right, Y is forward and backwards).
+     *
+     * @throws DumpsterFireException Throws this exception if you try and move for negative time.
      */
     public void turnAndMoveTime(long timeMs, Vector input) {
         if(timeMs < 0) {
@@ -487,12 +492,12 @@ public class TankDrive extends SubSystem {
      */
     private void setUsingConfigs() {
         inputs = robot.pullControls(this);
-        Map<String, Object> settingsData = robot.pullNonGamepad(this);
+        ConfigData data = robot.pullNonGamepad(this);
 
-        setTurnAndMove((boolean) settingsData.get("Turn and Move"));
+        setTurnAndMove(data.getData("Turn and Move",Boolean.class));
         if (!useSpecific) {
-            setConstantSpeedModifier((double) settingsData.get("ConstantSpeedModifier"));
-            setSpeedModeModifier((double) settingsData.get("SpeedModeModifier"));
+            setConstantSpeedModifier(data.getData("ConstantSpeedModifier",Double.class));
+            setSpeedModeModifier(data.getData("SpeedModeModifier",Double.class));
         }
     }
 
@@ -500,9 +505,9 @@ public class TankDrive extends SubSystem {
      * Pulls the config settings for autonomous.
      */
     private void setUsingConfigsAutonomous(){
-        Map<String, Object> settingsData = robot.pullNonGamepad(this);
+        ConfigData data = robot.pullNonGamepad(this);
 
-        setConstantSpeedModifier((double) settingsData.get("ConstantSpeedModifier"));
+        setConstantSpeedModifier(data.getData("ConstantSpeedModifier",Double.class));
     }
 
     /**
@@ -634,6 +639,8 @@ public class TankDrive extends SubSystem {
          *
          * @param driveStick - The drivestick button.
          * @return This instance of Params.
+         *
+         * @throws NotDoubleInputException Throws this exception when the drivestick button is not a double input.
          */
         public Params setDriveStick(Button driveStick) {
             if(!driveStick.isDouble) {
@@ -649,6 +656,8 @@ public class TankDrive extends SubSystem {
          *
          * @param turnStick - The turnstick button.
          * @return This instance of Params.
+         *
+         * @throws NotDoubleInputException Throws this exception when the turnstick button is not a double input.
          */
         public Params setTurnStick(Button turnStick) {
             if(!turnStick.isDouble) {
@@ -663,6 +672,8 @@ public class TankDrive extends SubSystem {
          *
          * @param speedModeButton - The speed mode button.
          * @return This instance of Params.
+         *
+         * @throws NotBooleanInputException Throws this exception when the speed mode button is not a boolean input.
          */
         public Params setSpeedModeButton(Button speedModeButton) {
             if(!speedModeButton.isBoolean) {

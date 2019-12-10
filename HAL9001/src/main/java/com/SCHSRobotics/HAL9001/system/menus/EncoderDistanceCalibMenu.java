@@ -32,7 +32,6 @@ public class EncoderDistanceCalibMenu extends Menu {
         }
     }
     private SpeedMode speedMode;
-
     //The customizable gamepad that stores all the inputs for the program.
     private CustomizableGamepad inputs;
     //The name of the button used to toggle the speed mode.
@@ -47,10 +46,12 @@ public class EncoderDistanceCalibMenu extends Menu {
     /**
      * Constructor for EncoderDistanceCalibMenu.
      *
-     * @param gui - The GUI being used to render the menu.
-     * @param unit - The unit of distance being entered into the menu.
-     * @param speedToggleButton - The button used to toggle the increment/decrement speed.
-     * @param calib - The EncoderDistanceCalib subsystem associated with this menu.
+     * @param gui The GUI being used to render the menu.
+     * @param unit The unit of distance being entered into the menu.
+     * @param speedToggleButton The button used to toggle the increment/decrement speed.
+     * @param calib The EncoderDistanceCalib subsystem associated with this menu.
+     *
+     * @throws NotBooleanInputException Throws this exception if the speed toggle button is not a boolean button.
      */
     public EncoderDistanceCalibMenu(GUI gui, Units unit, Button speedToggleButton, EncoderDistanceCalib calib){
         super(gui, new DefaultCursor(gui.robot, new DefaultCursor.Params()), new GuiLine[]{new GuiLine("<#>", ""), new GuiLine("###", "Done  " + "Increment: " + "Fast")},3,2);

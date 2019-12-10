@@ -366,7 +366,7 @@ public class ColorspaceCalib extends VisionSubSystem {
     public void start() {
         if(usesConfig) {
             inputs = robot.pullControls(this);
-            ConfigData data = robot.pullNonGamepad2(this);
+            ConfigData data = robot.pullNonGamepad(this);
             colorSpace = data.getData("Colorspace", ColorSpace.class);
         }
 

@@ -35,7 +35,7 @@ import java.util.Map;
  */
 public class ConfigMenu extends ScrollingListMenu {
 
-    /**
+    /*
     Internal state of the menu. Controls how it will react when a button is pressed.
     Menu State Key:
 
@@ -87,9 +87,9 @@ public class ConfigMenu extends ScrollingListMenu {
     /**
      * A constructor for ConfigMenu.
      *
-     * @param gui - The GUI being used to render the menu.
-     * @param filePath - The filepath where the menu is to start.
-     * @param standAloneMode - Whether or not the menu is being run in standAloneMode
+     * @param gui The GUI being used to render the menu.
+     * @param filePath The filepath where the menu is to start.
+     * @param standAloneMode Whether or not the menu is being run in standAloneMode
      */
     public ConfigMenu(GUI gui, String filePath, boolean standAloneMode) {
 
@@ -479,7 +479,7 @@ public class ConfigMenu extends ScrollingListMenu {
     /**
      * Returns an ArrayList representation of SUPPORTED_CHARS.
      *
-     * @return - ArrayList representation of SUPPORTED_CHARS.
+     * @return ArrayList representation of SUPPORTED_CHARS.
      */
     private static ArrayList<Character> getValidChars() {
         ArrayList<Character> outputList = new ArrayList<>();
@@ -492,8 +492,8 @@ public class ConfigMenu extends ScrollingListMenu {
     /**
      * Extract config file name from the file's path.
      *
-     * @param filePath - The path to the config file.
-     * @return - The config file's name.
+     * @param filePath The path to the config file.
+     * @return The config file's name.
      */
     private static String filepath2ConfigName(String filePath) {
         String[] data = filePath.split("/");
@@ -503,8 +503,8 @@ public class ConfigMenu extends ScrollingListMenu {
     /**
      * Parses the new_config name line. Removes all #s from the end and beginning of the line, and turns the ones in the middle into '_'s
      *
-     * @param input - The string obtained from the name line in new_config.
-     * @return - The name of the config file to be created.
+     * @param input The string obtained from the name line in new_config.
+     * @return The name of the config file to be created.
      */
     private static String parseName(String input) {
         int startIdx = 0;
@@ -535,8 +535,8 @@ public class ConfigMenu extends ScrollingListMenu {
     /**
      * Parse a GuiLine that represents a ConfigParam.
      *
-     * @param line - The GuiLine to be parsed.
-     * @return - A string array containing the name of the config param, the config param's current option, and, if applicable, the config param's current gamepad option.
+     * @param line The GuiLine to be parsed.
+     * @return A string array containing the name of the config param, the config param's current option, and, if applicable, the config param's current gamepad option.
      */
     private static String[] parseOptionLine(GuiLine line) {
         String unparsedLine = line.postSelectionText;
@@ -561,8 +561,8 @@ public class ConfigMenu extends ScrollingListMenu {
     /**
      * Generates a list of GuiLines from the names of all the config files in the given folder.
      *
-     * @param filePath - The path to the folder containing the config files.
-     * @return - A list of GuiLines generated from the names of all the config files.
+     * @param filePath The path to the folder containing the config files.
+     * @return A list of GuiLines generated from the names of all the config files.
      */
     private static ArrayList<GuiLine> genConfigLines(String filePath) {
         File rootDirectory = new File(filePath);
@@ -579,8 +579,8 @@ public class ConfigMenu extends ScrollingListMenu {
     /**
      * Generates the menu's initial lines. Basically a static version of setRootDirLines(). Only exists so that it can be passed into super() in the constructor as an initial set of lines.
      *
-     * @param filePath - The path to the folder where the config file are located.
-     * @return - The menu's initial GuiLines.
+     * @param filePath The path to the folder where the config file are located.
+     * @return The menu's initial GuiLines.
      */
     private static ArrayList<GuiLine> genInitialLines(String filePath) {
         ArrayList<GuiLine> startingLines = new ArrayList<>();
@@ -649,7 +649,7 @@ public class ConfigMenu extends ScrollingListMenu {
     /**
      * Loads the lines used when creating a new config. (2 lines, each 15 characters. 1st line is where the name is typed, 2nd line is a done line).
      *
-     * @param initName - The GuiLine to initialize the naming line as.
+     * @param initName The GuiLine to initialize the naming line as.
      */
     private void setNewConfigLines(GuiLine initName) {
         List<GuiLine> newLines = new ArrayList<>();
@@ -681,7 +681,7 @@ public class ConfigMenu extends ScrollingListMenu {
     /**
      * Removes the first Done line in a list of GuiLines.
      *
-     * @param lines - The list of GuiLines to search.
+     * @param lines The list of GuiLines to search.
      */
     private void removeDone(List<GuiLine> lines) {
         for(GuiLine line : lines) {
@@ -735,7 +735,7 @@ public class ConfigMenu extends ScrollingListMenu {
     /**
      * Updates a subsystem entry in the config map with a list of updated ConfigParams.
      *
-     * @param newConfig - The raw GuiLines containing all of the data used in updating the ConfigParams.
+     * @param newConfig The raw GuiLines containing all of the data used in updating the ConfigParams.
      */
     private void updateConfigMapSubsystem(List<GuiLine> newConfig, String subsystemName) {
         removeDone(newConfig); //gets rid of the Done line
@@ -755,7 +755,7 @@ public class ConfigMenu extends ScrollingListMenu {
     /**
      * Export the data in a config file to the Robot autonomous and teleop config maps.
      *
-     * @param filepath - The path to the config file being exported.
+     * @param filepath The path to the config file being exported.
      */
     private void exportConfigFile(String filepath) {
 
@@ -804,7 +804,7 @@ public class ConfigMenu extends ScrollingListMenu {
     /**
      * Reads a config file and loads it into the internal config map.
      *
-     * @param filepath - The path to the config file.
+     * @param filepath The path to the config file.
      */
     private void readConfigFile(String filepath) {
         FileInputStream fis;
@@ -847,8 +847,8 @@ public class ConfigMenu extends ScrollingListMenu {
     /**
      * Get the filepath of the config to autorun during teleop if not in standalone mode.
      *
-     * @param teleopFolderPath - The path to the teleop folder.
-     * @return - The filepath stored in the teleop/robot_info.txt file. If no filepath is found it will return an empty string.
+     * @param teleopFolderPath The path to the teleop folder.
+     * @return The filepath stored in the teleop/robot_info.txt file. If no filepath is found it will return an empty string.
      */
     private String getAutorunFilepath(String teleopFolderPath) {
         String outputFilepath = "";
@@ -888,7 +888,7 @@ public class ConfigMenu extends ScrollingListMenu {
     /**
      * Writes a config file to the specified path.
      *
-     * @param configPath - The path of the new config file.
+     * @param configPath The path of the new config file.
      */
     private void writeConfigFile(String configPath) {
         StringBuilder sb = new StringBuilder();
@@ -917,8 +917,8 @@ public class ConfigMenu extends ScrollingListMenu {
     /**
      * Writes data to a specified file. If the file doesn't exist, it creates it, otherwise, it overwrites it.
      *
-     * @param filePath - The path to write the data to.
-     * @param data - The data to write.
+     * @param filePath The path to write the data to.
+     * @param data The data to write.
      */
     private void writeData(String filePath, String data) {
         FileOutputStream fos;

@@ -15,6 +15,7 @@ import com.SCHSRobotics.HAL9001.util.misc.Button;
 
 import java.util.List;
 
+//TODO make synchronized/multithreaded
 /**
  * A menu class meant for displaying information similarly to telemetry.
  */
@@ -23,7 +24,7 @@ public class DisplayMenu extends BaseDisplayMenu {
     /**
      * Constructor for DisplayMenu.
      *
-     * @param gui - The GUI used to render the menu.
+     * @param gui The GUI used to render the menu.
      */
     public DisplayMenu(GUI gui) {
         super(gui, new DefaultCursor(gui.robot,new DefaultCursor.Params().setBlinkSpeedMs(0)), new GuiLine[]{});
@@ -40,8 +41,8 @@ public class DisplayMenu extends BaseDisplayMenu {
     /**
      * Adds a line with a caption and a data value to the end of the menu's lines.
      *
-     * @param caption - The data's caption.
-     * @param data - The data to print to the screen.
+     * @param caption The data's caption.
+     * @param data The data to print to the screen.
      */
     public void addData(String caption, Object data){
         if(lines.size() == 1 && lines.get(0).postSelectionText.equals("")) {
@@ -55,7 +56,7 @@ public class DisplayMenu extends BaseDisplayMenu {
     /**
      * Adds a line of text to the end of the menu's lines.
      *
-     * @param text - The text to add.
+     * @param text The text to add.
      */
     public void addLine(String text) {
 

@@ -11,6 +11,8 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.Supplier;
+
 /**
  * An abstract class used to more easily create opmodes.
  */
@@ -22,7 +24,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
     /**
      * An abstract method that is used to instantiate the robot.
      *
-     * @return - The robot being used in the opmode.
+     * @return The robot being used in the opmode.
      */
     protected abstract Robot buildRobot();
 
@@ -85,11 +87,96 @@ public abstract class BaseAutonomous extends LinearOpMode {
     }
 
     /**
-     * Gets the robot.
+     * Gets the robot running the program.
      *
-     * @return - The robot.
+     * @return The robot running this program.
      */
     protected final Robot getRobot() {
         return robot;
+    }
+
+    /**
+     * Waits for a specified number of milliseconds.
+     *
+     * @param millis The number of milliseconds to wait.
+     */
+    protected final void waitTime(long millis) {
+        long stopTime = System.currentTimeMillis() + millis;
+        while (robot.opModeIsActive() && System.currentTimeMillis() < stopTime) {
+            sleep(1);
+        }
+    }
+
+    /**
+     * Waits for a specified number of milliseconds, running a function in a loop while its waiting.
+     *
+     * @param millis The number of milliseconds to wait.
+     * @param runner The code to run each loop while waiting.
+     */
+    protected final void waitTime(long millis, Runnable runner) {
+        long stopTime = System.currentTimeMillis() + millis;
+        while (robot.opModeIsActive() && System.currentTimeMillis() < stopTime) {
+            runner.run();
+            sleep(1);
+        }
+    }
+
+    /**
+     * Waits until a condition returns true.
+     *
+     * @param condition The boolean condition that must be true in order for the program to stop waiting.
+     */
+    protected final void waitUntil(Supplier<Boolean> condition) {
+        while (robot.opModeIsActive() && !condition.get()) {
+            sleep(1);
+        }
+    }
+
+    /**
+     * Waits until a condition returns true, running a function in a loop while its waiting.
+     *
+     * @param condition The boolean condition that must be true in order for the program to stop waiting.
+     * @param runner The code to run each loop while waiting.
+     */
+    protected final void waitUntil(Supplier<Boolean> condition, Runnable runner) {
+        while (robot.opModeIsActive() && !condition.get()) {
+            runner.run();
+            sleep(1);
+        }
+    }
+
+    /**
+     * Waits while a condition is true.
+     *
+     * @param condition The boolean condition that must become false for the program to stop waiting.
+     */
+    protected final void waitWhile(Supplier<Boolean> condition) {
+        while (robot.opModeIsActive() && condition.get()) {
+            sleep(1);
+        }
+    }
+
+    /**
+     * Waits while a condition is true, running a function in a loop while its waiting.
+     *
+     * @param condition The boolean condition that must become false for the program to stop waiting.
+     * @param runner The code to run each loop while waiting.
+     */
+    protected final void waitWhile(Supplier<Boolean> condition, Runnable runner) {
+        while (robot.opModeIsActive() && condition.get()) {
+            runner.run();
+            sleep(1);
+        }
+    }
+
+    /**
+     * Waits a certain amount of time.
+     *
+     * @param millis The amount of time in milliseconds to wait.
+     * @deprecated Renamed to waitTime
+     */
+    @Deprecated
+    protected final void waitFor(long millis) {
+        waitTime(millis);
     }
 }

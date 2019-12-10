@@ -14,13 +14,11 @@ import com.SCHSRobotics.HAL9001.util.annotations.AutonomousConfig;
 import com.SCHSRobotics.HAL9001.util.annotations.TeleopConfig;
 import com.SCHSRobotics.HAL9001.util.control.PIDController;
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
-import com.SCHSRobotics.HAL9001.util.exceptions.GuiNotPresentException;
 import com.SCHSRobotics.HAL9001.util.exceptions.InvalidMoveCommandException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotAnAlchemistException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotDoubleInputException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotVectorInputException;
-import com.SCHSRobotics.HAL9001.util.exceptions.WrongDrivetypeException;
 import com.SCHSRobotics.HAL9001.util.functional_interfaces.BiFunction;
 import com.SCHSRobotics.HAL9001.util.math.ArrayMath;
 import com.SCHSRobotics.HAL9001.util.math.EncoderToDistanceProcessor;
@@ -90,26 +88,20 @@ public class MechanumDrive extends SubSystem {
         STANDARD, FIELD_CENTRIC, MATTHEW, ARCADE, STANDARD_TTA, FIELD_CENTRIC_TTA, ARCADE_TTA
     }
     private DriveType driveType;
-
+    //Which motors on the mechanum drive are reversed.
     public enum ReverseType {
         REVERSE_LEFT, REVERSE_RIGHT, REVERSE_FRONT, REVERSE_BACK
     }
     private ReverseType reverseType;
 
-    private DcMotorEx.RunMode runMode;
-    private DcMotorEx.ZeroPowerBehavior zeroPowerBehavior;
-
     /**
      * A constructor for the mechanum drive that takes parameters as input.
      *
-     * @param robot  - The robot the drive is currently being used on.
-     * @param params - The parameters for the drive.
+     * @param robot  The robot the drive is currently being used on.
+     * @param params The parameters for the drive.
      */
     public MechanumDrive(Robot robot, Params params) {
         super(robot);
-
-        runMode = params.runMode;
-        zeroPowerBehavior = params.zeroPowerBehavior;
 
         driveType = params.driveType;
 
@@ -144,10 +136,10 @@ public class MechanumDrive extends SubSystem {
         botLeft.setMode(params.runMode);
         botRight.setMode(params.runMode);
 
-        topLeft.setZeroPowerBehavior(zeroPowerBehavior);
-        topRight.setZeroPowerBehavior(zeroPowerBehavior);
-        botLeft.setZeroPowerBehavior(zeroPowerBehavior);
-        botRight.setZeroPowerBehavior(zeroPowerBehavior);
+        topLeft.setZeroPowerBehavior(params.zeroPowerBehavior);
+        topRight.setZeroPowerBehavior(params.zeroPowerBehavior);
+        botLeft.setZeroPowerBehavior(params.zeroPowerBehavior);
+        botRight.setZeroPowerBehavior(params.zeroPowerBehavior);
 
         resetAllEncoders();
 
@@ -200,9 +192,9 @@ public class MechanumDrive extends SubSystem {
     /**
      * A constructor for the mechanum drive that takes parameters as input and uses config.
      *
-     * @param robot         - The robot the drive is currently being used on.
-     * @param params        - The parameters for the drive.
-     * @param usingSpecific - Whether or not specific parameters were used instead of the configuration increment system.
+     * @param robot         The robot the drive is currently being used on.
+     * @param params        The parameters for the drive.
+     * @param usingSpecific Whether or not specific parameters were used instead of the configuration increment system.
      */
     public MechanumDrive(Robot robot, SpecificParams params, boolean usingSpecific) {
         super(robot);
@@ -260,11 +252,11 @@ public class MechanumDrive extends SubSystem {
     /**
      * A constructor for MechanumDrive that uses config and default settings.
      *
-     * @param robot - The robot the drive is currently being used on.
-     * @param topLeft - The top left motor config name.
-     * @param topRight - The top right motor config name.
-     * @param botLeft - The bottom left motor config name.
-     * @param botRight - The bottom right motor config name.
+     * @param robot The robot the drive is currently being used on.
+     * @param topLeft The top left motor config name.
+     * @param topRight The top right motor config name.
+     * @param botLeft The bottom left motor config name.
+     * @param botRight The bottom right motor config name.
      */
     public MechanumDrive(Robot robot, String topLeft, String topRight, String botLeft, String botRight) {
         this(robot,new SpecificParams(topLeft,topRight,botLeft,botRight), false);
@@ -273,12 +265,12 @@ public class MechanumDrive extends SubSystem {
     /**
      * A constructor for MechanumDrive that uses config and encoders per meter.
      *
-     * @param robot - The robot the drive is currently being used on.
-     * @param topLeft - The top left motor config name.
-     * @param topRight - The top right motor config name.
-     * @param botLeft - The bottom left motor config name.
-     * @param botRight - The bottom right motor config name.
-     * @param encodersPerMeter - The number of encoder ticks per meter.
+     * @param robot The robot the drive is currently being used on.
+     * @param topLeft The top left motor config name.
+     * @param topRight The top right motor config name.
+     * @param botLeft The bottom left motor config name.
+     * @param botRight The bottom right motor config name.
+     * @param encodersPerMeter The number of encoder ticks per meter.
      */
     public MechanumDrive(Robot robot, String topLeft, String topRight, String botLeft, String botRight, double encodersPerMeter) {
         this(robot,new SpecificParams(topLeft,topRight,botLeft,botRight).setEncodersPerMeter(encodersPerMeter), false);
@@ -323,7 +315,7 @@ public class MechanumDrive extends SubSystem {
     public void start() {
         if (usesConfig && robot.isTeleop()) {
             inputs = robot.pullControls(this);
-            ConfigData data = robot.pullNonGamepad2(this);
+            ConfigData data = robot.pullNonGamepad(this);
 
             imuNumber = (int) Math.round(data.getData("ImuNumber",Double.class));
 
@@ -361,7 +353,7 @@ public class MechanumDrive extends SubSystem {
             }
         }
         else if (usesConfig && robot.isAutonomous()) {
-            ConfigData data = robot.pullNonGamepad2(this);
+            ConfigData data = robot.pullNonGamepad(this);
 
             imuNumber = (int) Math.round(data.getData("ImuNumber",Double.class));
 
@@ -647,7 +639,7 @@ public class MechanumDrive extends SubSystem {
     }
 
     /**
-     * Sets the motors to the reverse direction.
+     * Reverses the left motors.
      */
     public void reverseLeft() {
         topLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -657,7 +649,7 @@ public class MechanumDrive extends SubSystem {
     }
 
     /**
-     * Sets the motors to the forward direction.
+     * Reverses the right motors.
      */
     public void reverseRight() {
         topLeft.setDirection(DcMotor.Direction.FORWARD);
@@ -666,6 +658,9 @@ public class MechanumDrive extends SubSystem {
         botRight.setDirection(DcMotor.Direction.REVERSE);
     }
 
+    /**
+     * Reverses the front motors.
+     */
     public void reverseFront() {
         topLeft.setDirection(DcMotor.Direction.REVERSE);
         topRight.setDirection(DcMotor.Direction.REVERSE);
@@ -673,18 +668,22 @@ public class MechanumDrive extends SubSystem {
         botRight.setDirection(DcMotor.Direction.FORWARD);
     }
 
+    /**
+     * Reverses the back motors.
+     */
     public void reverseBack() {
         topLeft.setDirection(DcMotor.Direction.FORWARD);
         topRight.setDirection(DcMotor.Direction.FORWARD);
         botLeft.setDirection(DcMotor.Direction.REVERSE);
         botRight.setDirection(DcMotor.Direction.REVERSE);
     }
+
     /**
      * Drive method for driving for a certain amount of time with matthew drive.
      *
-     * @param leftVector  - The vector for controlling the left side of the robot.
-     * @param rightVector - The vector for controlling the right side of the robot.
-     * @param timeMs      - The total time to run in ms.
+     * @param leftVector  The vector for controlling the left side of the robot.
+     * @param rightVector The vector for controlling the right side of the robot.
+     * @param timeMs      The total time to run in ms.
      */
     public void driveTime(Vector leftVector, Vector rightVector, long timeMs) {
         drive(leftVector, rightVector);
@@ -695,11 +694,11 @@ public class MechanumDrive extends SubSystem {
     /**
      * Drive method for driving for a certain distance with matthew drive.
      *
-     * @param leftVector    - The left motor vector.
-     * @param rightVector   - The right motor vector.
-     * @param distanceLeft  - The distance for the left side of the robot to travel.
-     * @param distanceRight - The distance for the right side of the robot to travel.
-     * @param unit          - The unit that the distance is being provided in.
+     * @param leftVector    The left motor vector.
+     * @param rightVector   The right motor vector.
+     * @param distanceLeft  The distance for the left side of the robot to travel.
+     * @param distanceRight The distance for the right side of the robot to travel.
+     * @param unit          The unit that the distance is being provided in.
      */
     public void turnAndMoveDistance(Vector leftVector, Vector rightVector, double distanceLeft, double distanceRight, Units unit) {
         EncoderToDistanceProcessor processor = new EncoderToDistanceProcessor(encodersPerMeter);
@@ -709,10 +708,13 @@ public class MechanumDrive extends SubSystem {
     /**
      * Turn and move at the same time for a certain amount of encoder ticks.
      *
-     * @param leftVector - The left motor vector.
-     * @param rightVector - The right motor vector.
-     * @param encodersLeft - The amount of encoders that the left side of the robot should travel.
-     * @param encodersRight - The amount of encoders that the right side of the robot should travel.
+     * @param leftVector The left motor vector.
+     * @param rightVector The right motor vector.
+     * @param encodersLeft The amount of encoders that the left side of the robot should travel.
+     * @param encodersRight The amount of encoders that the right side of the robot should travel.
+     *
+     * @throws InvalidMoveCommandException Throws this exception if you tried to move the robot in an impossible way. (ex: 0 power, move 2000 encoder ticks).
+     * @throws DumpsterFireException Throws this exception if you try and move negative encoder distances. Change the power to change direction.
      */
     public void turnAndMoveEncoders(Vector leftVector, Vector rightVector, double encodersLeft, double encodersRight) {
             if ((leftVector.isZeroVector() && encodersLeft != 0) || (rightVector.isZeroVector() && encodersRight != 0)) {
@@ -774,9 +776,9 @@ public class MechanumDrive extends SubSystem {
     /**
      * Turn and move at the same time for a certain amount of time.
      *
-     * @param leftVector - The left motor vector.
-     * @param rightVector - The right motor vector.
-     * @param timeMs - The time to turn and move in milliseconds.
+     * @param leftVector The left motor vector.
+     * @param rightVector The right motor vector.
+     * @param timeMs The time to turn and move in milliseconds.
      */
     public void turnAndMoveTime(Vector leftVector, Vector rightVector, long timeMs) {
         turnAndMove(leftVector,rightVector);
@@ -787,8 +789,8 @@ public class MechanumDrive extends SubSystem {
     /**
      * Turns and moves at the same time.
      *
-     * @param left - The left motor vector.
-     * @param right - The right motor vector.
+     * @param left The left motor vector.
+     * @param right The right motor vector.
      */
     public void turnAndMove(Vector left, Vector right) {
         drive(left, right);
@@ -797,10 +799,10 @@ public class MechanumDrive extends SubSystem {
     /**
      * Turn and move at the same time for a certain distance.
      *
-     * @param v - The velocity vector of the robot.
-     * @param turnPower - The power to turn at.
-     * @param distance - The distance to travel.
-     * @param unit - The unit of distance.
+     * @param v The velocity vector of the robot.
+     * @param turnPower The power to turn at.
+     * @param distance The distance to travel.
+     * @param unit The unit of distance.
      */
     public void turnAndMoveDistance(Vector v, double turnPower, double distance, Units unit) {
         EncoderToDistanceProcessor processor = new EncoderToDistanceProcessor(encodersPerMeter);
@@ -810,9 +812,9 @@ public class MechanumDrive extends SubSystem {
     /**
      * Turn and move at the same time for a certain amount of encoder ticks.
      *
-     * @param v - The velocity vector of the robot.
-     * @param turnPower - The power to turn at.
-     * @param encoders - The amount of encoder ticks to travel.
+     * @param v The velocity vector of the robot.
+     * @param turnPower The power to turn at.
+     * @param encoders The amount of encoder ticks to travel.
      */
     public void turnAndMoveEncoders(Vector v, double turnPower, final double encoders) {
         final int[] initVals = getEncoderPos();
@@ -829,9 +831,9 @@ public class MechanumDrive extends SubSystem {
     /**
      * Turn and move at the same time for a certain amount of time.
      *
-     * @param v - The robot's velocity vector.
-     * @param turnPower - The power to turn at.
-     * @param timeMs - The amount of time to run in milliseconds.
+     * @param v The robot's velocity vector.
+     * @param turnPower The power to turn at.
+     * @param timeMs The amount of time to run in milliseconds.
      */
     public void turnAndMoveTime(Vector v, double turnPower, long timeMs)  {
         turnAndMove(v, turnPower);
@@ -842,8 +844,8 @@ public class MechanumDrive extends SubSystem {
     /**
      * Turn and move at the same time.
      *
-     * @param v - The robot's velocity vector.
-     * @param turnPower - The power to turn at.
+     * @param v The robot's velocity vector.
+     * @param turnPower The power to turn at.
      */
     public void turnAndMove(Vector v, double turnPower) {
         Vector vcpy = v.clone();
@@ -885,8 +887,8 @@ public class MechanumDrive extends SubSystem {
     /**
      * Makes the robot move and/or turn. This is only used if the drive is being controlled matthew-style.
      *
-     * @param leftVector  - The left input vector.
-     * @param rightVector - The right input vector.
+     * @param leftVector  The left input vector.
+     * @param rightVector The right input vector.
      */
     public void drive(Vector leftVector, Vector rightVector) {
 
@@ -911,13 +913,12 @@ public class MechanumDrive extends SubSystem {
         botRight.setPower(powersRight[0]);
     }
 
-
     /**
      * Makes the robot move for a certain amount of time. Use this for any non-matthew drive mode.
      *
-     * @param v                - Makes the robot move a certain distance. Use this for any non-matthew drive mode.
-     * @param timeMs           - The amount of time in ms the robot should move.
-     * @param stabilityControl - Whether the robot should use stability control.
+     * @param v                Makes the robot move a certain distance. Use this for any non-matthew drive mode.
+     * @param timeMs           The amount of time in ms the robot should move.
+     * @param stabilityControl Whether the robot should use stability control.
      */
     public void driveTime(Vector v, long timeMs, boolean stabilityControl) {
         if (stabilityControl) {
@@ -937,8 +938,8 @@ public class MechanumDrive extends SubSystem {
     /**
      * Makes the robot move for a certain amount of time. Use this for any non-matthew drive mode.
      *
-     * @param v      - The direction and power that the robot should move at.
-     * @param timeMs - The time in ms that the robot should move for.
+     * @param v      The direction and power that the robot should move at.
+     * @param timeMs The time in ms that the robot should move for.
      */
     public void driveTime(Vector v, long timeMs) {
         driveTime(v, timeMs, false);
@@ -947,10 +948,10 @@ public class MechanumDrive extends SubSystem {
     /**
      * Makes the robot move a certain distance. Use this for any non-matthew drive mode.
      *
-     * @param v                - The direction and power that the robot should move at.
-     * @param distance         - The distance the robot should travel.
-     * @param unit             - The unit of distance the robot should travel.
-     * @param stabilityControl - Whether the robot should use stability control.
+     * @param v                The direction and power that the robot should move at.
+     * @param distance         The distance the robot should travel.
+     * @param unit             The unit of distance the robot should travel.
+     * @param stabilityControl Whether the robot should use stability control.
      */
     public void driveDistance(Vector v, double distance, Units unit, boolean stabilityControl) {
         EncoderToDistanceProcessor processor = new EncoderToDistanceProcessor(encodersPerMeter);
@@ -960,9 +961,9 @@ public class MechanumDrive extends SubSystem {
     /**
      * Makes the robot drive a specified distance in a specified direction.
      *
-     * @param v        - The input velocity vector.
-     * @param distance - The distance the robot should travel.
-     * @param unit     - The units of distance.
+     * @param v        The input velocity vector.
+     * @param distance The distance the robot should travel.
+     * @param unit     The units of distance.
      */
     public void driveDistance(Vector v, double distance, Units unit) {
         driveDistance(v, distance, unit, false);
@@ -971,9 +972,12 @@ public class MechanumDrive extends SubSystem {
     /**
      * Drive a certain number of encoder ticks.
      *
-     * @param v - The input velocity vector.
-     * @param encoders - The amount of encoder ticks to travel.
-     * @param stabilityControl - Whether or not to use the stability PID.
+     * @param v The input velocity vector.
+     * @param encoders The amount of encoder ticks to travel.
+     * @param stabilityControl Whether or not to use the stability PID.
+     *
+     * @throws InvalidMoveCommandException Throws this exception if you tried to move the robot in an impossible way. (ex: 0 power, move 2000 encoder ticks).
+     * @throws DumpsterFireException Throws this exception if you try and move negative encoder distances. Change the power to change direction.
      */
     public void driveEncoders(Vector v, double encoders, boolean stabilityControl) {
         if (v.isZeroVector() && encoders != 0) {
@@ -1021,10 +1025,6 @@ public class MechanumDrive extends SubSystem {
                 break;
             case FIELD_CENTRIC_TTA:
             case FIELD_CENTRIC:
-                if (!usesGyro) {
-                    throw new WrongDrivetypeException("Field Centric Drive Must uses the IMU but the IMU was never set up");
-                }
-
                 displacement.rotate(-((PI / 4) + getCurrentAngle()));
 
                 thresh1 = Math.abs(displacement.x);
@@ -1068,8 +1068,8 @@ public class MechanumDrive extends SubSystem {
     /**
      * Drive a certain number of encoder ticks.
      *
-     * @param v - The input velocity vector.
-     * @param encoders - The amount of encoder ticks to travel.
+     * @param v The input velocity vector.
+     * @param encoders The amount of encoder ticks to travel.
      */
     public void driveEncoders(Vector v, double encoders) {
         driveEncoders(v,encoders,false);
@@ -1078,8 +1078,8 @@ public class MechanumDrive extends SubSystem {
     /**
      * Makes the robot move. Use this for any non-matthew drive mode. You must set the stability control target manually for this to work with stability control.
      *
-     * @param v - The direction and power that the robot should move at.
-     * @param stabilityControl - Whether or not to use the drive's stability control system.
+     * @param v The direction and power that the robot should move at.
+     * @param stabilityControl Whether or not to use the drive's stability control system.
      */
     public void drive(Vector v, boolean stabilityControl){
 
@@ -1098,9 +1098,6 @@ public class MechanumDrive extends SubSystem {
                 break;
             case FIELD_CENTRIC_TTA:
             case FIELD_CENTRIC:
-                if(!usesGyro) {
-                    throw new WrongDrivetypeException("Field Centric Drive Must uses the IMU but the IMU was never set up");
-                }
                 vcpy.rotate(-((PI / 4) + getCurrentAngle()));
                 setPower(vcpy.x - correction, vcpy.y + correction, vcpy.y - correction, vcpy.x + correction);
                 break;
@@ -1125,7 +1122,7 @@ public class MechanumDrive extends SubSystem {
     /**
      * Makes the robot move. Use this for any non-matthew drive mode. You must set the stability control target manually for this to work with stability control.
      *
-     * @param v - The direction vector indicating how the robot should move.
+     * @param v The direction vector indicating how the robot should move.
      */
     public void drive(Vector v) {
         drive(v,false);
@@ -1134,8 +1131,8 @@ public class MechanumDrive extends SubSystem {
     /**
      * Turns for a certain amount of time.
      *
-     * @param turnPower - The power to turn at.
-     * @param timeMs - The time to turn in milliseconds.
+     * @param turnPower The power to turn at.
+     * @param timeMs The time to turn in milliseconds.
      */
     public void turnTime(double turnPower, long timeMs){
         turn(turnPower);
@@ -1146,9 +1143,9 @@ public class MechanumDrive extends SubSystem {
     /**
      * Turn a certain distance.
      *
-     * @param turnPower - The power to turn at.
-     * @param distance - The distance to turn.
-     * @param unit - The unit of distance.
+     * @param turnPower The power to turn at.
+     * @param distance The distance to turn.
+     * @param unit The unit of distance.
      */
     public void turnDistance(double turnPower, double distance, Units unit) {
         EncoderToDistanceProcessor processor = new EncoderToDistanceProcessor(encodersPerMeter);
@@ -1159,8 +1156,10 @@ public class MechanumDrive extends SubSystem {
     /**
      * Turn a certain number of encoder ticks.
      *
-     * @param turnPower - The power to turn at.
-     * @param encoders - The number of encoder ticks to turn.
+     * @param turnPower The power to turn at.
+     * @param encoders The number of encoder ticks to turn.
+     *
+     * @throws DumpsterFireException Throws this exception if you try and move negative encoder distances. Change the power to change direction.
      */
     public void turnEncoders(double turnPower, final double encoders) {
         if (encoders < 0) {
@@ -1181,7 +1180,7 @@ public class MechanumDrive extends SubSystem {
     /**
      * Makes the robot turn.
      *
-     * @param turnPower - The power to turn at.
+     * @param turnPower The power to turn at.
      */
     public void turn(double turnPower) {
         topLeft.setPower(Range.clip(-turnPower,-1,1));
@@ -1193,12 +1192,14 @@ public class MechanumDrive extends SubSystem {
     /**
      * Turns to a specified angle within a specified tolerance.
      *
-     * @param angle - The angle to turn to.
-     * @param tolerance - The tolerance that the angle must be within.
+     * @param angle The angle to turn to.
+     * @param tolerance The tolerance that the angle must be within.
+     *
+     * @throws InvalidMoveCommandException Throws this exception when you try and run turnTo without a gyroscope activated.
      */
     public void turnTo(double angle, double tolerance) {
         if(!usesGyro) {
-            throw new GuiNotPresentException("turnTo must use a gyroscope");
+            throw new InvalidMoveCommandException("turnTo must use a gyroscope");
         }
         double prevDeadband = turnPID.deadband;
         turnPID.setDeadband(tolerance);
@@ -1213,6 +1214,11 @@ public class MechanumDrive extends SubSystem {
         stopAllMotors();
     }
 
+    /**
+     * Turns to a specified angle using the turn PID controller's tolerance.
+     *
+     * @param angle The angle to turn to.
+     */
     public void turnTo(double angle) {
         turnTo(angle, turnPID.deadband);
     }
@@ -1265,7 +1271,7 @@ public class MechanumDrive extends SubSystem {
     /**
      * Updates the mechanum drive's mode.
      *
-     * @param driveType - The driving mode that the drivetrain will be set to.
+     * @param driveType The driving mode that the drivetrain will be set to.
      */
     public void setDriveMode(DriveType driveType) {
         boolean useGyro = driveType == DriveType.STANDARD_TTA || driveType == DriveType.FIELD_CENTRIC || driveType == DriveType.FIELD_CENTRIC_TTA || driveType == DriveType.ARCADE_TTA;
@@ -1276,8 +1282,8 @@ public class MechanumDrive extends SubSystem {
     /**
      * Sets the gyroscope mode.
      *
-     * @param useGyro - Whether or not to use the gyroscope.
-     * @param imuNumber - The imu number referring to which IMU is being used as a gyro. It must be either 1 or 2.
+     * @param useGyro Whether or not to use the gyroscope.
+     * @param imuNumber The imu number referring to which IMU is being used as a gyro. It must be either 1 or 2.
      */
     public void setUseGyro(boolean useGyro, int imuNumber) {
         if(!usesGyro && useGyro) {
@@ -1301,7 +1307,7 @@ public class MechanumDrive extends SubSystem {
     /**
      * Gets the motor config.
      *
-     * @return - The motor config.
+     * @return The motor config.
      */
     public String[] getConfig() {
         return config;
@@ -1310,10 +1316,10 @@ public class MechanumDrive extends SubSystem {
     /**
      * Sets the scaled powers of all 4 motors.
      *
-     * @param topLeftPower - The top left motor power.
-     * @param topRightPower - The top right motor power.
-     * @param botLeftPower - The top left motor power.
-     * @param botRightPower - The bottom right motor power.
+     * @param topLeftPower The top left motor power.
+     * @param topRightPower The top right motor power.
+     * @param botLeftPower The top left motor power.
+     * @param botRightPower The bottom right motor power.
      */
     public void setPower(double topLeftPower, double topRightPower, double botLeftPower, double botRightPower) {
         double[] powers = new double[] {topLeftPower, topRightPower, botLeftPower, botRightPower};
@@ -1326,106 +1332,251 @@ public class MechanumDrive extends SubSystem {
         botRight.setPower(powers[3]);
     }
 
+    /**
+     * Set the top left motor power.
+     *
+     * @param power The desired motor power.
+     */
     public void setTopLeftPower(double power) {
         topLeft.setPower(power);
     }
 
+    /**
+     * Set the top right motor power.
+     *
+     * @param power The desired motor power.
+     */
     public void setTopRightPower(double power) {
         topRight.setPower(power);
     }
 
+    /**
+     * Set the bottom left motor power.
+     *
+     * @param power The desired motor power.
+     */
     public void setBotLeftPower(double power) {
         botLeft.setPower(power);
     }
 
+    /**
+     * Set the bottom right motor power.
+     *
+     * @param power The desired motor power.
+     */
     public void setBotRightPower(double power) {
         botRight.setPower(power);
     }
 
+    /**
+     * Sets the top left motor runmode.
+     *
+     * @param mode The desired runmode.
+     */
     public void setTopLeftMode(DcMotor.RunMode mode) {
         topLeft.setMode(mode);
     }
 
+    /**
+     * Sets the top right motor runmode.
+     *
+     * @param mode The desired runmode.
+     */
     public void setTopRightMode(DcMotor.RunMode mode) {
         topRight.setMode(mode);
     }
 
+    /**
+     * Sets the bottom left motor runmode.
+     *
+     * @param mode The desired runmode.
+     */
     public void setBotLeftMode(DcMotor.RunMode mode) {
         botLeft.setMode(mode);
     }
 
+    /**
+     * Sets the bottom right motor runmode.
+     *
+     * @param mode The desired runmode.
+     */
     public void setBotRightMode(DcMotor.RunMode mode) {
         botRight.setMode(mode);
     }
 
+    /**
+     * Sets the top left motor zero power behavior.
+     *
+     * @param zeroPowerBehavior The desired power behavior.
+     */
     public void setTopLeftZeroMode(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
         topLeft.setZeroPowerBehavior(zeroPowerBehavior);
     }
 
+    /**
+     * Sets the top right motor zero power behavior.
+     *
+     * @param zeroPowerBehavior The desired zero power behavior.
+     */
     public void setTopRightZeroMode(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
         topRight.setZeroPowerBehavior(zeroPowerBehavior);
     }
 
+    /**
+     * Sets the bottom left motor zero power behavior.
+     *
+     * @param zeroPowerBehavior The desired zero power behavior.
+     */
     public void setBotLeftZeroMode(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
         botLeft.setZeroPowerBehavior(zeroPowerBehavior);
     }
 
+    /**
+     * Sets the bottom right motor zero power behavior.
+     *
+     * @param zeroPowerBehavior The desired zero power behavior.
+     */
     public void setBotRightZeroMode(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
         botRight.setZeroPowerBehavior(zeroPowerBehavior);
     }
 
+    /**
+     * Gets the robot's current yaw angle from the gyro.
+     *
+     * @param angleUnit The unit the angle will be returned in.
+     * @return The current yaw angle if the gyroscope is use. If the gyro is not active, it returns 0.
+     */
     public double getCurrentAngle(AngleUnit angleUnit) {
         return usesGyro ? imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,angleUnit).firstAngle : 0;
     }
 
+    /**
+     * Gets the robot's current yaw angle from the gyro.
+     *
+     * @return The current yaw angle if the gyroscope is use. If the gyro is not active, it returns 0.
+     */
     public double getCurrentAngle() {
         return getCurrentAngle(AngleUnit.RADIANS);
     }
 
+    /**
+     * Gets the robot's current pitch angle from the gyro.
+     *
+     * @param angleUnit The unit the angle will be returned in.
+     * @return The current pitch angle if the gyroscope is use. If the gyro is not active, it returns 0.
+     */
     public double getCurrentPitch(AngleUnit angleUnit) {
         return usesGyro ? imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,angleUnit).secondAngle : 0;
     }
 
+    /**
+     * Gets the robot's current pitch angle from the gyro.
+     *
+     * @return The current pitch angle if the gyroscope is use. If the gyro is not active, it returns 0.
+     */
     public double getCurrentPitch() {
         return getCurrentPitch(AngleUnit.RADIANS);
     }
 
+    /**
+     * Gets the robot's current roll angle from the gyro.
+     *
+     * @param angleUnit The unit the angle will be returned in.
+     * @return The current roll angle if the gyroscope is use. If the gyro is not active, it returns 0.
+     */
     public double getCurrentRoll(AngleUnit angleUnit) {
         return usesGyro ? imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,angleUnit).secondAngle : 0;
     }
 
+    /**
+     * Gets the robot's current roll angle from the gyro.
+     *
+     * @return The current roll angle if the gyroscope is use. If the gyro is not active, it returns 0.
+     */
     public double getCurrentRoll() {
         return getCurrentRoll(AngleUnit.RADIANS);
     }
 
+    /**
+     * Gets the robot's angular orientation in space.
+     *
+     * @param angleUnit The unit the angles will be returned in.
+     * @param order The order of the axes used to define the angles.
+     * @param reference The coordinate axes reference.
+     * @return The robot's orientation.
+     */
     public Orientation getOrientation(AngleUnit angleUnit, AxesOrder order, AxesReference reference) {
         return usesGyro ? imu.getAngularOrientation(reference,order,angleUnit) : new Orientation();
     }
 
+    /**
+     * Gets the robot's angular orientation in space.
+     *
+     * @param angleUnit The unit the angles will be returned in.
+     * @param order The order of the axes used to define the angles.
+     * @return The robot's orientation.
+     */
     public Orientation getOrientation(AngleUnit angleUnit, AxesOrder order) {
         return getOrientation(angleUnit,order,AxesReference.INTRINSIC);
     }
 
+    /**
+     * Gets the robot's angular orientation in space.
+     *
+     * @param angleUnit The unit the angles will be returned in.
+     * @param reference The coordinate axes reference.
+     * @return The robot's orientation.
+     */
     public Orientation getOrientation(AngleUnit angleUnit, AxesReference reference) {
         return getOrientation(angleUnit,AxesOrder.ZYX,reference);
     }
 
+    /**
+     * Gets the robot's angular orientation in space.
+     *
+     * @param order The order of the axes used to define the angles.
+     * @param reference The coordinate axes reference.
+     * @return The robot's orientation.
+     */
     public Orientation getOrientation(AxesOrder order, AxesReference reference) {
         return getOrientation(AngleUnit.RADIANS, order, reference);
     }
 
+    /**
+     * Gets the robot's angular orientation in space.
+     *
+     * @param angleUnit The unit the angles will be returned in.
+     * @return The robot's orientation.
+     */
     public Orientation getOrientation(AngleUnit angleUnit) {
         return getOrientation(angleUnit,AxesOrder.ZYX,AxesReference.INTRINSIC);
     }
 
+    /**
+     * Gets the robot's angular orientation in space.
+     *
+     * @param order The order of the axes used to define the angles.
+     * @return The robot's orientation.
+     */
     public Orientation getOrientation(AxesOrder order) {
         return getOrientation(AngleUnit.RADIANS,order,AxesReference.INTRINSIC);
     }
 
+    /**
+     * Gets the robot's angular orientation in space.
+     *
+     * @param reference The coordinate axes reference.
+     * @return The robot's orientation.
+     */
     public Orientation getOrientation(AxesReference reference) {
         return getOrientation(AngleUnit.RADIANS,AxesOrder.ZYX,reference);
     }
 
+    /**
+     * Gets the robot's angular orientation in space.
+     *
+     * @return The robot's orientation.
+     */
     public Orientation getOrientation() {
         return getOrientation(AngleUnit.RADIANS,AxesOrder.ZYX,AxesReference.INTRINSIC);
     }
@@ -1555,17 +1706,20 @@ public class MechanumDrive extends SubSystem {
         private double constantTurnSpeedMultiplier, turnSpeedModeMultiplier;
         //Boolean values specifying whether or not degrees should be used for the stability and turn PID controllers.
         private boolean useDegreesStability, useDegreesTurn;
+        //The runmode of the motors.
         private DcMotorEx.RunMode runMode;
+        //The zero power behavior of the motors.
         private DcMotorEx.ZeroPowerBehavior zeroPowerBehavior;
+        //Which motors will be reversed on the robot.
         private ReverseType reverseType;
 
         /**
          * A constructor for the parameters object. Sets default parameter values.
          *
-         * @param topLeft  - The top left motor config name.
-         * @param topRight - The top right motor config name.
-         * @param botLeft  - The bottom left motor config name.
-         * @param botRight - The bottom right motor config name.
+         * @param topLeft  The top left motor config name.
+         * @param topRight The top right motor config name.
+         * @param botLeft  The bottom left motor config name.
+         * @param botRight The bottom right motor config name.
          */
         public Params(String topLeft, String topRight, String botLeft, String botRight) {
 
@@ -1619,8 +1773,8 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the drive type to be used.
          *
-         * @param driveType - The driveType that will be used.
-         * @return - This instance of Params.
+         * @param driveType The driveType that will be used.
+         * @return This instance of Params.
          */
         public Params setDriveType(DriveType driveType) {
             this.driveType = driveType;
@@ -1631,9 +1785,10 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the driving input button. Must be a vector input.
          *
-         * @param driveStick - The vector input used to control the robot.
-         * @return - This instance of Params.
-         * @throws NotVectorInputException - Throws this if the input button is not a vector input.
+         * @param driveStick The vector input used to control the robot.
+         * @return This instance of Params.
+         *
+         * @throws NotVectorInputException Throws this if the input button is not a vector input.
          */
         public Params setDriveStick(Button driveStick) {
             if (!driveStick.isVector) {
@@ -1646,9 +1801,10 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the driving input button for the left side of the robot. Must be a vector input.
          *
-         * @param driveStickLeft - The vector input used to control the left side of the robot.
-         * @return - This instance of Params.
-         * @throws NotVectorInputException - Throws this if input button is not a vector input.
+         * @param driveStickLeft The vector input used to control the left side of the robot.
+         * @return This instance of Params.
+         *
+         * @throws NotVectorInputException Throws this if input button is not a vector input.
          */
         public Params setDriveStickLeft(Button driveStickLeft) {
             if (!driveStickLeft.isVector) {
@@ -1661,9 +1817,10 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the driving input button for the right side of the robot. Must be a vector input.
          *
-         * @param driveStickRight - The vector input used to control the right side of the robot.
-         * @return - This instance of Params.
-         * @throws NotVectorInputException - Throws this if input button is not a vector input.
+         * @param driveStickRight The vector input used to control the right side of the robot.
+         * @return This instance of Params.
+         *
+         * @throws NotVectorInputException Throws this if input button is not a vector input.
          */
         public Params setDriveStickRight(Button driveStickRight) {
             if (!driveStickRight.isVector) {
@@ -1676,9 +1833,10 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the turning input button. Must be a double input.
          *
-         * @param turnStick - The double input used to control the robot's turning speed.
-         * @return - This instance of Params.
-         * @throws NotDoubleInputException - Throws this if the input button is not a double input.
+         * @param turnStick The double input used to control the robot's turning speed.
+         * @return This instance of Params.
+         *
+         * @throws NotDoubleInputException Throws this if the input button is not a double input.
          */
         public Params setTurnStick(Button turnStick) {
             if (!turnStick.isDouble) {
@@ -1691,9 +1849,10 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the turn to angle input button. Must be a vector input.
          *
-         * @param ttaStick - The vector input used to control what angle the robot turns to.
-         * @return - This instance of Params.
-         * @throws NotVectorInputException - Throws this is the input button is not a vector input.
+         * @param ttaStick The vector input used to control what angle the robot turns to.
+         * @return This instance of Params.
+         *
+         * @throws NotVectorInputException Throws this is the input button is not a vector input.
          */
         public Params setTTAStick(Button ttaStick) {
             if (!driveStickRight.isVector) {
@@ -1706,10 +1865,11 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets left turn button input. Must be a boolean input.
          *
-         * @param turnLeft  - The button used to make the robot turn left.
-         * @param turnSpeed - The speed at which the robot should turn left when the button is pressed.
-         * @return - This instance of Params.
-         * @throws NotBooleanInputException - Throws this if the input button is not a boolean input.
+         * @param turnLeft  The button used to make the robot turn left.
+         * @param turnSpeed The speed at which the robot should turn left when the button is pressed.
+         * @return This instance of Params.
+         *
+         * @throws NotBooleanInputException Throws this if the input button is not a boolean input.
          */
         public Params setTurnLeftButton(Button turnLeft, double turnSpeed) {
             if (!turnLeft.isBoolean) {
@@ -1723,10 +1883,11 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets right turn button input. Must be a boolean input.
          *
-         * @param turnRight - The button used to make the robot turn right.
-         * @param turnSpeed - The speec at which the robot should turn right when the button is pressed.
-         * @return - This instance of Params.
-         * @throws NotBooleanInputException - Throws this if the input button is not a boolean input.
+         * @param turnRight The button used to make the robot turn right.
+         * @param turnSpeed The speec at which the robot should turn right when the button is pressed.
+         * @return This instance of Params.
+         *
+         * @throws NotBooleanInputException Throws this if the input button is not a boolean input.
          */
         public Params setTurnRightButton(Button turnRight, double turnSpeed) {
             if (!turnRight.isBoolean) {
@@ -1740,8 +1901,10 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the button used to activate/deactivate speed mode.
          *
-         * @param speedMode - The speed mode button.
+         * @param speedMode The speed mode button.
          * @return This instance of Params.
+         *
+         * @throws NotBooleanInputException Throws this exception if the speedmode button is not a boolean input.
          */
         public Params setSpeedModeButton(Button speedMode) {
             if (!speedMode.isBoolean) {
@@ -1754,8 +1917,10 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the button used to toggle speed mode.
          *
-         * @param turnSpeedMode - The button that will be used to toggle turn speed mode.
-         * @return - This instance of Params.
+         * @param turnSpeedMode The button that will be used to toggle turn speed mode.
+         * @return This instance of Params.
+         *
+         * @throws NotBooleanInputException Throws this exception if the speedmode button is not a boolean input.
          */
         public Params setTurnSpeedModeButton(Button turnSpeedMode) {
             if (!speedMode.isBoolean) {
@@ -1768,9 +1933,10 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the number imu for the drive system to use.
          *
-         * @param imuNumber - The imu's number. Must be either 1 or 2.
-         * @return - This instance of Params.
-         * @throws NotAnAlchemistException - Throws this if the imu number is not 1 or 2. Can't make something out of nothing.
+         * @param imuNumber The imu's number. Must be either 1 or 2.
+         * @return This instance of Params.
+         *
+         * @throws NotAnAlchemistException Throws this if the imu number is not 1 or 2. Can't make something out of nothing.
          */
         public Params setImuNumber(int imuNumber) {
             if (imuNumber != 1 && imuNumber != 2) {
@@ -1783,10 +1949,10 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the coefficients for the turnPID controller.
          *
-         * @param kp - Proportional gain.
-         * @param ki - Integral gain.
-         * @param kd - Derivative gain.
-         * @return - This instance of Params.
+         * @param kp Proportional gain.
+         * @param ki Integral gain.
+         * @param kd Derivative gain.
+         * @return This instance of Params.
          */
         public Params setTurnPIDCoeffs(double kp, double ki, double kd) {
             return setTurnPIDCoeffs(kp, ki, kd, false);
@@ -1795,20 +1961,39 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the coefficients for the turnPID controller.
          *
-         * @param kp         - Proportional gain.
-         * @param ki         - Integral gain.
-         * @param kd         - Derivative gain.
-         * @param useDegrees - A boolean specifying if the units are in degrees.
-         * @return - This instance of Params.
+         * @param kp         Proportional gain.
+         * @param ki         Integral gain.
+         * @param kd         Derivative gain.
+         * @param useDegrees A boolean specifying if the units are in degrees.
+         * @return This instance of Params.
          */
         public Params setTurnPIDCoeffs(double kp, double ki, double kd, boolean useDegrees) {
             return setTurnPIDCoeffs(kp,ki,kd,0.05,useDegrees);
         }
 
+        /**
+         * Sets the coefficients for the turnPID controller.
+         *
+         * @param kp Proportional gain.
+         * @param ki Integral gain.
+         * @param kd Derivative gain.
+         * @param deadband The controller's deadband.
+         * @return This instance of Params.
+         */
         public Params setTurnPIDCoeffs(double kp, double ki, double kd, double deadband) {
             return setTurnPIDCoeffs(kp,ki,kd,deadband,false);
         }
 
+        /**
+         * Sets the coefficients for the turnPID controller.
+         *
+         * @param kp Proportional gain.
+         * @param ki Integral gain.
+         * @param kd Derivative gain.
+         * @param deadband The controller's deadband.
+         * @param useDegrees A boolean specifying if the units are in degrees.
+         * @return This instance of Params.
+         */
         public Params setTurnPIDCoeffs(double kp, double ki, double kd, double deadband, final boolean useDegrees){
             useGyro = true;
             useDegreesTurn = useDegrees;
@@ -1838,7 +2023,7 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the PID controller used for turning to specific angles.
          *
-         * @param turnPID - The PID to use for turning to specific angles.
+         * @param turnPID The PID to use for turning to specific angles.
          * @return This instance of Params.
          */
         public Params setTurnPID(PIDController turnPID) {
@@ -1848,8 +2033,8 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the PID controller used for turning to specific angles.
          *
-         * @param turnPID    - The PID to use for turning to specific angles.
-         * @param useDegrees - Whether the PID controller uses degrees.
+         * @param turnPID    The PID to use for turning to specific angles.
+         * @param useDegrees Whether the PID controller uses degrees.
          * @return This instance of Params.
          */
         public Params setTurnPID(PIDController turnPID, boolean useDegrees) {
@@ -1862,19 +2047,37 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the coefficients for the stability PID controller.
          *
-         * @param kp - Proportional gain.
-         * @param ki - Integral gain.
-         * @param kd - Derivative gain.
-         * @return - This instance of Params.
+         * @param kp Proportional gain.
+         * @param ki Integral gain.
+         * @param kd Derivative gain.
+         * @return This instance of Params.
          */
         public Params setStabilityPIDCoeffs(double kp, double ki, double kd) {
             return setStabilityPIDCoeffs(kp, ki, kd, false);
         }
 
+        /**
+         * Sets the coefficients for the stability PID controller.
+         *
+         * @param kp Proportional gain.
+         * @param ki Integral gain.
+         * @param kd Derivative gain.
+         * @param useDegrees A boolean specifying if the units are in degrees.
+         * @return
+         */
         public Params setStabilityPIDCoeffs(double kp, double ki, double kd, boolean useDegrees) {
             return setStabilityPIDCoeffs(kp,ki,kd,0,useDegrees);
         }
 
+        /**
+         * Sets the coefficients for the stability PID controller.
+         *
+         * @param kp Proportional gain.
+         * @param ki Integral gain.
+         * @param kd Derivative gain.
+         * @param deadband The controller's deadband.
+         * @return This instance of Params.
+         */
         public Params setStabilityPIDCoeffs(double kp, double ki, double kd, double deadband) {
             return setStabilityPIDCoeffs(kp,ki,kd,deadband,false);
         }
@@ -1882,11 +2085,11 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the coefficients for the stabilityPID controller.
          *
-         * @param kp         - Proportional gain.
-         * @param ki         - Integral gain.
-         * @param kd         - Derivative gain.
-         * @param useDegrees - A boolean specifying if the units are in degrees.
-         * @return - This instance of Params.
+         * @param kp         Proportional gain.
+         * @param ki         Integral gain.
+         * @param kd         Derivative gain.
+         * @param useDegrees A boolean specifying if the units are in degrees.
+         * @return This instance of Params.
          */
         public Params setStabilityPIDCoeffs(double kp, double ki, double kd, double deadband, final boolean useDegrees) {
             useGyro = true;
@@ -1917,7 +2120,7 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the PID controller used for stability control.
          *
-         * @param stabilityPID - The PID to use for stability control.
+         * @param stabilityPID The PID to use for stability control.
          * @return This instance of Params.
          */
         public Params setStabilityPID(PIDController stabilityPID) {
@@ -1927,8 +2130,8 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the PID controller that will be used for stability control.
          *
-         * @param stabilityPID - The PID controller that will be used for stability control.
-         * @param useDegrees   - Whether or not the PID controller uses degrees.
+         * @param stabilityPID The PID controller that will be used for stability control.
+         * @param useDegrees   Whether or not the PID controller uses degrees.
          * @return This instance of SpecificParams.
          */
         public Params setStabilityPID(PIDController stabilityPID, boolean useDegrees) {
@@ -1941,11 +2144,11 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the velocity PID coefficients.
          *
-         * @param kp - Proportional gain.
-         * @param ki - Integral gain.
-         * @param kd - Derivative gain.
-         * @param kf - Feedforward gain.
-         * @return - This instance of Params.
+         * @param kp Proportional gain.
+         * @param ki Integral gain.
+         * @param kd Derivative gain.
+         * @param kf Feedforward gain.
+         * @return This instance of Params.
          */
         public Params setVelocityPID(double kp, double ki, double kd, double kf) {
             changeVelocityPID = true;
@@ -1959,8 +2162,8 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the number of encoder ticks per meter distance traveled.
          *
-         * @param encodersPerMeter - The number of encoder ticks per meter distance traveled.
-         * @return - This instance of Params.
+         * @param encodersPerMeter The number of encoder ticks per meter distance traveled.
+         * @return This instance of Params.
          */
         public Params setEncodersPerMeter(double encodersPerMeter) {
             this.encodersPerMeter = encodersPerMeter;
@@ -1970,8 +2173,8 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets a constant speed multiplier to scale the calculated linear velocities by.
          *
-         * @param constantSpeedModifier - The value to multiply the speed by.
-         * @return - This instance of Params.
+         * @param constantSpeedModifier The value to multiply the speed by.
+         * @return This instance of Params.
          */
         public Params setConstantSpeedModifier(double constantSpeedModifier) {
             this.constantSpeedMultiplier = constantSpeedModifier;
@@ -1981,8 +2184,8 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the multiplier that will be applied when speed mode is entered. If the multiplier is < 1 then the robot will slow down, otherwise it will speed up.
          *
-         * @param speedModeMultiplier - The multiplier that will be applied when speed mode is entered.
-         * @return - This instance of Params.
+         * @param speedModeMultiplier The multiplier that will be applied when speed mode is entered.
+         * @return This instance of Params.
          */
         public Params setSpeedModeMultiplier(double speedModeMultiplier) {
             this.slowModeMultiplier = speedModeMultiplier;
@@ -1992,8 +2195,8 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets a constant multiplier that will be applied to every speed while turning.
          *
-         * @param constantTurnSpeedMultiplier - The constant turn speed multiplier.
-         * @return - This instance of params.
+         * @param constantTurnSpeedMultiplier The constant turn speed multiplier.
+         * @return This instance of params.
          */
         public Params setConstantTurnSpeedMultiplier(double constantTurnSpeedMultiplier) {
             this.constantTurnSpeedMultiplier = constantTurnSpeedMultiplier;
@@ -2003,23 +2206,42 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the multiplier that will be applied to the turn speed when turn speed mode is activated.
          *
-         * @param turnSpeedModeMultiplier - The turn speed mode multiplier.
-         * @return - This instance of params.
+         * @param turnSpeedModeMultiplier The turn speed mode multiplier.
+         * @return This instance of params.
          */
         public Params setTurnSpeedModeMultiplier(double turnSpeedModeMultiplier) {
             this.turnSpeedModeMultiplier = turnSpeedModeMultiplier;
             return this;
         }
 
+        /**
+         * Sets the runmode of the motors.
+         *
+         * @param runMode The desired runmode.
+         * @return This instance of Params.
+         */
         public Params setMotorRunMode(DcMotor.RunMode runMode) {
             this.runMode = runMode;
             return this;
         }
 
+        /**
+         * Sets the zero power behavior of the motors.
+         *
+         * @param behavior The desired zero power behavior.
+         * @return This instance of Params.
+         */
         public Params setZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior) {
             zeroPowerBehavior = behavior;
             return this;
         }
+
+        /**
+         * Set which motors are reversed.
+         *
+         * @param reverseType Which motors should be reversed.
+         * @return This instance of params.
+         */
         public Params setReverseType(ReverseType reverseType) {
             this.reverseType = reverseType;
             return this;
@@ -2046,10 +2268,10 @@ public class MechanumDrive extends SubSystem {
         /**
          * A constructor for SpecificParams.
          *
-         * @param topLeft - The top left motor config name.
-         * @param topRight - The top right motor config name.
-         * @param botLeft - The bottom left motor config name.
-         * @param botRight - The bottom right motor config name
+         * @param topLeft The top left motor config name.
+         * @param topRight The top right motor config name.
+         * @param botLeft The bottom left motor config name.
+         * @param botRight The bottom right motor config name
          */
         public SpecificParams(String topLeft, String topRight, String botLeft, String botRight) {
             config = new String[4];
@@ -2085,8 +2307,8 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the number of encoders ticks per meter distance.
          *
-         * @param encodersPerMeter - The number of encoders ticks per meter distance
-         * @return - This instance of SpecificParams.
+         * @param encodersPerMeter The number of encoders ticks per meter distance
+         * @return This instance of SpecificParams.
          */
         public SpecificParams setEncodersPerMeter(double encodersPerMeter) {
             this.encodersPerMeter = encodersPerMeter;
@@ -2096,8 +2318,8 @@ public class MechanumDrive extends SubSystem {
         /**
          * Set the turn left power.
          *
-         * @param turnLeftPower - The turn left power.
-         * @return - This instance of SpecificParams.
+         * @param turnLeftPower The turn left power.
+         * @return This instance of SpecificParams.
          */
         public SpecificParams setTurnLeftPower(double turnLeftPower) {
             this.turnLeftPower = turnLeftPower;
@@ -2107,8 +2329,8 @@ public class MechanumDrive extends SubSystem {
         /**
          * Set the turn right power.
          *
-         * @param turnRightPower - The turn right power.
-         * @return - This instance of SpecificParams.
+         * @param turnRightPower The turn right power.
+         * @return This instance of SpecificParams.
          */
         public SpecificParams setTurnRightPower(double turnRightPower) {
             this.turnRightPower = turnRightPower;
@@ -2118,8 +2340,8 @@ public class MechanumDrive extends SubSystem {
         /**
          * Set the constant speed multiplier.
          *
-         * @param constantSpeedMultiplier - The constant speed multiplier. Always multiplied by velocity.
-         * @return - This instance of SpecificParams.
+         * @param constantSpeedMultiplier The constant speed multiplier. Always multiplied by velocity.
+         * @return This instance of SpecificParams.
          */
         public SpecificParams setConstantSpeedMultiplier(double constantSpeedMultiplier) {
             this.constantSpeedMultiplier = constantSpeedMultiplier;
@@ -2129,8 +2351,8 @@ public class MechanumDrive extends SubSystem {
         /**
          * Set the slow mode multiplier.
          *
-         * @param slowModeMultiplier - The slow mode multiplier. Applied to velocity when in slow/speed mode.
-         * @return - This instance of SpecificParams.
+         * @param slowModeMultiplier The slow mode multiplier. Applied to velocity when in slow/speed mode.
+         * @return This instance of SpecificParams.
          */
         public SpecificParams setSlowModeMultiplier(double slowModeMultiplier) {
             this.slowModeMultiplier = slowModeMultiplier;
@@ -2140,8 +2362,8 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets a constant multiplier that will be applied to every speed while turning.
          *
-         * @param constantTurnSpeedMultiplier - The constant turn speed multiplier.
-         * @return - This instance of params.
+         * @param constantTurnSpeedMultiplier The constant turn speed multiplier.
+         * @return This instance of params.
          */
         public SpecificParams setConstantTurnSpeedMultiplier(double constantTurnSpeedMultiplier) {
             this.constantTurnSpeedMultiplier = constantTurnSpeedMultiplier;
@@ -2151,8 +2373,8 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the multiplier that will be applied to the turn speed when turn speed mode is activated.
          *
-         * @param slowTurnModeMultiplier - The turn speed mode multiplier.
-         * @return - This instance of params.
+         * @param slowTurnModeMultiplier The turn speed mode multiplier.
+         * @return This instance of params.
          */
         public SpecificParams setSlowTurnModeMultiplier(double slowTurnModeMultiplier) {
             this.slowTurnModeMultiplier = slowTurnModeMultiplier;
@@ -2162,11 +2384,11 @@ public class MechanumDrive extends SubSystem {
         /**
          * Set the coefficients for the motors' velocity PID.
          *
-         * @param kp - Proportional gain for velocity PID.
-         * @param ki - Integral gain for velocity PID.
-         * @param kd - Derivative gain for velocity PID.
-         * @param kf - Feedforward gain for velocity PID.
-         * @return - This instance of SpecificParams.
+         * @param kp Proportional gain for velocity PID.
+         * @param ki Integral gain for velocity PID.
+         * @param kd Derivative gain for velocity PID.
+         * @param kf Feedforward gain for velocity PID.
+         * @return This instance of SpecificParams.
          */
         public SpecificParams setVelocityPID(double kp, double ki, double kd, double kf) {
             changeVelocityPID = true;
@@ -2180,19 +2402,37 @@ public class MechanumDrive extends SubSystem {
         /**
          * Set the coefficients for the turn PID.
          *
-         * @param kp - Proportional gain for velocity PID.
-         * @param ki - Integral gain for velocity PID.
-         * @param kd - Derivative gain for velocity PID.
-         * @return - This instance of SpecificParams.
+         * @param kp Proportional gain for velocity PID.
+         * @param ki Integral gain for velocity PID.
+         * @param kd Derivative gain for velocity PID.
+         * @return This instance of SpecificParams.
          */
         public SpecificParams setTurnPIDCoeffs(double kp, double ki, double kd) {
             return setTurnPIDCoeffs(kp, ki, kd, false);
         }
 
+        /**
+         * Set the coefficients for the turn PID.
+         *
+         * @param kp Proportional gain for velocity PID.
+         * @param ki Integral gain for velocity PID.
+         * @param kd Derivative gain for velocity PID.
+         * @param useDegrees A boolean specifying if the units are in degrees.
+         * @return This instance of SpecificParams.
+         */
         public SpecificParams setTurnPIDCoeffs(double kp, double ki, double kd, boolean useDegrees) {
             return setTurnPIDCoeffs(kp,ki,kd,0.05,useDegrees);
         }
 
+        /**
+         * Set the coefficients for the turn PID.
+         *
+         * @param kp Proportional gain for velocity PID.
+         * @param ki Integral gain for velocity PID.
+         * @param kd Derivative gain for velocity PID.
+         * @param deadband The controller's deadband.
+         * @return This instance of SpecificParams.
+         */
         public SpecificParams setTurnPIDCoeffs(double kp, double ki, double kd, double deadband) {
             return setTurnPIDCoeffs(kp,ki,kd,deadband,false);
         }
@@ -2200,11 +2440,12 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the coefficients for the turnPID controller.
          *
-         * @param kp - Proportional gain.
-         * @param ki - Integral gain.
-         * @param kd - Derivative gain.
-         * @param useDegrees - A boolean specifying if the units are in degrees.
-         * @return - This instance of Params.
+         * @param kp Proportional gain.
+         * @param ki Integral gain.
+         * @param kd Derivative gain.
+         * @param deadband The controller's deadband.
+         * @param useDegrees A boolean specifying if the units are in degrees.
+         * @return This instance of SpecificParams.
          */
         public SpecificParams setTurnPIDCoeffs(double kp, double ki, double kd, double deadband, final boolean useDegrees) {
             useDegreesTurn = useDegrees;
@@ -2220,7 +2461,7 @@ public class MechanumDrive extends SubSystem {
 
                     double m = useDegrees ? 360 : 2 * PI;
 
-                    //cw - ccw +
+                    //cw ccw +
                     double cw = -mod.apply(mod.apply(current, m) - mod.apply(target, m), m);
                     double ccw = mod.apply(mod.apply(target, m) - mod.apply(current, m), m);
 
@@ -2234,7 +2475,7 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the PID controller to use for turning to specific angles.
          *
-         * @param turnPID - The PID controller that will be used for turning.
+         * @param turnPID The PID controller that will be used for turning.
          * @return This instance of SpecificParams.
          */
         public SpecificParams setTurnPID(PIDController turnPID) {
@@ -2244,8 +2485,8 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the PID controller to use for turning to specific angles.
          *
-         * @param turnPID - The PID controller that will be used for turning.
-         * @param useDegrees- Whether or not the PID controller uses degrees.
+         * @param turnPID The PID controller that will be used for turning.
+         * @param useDegrees Whether or not the PID controller uses degrees.
          * @return This instance of SpecificParams.
          */
         public SpecificParams setTurnPID(PIDController turnPID, boolean useDegrees) {
@@ -2257,19 +2498,37 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the coefficients for the stabilityPID controller.
          *
-         * @param kp - Proportional gain.
-         * @param ki - Integral gain.
-         * @param kd - Derivative gain.
-         * @return - This instance of SpecificParams.
+         * @param kp Proportional gain.
+         * @param ki Integral gain.
+         * @param kd Derivative gain.
+         * @return This instance of SpecificParams.
          */
         public SpecificParams setStabilityPIDCoeffs(double kp, double ki, double kd) {
             return setStabilityPIDCoeffs(kp, ki, kd, false);
         }
 
+        /**
+         * Sets the coefficients for the stabilityPID controller.
+         *
+         * @param kp Proportional gain.
+         * @param ki Integral gain.
+         * @param kd Derivative gain.
+         * @param useDegrees A boolean specifying if the units are in degrees.
+         * @return This instance of SpecificParams.
+         */
         public SpecificParams setStabilityPIDCoeffs(double kp, double ki, double kd, boolean useDegrees) {
             return setStabilityPIDCoeffs(kp,ki,kd,0,useDegrees);
         }
 
+        /**
+         * Sets the coefficients for the stabilityPID controller.
+         *
+         * @param kp Proportional gain.
+         * @param ki Integral gain.
+         * @param kd Derivative gain.
+         * @param deadband The controller's deadband.
+         * @return This instance of SpecificParams.
+         */
         public SpecificParams setStabilityPIDCoeffs(double kp, double ki, double kd, double deadband) {
             return setStabilityPIDCoeffs(kp,ki,kd,deadband,false);
         }
@@ -2277,11 +2536,12 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the coefficients for the stability PID controller.
          *
-         * @param kp - Proportional gain.
-         * @param ki - Integral gain.
-         * @param kd - Derivative gain.
-         * @param useDegrees - A boolean specifying if the units are in degrees.
-         * @return - This instance of SpecificParams.
+         * @param kp Proportional gain.
+         * @param ki Integral gain.
+         * @param kd Derivative gain.
+         * @param deadband The controller's deadband.
+         * @param useDegrees A boolean specifying if the units are in degrees.
+         * @return This instance of SpecificParams.
          */
         public SpecificParams setStabilityPIDCoeffs(double kp, double ki, double kd, double deadband, final boolean useDegrees) {
             useDegreesStability = useDegrees;
@@ -2311,7 +2571,7 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the PID controller that will be used for stability control.
          *
-         * @param stabilityPID - The PID controller that will be used for stability control.
+         * @param stabilityPID The PID controller that will be used for stability control.
          * @return This instance of SpecificParams.
          */
         public SpecificParams setStabilityPID(PIDController stabilityPID) {
@@ -2321,8 +2581,8 @@ public class MechanumDrive extends SubSystem {
         /**
          * Sets the PID controller that will be used for stability control.
          *
-         * @param stabilityPID - The PID controller that will be used for stability control.
-         * @param useDegrees - Whether or not the PID controller uses degrees.
+         * @param stabilityPID The PID controller that will be used for stability control.
+         * @param useDegrees Whether or not the PID controller uses degrees.
          * @return This instance of SpecificParams.
          */
         public SpecificParams setStabilityPID(PIDController stabilityPID, boolean useDegrees) {

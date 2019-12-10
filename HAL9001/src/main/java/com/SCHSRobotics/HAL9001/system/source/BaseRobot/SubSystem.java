@@ -74,6 +74,12 @@ public abstract class SubSystem {
         }
     }
 
+    /**
+     * Waits for a specified number of milliseconds, running a function in a loop while its waiting.
+     *
+     * @param millis The number of milliseconds to wait.
+     * @param runner The code to run each loop while waiting.
+     */
     protected final void waitTime(long millis, Runnable runner) {
         long stopTime = System.currentTimeMillis() + millis;
         while (robot.opModeIsActive() && System.currentTimeMillis() < stopTime) {
@@ -82,12 +88,23 @@ public abstract class SubSystem {
         }
     }
 
+    /**
+     * Waits until a condition returns true.
+     *
+     * @param condition The boolean condition that must be true in order for the program to stop waiting.
+     */
     protected final void waitUntil(Supplier<Boolean> condition) {
         while (robot.opModeIsActive() && !condition.get()) {
             ((LinearOpMode) robot.getOpMode()).sleep(1);
         }
     }
 
+    /**
+     * Waits until a condition returns true, running a function in a loop while its waiting.
+     *
+     * @param condition The boolean condition that must be true in order for the program to stop waiting.
+     * @param runner The code to run each loop while waiting.
+     */
     protected final void waitUntil(Supplier<Boolean> condition, Runnable runner) {
         while (robot.opModeIsActive() && !condition.get()) {
             runner.run();
@@ -95,12 +112,23 @@ public abstract class SubSystem {
         }
     }
 
+    /**
+     * Waits while a condition is true.
+     *
+     * @param condition The boolean condition that must become false for the program to stop waiting.
+     */
     protected final void waitWhile(Supplier<Boolean> condition) {
         while (robot.opModeIsActive() && condition.get()) {
             ((LinearOpMode) robot.getOpMode()).sleep(1);
         }
     }
 
+    /**
+     * Waits while a condition is true, running a function in a loop while its waiting.
+     *
+     * @param condition The boolean condition that must become false for the program to stop waiting.
+     * @param runner The code to run each loop while waiting.
+     */
     protected final void waitWhile(Supplier<Boolean> condition, Runnable runner) {
         while (robot.opModeIsActive() && condition.get()) {
             runner.run();

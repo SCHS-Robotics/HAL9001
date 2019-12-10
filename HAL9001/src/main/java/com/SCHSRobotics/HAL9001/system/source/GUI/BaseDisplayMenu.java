@@ -14,16 +14,15 @@ import java.util.List;
  * The base menu class for DisplayMenus to extend.
  */
 public abstract class BaseDisplayMenu extends Menu {
-
     //The current "level" of screen in the menu. If the number of lines in the menu exceeds the maximum number, menunumber will increase by one for every screen the menu takes up.
     private int menuNumber;
 
     /**
      * Constructor for BaseDisplayMenu.
      *
-     * @param gui - The GUI being used to render the menu.
-     * @param cursor - The cursor being used in the menu.
-     * @param startingLines - The menu's initial set of GuiLines.
+     * @param gui The GUI being used to render the menu.
+     * @param cursor The cursor being used in the menu.
+     * @param startingLines The menu's initial set of GuiLines.
      */
     public BaseDisplayMenu(GUI gui, Cursor cursor, GuiLine[] startingLines) {
         super(gui, cursor, startingLines,0,0);
@@ -33,9 +32,9 @@ public abstract class BaseDisplayMenu extends Menu {
     /**
      * Constructor for BaseDisplayMenu.
      *
-     * @param gui - The GUI being used to render the menu.
-     * @param cursor - The cursor being used in the menu.
-     * @param startingLines - The menu's initial set of GuiLines.
+     * @param gui The GUI being used to render the menu.
+     * @param cursor The cursor being used in the menu.
+     * @param startingLines The menu's initial set of GuiLines.
      */
     public BaseDisplayMenu(GUI gui, Cursor cursor, ArrayList<GuiLine> startingLines) {
         super(gui,cursor, startingLines,0,0);

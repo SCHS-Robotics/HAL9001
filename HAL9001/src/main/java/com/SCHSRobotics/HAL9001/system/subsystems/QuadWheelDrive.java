@@ -19,6 +19,7 @@ import com.SCHSRobotics.HAL9001.util.exceptions.NotDoubleInputException;
 import com.SCHSRobotics.HAL9001.util.math.Vector;
 import com.SCHSRobotics.HAL9001.util.misc.BaseParam;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
+import com.SCHSRobotics.HAL9001.util.misc.ConfigData;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigParam;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 import com.SCHSRobotics.HAL9001.util.misc.Toggle;
@@ -27,7 +28,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.Supplier;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * A customizable tankdrive subsystem.
@@ -510,22 +510,22 @@ public class QuadWheelDrive extends SubSystem {
      */
     private void setUsingConfigs() {
         inputs = robot.pullControls(this);
-        Map<String, Object> settingsData = robot.pullNonGamepad(this);
+        ConfigData data = robot.pullNonGamepad(this);
 
-        setTurnAndMove((boolean) settingsData.get("Turn and Move"));
+        setTurnAndMove(data.getData("Turn and Move",Boolean.class));
         if (!useSpecific) {
-            setConstantSpeedModifier((double) settingsData.get("ConstantSpeedModifier"));
-            setSpeedModeModifier((double) settingsData.get("SpeedModeModifier"));
+            setConstantSpeedModifier(data.getData("ConstantSpeedModifier",Double.class));
+            setSpeedModeModifier(data.getData("SpeedModeModifier",Double.class));
         }
     }
 
     /**
      * Pulls autonomous config settings.
      */
-    private void setUsingConfigsAutonomous(){
-        Map<String, Object> settingsData = robot.pullNonGamepad(this);
+    private void setUsingConfigsAutonomous() {
+        ConfigData data = robot.pullNonGamepad(this);
 
-        setConstantSpeedModifier((double) settingsData.get("ConstantSpeedModifier"));
+        setConstantSpeedModifier(data.getData("ConstantSpeedModifier",Double.class));
     }
 
     /**
