@@ -19,14 +19,15 @@ public class Vector {
         CARTESIAN, POLAR
     }
 
+    //Properties of the vector.
     public double x,y,r,theta;
 
     /**
-     * Ctor for vector.
+     * Constructor for vector.
      *
-     * @param inx - The first input component.
-     * @param iny - The second input component.
-     * @param inCoord - The enum specifying the input format.
+     * @param inx The first input component.
+     * @param iny The second input component.
+     * @param inCoord The enum specifying the input format.
      */
     public Vector(double inx, double iny, CoordinateType inCoord) {
         if (inCoord == CoordinateType.CARTESIAN) {
@@ -48,10 +49,10 @@ public class Vector {
     }
 
     /**
-     * Ctor for vector.
+     * Constructor for vector.
      *
-     * @param inx - The input x component.
-     * @param iny - The input y component.
+     * @param inx The input x component.
+     * @param iny The input y component.
      */
     public Vector(double inx, double iny) {
         this.x = inx;
@@ -62,13 +63,10 @@ public class Vector {
         this.r = Math.sqrt(Math.pow(inx,2)+Math.pow(iny,2));
     }
 
-    //Counterclockwise is positive, clockwise is negative
-    //must be in radians
-
     /**
-     * Rotates the vector components about the origin by an angle theta.
+     * Rotates the vector components about the origin by an angle theta. The rotation angle must be in radians.
      *
-     * @param theta - The angle to rotate the vector in radians. Counterclockwise is positive, clockwise is negative.
+     * @param theta The angle to rotate the vector in radians. Counterclockwise is positive, clockwise is negative.
      */
     public void rotate(double theta) {
         if(!isZeroVector()) {
@@ -85,7 +83,7 @@ public class Vector {
     /**
      * Returns if the current vector is the zero vector.
      *
-     * @return - returns if the x and y components of the vector both equal to 0.
+     * @return Whether the x and y components of the vector both equal to 0.
      */
     public boolean isZeroVector() {
         return (this.x == 0.0) && (this.y == 0.0);
@@ -94,7 +92,7 @@ public class Vector {
     /**
      * Normalizes the vector to a specified length.
      *
-     * @param length - The length to normalize the vector to.
+     * @param length The length to normalize the vector to.
      */
     public void normalize(double length) {
         if(!isZeroVector()) {
@@ -105,7 +103,7 @@ public class Vector {
     }
 
     /**
-     * Normalizes the vector to a length of 1 unit.
+     * Normalizes the vector to a length of 1 unit (a unit vector).
      */
     public void normalize() {
         normalize(1.0);
@@ -114,7 +112,7 @@ public class Vector {
     /**
      * Multiply the vector by a scalar.
      *
-     * @param scalar - A constant number.
+     * @param scalar A constant number.
      */
     public void scalarMultiply(double scalar) {
         this.normalize(scalar*r);
@@ -123,7 +121,7 @@ public class Vector {
     /**
      * Performs a dot product with another vector.
      *
-     * @param v - The second vector.
+     * @param v The second vector.
      * @return The dot product of this vector and v.
      */
     public double dotProduct(Vector v) {

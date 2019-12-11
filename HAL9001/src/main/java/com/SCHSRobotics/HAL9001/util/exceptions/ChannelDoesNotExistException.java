@@ -15,8 +15,8 @@ public class ChannelDoesNotExistException extends RuntimeException {
     /**
      * Constructor for ChannelDoesNotExistException.
      *
-     * @param message - The message to print to the screen.
-     * @param cause - The cause of the error.
+     * @param message The message to print to the screen.
+     * @param cause The cause of the error.
      */
     public ChannelDoesNotExistException(String message, Throwable cause) {
         super(message,cause);

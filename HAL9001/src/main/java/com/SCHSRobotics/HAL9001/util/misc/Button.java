@@ -46,8 +46,8 @@ public class Button {
     /**
      * Constructor for button that makes a double button.
      *
-     * @param gamepadNumber - Number of gamepad this button will use.
-     * @param inputName - DoubleInput that this button will output.
+     * @param gamepadNumber Number of gamepad this button will use.
+     * @param inputName DoubleInput that this button will output.
      */
     public Button(int gamepadNumber, DoubleInputs inputName){
         this(gamepadNumber,inputName,0.0);
@@ -56,9 +56,9 @@ public class Button {
     /**
      * Constructor for button that makes a double button.
      *
-     * @param gamepadNumber - Number of gamepad this button will use.
-     * @param inputName - DoubleInput that this button will output.
-     * @param deadzone - Double between 0 and 1 that sets the deadzone.
+     * @param gamepadNumber Number of gamepad this button will use.
+     * @param inputName DoubleInput that this button will output.
+     * @param deadzone Double between 0 and 1 that sets the deadzone.
      */
     public Button(int gamepadNumber, DoubleInputs inputName, Double deadzone){
         this.gamepadNumber = gamepadNumber;
@@ -73,8 +73,8 @@ public class Button {
     /**
      * Constructor for button that makes a boolean button.
      *
-     * @param gamepadNumber - Number of gamepad this button will use.
-     * @param inputName - BooleanInput that this button will output.
+     * @param gamepadNumber Number of gamepad this button will use.
+     * @param inputName BooleanInput that this button will output.
      */
     public Button(int gamepadNumber, BooleanInputs inputName){
         this(gamepadNumber, inputName, 0.0);
@@ -83,9 +83,9 @@ public class Button {
     /**
      * Constructor for button that makes a boolean button.
      *
-     * @param gamepadNumber - Number of gamepad this button will use.
-     * @param inputName - BooleanInput that this button will output.
-     * @param deadzone - Double between 0 and 1 that sets the deadzone.
+     * @param gamepadNumber Number of gamepad this button will use.
+     * @param inputName BooleanInput that this button will output.
+     * @param deadzone Double between 0 and 1 that sets the deadzone.
      */
     public Button(int gamepadNumber, BooleanInputs inputName, Double deadzone){
         this.gamepadNumber = gamepadNumber;
@@ -99,8 +99,8 @@ public class Button {
     /**
      * Constructor for button that makes a vector button.
      * 
-     * @param gamepadNumber - Number of gamepad this button will use.
-     *  @param inputName - VectorInput that this button will output.
+     * @param gamepadNumber Number of gamepad this button will use.
+     *  @param inputName VectorInput that this button will output.
      */
     public Button(int gamepadNumber, VectorInputs inputName){
         this.gamepadNumber = gamepadNumber;
@@ -113,7 +113,7 @@ public class Button {
     /**
      * Sets the deadzone for the boolean version of the double inputs.
      *
-     * @param deadzone - Double between 0 and 1 that sets the deadzone.
+     * @param deadzone Double between 0 and 1 that sets the deadzone.
      */
     public void setDeadzone(double deadzone){
         this.deadzone = deadzone;

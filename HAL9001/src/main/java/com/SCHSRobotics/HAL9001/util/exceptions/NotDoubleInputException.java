@@ -13,9 +13,9 @@ package com.SCHSRobotics.HAL9001.util.exceptions;
 public class NotDoubleInputException extends RuntimeException {
 
     /**
-     * Ctor for NotDoubleInputException.
+     * Constructor for NotDoubleInputException.
      *
-     * @param message - The message to print to the screen.
+     * @param message The message to print to the screen.
      */
     public NotDoubleInputException(String message) {
         super(message);

@@ -15,7 +15,7 @@ public class InvalidSelectionZoneException extends RuntimeException {
     /**
      * Constructor for InvalidSelectionZoneException.
      *
-     * @param message - The message to print to the screen.
+     * @param message The message to print to the screen.
      */
     public InvalidSelectionZoneException(String message) {
         super(message);

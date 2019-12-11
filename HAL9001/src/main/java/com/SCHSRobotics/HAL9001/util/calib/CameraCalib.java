@@ -59,8 +59,8 @@ public class CameraCalib extends VisionSubSystem {
     /**
      * Constructor for CameraCalib.
      *
-     * @param robot - The robot using this subsystem.
-     * @param chessboardSize - The size of the chessboard pattern.
+     * @param robot The robot using this subsystem.
+     * @param chessboardSize The size of the chessboard pattern.
      */
     public CameraCalib(Robot robot, Size chessboardSize) {
         super(robot);

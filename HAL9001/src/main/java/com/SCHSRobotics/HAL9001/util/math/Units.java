@@ -14,8 +14,8 @@ public enum Units {
     /**
      * Constructor for Units.
      *
-     * @param meterConversion - The conversion factor used to convert that unit to meters.
-     * @param abreviation - The abbreviation of the unit.
+     * @param meterConversion The conversion factor used to convert that unit to meters.
+     * @param abreviation The abbreviation of the unit.
      */
     Units(double meterConversion, String abreviation)
     {
@@ -26,10 +26,10 @@ public enum Units {
     /**
      * Converts from one unit of distance to another.
      *
-     * @param input - The value to convert.
-     * @param fromUnit - The unit of the value to convert.
-     * @param toUnit - The unit to convert to.
-     * @return
+     * @param input The value to convert.
+     * @param fromUnit The unit of the value to convert.
+     * @param toUnit The unit to convert to.
+     * @return The converted value.
      */
     public static double convert(double input, Units fromUnit, Units toUnit) {
         double meters = input * fromUnit.conversionFactor;

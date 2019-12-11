@@ -1,10 +1,3 @@
-/*
- * Filename: ConfigMenu.java
- * Author: Cole Savage
- * Team Name: Level Up
- * Date: 8/17/19
- */
-
 package com.SCHSRobotics.HAL9001.system.menus;
 
 import android.util.Log;
@@ -32,6 +25,12 @@ import java.util.Map;
 
 /**
  * A menu class used for configuring robots.
+ *
+ * @author Cole Savage, Level Up
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 8/17/19
  */
 public class ConfigMenu extends ScrollingListMenu {
 

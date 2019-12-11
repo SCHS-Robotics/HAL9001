@@ -15,7 +15,7 @@ public class WrongSkyscraperBlueprintException extends RuntimeException{
     /**
      * Ctor for WrongSkyscraperBlueprintException.
      *
-     * @param message - The message to print to the screen.
+     * @param message The message to print to the screen.
      */
     public WrongSkyscraperBlueprintException(String message) {super(message);}
 }

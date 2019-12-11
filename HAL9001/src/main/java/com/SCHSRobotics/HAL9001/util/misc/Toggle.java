@@ -12,18 +12,22 @@ package com.SCHSRobotics.HAL9001.util.misc;
  */
 public class Toggle {
 
-
+    /**
+     * The different types of toggle that can be created.
+     * FlipToggle - Press once to make it true, press and release a second time to make it false.
+     * True Once Toggle - Only true one time after you press the button, false until you press the button again.
+     * True Once Toggle Allow Turn Off - Same as FlipToggle, but if you check the value it changes the false.
+     * True While Held Once - IDK to be honest, just ignore this one.
+     */
     public enum ToggleTypes{
           flipToggle, trueOnceToggle, trueOnceToggleAllowTurnOff, trueWhileHeldOnce
     }
-
+    private ToggleTypes toggleType;
     //Boolean values representing the current state of the toggle and whether the toggling button has been released.
     private boolean currentState, flag;
 
-    private ToggleTypes toggleType;
-
     /**
-     * Ctor for toggle class.
+     * Constructor for toggle class.
      * 
      * @param currentState - Initial toggle state.
      */
@@ -90,8 +94,5 @@ public class Toggle {
                 return false;
         }
         return false;
-    }
-
-    public static interface Params {
     }
 }

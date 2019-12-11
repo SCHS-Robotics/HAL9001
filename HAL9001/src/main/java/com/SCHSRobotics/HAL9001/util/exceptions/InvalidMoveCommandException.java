@@ -15,7 +15,7 @@ public class InvalidMoveCommandException extends RuntimeException {
     /**
      * Constructor for InvalidMoveCommandException.
      *
-     * @param message - The error message to print to the screen.
+     * @param message The error message to print to the screen.
      */
     public InvalidMoveCommandException(String message) {
         super(message);

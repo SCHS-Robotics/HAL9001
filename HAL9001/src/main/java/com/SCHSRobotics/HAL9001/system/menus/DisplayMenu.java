@@ -18,6 +18,12 @@ import java.util.List;
 //TODO make synchronized/multithreaded
 /**
  * A menu class meant for displaying information similarly to telemetry.
+ *
+ * @author Cole Savage, Level Up
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation date: 8/5/19
  */
 public class DisplayMenu extends BaseDisplayMenu {
 

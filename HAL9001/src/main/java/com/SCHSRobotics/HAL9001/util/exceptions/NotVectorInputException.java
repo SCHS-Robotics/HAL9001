@@ -15,7 +15,7 @@ public class NotVectorInputException extends RuntimeException {
     /**
      * Constructor for NotVectorInputException.
      *
-     * @param message - The error message to print to the screen.
+     * @param message The error message to print to the screen.
      */
     public NotVectorInputException(String message) {
         super(message);

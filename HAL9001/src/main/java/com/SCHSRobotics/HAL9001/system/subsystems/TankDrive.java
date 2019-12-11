@@ -398,10 +398,6 @@ public class TankDrive extends SubSystem {
     public void PIDTurn(double kp, double ki, double kd, double targetAngle) {
         PIDController pid = new PIDController(kp, ki, kd);
         pid.setSetpoint(targetAngle);
-
-
-
-        //turnClockwise(-pid.getCorrection());
     }
 
     /**

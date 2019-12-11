@@ -15,7 +15,7 @@ public class NothingToSeeHereException extends RuntimeException {
     /**
      * Constructor for NothingToSeeHereException.
      *
-     * @param message - The message to print to the screen.
+     * @param message The message to print to the screen.
      */
     public NothingToSeeHereException(String message) {
         super(message);

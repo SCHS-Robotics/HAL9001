@@ -15,7 +15,7 @@ public class NotAnAlchemistException extends RuntimeException {
     /**
      * Constructor for NotAnAlchemistException.
      *
-     * @param message - The error message to print to the screen.
+     * @param message The error message to print to the screen.
      */
     public NotAnAlchemistException(String message) {
         super(message);

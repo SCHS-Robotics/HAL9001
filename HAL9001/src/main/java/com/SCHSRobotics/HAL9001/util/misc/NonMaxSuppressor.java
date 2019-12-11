@@ -20,7 +20,7 @@ public class NonMaxSuppressor {
     /**
      * Constructor for NonMaxSuppressor.
      *
-     * @param thresh - The area overlap threshold.
+     * @param thresh The area overlap threshold.
      */
     public NonMaxSuppressor(double thresh) {
 
@@ -30,7 +30,7 @@ public class NonMaxSuppressor {
     /**
      * Performs non-max suppression.
      *
-     * @param boxes - A list of bounding boxes.
+     * @param boxes A list of bounding boxes.
      * @return A list of merged bounding boxes.
      */
     public List<Rect> suppressNonMax(List<Rect> boxes) {
@@ -96,8 +96,8 @@ public class NonMaxSuppressor {
     /**
      * Adds all boxes that have references in idxes to a list, and returns that list
      *
-     * @param boxes - The original list of bounding boxes.
-     * @param idxes - The indexes of the bounding boxes to use to populate the list.
+     * @param boxes The original list of bounding boxes.
+     * @param idxes The indexes of the bounding boxes to use to populate the list.
      * @return A list containing all the bounding boxes referenced by idxes.
      */
     private List<Rect> populateList(List<Rect> boxes, List<Integer> idxes) {
@@ -111,8 +111,8 @@ public class NonMaxSuppressor {
     /**
      * Adds a constant value to every value in a list.
      *
-     * @param lst - The list to add a constant to.
-     * @param x - The constant to add.
+     * @param lst The list to add a constant to.
+     * @param x The constant to add.
      * @return The original list where every value has a constant added.
      */
     private List<Double> addListConstant(List<Double> lst, double x) {
@@ -126,9 +126,9 @@ public class NonMaxSuppressor {
     /**
      * Subtract the elements of two lists.
      *
-     * @param lst1 - The first list.
-     * @param lst2 - The second list.
-     * @return list1 - list2.
+     * @param lst1 The first list.
+     * @param lst2 The second list.
+     * @return list1 list2.
      */
     private List<Double> subtractLists(List<Double> lst1, List<Double> lst2) {
         if(lst1.size() != lst2.size()) {
@@ -144,9 +144,9 @@ public class NonMaxSuppressor {
     /**
      * Divide the elements of two lists.
      *
-     * @param lst1 - The first list.
-     * @param lst2 - The second list.
-     * @param mask - The indexes that should be divided.
+     * @param lst1 The first list.
+     * @param lst2 The second list.
+     * @param mask The indexes that should be divided.
      * @return list1/list2 for the indexes in mask.
      */
     private List<Double> divideLists(List<Double> lst1, List<Double> lst2, List<Integer> mask) {
@@ -160,8 +160,8 @@ public class NonMaxSuppressor {
     /**
      * Multiply the elements of two lists.
      *
-     * @param lst1 - The first list.
-     * @param lst2 - The second list.
+     * @param lst1 The first list.
+     * @param lst2 The second list.
      * @return list1 * list2.
      */
     private List<Double> multiplyLists(List<Double> lst1, List<Double> lst2) {
@@ -179,8 +179,8 @@ public class NonMaxSuppressor {
     /**
      * Deletes all indexes where the corresponding overlap is greater than the overlap threshold.
      *
-     * @param idxes - The list of indexes of the bounding boxes.
-     * @param overlaps - The list of area overlap ratios for the bounding boxes.
+     * @param idxes The list of indexes of the bounding boxes.
+     * @param overlaps The list of area overlap ratios for the bounding boxes.
      */
     private void deleteBadIndexes(List<Integer> idxes, List<Double> overlaps) {
         for(int i = 0; i < overlaps.size(); i++) {
@@ -194,9 +194,9 @@ public class NonMaxSuppressor {
     /**
      * Performs Math.max() on every element in the given list with a given constant.
      *
-     * @param x - The value being compared with every element in the list.
-     * @param lst - The list.
-     * @param mask - A list of valid indexes for the max() operation to take place.
+     * @param x The value being compared with every element in the list.
+     * @param lst The list.
+     * @param mask A list of valid indexes for the max() operation to take place.
      * @return A list where all elements < x are replaced with x.
      */
     private List<Double> listMax(double x, List<Double> lst, List<Integer> mask) {
@@ -210,8 +210,8 @@ public class NonMaxSuppressor {
     /**
      * Performs Math.max() on every element in the given list with a given constant.
      *
-     * @param x - The value being compared with every element in the list.
-     * @param lst - The list.
+     * @param x The value being compared with every element in the list.
+     * @param lst The list.
      * @return A list where all elements < x are replaced with x.
      */
     private List<Double> listMax(double x, List<Double> lst) {
@@ -225,9 +225,9 @@ public class NonMaxSuppressor {
     /**
      * Performs Math.min() on every element in the given list with a given constant.
      *
-     * @param x - The value being compared with every element in the list.
-     * @param lst - The list.
-     * @param mask - A list of valid indexes for the min() operation to take place.
+     * @param x The value being compared with every element in the list.
+     * @param lst The list.
+     * @param mask A list of valid indexes for the min() operation to take place.
      * @return A list where all elements > x are replaced with x.
      */
     private List<Double> listMin(double x, List<Double> lst, List<Integer> mask) {
@@ -241,7 +241,7 @@ public class NonMaxSuppressor {
     /**
      * Sorts the input list and returns sorted list in the form of references to the input list.
      *
-     * @param input - The input list.
+     * @param input The input list.
      * @return A list of the indexes of each of the elements in the sorted list (in the sorted order).
      */
     private List<Integer> argsort(List<Double> input) {

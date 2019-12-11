@@ -43,7 +43,7 @@ public class Grapher {
     private boolean firstLoop;
     //A boolean specifying if the grapher should allow negative y values.
     private boolean negativeY;
-
+    //The size of the output graph frame.
     private Size frameSize;
 
     /**

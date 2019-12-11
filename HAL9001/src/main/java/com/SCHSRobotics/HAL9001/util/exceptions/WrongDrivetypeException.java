@@ -15,7 +15,7 @@ public class WrongDrivetypeException extends RuntimeException {
     /**
      * Constructor for WrongDriveTypeException.
      *
-     * @param message - The error message to print to the screen.
+     * @param message The error message to print to the screen.
      */
     public WrongDrivetypeException(String message) {
         super(message);

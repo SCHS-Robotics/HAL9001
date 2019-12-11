@@ -25,15 +25,15 @@ public class BeatBox {
     private Map<String, MediaPlayer> songs;
 
     /**
-     * Constructor for BeatBox class.
+     * Constructor for BeatBox.
      */
     public BeatBox() {}
 
     /**
      * Adds a song to the list of songs.
      *
-     * @param songName - The name of the song.
-     * @param song - The song class.
+     * @param songName The name of the song.
+     * @param song The song class.
      */
     public void addSong(String songName, MediaPlayer song){
         songs.put(songName, song);
@@ -42,7 +42,7 @@ public class BeatBox {
     /**
      * Removes a song from the list of songs.
      *
-     * @param songName - The name of the song to remove.
+     * @param songName The name of the song to remove.
      */
     public void removeSong(String songName){
         songs.remove(songName);
@@ -51,7 +51,7 @@ public class BeatBox {
     /**
      * Play a song.
      *
-     * @param songName - The name of the song to play.
+     * @param songName The name of the song to play.
      */
     public void playSong(String songName){
         songs.get(songName).start();
@@ -60,7 +60,7 @@ public class BeatBox {
     /**
      * Stop playing a song.
      *
-     * @param songName - The name of the song to stop playing.
+     * @param songName The name of the song to stop playing.
      */
     public void stopSong(String songName){
         songs.get(songName).stop();
@@ -69,8 +69,8 @@ public class BeatBox {
     /**
      * Sets if a song should infinitely loop.
      *
-     * @param songName - The name of the song to loop.
-     * @param loop - Whether or not the song should infinitely loop.
+     * @param songName The name of the song to loop.
+     * @param loop Whether or not the song should infinitely loop.
      */
     public void setSongLoop(String songName, boolean loop){
         songs.get(songName).setLooping(loop);
@@ -99,8 +99,8 @@ public class BeatBox {
     /**
      * Base boost a song.
      *
-     * @param name - The name of the song to base boost.
-     * @param level - The level of base boost, between 0 and 1.
+     * @param name The name of the song to base boost.
+     * @param level The level of base boost, between 0 and 1.
      */
     public void baseBoost(String name, int level) {
 

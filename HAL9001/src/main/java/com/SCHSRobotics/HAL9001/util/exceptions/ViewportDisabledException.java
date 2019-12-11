@@ -15,7 +15,7 @@ public class ViewportDisabledException extends RuntimeException {
     /**
      * Constructor for ViewportDisabledException.
      *
-     * @param message - The message to print to the screen.
+     * @param message The message to print to the screen.
      */
     public ViewportDisabledException(String message) {
         super(message);

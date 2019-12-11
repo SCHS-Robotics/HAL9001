@@ -62,11 +62,14 @@ public class EncoderDistanceCalib extends SubSystem {
     /**
      * Constructor for EncoderDistanceCalib.
      *
-     * @param robot - The robot using this subsystem.
-     * @param driveTrain - The drivetrain being used.
-     * @param unit - The unit of distance to enter.
-     * @param params - The drivetrain params to use to create the drivetrain.
-     * @param switchSpeedButton - The speed mode button for distance entry.
+     * @param robot The robot using this subsystem.
+     * @param driveTrain The drivetrain being used.
+     * @param unit The unit of distance to enter.
+     * @param params The drivetrain params to use to create the drivetrain.
+     * @param switchSpeedButton The speed mode button for distance entry.
+     *
+     * @throws GuiNotPresentException Throws this exception if the GUI is not activated on the robot.
+     * @throws NotAnAlchemistException Throws this exception if the provided parameters are not from a drivetrain.
      */
     public EncoderDistanceCalib(Robot robot, DriveTrain driveTrain, Units unit, BaseParam params, Button switchSpeedButton) {
         super(robot);
@@ -240,7 +243,7 @@ public class EncoderDistanceCalib extends SubSystem {
     /**
      * Closes menu and gets the distance from the user.
      *
-     * @param distance - The distance entered by the user.
+     * @param distance The distance entered by the user.
      */
     public void numberSelected(double distance){
         this.distance = distance;

@@ -74,7 +74,7 @@ public class ColorspaceCalib extends VisionSubSystem {
     /**
      * Constructor that uses configuration to set everything.
      *
-     * @param robot - The robot running the program.
+     * @param robot The robot running the program.
      */
     public ColorspaceCalib(Robot robot) {
         super(robot);
@@ -97,8 +97,8 @@ public class ColorspaceCalib extends VisionSubSystem {
     /**
      * Constructor that uses default keys.
      *
-     * @param robot - The robot running the program.
-     * @param colorSpace - Enum that determine what 3 chanel color space to use.
+     * @param robot The robot running the program.
+     * @param colorSpace Enum that determine what 3 chanel color space to use.
      */
     public ColorspaceCalib(Robot robot, ColorSpace colorSpace){
         super(robot);
@@ -124,10 +124,10 @@ public class ColorspaceCalib extends VisionSubSystem {
     /**
      * Constructor that uses default keys and allows the user to specify the type of image being filtered.
      *
-     * @param robot - The robot running the program.
-     * @param colorSpace - Enum that determine what 3 chanel color space to use.
-     * @param imageType - An enum that specifies if a single channel or multi-channel image is being filtered.
-     * @param channelIdx - The index of the filtered channel within the colorspace.
+     * @param robot The robot running the program.
+     * @param colorSpace Enum that determine what 3 chanel color space to use.
+     * @param imageType An enum that specifies if a single channel or multi-channel image is being filtered.
+     * @param channelIdx The index of the filtered channel within the colorspace.
      */
     public ColorspaceCalib(Robot robot, ColorSpace colorSpace, ImageType imageType, int channelIdx){
         super(robot);
@@ -154,8 +154,8 @@ public class ColorspaceCalib extends VisionSubSystem {
     /**
      * Constructor that uses default keys and lets the user specify a custom function to convert from the RGB color space to an arbitrary custom colorspace.
      *
-     * @param robot - The robot running the program.
-     * @param converter - The custom conversion function.
+     * @param robot The robot running the program.
+     * @param converter The custom conversion function.
      */
     public ColorspaceCalib(Robot robot, Function<Mat, Mat> converter){
         super(robot);
@@ -181,10 +181,10 @@ public class ColorspaceCalib extends VisionSubSystem {
     /**
      * Constructor that uses default keys, lets the user input a custom color conversion function (RGB to custom), and allows the user to specify if a single channel or multi-channel image is being filtered.
      *
-     * @param robot - The robot running the program.
-     * @param converter - The custom conversion function.
-     * @param imageType - An enum that specifies if a single channel or multi-channel image is being filtered.
-     * @param channelIdx - The index of the filtered channel within the colorspace.
+     * @param robot The robot running the program.
+     * @param converter The custom conversion function.
+     * @param imageType An enum that specifies if a single channel or multi-channel image is being filtered.
+     * @param channelIdx The index of the filtered channel within the colorspace.
      */
     public ColorspaceCalib(Robot robot, Function<Mat, Mat> converter, ImageType imageType, int channelIdx){
         super(robot);
@@ -211,16 +211,16 @@ public class ColorspaceCalib extends VisionSubSystem {
     /**
      * Constructor that lets you set the keys.
      *
-     * @param robot - The robot running the program.
-     * @param XUp - Button to increment X values.
-     * @param XDown - Button to decrement X values.
-     * @param YUp - Button to increment Y values.
-     * @param YDown - Button to decrement Y values.
-     * @param ZUp - Button to increment Z values.
-     * @param ZDown - Button to decrement Z values.
-     * @param slowMode - Toggle button for slow mode.
-     * @param changeLimit - Toggle button for changing between changing upper values and lower values.
-     * @param colorSpace - Enum that determines what 3 chanel color space to use.
+     * @param robot The robot running the program.
+     * @param XUp Button to increment X values.
+     * @param XDown Button to decrement X values.
+     * @param YUp Button to increment Y values.
+     * @param YDown Button to decrement Y values.
+     * @param ZUp Button to increment Z values.
+     * @param ZDown Button to decrement Z values.
+     * @param slowMode Toggle button for slow mode.
+     * @param changeLimit Toggle button for changing between changing upper values and lower values.
+     * @param colorSpace Enum that determines what 3 chanel color space to use.
      */
     public ColorspaceCalib(Robot robot, Button XUp, Button XDown, Button YUp, Button YDown, Button ZUp, Button ZDown, Button slowMode, Button changeLimit, ColorSpace colorSpace){
         super(robot);
@@ -245,18 +245,18 @@ public class ColorspaceCalib extends VisionSubSystem {
     /**
      * Constructor that lets you set the keys and allows the user to specify if a single channel or multi-channel image is being filtered.
      *
-     * @param robot - The robot running the program.
-     * @param XUp - Button to increment X values.
-     * @param XDown - Button to decrement X values.
-     * @param YUp - Button to increment Y values.
-     * @param YDown - Button to decrement Y values.
-     * @param ZUp - Button to increment Z values.
-     * @param ZDown - Button to decrement Z values.
-     * @param slowMode - Toggle button for slow mode.
-     * @param changeLimit - Toggle button for changing between changing upper values and lower values.
-     * @param colorSpace - Enum that determine what 3 chanel color space to use.
-     * @param imageType - An enum that specifies if a single channel or multi-channel image is being filtered.
-     * @param channelIdx - The index of the filtered channel within the colorspace.
+     * @param robot The robot running the program.
+     * @param XUp Button to increment X values.
+     * @param XDown Button to decrement X values.
+     * @param YUp Button to increment Y values.
+     * @param YDown Button to decrement Y values.
+     * @param ZUp Button to increment Z values.
+     * @param ZDown Button to decrement Z values.
+     * @param slowMode Toggle button for slow mode.
+     * @param changeLimit Toggle button for changing between changing upper values and lower values.
+     * @param colorSpace Enum that determine what 3 chanel color space to use.
+     * @param imageType An enum that specifies if a single channel or multi-channel image is being filtered.
+     * @param channelIdx The index of the filtered channel within the colorspace.
      */
     public ColorspaceCalib(Robot robot, Button XUp, Button XDown, Button YUp, Button YDown, Button ZUp, Button ZDown, Button slowMode, Button changeLimit, ColorSpace colorSpace, ImageType imageType, int channelIdx){
         super(robot);
@@ -282,16 +282,16 @@ public class ColorspaceCalib extends VisionSubSystem {
     /**
      * Constructor that lets the user set the keys and lets the user input a custom color conversion function (RGB to custom).
      *
-     * @param robot - The robot running the program.
-     * @param XUp - Button to increment X values.
-     * @param XDown - Button to decrement X values.
-     * @param YUp - Button to increment Y values.
-     * @param YDown - Button to decrement Y values.
-     * @param ZUp - Button to increment Z values.
-     * @param ZDown - Button to decrement Z values.
-     * @param slowMode - Toggle button for slow mode.
-     * @param changeLimit - Toggle button for changing between changing upper values and lower values.
-     * @param converter - The custom conversion function.
+     * @param robot The robot running the program.
+     * @param XUp Button to increment X values.
+     * @param XDown Button to decrement X values.
+     * @param YUp Button to increment Y values.
+     * @param YDown Button to decrement Y values.
+     * @param ZUp Button to increment Z values.
+     * @param ZDown Button to decrement Z values.
+     * @param slowMode Toggle button for slow mode.
+     * @param changeLimit Toggle button for changing between changing upper values and lower values.
+     * @param converter The custom conversion function.
      */
     public ColorspaceCalib(Robot robot, Button XUp, Button XDown, Button YUp, Button YDown, Button ZUp, Button ZDown, Button slowMode, Button changeLimit, Function<Mat, Mat> converter){
         super(robot);
@@ -317,18 +317,18 @@ public class ColorspaceCalib extends VisionSubSystem {
     /**
      * Constructor that lets the user set the keys, lets the user input a custom color conversion function (RGB to custom), and allows the user to specify if a single channel or multi-channel image is being filtered.
      *
-     * @param robot - The robot running the program.
-     * @param XUp - Button to increment X values.
-     * @param XDown - Button to decrement X values.
-     * @param YUp - Button to increment Y values.
-     * @param YDown - Button to decrement Y values.
-     * @param ZUp - Button to increment Z values.
-     * @param ZDown - Button to decrement Z values.
-     * @param slowMode - Toggle button for slow mode.
-     * @param changeLimit - Toggle button for changing between changing upper values and lower values.
-     * @param converter - The custom conversion function.
-     * @param imageType - An enum that specifies if a single channel or multi-channel image is being filtered.
-     * @param channelIdx- The index of the filtered channel within the colorspace.
+     * @param robot The robot running the program.
+     * @param XUp Button to increment X values.
+     * @param XDown Button to decrement X values.
+     * @param YUp Button to increment Y values.
+     * @param YDown Button to decrement Y values.
+     * @param ZUp Button to increment Z values.
+     * @param ZDown Button to decrement Z values.
+     * @param slowMode Toggle button for slow mode.
+     * @param changeLimit Toggle button for changing between changing upper values and lower values.
+     * @param converter The custom conversion function.
+     * @param imageType An enum that specifies if a single channel or multi-channel image is being filtered.
+     * @param channelIdx The index of the filtered channel within the colorspace.
      */
     public ColorspaceCalib(Robot robot, Button XUp, Button XDown, Button YUp, Button YDown, Button ZUp, Button ZDown, Button slowMode, Button changeLimit, Function<Mat, Mat> converter, ImageType imageType, int channelIdx){
         super(robot);
@@ -511,6 +511,8 @@ public class ColorspaceCalib extends VisionSubSystem {
 
     /**
      * Returns lower bounds for x, y, and z in an array.
+     *
+     * @return An array containing the lower bounds of the colorspace range.
      */
     public int[] getLowerBound() {
         return new int[] {x_lower,y_lower,z_lower};
@@ -518,6 +520,8 @@ public class ColorspaceCalib extends VisionSubSystem {
 
     /**
      * Returns upper bounds for x, y, and z in an array.
+     *
+     * @return An array containing the upper bounds of the colorspace range.
      */
     public int[] getUpperBound() {
         return new int[] {x_upper,y_upper,z_upper};
@@ -526,8 +530,8 @@ public class ColorspaceCalib extends VisionSubSystem {
     /**
      * Converts an image from the RGB color space to a specified color space.
      *
-     * @param src - Source image that needs converting.
-     * @param dst - Output of the image conversion.
+     * @param src Source image that needs converting.
+     * @param dst Output of the image conversion.
      */
     private void convertImage(Mat src, Mat dst, ColorSpace colorSpace){
         switch (colorSpace){
@@ -550,7 +554,7 @@ public class ColorspaceCalib extends VisionSubSystem {
     /**
      * Set delay between each x, y, or z change.
      *
-     * @param delayMs - delay in milliseconds between x, y, or z changes.
+     * @param delayMs delay in milliseconds between x, y, or z changes.
      */
     public void setDelay(int delayMs) {
         this.delayMs = delayMs;
@@ -578,16 +582,16 @@ public class ColorspaceCalib extends VisionSubSystem {
     /**
      * Sets inputs to be used.
      *
-     * @param XUp - Button to increment X values.
-     * @param XDown - Button to decrement X values.
-     * @param YUp - Button to increment Y values.
-     * @param YDown - Button to decrement Y values.
-     * @param ZUp - Button to increment Z values.
-     * @param ZDown - Button to decrement Z values.
-     * @param slowMode - Toggle button for slow mode.
-     * @param changeLimit - Toggle button for changing between changing upper values and lower values.
+     * @param XUp Button to increment X values.
+     * @param XDown Button to decrement X values.
+     * @param YUp Button to increment Y values.
+     * @param YDown Button to decrement Y values.
+     * @param ZUp Button to increment Z values.
+     * @param ZDown Button to decrement Z values.
+     * @param slowMode Toggle button for slow mode.
+     * @param changeLimit Toggle button for changing between changing upper values and lower values.
      *                    
-     * @throws NotBooleanInputException - Throws an exception if button does not return boolean values.
+     * @throws NotBooleanInputException Throws an exception if button does not return boolean values.
      */
     private void setInputs(Button XUp, Button XDown, Button YUp, Button YDown, Button ZUp, Button ZDown, Button slowMode, Button changeLimit){
         if(XUp.isBoolean && XDown.isBoolean && YUp.isBoolean && YDown.isBoolean && ZUp.isBoolean && ZDown.isBoolean && slowMode.isBoolean && changeLimit.isBoolean) {
@@ -608,7 +612,7 @@ public class ColorspaceCalib extends VisionSubSystem {
     /**
      * Returns a list of all of the settings that need to be configured for this program in teleop.
      *
-     * @return - The settings this program needs to be configured for teleop.
+     * @return The settings this program needs to be configured for teleop.
      */
     @TeleopConfig
     public static ConfigParam[] teleopConfig() {

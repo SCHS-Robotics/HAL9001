@@ -15,7 +15,7 @@ public class NotBooleanInputException extends RuntimeException {
     /**
      * Ctor for NotBooleanInputException.
      *
-     * @param message - The message to print to the screen.
+     * @param message The message to print to the screen.
      */
     public NotBooleanInputException(String message) {
         super(message);

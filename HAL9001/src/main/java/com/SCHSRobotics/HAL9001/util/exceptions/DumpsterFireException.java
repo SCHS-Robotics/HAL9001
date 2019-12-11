@@ -15,7 +15,7 @@ public class DumpsterFireException extends RuntimeException {
     /**
      * Constructor for DumpsterFireException.
      *
-     * @param message - The error message to print to the screen.
+     * @param message The error message to print to the screen.
      */
     public DumpsterFireException(String message) {
         super(message);

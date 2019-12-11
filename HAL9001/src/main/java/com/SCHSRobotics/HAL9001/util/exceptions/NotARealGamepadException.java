@@ -15,7 +15,7 @@ public class NotARealGamepadException extends RuntimeException {
     /**
      * Constructor for NotARealGamepadException.
      *
-     * @param message - The error message to print to the screen.
+     * @param message The error message to print to the screen.
      */
     public NotARealGamepadException(String message) {
         super(message);

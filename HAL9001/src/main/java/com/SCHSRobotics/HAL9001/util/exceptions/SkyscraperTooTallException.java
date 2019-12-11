@@ -15,7 +15,7 @@ public class SkyscraperTooTallException extends RuntimeException{
     /**
      * Ctor for SkyscraperTooTallException.
      *
-     * @param message - The message to print to the screen.
+     * @param message The message to print to the screen.
      */
     public SkyscraperTooTallException(String message) {super(message);}
 }

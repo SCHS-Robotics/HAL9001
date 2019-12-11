@@ -15,7 +15,7 @@ public class GuiNotPresentException extends RuntimeException {
     /**
      * Constructor for GuiNotPresentException
      *
-     * @param message - The error message to print to the screen.
+     * @param message The error message to print to the screen.
      */
     public GuiNotPresentException(String message) {
         super(message);
