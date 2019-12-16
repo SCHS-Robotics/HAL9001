@@ -13,10 +13,8 @@ import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
  *
  * @author Dylan Zueck, Crow Force
  * @author Cole Savage, Level Up
- * @since 1.0.0
+ * @since 1.0.0, Creation Date: 7/20/19
  * @version 1.0.0
- *
- * Creation Date: 7/20/19
  */
 public class DefaultCursor extends Cursor {
 

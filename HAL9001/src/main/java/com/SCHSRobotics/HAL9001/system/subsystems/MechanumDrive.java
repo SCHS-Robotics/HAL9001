@@ -93,6 +93,18 @@ public class MechanumDrive extends SubSystem {
         REVERSE_LEFT, REVERSE_RIGHT, REVERSE_FRONT, REVERSE_BACK
     }
     private ReverseType reverseType;
+    //What value to shift the IMU reading by
+    public enum IMUShift {
+        ZERO(0);
+
+        double val;
+        IMUShift(double val) {
+            this.val = val;
+        }
+    }
+
+    //Whether the rev hubs are inverted.
+    private boolean invertedHubs;
 
     /**
      * A constructor for the mechanum drive that takes parameters as input.
@@ -328,6 +340,8 @@ public class MechanumDrive extends SubSystem {
             botLeft.setMode(runMode);
             botRight.setMode(runMode);
 
+            invertedHubs = data.getData("InvertedHubs", Boolean.class);
+
             DcMotor.ZeroPowerBehavior zeroPower = data.getData("MotorZeroPower",DcMotor.ZeroPowerBehavior.class);
             topLeft.setZeroPowerBehavior(zeroPower);
             topRight.setZeroPowerBehavior(zeroPower);
@@ -358,7 +372,9 @@ public class MechanumDrive extends SubSystem {
             imuNumber = (int) Math.round(data.getData("ImuNumber",Double.class));
 
             setDriveMode(data.getData("DriveType", DriveType.class));
-            setUseGyro(data.getData("UseGyro",Boolean.class), imuNumber);
+            setUseGyro(data.getData("UseGyro", Boolean.class), imuNumber);
+
+            invertedHubs = data.getData("InvertedHubs", Boolean.class);
 
             DcMotor.RunMode runMode = data.getData("MotorRunMode",DcMotor.RunMode.class);
             topLeft.setMode(runMode);
@@ -1441,13 +1457,40 @@ public class MechanumDrive extends SubSystem {
     }
 
     /**
+     * Sets the mechanum drive's turn PID controller.
+     *
+     * @param turnPID The new turn PID controller.
+     */
+    public void setTurnPID(PIDController turnPID) {
+        this.turnPID = turnPID;
+    }
+
+    /**
+     * Sets the mechanum drive's turn PID controller.
+     *
+     * @param stabilityPID The new stability PID controller.
+     */
+    public void setStabilityPID(PIDController stabilityPID) {
+        this.stabilityPID = stabilityPID;
+    }
+
+    /**
+     * Gets the motors that MechanumDrive uses.
+     *
+     * @return Returns the list of motors. (topLeft, topRight, botLeft, botRight)
+     */
+    public DcMotor[] getMotors() {
+        return new DcMotor[] {topLeft, topRight, botLeft, botRight};
+    }
+
+    /**
      * Gets the robot's current yaw angle from the gyro.
      *
      * @param angleUnit The unit the angle will be returned in.
      * @return The current yaw angle if the gyroscope is use. If the gyro is not active, it returns 0.
      */
     public double getCurrentAngle(AngleUnit angleUnit) {
-        return usesGyro ? imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,angleUnit).firstAngle : 0;
+        return usesGyro ? getOrientation(angleUnit).firstAngle : 0;
     }
 
     /**
@@ -1466,7 +1509,7 @@ public class MechanumDrive extends SubSystem {
      * @return The current pitch angle if the gyroscope is use. If the gyro is not active, it returns 0.
      */
     public double getCurrentPitch(AngleUnit angleUnit) {
-        return usesGyro ? imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,angleUnit).secondAngle : 0;
+        return usesGyro ? getOrientation(angleUnit).secondAngle : 0;
     }
 
     /**
@@ -1485,7 +1528,7 @@ public class MechanumDrive extends SubSystem {
      * @return The current roll angle if the gyroscope is use. If the gyro is not active, it returns 0.
      */
     public double getCurrentRoll(AngleUnit angleUnit) {
-        return usesGyro ? imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,angleUnit).secondAngle : 0;
+        return usesGyro ? getOrientation(angleUnit).thirdAngle : 0;
     }
 
     /**
@@ -1506,7 +1549,13 @@ public class MechanumDrive extends SubSystem {
      * @return The robot's orientation.
      */
     public Orientation getOrientation(AngleUnit angleUnit, AxesOrder order, AxesReference reference) {
-        return usesGyro ? imu.getAngularOrientation(reference,order,angleUnit) : new Orientation();
+        Orientation o = usesGyro ? imu.getAngularOrientation(reference,order,angleUnit) : new Orientation();
+        if(invertedHubs) {
+            o.firstAngle = -o.firstAngle;
+            o.secondAngle = -o.secondAngle;
+            o.thirdAngle = -o.thirdAngle;
+        }
+        return o;
     }
 
     /**
@@ -1607,7 +1656,8 @@ public class MechanumDrive extends SubSystem {
                             DcMotor.RunMode.RUN_USING_ENCODER,
                             DcMotor.RunMode.RUN_WITHOUT_ENCODER},
                             DcMotor.RunMode.RUN_USING_ENCODER),
-                    new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE)
+                    new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE),
+                    new ConfigParam("InvertedHubs", ConfigParam.booleanMap, false)
             };
         }
         else {
@@ -1635,7 +1685,8 @@ public class MechanumDrive extends SubSystem {
                             DcMotor.RunMode.RUN_USING_ENCODER,
                             DcMotor.RunMode.RUN_WITHOUT_ENCODER},
                             DcMotor.RunMode.RUN_USING_ENCODER),
-                    new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE)
+                    new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE),
+                    new ConfigParam("InvertedHubs", ConfigParam.booleanMap, false)
             };
         }
     }
@@ -1657,7 +1708,8 @@ public class MechanumDrive extends SubSystem {
                             DcMotor.RunMode.RUN_WITHOUT_ENCODER},
                             DcMotor.RunMode.RUN_USING_ENCODER),
                     new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE),
-                    new ConfigParam("ReverseType", ReverseType.REVERSE_RIGHT)
+                    new ConfigParam("ReverseType", ReverseType.REVERSE_RIGHT),
+                    new ConfigParam("InvertedHubs", ConfigParam.booleanMap, false)
             };
         }
         else {
@@ -1671,7 +1723,8 @@ public class MechanumDrive extends SubSystem {
                             DcMotor.RunMode.RUN_WITHOUT_ENCODER},
                             DcMotor.RunMode.RUN_USING_ENCODER),
                     new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE),
-                    new ConfigParam("ReverseType", ReverseType.REVERSE_RIGHT)
+                    new ConfigParam("ReverseType", ReverseType.REVERSE_RIGHT),
+                    new ConfigParam("InvertedHubs", ConfigParam.booleanMap, false)
             };
         }
     }
@@ -1696,6 +1749,8 @@ public class MechanumDrive extends SubSystem {
         private boolean useGyro;
         //A boolean specifying whether to change the motor velocity PID.
         private boolean changeVelocityPID;
+        //A boolean specifying if the revHubs are upside down;
+        private boolean revHubsInverted;
         //The new velocity PID coefficients.
         private double vkp, vki, vkd, vkf;
         //The number of encoder ticks per meter traveled.
@@ -1746,6 +1801,8 @@ public class MechanumDrive extends SubSystem {
             turnLeftPower = 0;
             turnRightPower = 0;
 
+            revHubsInverted = false;
+
             useGyro = false;
 
             changeVelocityPID = false;
@@ -1779,6 +1836,17 @@ public class MechanumDrive extends SubSystem {
         public Params setDriveType(DriveType driveType) {
             this.driveType = driveType;
             useGyro = driveType == DriveType.STANDARD_TTA || driveType == DriveType.FIELD_CENTRIC || driveType == DriveType.FIELD_CENTRIC_TTA || driveType == DriveType.ARCADE_TTA;
+            return this;
+        }
+
+        /**
+         * Sets whether the rev hubs are upside down or not. Used for PID/getting the angle.
+         *
+         * @param inverted True if the hubs are inverted.
+         * @return This instance of Params.
+         */
+        public Params setRevHubsInverted(boolean inverted){
+            revHubsInverted = inverted;
             return this;
         }
 
@@ -2063,7 +2131,7 @@ public class MechanumDrive extends SubSystem {
          * @param ki Integral gain.
          * @param kd Derivative gain.
          * @param useDegrees A boolean specifying if the units are in degrees.
-         * @return
+         * @return This instance of Params.
          */
         public Params setStabilityPIDCoeffs(double kp, double ki, double kd, boolean useDegrees) {
             return setStabilityPIDCoeffs(kp,ki,kd,0,useDegrees);

@@ -581,6 +581,15 @@ public class QuadWheelDrive extends SubSystem {
     }
 
     /**
+     * Gets an array containing all of the motors.
+     *
+     * @return An array containing all of the motors. (topLeft, topRight, botLeft, botRight)
+     */
+    public DcMotor[] getMotors(){
+        return new DcMotor[]{topLeft, topRight, botLeft, botRight};
+    }
+
+    /**
      * The teleop configuration settings.
      *
      * @return The teleop configuration settings.

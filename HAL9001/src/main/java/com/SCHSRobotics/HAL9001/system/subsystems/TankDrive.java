@@ -515,6 +515,15 @@ public class TankDrive extends SubSystem {
     }
 
     /**
+     * Gets an array containing all of the motors.
+     *
+     * @return An array containing all of the motors. (left, right)
+     */
+    public DcMotor[] getMotors(){
+        return new DcMotor[]{left, right};
+    }
+
+    /**
      * Gets the right motor encoder position.
      *
      * @return The right motor encoder position.

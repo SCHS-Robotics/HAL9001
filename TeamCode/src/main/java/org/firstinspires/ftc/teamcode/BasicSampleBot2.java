@@ -4,16 +4,18 @@ import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
 import com.SCHSRobotics.HAL9001.system.subsystems.MechanumDrive;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-public class BasicSampleBot extends Robot {
+public class BasicSampleBot2 extends Robot {
 
     public MechanumDrive drive;
     public SubSystem1 s1;
+    public SubSystem2 s2;
+    public SubSystem3 s3;
     /**
      * Constructor for robot.
      *
      * @param opMode - The opmode the robot is currently running.
      */
-    public BasicSampleBot(OpMode opMode) {
+    public BasicSampleBot2(OpMode opMode) {
         super(opMode);
 
         //vision = new TestVisionSystem(this);
@@ -39,7 +41,11 @@ public class BasicSampleBot extends Robot {
         //calib = new AnglePIDTunerSystem(this, new MechanumDrive.Params("forwardLeftMotor","forwardRightMotor","backLeftMotor","backRightMotor"), controller,45, AngleUnit.DEGREES);
         drive = new MechanumDrive(this, new MechanumDrive.SpecificParams("topLeft","topRight","botLeft","botRight"),false);
         s1 = new SubSystem1(this);
+        s2 = new SubSystem2(this);
+        s3 = new SubSystem3(this);
         putSubSystem("Tank", drive);
         putSubSystem("Test",s1);
+        putSubSystem("Test2",s2);
+        putSubSystem("Test3",s3);
     }
 }

@@ -9,16 +9,16 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @StandAlone
 //@Disabled should be removed when using
 //@Disabled
-@TeleOp(name = "Basic Sample Bot Teleop")
+@TeleOp(name = "Basic Sample Bot Teleop 2")
 //extends BaseTeleop means it is a TeleOp program
-public class BasicSampleTeleop extends BaseTeleop {
+public class BasicSampleTeleop2 extends BaseTeleop {
 
-    private BasicSampleBot robot;
+    private BasicSampleBot2 robot;
 
     //return the robot that will be used
     @Override
     protected Robot buildRobot() {
-        robot = new BasicSampleBot(this);
+        robot = new BasicSampleBot2(this);
         return robot;
     }
 

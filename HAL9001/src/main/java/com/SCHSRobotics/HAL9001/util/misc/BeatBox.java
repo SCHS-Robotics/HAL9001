@@ -4,6 +4,7 @@ import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -26,7 +27,9 @@ public class BeatBox {
     /**
      * Constructor for BeatBox.
      */
-    public BeatBox() {}
+    public BeatBox() {
+        songs = new HashMap<>();
+    }
 
     /**
      * Adds a song to the list of songs.

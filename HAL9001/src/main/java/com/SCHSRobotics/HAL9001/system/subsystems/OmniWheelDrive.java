@@ -2063,7 +2063,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param ki Integral gain.
          * @param kd Derivative gain.
          * @param useDegrees A boolean specifying if the units are in degrees.
-         * @return
+         * @return This instance of Params
          */
         public Params setStabilityPIDCoeffs(double kp, double ki, double kd, boolean useDegrees) {
             return setStabilityPIDCoeffs(kp,ki,kd,0,useDegrees);

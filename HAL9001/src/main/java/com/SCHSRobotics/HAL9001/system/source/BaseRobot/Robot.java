@@ -88,9 +88,9 @@ public abstract class Robot {
     //A list of Vision-Based subsystems.
     private List<VisionSubSystem> visionSubSystems;
     //Whether or not a program has thrown an error.
-    private static boolean errorThrown = false;
+    private boolean errorThrown;
     //The exception that was thrown (if an exception was thrown).
-    private static Exception thrownException;
+    private Exception thrownException;
 
     /**
      * Constructor for robot.
@@ -116,6 +116,9 @@ public abstract class Robot {
 
         cameraSize = new Size(320, 240);
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId","id", hardwareMap.appContext.getPackageName());
+
+        thrownException = new Exception();
+        errorThrown = false;
     }
 
     /**
@@ -124,7 +127,7 @@ public abstract class Robot {
      * @param name The name of the subsystem.
      * @param subSystem The subsystem object.
      */
-    protected final void putSubSystem(String name,  SubSystem subSystem)
+    protected final void putSubSystem(String name, SubSystem subSystem)
     {
         subSystems.put(name, subSystem);
 
@@ -144,6 +147,7 @@ public abstract class Robot {
                     //method must be annotated as TeleopConfig, have no parameters, be public and static, and return an array of config params
                     if(!foundTeleopConfig && m.isAnnotationPresent(TeleopConfig.class) && m.getReturnType() == ConfigParam[].class && m.getParameterTypes().length == 0 && Modifier.isStatic(m.getModifiers()) && Modifier.isPublic(m.getModifiers())) {
                         teleopConfig.put(subSystem.getClass().getSimpleName(),Arrays.asList((ConfigParam[]) m.invoke(null)));
+                        Log.wtf(teleopConfig.keySet().toString(), "   " + teleopConfig.values().toString());
                         if(!useGui) {
                             gui = new GUI(this, new Button(1, Button.BooleanInputs.noButton));
                             useGui = true;
@@ -155,6 +159,7 @@ public abstract class Robot {
                     //method must be annotated as AutonomousConfig, have no parameters, be public and static, and return an array of config params
                     if(!foundAutonomousConfig && m.isAnnotationPresent(AutonomousConfig.class) && m.getReturnType() == ConfigParam[].class && m.getParameterTypes().length == 0 && Modifier.isStatic(m.getModifiers()) && Modifier.isPublic(m.getModifiers())) {
                         autonomousConfig.put(subSystem.getClass().getSimpleName(),Arrays.asList((ConfigParam[]) m.invoke(null)));
+                        Log.wtf(teleopConfig.keySet().toString(), "   " + teleopConfig.values().toString());
                         if(!useGui) {
                             gui = new GUI(this, new Button(1, Button.BooleanInputs.noButton));
                             useGui = true;
