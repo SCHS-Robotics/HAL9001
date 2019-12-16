@@ -1,14 +1,13 @@
-/*
- * Filename: Vector.java
- * Author: Cole Savage
- * Team Name: Level Up
- * Date: 7/11/17
- */
-
 package com.SCHSRobotics.HAL9001.util.math;
 
 /**
  * A class for doing mathematical operations on 2 dimensional vectors.
+ *
+ * @author Cole Savage, Level Up
+ * @since 0.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 7/11/17
  */
 public class Vector {
 

@@ -1,10 +1,3 @@
-/*
- * Filename: AnglePIDTunerSystem.java
- * Author: Cole Savage
- * Team Name: Level Up
- * Date: 8/11/19
- */
-
 package com.SCHSRobotics.HAL9001.util.calib;
 
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
@@ -29,6 +22,12 @@ import org.opencv.core.Mat;
 
 /**
  * A subsystem used to tune turn-to-angle PID controllers.
+ *
+ * @author Cole Savage, Level Up
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 8/11/19
  */
 public class AnglePIDTunerSystem extends VisionSubSystem {
 

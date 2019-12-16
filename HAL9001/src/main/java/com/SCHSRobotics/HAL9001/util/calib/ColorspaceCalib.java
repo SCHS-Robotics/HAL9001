@@ -1,9 +1,3 @@
-/*
- * Filename: ColorspaceCalib.java
- * Author: Dylan Zueck and Cole Savage
- * Team Name: Crow Force, Level Up
- * Date: 7/18/19
- */
 package com.SCHSRobotics.HAL9001.util.calib;
 
 import com.SCHSRobotics.HAL9001.system.menus.DisplayMenu;
@@ -30,6 +24,13 @@ import org.opencv.imgproc.Imgproc;
 
 /**
  * A calibration subsystem used to find good colorspace ranges for color detection algorithms.
+ *
+ * @author Dylan Zueck, Crow Force
+ * @author Cole Savage, Level Up
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 7/18/19
  */
 public class ColorspaceCalib extends VisionSubSystem {
 

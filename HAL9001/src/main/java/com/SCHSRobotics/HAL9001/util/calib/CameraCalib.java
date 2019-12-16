@@ -1,10 +1,3 @@
-/*
- * Filename: CameraCalib.java
- * Author: Cole Savage
- * Team Name: Level Up
- * Date: 8/24/19
- */
-
 package com.SCHSRobotics.HAL9001.util.calib;
 
 import android.util.Log;
@@ -30,6 +23,12 @@ import java.util.List;
 
 /**
  * A class for calibrating the phone camera in real-ish (surreal?) time.
+ *
+ * @author Cole Savage, Level Up
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 8/24/19
  */
 public class CameraCalib extends VisionSubSystem {
 

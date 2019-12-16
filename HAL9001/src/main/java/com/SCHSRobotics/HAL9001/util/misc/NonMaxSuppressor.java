@@ -11,6 +11,12 @@ import java.util.List;
 /**
  * A class used to perform non-max suppression on a list of bounding boxes.
  * The algorithm is essentially a port of the Malisiewicz et al. method described in http://www.computervisionblog.com/2011/08/blazing-fast-nmsm-from-exemplar-svm.html.
+ *
+ * @author Cole Savage, Level Up
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 1/15/19
  */
 public class NonMaxSuppressor {
 

@@ -1,10 +1,3 @@
-/*
- * Filename: ConfigCursor.java
- * Author: Dylan Zueck and Cole Savage
- * Team Name: Crow Force, Level Up
- * Date: 8/13/19
- */
-
 package com.SCHSRobotics.HAL9001.system.subsystems.cursors;
 
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
@@ -16,6 +9,13 @@ import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 
 /**
  * A cursor object used in config menus. Contains all the controls needed to use the config system.
+ *
+ * @author Dylan Zueck, Crow Force
+ * @author Cole Savage, Level Up
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 8/13/19
  */
 public class ConfigCursor extends Cursor {
 

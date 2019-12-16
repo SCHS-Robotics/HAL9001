@@ -1,10 +1,3 @@
-/*
- * Filename: Grapher.java
- * Author: Cole Savage
- * Team Name: Level Up
- * Date: 8/3/19
- */
-
 package com.SCHSRobotics.HAL9001.util.misc;
 
 import android.os.Environment;
@@ -23,7 +16,13 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 /**
- * A class for graphing functions on the phone in real time/
+ * A class for graphing functions on the phone in real time.
+ *
+ * @author Cole Savage, Level Up
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 8/3/19
  */
 public class Grapher {
 

@@ -1,16 +1,15 @@
-/*
- * Filename: VisionSubSystem.java
- * Author: Cole Savage
- * Team Name: Level Up
- * Date: 11/6/19
- */
-
 package com.SCHSRobotics.HAL9001.system.source.BaseRobot;
 
 import org.opencv.core.Mat;
 
 /**
  * An abstract class for writing vision-based subsystems.
+ *
+ * @author Cole Savage, Level Up
+ * @since 1.0.5
+ * @version 1.0.0
+ *
+ * Creation Date: 11/6/19
  */
 public abstract class VisionSubSystem extends SubSystem {
     //The global Id for all vision subsystems (determines Id of next created vision subsystem).

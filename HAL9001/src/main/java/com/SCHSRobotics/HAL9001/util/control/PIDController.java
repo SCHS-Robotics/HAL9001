@@ -1,10 +1,3 @@
-/*
- * Filename: PIDController.java
- * Author: Cole Savage
- * Team Name: Level Up
- * Date: 7/17/19 - 8/9/19
- */
-
 package com.SCHSRobotics.HAL9001.util.control;
 
 import com.SCHSRobotics.HAL9001.util.functional_interfaces.BiFunction;
@@ -12,6 +5,12 @@ import com.qualcomm.robotcore.util.Range;
 
 /**
  * A PID controller class with multiple modes.
+ *
+ * @author Cole Savage, Level Up
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 7/17/19
  */
 public class PIDController {
 

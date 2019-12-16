@@ -29,6 +29,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A menu for debugging all robot configuration files.
+ *
+ * @author Cole Savage, Level Up
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 8/13/19
+ */
 public class ConfigDebugMenu extends ScrollingListMenu {
 
     /**

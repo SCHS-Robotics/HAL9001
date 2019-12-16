@@ -1,10 +1,3 @@
-/*
- * Filename: CustomizableGamepad.java
- * Author: Dylan Zueck
- * Team Name: Crow Force
- * Date: 7/18/19
- */
-
 package com.SCHSRobotics.HAL9001.util.misc;
 
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
@@ -15,6 +8,12 @@ import java.util.Map;
 
 /**
  * A intermediary class between the robot and the gamepad controls that allows all control systems to be customized.
+ *
+ * @author Dylan Zueck, Crow Force
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 7/18/19
  */
 public class CustomizableGamepad {
 

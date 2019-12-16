@@ -1,10 +1,3 @@
-/*
- * Filename: BeatBox.java
- * Author: Dylan Zueck and Cole Savage
- * Team Name: Crow Force and Level Up
- * Date: 8/10/19
- */
-
 package com.SCHSRobotics.HAL9001.util.misc;
 
 import android.media.MediaPlayer;
@@ -15,9 +8,15 @@ import java.util.Map;
 import java.util.Random;
 
 //TODO add more features and test class.
-
 /**
  * A class for managing, playing, and editing songs.
+ *
+ * @author Dylan Zueck, Crow Force
+ * @author Cole Savage, Level Up
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 8/10/19
  */
 public class BeatBox {
 

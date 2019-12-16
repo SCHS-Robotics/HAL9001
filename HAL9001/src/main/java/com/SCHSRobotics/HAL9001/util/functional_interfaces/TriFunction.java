@@ -1,14 +1,13 @@
-/*
- * Filename: TriFunction.java
- * Author: Cole Savage
- * Team Name: Level Up
- * Date: 7/18/19
- */
-
 package com.SCHSRobotics.HAL9001.util.functional_interfaces;
 
 /**
  * An arbitrary function with 3 inputs and 1 output.
+ *
+ * @author Cole Savage, Level Up
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 7/18/19
  *
  * @param <T> The datatype of the first input.
  * @param <R> The datatype of the second input.

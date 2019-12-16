@@ -1,10 +1,3 @@
-/*
- * Filename: EncoderDistanceCalib.java
- * Author: Cole Savage and Dylan Zueck
- * Team Name: Level Up, Crow Force
- * Date: 9/1/19
- */
-
 package com.SCHSRobotics.HAL9001.util.calib;
 
 import com.SCHSRobotics.HAL9001.system.menus.DisplayMenu;
@@ -29,6 +22,13 @@ import java.util.LinkedHashMap;
  * 
  * BeforeHAL: Wow im so bad at coding. I only use one constructor in my classes.
  * AfterHAL: Wow im so good at coding. I only used one constructor in this class.
+ *
+ * @author Cole Savage, Level Up
+ * @author Dylan Zueck, Crow Force
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 9/1/19
  */
 public class EncoderDistanceCalib extends SubSystem {
 

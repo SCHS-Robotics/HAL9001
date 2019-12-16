@@ -1,10 +1,3 @@
-/*
- * Filename: DefaultCursor.java
- * Author: Dylan Zueck and Cole Savage
- * Team Name: Crow Force, Level Up
- * Date: 7/20/19
- */
-
 package com.SCHSRobotics.HAL9001.system.subsystems.cursors;
 
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
@@ -17,6 +10,13 @@ import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 
 /**
  * A default cursor object with normal movement and selection operations.
+ *
+ * @author Dylan Zueck, Crow Force
+ * @author Cole Savage, Level Up
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 7/20/19
  */
 public class DefaultCursor extends Cursor {
 

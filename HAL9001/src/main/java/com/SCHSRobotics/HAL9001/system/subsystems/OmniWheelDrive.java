@@ -1,10 +1,3 @@
-/*
- * Filename: OmniWheelDrive.java
- * Author: Dylan Zueck and Cole Savage
- * Team Name: Crow Force, Level Up
- * Date: 9/1/19
- */
-
 package com.SCHSRobotics.HAL9001.system.subsystems;
 
 import com.SCHSRobotics.HAL9001.system.menus.DisplayMenu;
@@ -46,6 +39,13 @@ import static java.lang.Math.PI;
 
 /**
  * A built in OmniWheel drive class with 7 drive modes.
+ *
+ * @author Cole Savage, Level Up
+ * @author Dylan Zueck, Crow Force
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 9/1/19
  */
 public class OmniWheelDrive extends SubSystem {
 

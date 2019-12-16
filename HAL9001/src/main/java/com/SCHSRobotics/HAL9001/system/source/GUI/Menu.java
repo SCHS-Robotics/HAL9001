@@ -1,10 +1,3 @@
-/*
- * Filename: Menu.java
- * Author: Cole Savage and Dylan Zueck
- * Team Name: Level Up, Crow Force
- * Date: 7/20/19
- */
-
 package com.SCHSRobotics.HAL9001.system.source.GUI;
 
 import android.util.Log;
@@ -20,6 +13,13 @@ import java.util.List;
 
 /**
  * An abstract class representing a menu that can be displayed on the driver station.
+ *
+ * @author Cole Savage, Level Up
+ * @author Dylan Zueck, Crow Force
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 7/20/19
  */
 public abstract class Menu {
 

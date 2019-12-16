@@ -1,10 +1,3 @@
-/*
- * Filename: SubSystem.java
- * Author: Andrew Liang
- * Team Name: Level Up
- * Date: 2017
- */
-
 package com.SCHSRobotics.HAL9001.system.source.BaseRobot;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -13,6 +6,12 @@ import org.firstinspires.ftc.robotcore.external.Supplier;
 
 /**
  * An abstract class representing a subsystem on the robot.
+ *
+ * @author Andrew Liang, Level Up
+ * @since 0.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 2017
  */
 public abstract class SubSystem {
 

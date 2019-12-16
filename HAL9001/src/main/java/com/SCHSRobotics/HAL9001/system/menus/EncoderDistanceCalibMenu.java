@@ -1,10 +1,3 @@
-/*
- * Filename: EncoderDistanceCalibMenu.java
- * Author: Dylan Zueck
- * Team Name: Crow Force
- * Date: 8/31/19
- */
-
 package com.SCHSRobotics.HAL9001.system.menus;
 
 import com.SCHSRobotics.HAL9001.system.source.GUI.GUI;
@@ -19,6 +12,12 @@ import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 
 /**
  * A Menu used in the EncoderDistanceCalibrator to display and calculate the number of encoder ticks per meter.
+ *
+ * @author Dylan Zueck, Crow Force
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 8/31/19
  */
 public class EncoderDistanceCalibMenu extends Menu {
 

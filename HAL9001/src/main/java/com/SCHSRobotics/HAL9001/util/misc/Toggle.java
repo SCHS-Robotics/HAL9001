@@ -1,14 +1,13 @@
-/*
- * Filename: Toggle.java
- * Author: Dylan Zueck
- * Team Name: Crow Force
- * Date: 7/17/19
- */
-
 package com.SCHSRobotics.HAL9001.util.misc;
 
 /**
  * A toggle class used to add toggle switches.
+ *
+ * @author Dylan Zueck, Crow Force
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 7/17/19
  */
 public class Toggle {
 

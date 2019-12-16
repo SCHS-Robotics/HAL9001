@@ -1,10 +1,3 @@
-/*
- * Filename: ConfigData.java
- * Author: Cole Savage
- * Team Name: Level Up
- * Date: 12/8/19
- */
-
 package com.SCHSRobotics.HAL9001.util.misc;
 
 import com.SCHSRobotics.HAL9001.util.exceptions.NotAnAlchemistException;
@@ -13,6 +6,12 @@ import java.util.Map;
 
 /**
  * A class for getting non-gamepad data out of the configuration system easily.
+ *
+ * @author Cole Savage, Level Up
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 12/8/19
  */
 public class ConfigData {
 

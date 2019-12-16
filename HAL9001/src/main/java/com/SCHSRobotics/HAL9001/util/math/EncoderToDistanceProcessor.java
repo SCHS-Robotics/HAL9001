@@ -1,14 +1,13 @@
-/*
- * Filename: EncoderToDistanceProcessor.java
- * Author: Dylan Zueck
- * Team Name: Crow Force
- * Date: 7/19/19
- */
-
 package com.SCHSRobotics.HAL9001.util.math;
 
 /**
  * A calculator that calculates encoder ticks per meter and uses that to find.
+ *
+ * @author Dylan Zueck, Crow Force
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 7/19/19
  */
 public class EncoderToDistanceProcessor {
 

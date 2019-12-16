@@ -1,10 +1,3 @@
-/*
- * Filename: TankDrive.java
- * Author: Dylan Zueck
- * Team Name: Crow Force
- * Date: 7/17/19
- */
-
 package com.SCHSRobotics.HAL9001.system.subsystems;
 
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
@@ -29,6 +22,12 @@ import org.firstinspires.ftc.robotcore.external.Supplier;
 
 /**
  * A customizable tankdrive subsystem.
+ *
+ * @author Dylan Zueck, Crow Force
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 7/17/19.
  */
 public class TankDrive extends SubSystem {
 

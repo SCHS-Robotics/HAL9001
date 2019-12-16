@@ -1,10 +1,3 @@
-/*
- * Filename: ScrollingListMenu.java
- * Author: Dylan Zueck
- * Team Name: Crow Force
- * Date: 7/20/19
- */
-
 package com.SCHSRobotics.HAL9001.system.source.GUI;
 
 import java.util.ArrayList;
@@ -12,6 +5,12 @@ import java.util.List;
 
 /**
  * An abstract class extending Menu.java that represents a common typ of menu.
+ *
+ * @author Dylan Zueck, Crow Force
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 7/20/19
  */
 public abstract class ScrollingListMenu extends Menu {
 
