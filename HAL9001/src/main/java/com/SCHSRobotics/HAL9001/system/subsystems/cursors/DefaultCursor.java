@@ -20,7 +20,7 @@ import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
  */
 public class DefaultCursor extends Cursor {
 
-    //The customizeable set of inputs used to control the cursor.
+    //The customizable set of inputs used to control the cursor.
     private CustomizableGamepad inputs;
     //The names of the controls that are used to interact with the cursor.
     public static final String UP = "up", DOWN = "down", LEFT = "left", RIGHT = "right", SELECT = "select";
