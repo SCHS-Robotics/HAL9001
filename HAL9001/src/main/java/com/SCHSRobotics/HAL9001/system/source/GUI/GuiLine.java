@@ -1,16 +1,15 @@
-/*
- * Filename: GuiLine.java
- * Author: Dylan Zueck
- * Team Name: Crow Force
- * Date: 7/20/19
- */
-
 package com.SCHSRobotics.HAL9001.system.source.GUI;
 
 import com.SCHSRobotics.HAL9001.util.exceptions.InvalidSelectionZoneException;
 
 /**
  * A class representing a line printed on a menu.
+ *
+ * @author Dylan Zueck, Crow Force
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 7/20/19
  */
 public class GuiLine {
 
@@ -22,11 +21,11 @@ public class GuiLine {
     /**
      * Constructor that checks line against the given menu and uses the default divider.
      *
-     * @param menu - menu to check size of selection zone text against.
-     * @param selectionZoneText - Text for the selection zone.
-     * @param postSelectionText - Text for the post selection zone area.
-     *                          
-     * @throws InvalidSelectionZoneException - Throws this exception when the text within the selection zone exceeds the length of the selection zone.
+     * @param menu Menu to check size of selection zone text against.
+     * @param selectionZoneText Text for the selection zone.
+     * @param postSelectionText Text for the post selection zone area.
+     *
+     * @throws InvalidSelectionZoneException Throws this exception when the text within the selection zone exceeds the length of the selection zone.
      */
     public GuiLine(Menu menu, String selectionZoneText, String postSelectionText){
         this.selectionZoneText = selectionZoneText;
@@ -40,8 +39,8 @@ public class GuiLine {
     /**
      * Constructor that creates a basic GuiLine with a default divider.
      *
-     * @param selectionZoneText - Text for the selection zone.
-     * @param postSelectionText - Text for the post selection zone area.
+     * @param selectionZoneText Text for the selection zone.
+     * @param postSelectionText Text for the post selection zone area.
      */
     public GuiLine(String selectionZoneText, String postSelectionText){
         this.selectionZoneText = selectionZoneText;
@@ -52,9 +51,9 @@ public class GuiLine {
     /**
      * Constructor that sets the divider.
      *
-     * @param selectionZoneText - Text for the selection zone.
-     * @param postSelectionText - Text for the post selection zone area.
-     * @param divider - Text that will divide the selection and post selection text.
+     * @param selectionZoneText Text for the selection zone.
+     * @param postSelectionText Text for the post selection zone area.
+     * @param divider Text that will divide the selection and post selection text.
      */
     public GuiLine(String selectionZoneText, String postSelectionText, String divider){
         this.selectionZoneText = selectionZoneText;
@@ -66,12 +65,12 @@ public class GuiLine {
     /**
      * Constructor that checks line against the given menu and sets the divider.
      *
-     * @param menu - menu to check size of selection zone text against.
-     * @param selectionZoneText - Text for the selection zone.
-     * @param postSelectionText - Text for the post selection zone area.
-     * @param divider - Text that will divide the selection and post selection text.
-     *                
-     * @throws InvalidSelectionZoneException - Throws this exception when the text within the selection zone exceeds the length of the selection zone.
+     * @param menu Menu to check size of selection zone text against.
+     * @param selectionZoneText Text for the selection zone.
+     * @param postSelectionText Text for the post selection zone area.
+     * @param divider Text that will divide the selection and post selection text.
+     *
+     * @throws InvalidSelectionZoneException Throws this exception when the text within the selection zone exceeds the length of the selection zone.
      */
     public GuiLine(Menu menu, String selectionZoneText, String postSelectionText, String divider){
         this.selectionZoneText = selectionZoneText;

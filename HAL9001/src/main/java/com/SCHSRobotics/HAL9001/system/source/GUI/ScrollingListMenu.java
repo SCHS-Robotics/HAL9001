@@ -1,10 +1,3 @@
-/*
- * Filename: ScrollingListMenu.java
- * Author: Dylan Zueck
- * Team Name: Crow Force
- * Date: 7/20/19
- */
-
 package com.SCHSRobotics.HAL9001.system.source.GUI;
 
 import java.util.ArrayList;
@@ -12,6 +5,12 @@ import java.util.List;
 
 /**
  * An abstract class extending Menu.java that represents a common typ of menu.
+ *
+ * @author Dylan Zueck, Crow Force
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 7/20/19
  */
 public abstract class ScrollingListMenu extends Menu {
 
@@ -21,13 +20,13 @@ public abstract class ScrollingListMenu extends Menu {
     /**
      * Constructor for ScrollingListMenu class.
      *
-     * @param gui - The GUI that will be used to render the menu.
-     * @param cursor - The cursor assigned to this menu.
-     * @param startingLines - The list of lines that will be displayed when the menu is first rendered.
-     * @param selectionZoneWidth - The maximum x value that the cursor will be able to travel to inside the selection zone.
-     *                             Note: This is not the actual width of the zone itself, but a boundary for the index.
-     * @param selectionZoneHeight - The maximum y value that the cursor will be able to travel to inside the selection zone.
-     *                              Note: This is not the actual height of the zone itself, but a boundary for the index.
+     * @param gui The GUI that will be used to render the menu.
+     * @param cursor The cursor assigned to this menu.
+     * @param startingLines The list of lines that will be displayed when the menu is first rendered.
+     * @param selectionZoneWidth The maximum x value that the cursor will be able to travel to inside the selection zone.
+     *                           Note: This is not the actual width of the zone itself, but a boundary for the index.
+     * @param selectionZoneHeight The maximum y value that the cursor will be able to travel to inside the selection zone.
+     *                            Note: This is not the actual height of the zone itself, but a boundary for the index.
      */
     public ScrollingListMenu(GUI gui, Cursor cursor, ArrayList<GuiLine> startingLines, int selectionZoneWidth, int selectionZoneHeight){
         super(gui, cursor,  startingLines, selectionZoneWidth, selectionZoneHeight);
@@ -38,13 +37,13 @@ public abstract class ScrollingListMenu extends Menu {
     /**
      * Constructor for ScrollingListMenu class.
      *
-     * @param gui - The GUI that will be used to render the menu.
-     * @param cursor - The cursor assigned to this menu.
-     * @param startingLines - The list of lines that will be displayed when the menu is first rendered.
-     * @param selectionZoneWidth - The maximum x value that the cursor will be able to travel to inside the selection zone.
-     *                             Note: This is not the actual width of the zone itself, but a boundary for the index.
-     * @param selectionZoneHeight - The maximum y value that the cursor will be able to travel to inside the selection zone.
-     *                              Note: This is not the actual height of the zone itself, but a boundary for the index.
+     * @param gui The GUI that will be used to render the menu.
+     * @param cursor The cursor assigned to this menu.
+     * @param startingLines The list of lines that will be displayed when the menu is first rendered.
+     * @param selectionZoneWidth The maximum x value that the cursor will be able to travel to inside the selection zone.
+     *                           Note: This is not the actual width of the zone itself, but a boundary for the index.
+     * @param selectionZoneHeight The maximum y value that the cursor will be able to travel to inside the selection zone.
+     *                            Note: This is not the actual height of the zone itself, but a boundary for the index.
      */
     public ScrollingListMenu(GUI gui, Cursor cursor, GuiLine[] startingLines, int selectionZoneWidth, int selectionZoneHeight){
         super(gui, cursor, startingLines, selectionZoneWidth, selectionZoneHeight);
@@ -129,7 +128,6 @@ public abstract class ScrollingListMenu extends Menu {
         for (int i = menuNumber * Menu.MAXLINESPERSCREEN; i < Math.min(lines.size(),(menuNumber+1)*Menu.MAXLINESPERSCREEN); i++) {
             lineNums.add(i);
         }
-
         displayLines(lines,lineNums);
     }
 }

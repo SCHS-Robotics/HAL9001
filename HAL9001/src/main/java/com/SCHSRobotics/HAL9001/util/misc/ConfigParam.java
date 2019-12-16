@@ -1,10 +1,3 @@
-/*
- * Filename: ConfigParam.java
- * Author: Cole Savage
- * Team Name: Level Up
- * Date: 8/13/19
- */
-
 package com.SCHSRobotics.HAL9001.util.misc;
 
 import com.SCHSRobotics.HAL9001.util.exceptions.NotARealGamepadException;
@@ -19,6 +12,12 @@ import java.util.Map;
 
 /**
  * A class for storing configuration options.
+ *
+ * @author Cole Savage, Level Up
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 8/13/19
  */
 public class ConfigParam {
 
@@ -27,7 +26,6 @@ public class ConfigParam {
         put("true",true);
         put("false",false);
     }};
-
     //The name of the option
     public String name;
     //The option's default value.
@@ -54,8 +52,8 @@ public class ConfigParam {
     /**
      * Constructor for ConfigParam that provides default settings for a boolean button on the gamepad.
      *
-     * @param name - The name of the option.
-     * @param defaultOption - The default value of the option.
+     * @param name The name of the option.
+     * @param defaultOption The default value of the option.
      */
     public ConfigParam(String name, Button.BooleanInputs defaultOption) {
         this.name = name;
@@ -80,9 +78,9 @@ public class ConfigParam {
     /**
      * Constructor for ConfigParam that provides default settings for a boolean button on the gamepad and asks for a default gamepad setting.
      *
-     * @param name - The name of the option.
-     * @param defaultOption - The default value of the option.
-     * @param gamepadDefault - The default gamepad value.
+     * @param name The name of the option.
+     * @param defaultOption The default value of the option.
+     * @param gamepadDefault The default gamepad value.
      */
     public ConfigParam(String name, Button.BooleanInputs defaultOption, int gamepadDefault) {
         this.name = name;
@@ -111,8 +109,8 @@ public class ConfigParam {
     /**
      * Constructor for ConfigParam that provides default settings for a double button on the gamepad.
      *
-     * @param name - The name of the option.
-     * @param defaultOption - The default value of the option.
+     * @param name The name of the option.
+     * @param defaultOption The default value of the option.
      */
     public ConfigParam(String name, Button.DoubleInputs defaultOption) {
         this.name = name;
@@ -137,9 +135,9 @@ public class ConfigParam {
     /**
      * Constructor for ConfigParam that provides default settings for a double button on the gamepad and asks for a default gamepad setting.
      *
-     * @param name - The name of the option.
-     * @param defaultOption - The default value of the option.
-     * @param gamepadDefault - The default gamepad value.
+     * @param name The name of the option.
+     * @param defaultOption The default value of the option.
+     * @param gamepadDefault The default gamepad value.
      */
     public ConfigParam(String name, Button.DoubleInputs defaultOption, int gamepadDefault) {
         this.name = name;
@@ -168,8 +166,8 @@ public class ConfigParam {
     /**
      * Constructor for ConfigParam that uses default settings for a Vector button.
      *
-     * @param name - The name of the parameter.
-     * @param defaultOption - The parameter's default option.
+     * @param name The name of the parameter.
+     * @param defaultOption The parameter's default option.
      */
     public ConfigParam(String name, Button.VectorInputs defaultOption) {
         this.name = name;
@@ -194,9 +192,9 @@ public class ConfigParam {
     /**
      * Constructor for ConfigParam that uses default settings for a Vector button.
      *
-     * @param name - The name of the parameter.
-     * @param defaultOption - The parameter's default option.
-     * @param gamepadDefault - The default gamepad setting.
+     * @param name The name of the parameter.
+     * @param defaultOption The parameter's default option.
+     * @param gamepadDefault The default gamepad setting.
      */
     public ConfigParam(String name, Button.VectorInputs defaultOption, int gamepadDefault) {
         this.name = name;
@@ -221,9 +219,9 @@ public class ConfigParam {
     /**
      * Constructor for ConfigParam for non-gamepad options.
      *
-     * @param name - The name of the option.
-     * @param options - An ArrayList of all possible values the option could take on.
-     * @param defaultOption - The option's default value.
+     * @param name The name of the option.
+     * @param options An ArrayList of all possible values the option could take on.
+     * @param defaultOption The option's default value.
      */
     public ConfigParam(String name, ArrayList<String> options, String defaultOption) {
         this.name = name;
@@ -231,7 +229,7 @@ public class ConfigParam {
         this.defaultOption = defaultOption;
         currentOption = this.defaultOption;
 
-        vals = new ArrayList<>(options);
+        vals = new ArrayList<Object>(options);
 
         isBoolButton = false;
         isDoubleButton = false;
@@ -242,9 +240,9 @@ public class ConfigParam {
     /**
      * Constructor for ConfigParam for non-gamepad options.
      *
-     * @param name - The name of the option.
-     * @param options - An array of all possible values the option could take on.
-     * @param defaultOption - The option's default value.
+     * @param name The name of the option.
+     * @param options An array of all possible values the option could take on.
+     * @param defaultOption The option's default value.
      */
     public ConfigParam(String name, String[] options, String defaultOption) {
         this.name = name;
@@ -252,7 +250,7 @@ public class ConfigParam {
         this.defaultOption = defaultOption;
         currentOption = this.defaultOption;
 
-        vals = new ArrayList<>(Arrays.asList(options));
+        vals = new ArrayList<Object>(Arrays.asList(options));
 
         isBoolButton = false;
         isDoubleButton = false;
@@ -263,9 +261,9 @@ public class ConfigParam {
     /**
      * Constructor for ConfigParam that uses map of strings to actual objects, which will be returned later when the user gives the name of the object they want.
      *
-     * @param name - The name of the config parameter.
-     * @param map - The map of strings to objects, representing the mappings of string options for the parameter and more program-friendly representations of the data (ex: int, enum).
-     * @param defaultOption - The option's default option.
+     * @param name The name of the config parameter.
+     * @param map The map of strings to objects, representing the mappings of string options for the parameter and more program-friendly representations of the data (ex: int, enum).
+     * @param defaultOption The option's default option.
      */
     public ConfigParam(String name, Map<String,Object> map, String defaultOption) {
         this.name = name;
@@ -285,14 +283,14 @@ public class ConfigParam {
     /**
      * Constructor for ConfigParam that uses map of strings to actual objects, which will be returned later when the user gives the name of the object they want.
      *
-     * @param name - The name of the config parameter.
-     * @param map - The map of strings to objects, representing the mappings of string options for the parameter and more program-friendly representations of the data (ex: int, enum).
-     * @param defaultOption - The option's default option.
+     * @param name The name of the config parameter.
+     * @param map The map of strings to objects, representing the mappings of string options for the parameter and more program-friendly representations of the data (ex: int, enum).
+     * @param defaultOption The option's default option.
      */
     public ConfigParam(String name, Map<String,Object> map, Object defaultOption) {
         this.name = name;
 
-        this.options = new ArrayList<>(map.keySet());
+        options = new ArrayList<>(map.keySet());
         this.defaultOption = defaultOption.toString();
         currentOption = this.defaultOption;
 
@@ -305,18 +303,61 @@ public class ConfigParam {
     }
 
     /**
+     * Constructor for ConfigParam that creates a configuration setting for a list of enums.
+     *
+     * @param name The name of the config parameter.
+     * @param defaultOption The default value for the enum.
+     */
+    public ConfigParam(String name, Enum<?> defaultOption) {
+        this.name = name;
+
+        options = Arrays.asList(Arrays.toString(defaultOption.getDeclaringClass().getEnumConstants()).replaceAll("^.|.$", "").split(", "));
+        this.defaultOption = defaultOption.name();
+        currentOption = this.defaultOption;
+
+        vals = new ArrayList<Object>(Arrays.asList(defaultOption.getDeclaringClass().getEnumConstants()));
+
+        isBoolButton = false;
+        isDoubleButton = false;
+
+        usesGamepad = false;
+    }
+
+    /**
+     * Constructor for ConfigParam that creates a configuration setting from a provided list of enums.
+     *
+     * @param name The name of the config parameter.
+     * @param enums The list of allowed enums.
+     * @param defaultOption The default enum.
+     */
+    public ConfigParam(String name, Enum<?>[] enums, Enum<?> defaultOption) {
+        this.name = name;
+
+        options = Arrays.asList(Arrays.toString(enums).replaceAll("^.|.$", "").split(", "));
+        this.defaultOption = defaultOption.name();
+        currentOption = this.defaultOption;
+
+        vals = new ArrayList<Object>(Arrays.asList(enums));
+
+        isBoolButton = false;
+        isDoubleButton = false;
+
+        usesGamepad = false;
+    }
+
+    /**
      * A private constructor for ConfigParam that is only used for cloning.
      *
-     * @param name - The name of the option.
-     * @param options - The list of all possible values that the option could take on.
-     * @param vals - The list of all possible values the option could take on, but in actual object form instead of string form.
-     * @param defaultOption - The option's default value.
-     * @param currentOption - The option's current value.
-     * @param gamepadOptions - The list of all possible gamepad values.
-     * @param defaultGamepadOption - The option's default gamepad value.
-     * @param currentGamepadOption - The option's current gamepad value.
-     * @param usesGamepad - Whether or not the option uses the gamepad.
-     * @param isBoolButton - Whether or not the option is a boolean button on the gamepad.
+     * @param name The name of the option.
+     * @param options The list of all possible values that the option could take on.
+     * @param vals The list of all possible values the option could take on, but in actual object form instead of string form.
+     * @param defaultOption The option's default value.
+     * @param currentOption The option's current value.
+     * @param gamepadOptions The list of all possible gamepad values.
+     * @param defaultGamepadOption The option's default gamepad value.
+     * @param currentGamepadOption The option's current gamepad value.
+     * @param usesGamepad Whether or not the option uses the gamepad.
+     * @param isBoolButton Whether or not the option is a boolean button on the gamepad.
      */
     private ConfigParam(String name, List<String> options, List<Object> vals, String defaultOption, String currentOption, List<String> gamepadOptions, String defaultGamepadOption, String currentGamepadOption, boolean usesGamepad, boolean isBoolButton, boolean isDoubleButton) {
         this.name = name;
@@ -335,8 +376,9 @@ public class ConfigParam {
     /**
      * Converts the option to a button object if possible.
      *
-     * @return - The button representation of the option.
-     * @throws NotAnAlchemistException - Throws this exception if it is not possible to convert the option into a button.
+     * @return The button representation of the option.
+     *
+     * @throws NotAnAlchemistException Throws this exception if it is not possible to convert the option into a button.
      */
     public Button toButton() {
         if(usesGamepad) {
@@ -358,9 +400,9 @@ public class ConfigParam {
     /**
      * Generates a map linking the names of numbers to the actual numbers. Used for config.
      *
-     * @param start - The lowest possible configurable number.
-     * @param end - The highest possible configurable number.
-     * @param increment - How much to increment by.
+     * @param start The lowest possible configurable number.
+     * @param end The highest possible configurable number.
+     * @param increment How much to increment by.
      * @return A map linking the names of numbers to the actual numbers.
      */
     public static LinkedHashMap<String,Object> numberMap(double start, double end, double increment) {
@@ -370,6 +412,23 @@ public class ConfigParam {
             numMap.put(Double.toString(((double) Math.round(i*multiplier))/multiplier), ((double) Math.round(i*multiplier))/multiplier);
         }
         numMap.put(Double.toString(end),end);
+        return numMap;
+    }
+
+    /**
+     * Generates a map linking the names of numbers to the actual numbers. Used for config. (This version uses all integers).
+     *
+     * @param start The lowest possible configurable number.
+     * @param end The highest possible configurable number.
+     * @param increment How much to increment by.
+     * @return A map linking the names of numbers to the actual numbers.
+     */
+    public static LinkedHashMap<String,Object> numberMap(int start, int end, int increment) {
+        LinkedHashMap<String,Object> numMap = new LinkedHashMap<>();
+        for (int i = start; i < end ; i+= increment) {
+            numMap.put(Integer.toString(i), i);
+        }
+        numMap.put(Integer.toString(end),end);
         return numMap;
     }
 

@@ -1,10 +1,3 @@
-/*
- * Filename: EncoderDistanceCalib.java
- * Author: Cole Savage and Dylan Zueck
- * Team Name: Level Up, Crow Force
- * Date: 9/1/19
- */
-
 package com.SCHSRobotics.HAL9001.util.calib;
 
 import com.SCHSRobotics.HAL9001.system.menus.DisplayMenu;
@@ -24,13 +17,18 @@ import com.SCHSRobotics.HAL9001.util.misc.Button;
 
 import java.util.LinkedHashMap;
 
-import static java.lang.Thread.sleep;
-
 /**
  * Finds the number of encoder ticks per meter that can be used in the encoder.
  * 
  * BeforeHAL: Wow im so bad at coding. I only use one constructor in my classes.
  * AfterHAL: Wow im so good at coding. I only used one constructor in this class.
+ *
+ * @author Cole Savage, Level Up
+ * @author Dylan Zueck, Crow Force
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 9/1/19
  */
 public class EncoderDistanceCalib extends SubSystem {
 
@@ -64,11 +62,14 @@ public class EncoderDistanceCalib extends SubSystem {
     /**
      * Constructor for EncoderDistanceCalib.
      *
-     * @param robot - The robot using this subsystem.
-     * @param driveTrain - The drivetrain being used.
-     * @param unit - The unit of distance to enter.
-     * @param params - The drivetrain params to use to create the drivetrain.
-     * @param switchSpeedButton - The speed mode button for distance entry.
+     * @param robot The robot using this subsystem.
+     * @param driveTrain The drivetrain being used.
+     * @param unit The unit of distance to enter.
+     * @param params The drivetrain params to use to create the drivetrain.
+     * @param switchSpeedButton The speed mode button for distance entry.
+     *
+     * @throws GuiNotPresentException Throws this exception if the GUI is not activated on the robot.
+     * @throws NotAnAlchemistException Throws this exception if the provided parameters are not from a drivetrain.
      */
     public EncoderDistanceCalib(Robot robot, DriveTrain driveTrain, Units unit, BaseParam params, Button switchSpeedButton) {
         super(robot);
@@ -151,7 +152,7 @@ public class EncoderDistanceCalib extends SubSystem {
     }
 
     @Override
-    public void handle() throws InterruptedException {
+    public void handle() {
         if(state == State.RUNNING) {
             switch (driveTrain) {
                 case TANK_DRIVE:
@@ -183,12 +184,10 @@ public class EncoderDistanceCalib extends SubSystem {
 
     /**
      * Drive forward for 2 seconds using tank drive.
-     *
-     * @throws InterruptedException - Throws this exception when the program is interrupted unexpectedly.
      */
-    private void usingTankDrive() throws InterruptedException {
+    private void usingTankDrive() {
         ((TankDrive) driveSubSystem).driveTime(2000, 1);
-        sleep(100);
+        waitTime(100);
         endingEncoderPos.put("Left", ((TankDrive) driveSubSystem).getLeftMotorEncoderPos());
         endingEncoderPos.put("Right", ((TankDrive) driveSubSystem).getRightMotorEncoderPos());
         robot.gui.addMenu("Getting Menu", new EncoderDistanceCalibMenu(robot.gui, unit, switchSpeedButton, this));
@@ -198,12 +197,10 @@ public class EncoderDistanceCalib extends SubSystem {
 
     /**
      * Drive forward for 2 seconds using mechanum drive.
-     *
-     * @throws InterruptedException - Throws this exception when the program is interrupted unexpectedly.
      */
-    private void usingMechanumDrive() throws InterruptedException {
+    private void usingMechanumDrive() {
         ((MechanumDrive) driveSubSystem).driveTime(new Vector(0,1), 2000);
-        sleep(100);
+        waitTime(100);
         endingEncoderPos.put("BotLeft", ((MechanumDrive) driveSubSystem).getBotLeftEncoderPos());
         endingEncoderPos.put("BotRight", ((MechanumDrive) driveSubSystem).getBotRightEncoderPos());
         endingEncoderPos.put("TopLeft", ((MechanumDrive) driveSubSystem).getTopLeftEncoderPos());
@@ -215,12 +212,10 @@ public class EncoderDistanceCalib extends SubSystem {
 
     /**
      * Drive forward for 2 seconds using omniwheel drive.
-     *
-     * @throws InterruptedException - Throws this exception when the program is interrupted unexpectedly.
      */
-    private void usingOmniWheelDrive() throws InterruptedException{
+    private void usingOmniWheelDrive() {
         ((OmniWheelDrive) driveSubSystem).driveTime(new Vector(0,1), 2000);
-        sleep(100);
+        waitTime(100);
         endingEncoderPos.put("BotLeft", ((MechanumDrive) driveSubSystem).getBotLeftEncoderPos());
         endingEncoderPos.put("BotRight", ((MechanumDrive) driveSubSystem).getBotRightEncoderPos());
         endingEncoderPos.put("TopLeft", ((MechanumDrive) driveSubSystem).getTopLeftEncoderPos());
@@ -232,12 +227,10 @@ public class EncoderDistanceCalib extends SubSystem {
 
     /**
      * Drive forward for 2 seconds using quad wheel drive.
-     *
-     * @throws InterruptedException - Throws this exception when the program is interrupted unexpectedly.
      */
-    private void usingQuadWheelDrive() throws InterruptedException {
+    private void usingQuadWheelDrive() {
         ((QuadWheelDrive) driveSubSystem).driveTime(2000, 1);
-        sleep(100);
+        waitTime(100);
         endingEncoderPos.put("BotLeft", ((QuadWheelDrive) driveSubSystem).getBotLeftMotorEncoderPos());
         endingEncoderPos.put("BotRight", ((QuadWheelDrive) driveSubSystem).getBotRightMotorEncoderPos());
         endingEncoderPos.put("TopLeft", ((QuadWheelDrive) driveSubSystem).getTopLeftMotorEncoderPos());
@@ -250,7 +243,7 @@ public class EncoderDistanceCalib extends SubSystem {
     /**
      * Closes menu and gets the distance from the user.
      *
-     * @param distance - The distance entered by the user.
+     * @param distance The distance entered by the user.
      */
     public void numberSelected(double distance){
         this.distance = distance;

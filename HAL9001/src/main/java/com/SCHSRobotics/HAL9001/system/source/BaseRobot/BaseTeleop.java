@@ -1,19 +1,19 @@
-/*
- * Filename: BaseTeleop.java
- * Author: Andrew Liang
- * Team Name: Level Up
- * Date: 2017
- */
-
 package com.SCHSRobotics.HAL9001.system.source.BaseRobot;
 
 import android.util.Log;
 
-import com.SCHSRobotics.HAL9001.util.functional_interfaces.BiFunction;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.robotcore.external.Supplier;
 
 /**
  * An abstract class used to more easily create teleop programs
+ *
+ * @author Andrew Liang, Level Up
+ * @since 0.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 2017
  */
 public abstract class BaseTeleop extends LinearOpMode {
 
@@ -23,7 +23,7 @@ public abstract class BaseTeleop extends LinearOpMode {
     /**
      * An abstract method that is used to instantiate the robot.
      *
-     * @return - The robot being used in the opmode.
+     * @return The robot being used in the opmode.
      */
     protected abstract Robot buildRobot();
 
@@ -91,9 +91,9 @@ public abstract class BaseTeleop extends LinearOpMode {
     }
 
     /**
-     * Gets the robot.
+     * Gets the robot running the program.
      *
-     * @return - The robot.
+     * @return The robot running the program.
      */
     protected final Robot getRobot(){
         return robot;
@@ -102,27 +102,85 @@ public abstract class BaseTeleop extends LinearOpMode {
     /**
      * Waits for a specified number of milliseconds.
      *
-     * @param millis - The number of milliseconds to wait.
+     * @param millis The number of milliseconds to wait.
      */
-    protected final void waitFor(long millis) {
+    protected final void waitTime(long millis) {
         long stopTime = System.currentTimeMillis() + millis;
-        while (opModeIsActive() && System.currentTimeMillis() < stopTime) {
+        while (robot.opModeIsActive() && System.currentTimeMillis() < stopTime) {
             sleep(1);
         }
     }
 
     /**
-     * Waits for a boolean function with two inputs to return true. param1 and 2 must be updated from separate thread.
+     * Waits for a specified number of milliseconds, running a function in a loop while its waiting.
      *
-     * @param condition - An arbitrary function taking two inputs and outputting a boolean.
-     * @param param1 - The function's first parameter.
-     * @param param2 - The function's second parameter.
-     * @param <T> - The first parameter's object type.
-     * @param <X> - The second parameter's object type.
+     * @param millis The number of milliseconds to wait.
+     * @param runner The code to run each loop while waiting.
      */
-    protected final <T,X> void waitFor(BiFunction<T,X,Boolean> condition, T param1, X param2) {
-        while (opModeIsActive() && !condition.apply(param1,param2)) {
+    protected final void waitTime(long millis, Runnable runner) {
+        long stopTime = System.currentTimeMillis() + millis;
+        while (robot.opModeIsActive() && System.currentTimeMillis() < stopTime) {
+            runner.run();
             sleep(1);
         }
+    }
+
+    /**
+     * Waits until a condition returns true.
+     *
+     * @param condition The boolean condition that must be true in order for the program to stop waiting.
+     */
+    protected final void waitUntil(Supplier<Boolean> condition) {
+        while (robot.opModeIsActive() && !condition.get()) {
+            sleep(1);
+        }
+    }
+
+    /**
+     * Waits until a condition returns true, running a function in a loop while its waiting.
+     *
+     * @param condition The boolean condition that must be true in order for the program to stop waiting.
+     * @param runner The code to run each loop while waiting.
+     */
+    protected final void waitUntil(Supplier<Boolean> condition, Runnable runner) {
+        while (robot.opModeIsActive() && !condition.get()) {
+            runner.run();
+            sleep(1);
+        }
+    }
+
+    /**
+     * Waits while a condition is true.
+     *
+     * @param condition The boolean condition that must become false for the program to stop waiting.
+     */
+    protected final void waitWhile(Supplier<Boolean> condition) {
+        while (robot.opModeIsActive() && condition.get()) {
+            sleep(1);
+        }
+    }
+
+    /**
+     * Waits while a condition is true, running a function in a loop while its waiting.
+     *
+     * @param condition The boolean condition that must become false for the program to stop waiting.
+     * @param runner The code to run each loop while waiting.
+     */
+    protected final void waitWhile(Supplier<Boolean> condition, Runnable runner) {
+        while (robot.opModeIsActive() && condition.get()) {
+            runner.run();
+            sleep(1);
+        }
+    }
+
+    /**
+     * Waits a certain amount of time.
+     *
+     * @param millis The amount of time in milliseconds to wait.
+     * @deprecated Renamed to waitTime
+     */
+    @Deprecated
+    protected final void waitFor(long millis) {
+        waitTime(millis);
     }
 }

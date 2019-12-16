@@ -1,14 +1,14 @@
-/*
- * Filename: Cursor.java
- * Author: Dylan Zueck and Cole Savage
- * Team Name: Crow Force, Level Up
- * Date: 7/20/19
- */
-
 package com.SCHSRobotics.HAL9001.system.source.GUI;
 
 /**
  * An abstract class meant to represent the user's cursor.
+ *
+ * @author Dylan Zueck, Crow Force
+ * @author Cole Savage, Level Up
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 7/20/19
  */
 public abstract class Cursor {
 
@@ -28,10 +28,10 @@ public abstract class Cursor {
     /**
      * Constructor for cursor class.
      *
-     * @param x            - The cursor's initial x coordinate.
-     * @param y            - The cursor's initial y coordinate.
-     * @param blinkSpeedMs - The cursor blink speed in milliseconds.
-     * @param cursorIcon   - The char that will represent the cursor when the menu is drawn.
+     * @param x            The cursor's initial x coordinate.
+     * @param y            The cursor's initial y coordinate.
+     * @param blinkSpeedMs The cursor blink speed in milliseconds.
+     * @param cursorIcon   The char that will represent the cursor when the menu is drawn.
      */
     public Cursor(int x, int y, int blinkSpeedMs, char cursorIcon) {
         this.blinkSpeedMs = blinkSpeedMs;
@@ -44,8 +44,8 @@ public abstract class Cursor {
     /**
      * Constructor for cursor class.
      *
-     * @param blinkSpeedMs - The cursor blink speed in milliseconds.
-     * @param cursorIcon   - The char that will represent the cursor when the menu is drawn.
+     * @param blinkSpeedMs The cursor blink speed in milliseconds.
+     * @param cursorIcon   The char that will represent the cursor when the menu is drawn.
      */
     public Cursor(int blinkSpeedMs, char cursorIcon) {
         this(0,0,blinkSpeedMs,cursorIcon);
@@ -54,7 +54,7 @@ public abstract class Cursor {
     /**
      * Constructor for cursor class.
      *
-     * @param blinkSpeedMs - The cursor blink speed in milliseconds.
+     * @param blinkSpeedMs The cursor blink speed in milliseconds.
      */
     public Cursor(int blinkSpeedMs) {
         this(0,0,blinkSpeedMs,'█');
@@ -63,9 +63,9 @@ public abstract class Cursor {
     /**
      * Constructor for cursor class.
      *
-     * @param x            - Cursor starting x position.
-     * @param y            - Cursor starting y position.
-     * @param blinkSpeedMs - Cursor blink speed in milliseconds.
+     * @param x            Cursor starting x position.
+     * @param y            Cursor starting y position.
+     * @param blinkSpeedMs Cursor blink speed in milliseconds.
      */
     public Cursor(int x, int y, int blinkSpeedMs) {
         this(x,y,blinkSpeedMs,'█');
@@ -74,7 +74,7 @@ public abstract class Cursor {
     /**
      * Returns the cursor icon.
      *
-     * @return - The cursor icon.
+     * @return The cursor icon.
      */
     public char getCursorIcon() {
         return cursorIcon;
@@ -83,7 +83,7 @@ public abstract class Cursor {
     /**
      * Sets the cursor icon.
      *
-     * @param cursorIcon - The new cursor icon.
+     * @param cursorIcon The new cursor icon.
      */
     public void setCursorIcon(char cursorIcon) {
         this.cursorIcon = cursorIcon;
@@ -92,7 +92,7 @@ public abstract class Cursor {
     /**
      * Sets the menu that the cursor belongs to.
      *
-     * @param menu - The menu to be assigned to the cursor.
+     * @param menu The menu to be assigned to the cursor.
      */
     public void setMenu(Menu menu) {
         this.menu = menu;
@@ -101,7 +101,7 @@ public abstract class Cursor {
     /**
      * Gets the cursor x coordinate.
      *
-     * @return - The cursor x coordinate.
+     * @return The cursor x coordinate.
      */
     public int getX() {
         return x;
@@ -110,7 +110,7 @@ public abstract class Cursor {
     /**
      * Gets the cursor y coordinate.
      *
-     * @return - The cursor y coordinate.
+     * @return The cursor y coordinate.
      */
     public int getY() {
         return y;
@@ -119,7 +119,7 @@ public abstract class Cursor {
     /**
      * Gets the cursor blink speed.
      *
-     * @return - The cursor blink speed.
+     * @return The cursor blink speed.
      */
     public int getBlinkSpeedMs() {
         return blinkSpeedMs;
@@ -128,7 +128,7 @@ public abstract class Cursor {
     /**
      * Sets the cursor's x coordinate.
      *
-     * @param x - The cursor's desired x coordinate.
+     * @param x The cursor's desired x coordinate.
      */
     public void setX(int x) {
         this.x = x;
@@ -137,7 +137,7 @@ public abstract class Cursor {
     /**
      * Sets the cursor's y coordinate.
      *
-     * @param y - The cursor's desired y coordinate.
+     * @param y The cursor's desired y coordinate.
      */
     public void setY(int y) {
         this.y = y;
@@ -151,7 +151,7 @@ public abstract class Cursor {
     /**
      * Sets if the cursor should blink or not.
      *
-     * @param doBlink - A boolean specifying whether the cursor should be set to blink (true) or not (false).
+     * @param doBlink A boolean specifying whether the cursor should be set to blink (true) or not (false).
      */
     public void setDoBlink(boolean doBlink) {
         this.doBlink = doBlink;

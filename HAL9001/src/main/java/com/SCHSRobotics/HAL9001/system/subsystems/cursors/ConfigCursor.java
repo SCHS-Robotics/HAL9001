@@ -1,10 +1,3 @@
-/*
- * Filename: ConfigCursor.java
- * Author: Dylan Zueck and Cole Savage
- * Team Name: Crow Force, Level Up
- * Date: 8/13/19
- */
-
 package com.SCHSRobotics.HAL9001.system.subsystems.cursors;
 
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
@@ -16,6 +9,13 @@ import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 
 /**
  * A cursor object used in config menus. Contains all the controls needed to use the config system.
+ *
+ * @author Dylan Zueck, Crow Force
+ * @author Cole Savage, Level Up
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 8/13/19
  */
 public class ConfigCursor extends Cursor {
 
@@ -33,11 +33,11 @@ public class ConfigCursor extends Cursor {
     /**
      * Constructor for config cursor.
      *
-     * @param robot - The robot the cursor is associataed with.
-     * @param x - The cursor's initial x coordinate.
-     * @param y - The cursor's initial y coordinate.
-     * @param blinkSpeedMs - The cursor's blink speed in milliseconds.
-     * @param cursorIcon - The icon used to represent the cursor.
+     * @param robot The robot the cursor is associataed with.
+     * @param x The cursor's initial x coordinate.
+     * @param y The cursor's initial y coordinate.
+     * @param blinkSpeedMs The cursor's blink speed in milliseconds.
+     * @param cursorIcon The icon used to represent the cursor.
      */
     public ConfigCursor(Robot robot, int x, int y, int blinkSpeedMs, char cursorIcon) {
         super(x, y, blinkSpeedMs, cursorIcon);
@@ -60,9 +60,9 @@ public class ConfigCursor extends Cursor {
     /**
      * Constructor for config cursor.
      *
-     * @param robot - The robot the cursor is associataed with.
-     * @param blinkSpeedMs - The cursor's blink speed in milliseconds.
-     * @param cursorIcon - The icon used to represent the cursor.
+     * @param robot The robot the cursor is associataed with.
+     * @param blinkSpeedMs The cursor's blink speed in milliseconds.
+     * @param cursorIcon The icon used to represent the cursor.
      */
     public ConfigCursor(Robot robot, int blinkSpeedMs, char cursorIcon) {
         super(blinkSpeedMs, cursorIcon);
@@ -85,8 +85,8 @@ public class ConfigCursor extends Cursor {
     /**
      * Constructor for config cursor.
      *
-     * @param robot - The robot the cursor is associataed with.
-     * @param blinkSpeedMs - The cursor's blink speed in milliseconds.
+     * @param robot The robot the cursor is associataed with.
+     * @param blinkSpeedMs The cursor's blink speed in milliseconds.
      */
     public ConfigCursor(Robot robot, int blinkSpeedMs) {
         super(blinkSpeedMs);
@@ -109,10 +109,10 @@ public class ConfigCursor extends Cursor {
     /**
      * Constructor for config cursor.
      *
-     * @param robot - The robot the cursor is associataed with.
-     * @param x - The cursor's initial x coordinate.
+     * @param robot The robot the cursor is associataed with.
+     * @param x The cursor's initial x coordinate.
      * @param y = The cursor's initial y coordinate.
-     * @param blinkSpeedMs - The cursor's blink speed in milliseconds.
+     * @param blinkSpeedMs The cursor's blink speed in milliseconds.
      */
     public ConfigCursor(Robot robot, int x, int y, int blinkSpeedMs) {
         super(x, y, blinkSpeedMs);
@@ -135,13 +135,13 @@ public class ConfigCursor extends Cursor {
     /**
      * Sets which buttons will be used to control the cursor.
      *
-     * @param up - The up button.
-     * @param down - The down button.
-     * @param left - The left button.
-     * @param right - The right button.
-     * @param select - The select button
+     * @param up The up button.
+     * @param down The down button.
+     * @param left The left button.
+     * @param right The right button.
+     * @param select The select button
      *
-     * @throws NotBooleanInputException - Throws an exception if button does not return boolean values.
+     * @throws NotBooleanInputException Throws an exception if button does not return boolean values.
      */
     public void setInputs(Button up, Button down, Button left, Button right, Button select, Button reverseSelect, Button switchGamepad, Button backButton){
 
@@ -164,7 +164,7 @@ public class ConfigCursor extends Cursor {
     /**
      * Sets whether the cursor is in write mode.
      *
-     * @param writeMode - Whether the cursor will be set to write mode (true) or not (false).
+     * @param writeMode Whether the cursor will be set to write mode (true) or not (false).
      */
     public void setWriteMode(boolean writeMode) {
         this.writeMode = writeMode;

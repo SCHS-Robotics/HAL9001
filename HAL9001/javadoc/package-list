@@ -1,0 +1,13 @@
+com.SCHSRobotics.HAL9001.system.menus
+com.SCHSRobotics.HAL9001.system.source.BaseRobot
+com.SCHSRobotics.HAL9001.system.source.GUI
+com.SCHSRobotics.HAL9001.system.subsystems
+com.SCHSRobotics.HAL9001.system.subsystems.cursors
+com.SCHSRobotics.HAL9001.util.annotations
+com.SCHSRobotics.HAL9001.util.calib
+com.SCHSRobotics.HAL9001.util.control
+com.SCHSRobotics.HAL9001.util.debug
+com.SCHSRobotics.HAL9001.util.exceptions
+com.SCHSRobotics.HAL9001.util.functional_interfaces
+com.SCHSRobotics.HAL9001.util.math
+com.SCHSRobotics.HAL9001.util.misc

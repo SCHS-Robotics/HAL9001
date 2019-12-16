@@ -1,10 +1,3 @@
-/*
- * Filename: TankDrive.java
- * Author: Dylan Zueck
- * Team Name: Crow Force
- * Date: 7/17/19
- */
-
 package com.SCHSRobotics.HAL9001.system.subsystems;
 
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
@@ -19,17 +12,22 @@ import com.SCHSRobotics.HAL9001.util.exceptions.NotDoubleInputException;
 import com.SCHSRobotics.HAL9001.util.math.Vector;
 import com.SCHSRobotics.HAL9001.util.misc.BaseParam;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
+import com.SCHSRobotics.HAL9001.util.misc.ConfigData;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigParam;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 import com.SCHSRobotics.HAL9001.util.misc.Toggle;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import java.util.Map;
-
-import static java.lang.Thread.sleep;
+import org.firstinspires.ftc.robotcore.external.Supplier;
 
 /**
  * A customizable tankdrive subsystem.
+ *
+ * @author Dylan Zueck, Crow Force
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 7/17/19.
  */
 public class TankDrive extends SubSystem {
 
@@ -101,7 +99,7 @@ public class TankDrive extends SubSystem {
     }
 
     @Override
-    public void init() throws InterruptedException
+    public void init()
     {
         normalDirection();
         resetEncoders();
@@ -249,18 +247,16 @@ public class TankDrive extends SubSystem {
      *
      * @param timeMs - time to drive for in milliseconds.
      * @param power - power to drive at. Positive for forward and negative for backwards.
+     *
+     * @throws DumpsterFireException Throws this exception if you try and move for negative time.
      */
-    public void driveTime(double timeMs, double power) throws InterruptedException {
+    public void driveTime(long timeMs, double power) {
 
         if(timeMs < 0) {
             throw new DumpsterFireException("HAL is cool, but can't travel back in time. Time must be positive.");
         }
-
-        double startTime = System.currentTimeMillis();
         drive(power);
-        while (System.currentTimeMillis() - startTime <= timeMs) {
-            sleep(1);
-        }
+        waitTime(timeMs);
         stopMovement();
     }
 
@@ -269,16 +265,16 @@ public class TankDrive extends SubSystem {
      *
      * @param timeMs - time to turn for in milliseconds.
      * @param power - power to turn at.
+     *
+     * @throws DumpsterFireException Throws this exception if you try and move for negative time.
      */
-    public void turnTime(double timeMs, double power) throws InterruptedException{
-
+    public void turnTime(long timeMs, double power) {
         if(timeMs < 0) {
             throw new DumpsterFireException("HAL is cool, but can't travel back in time. Time must be positive.");
         }
 
-        double startTime = System.currentTimeMillis();
         turn(power);
-        while(System.currentTimeMillis() - startTime <= timeMs){sleep(1);}
+        waitTime(timeMs);
         stopMovement();
     }
 
@@ -286,17 +282,18 @@ public class TankDrive extends SubSystem {
      * Drives and turns for a set time (positive power for counterclockwise or forward negative power for clockwise or backwards).
      *
      * @param timeMs - time to turn and drive for in milliseconds.
-     * @param input - Sets direction and rotational speed. (X is left and right, Y is forward and backwards)
+     * @param input - Sets direction and rotational speed. (X is left and right, Y is forward and backwards).
+     *
+     * @throws DumpsterFireException Throws this exception if you try and move for negative time.
      */
-    public void turnAndMoveTime(double timeMs, Vector input) throws InterruptedException{
-
+    public void turnAndMoveTime(long timeMs, Vector input) {
         if(timeMs < 0) {
             throw new DumpsterFireException("HAL is cool, but can't travel back in time. Time must be positive.");
         }
 
         double startTime = System.currentTimeMillis();
         turnAndMove(input);
-        while(System.currentTimeMillis() - startTime <= timeMs){sleep(1);}
+        waitTime(timeMs);
         stopMovement();
     }
 
@@ -306,8 +303,7 @@ public class TankDrive extends SubSystem {
      * @param encoderDistance - Encoder distance to travel.
      * @param power - Double from (-1)-(1) of intensity of the movement.
      */
-    public void driveEncoders(int encoderDistance, double power) throws InterruptedException{
-
+    public void driveEncoders(final int encoderDistance, double power) {
         if(power == 0 && encoderDistance != 0) {
             throw new InvalidMoveCommandException("Power cannot be zero with a non zero target");
         }
@@ -316,9 +312,14 @@ public class TankDrive extends SubSystem {
             throw new DumpsterFireException("Where you're going, you don't need roads! (distance must be positive)");
         }
 
-        int startEncoderPos = left.getCurrentPosition();
+        final int startEncoderPos = left.getCurrentPosition();
         drive(power);
-        while(Math.abs(left.getCurrentPosition() - startEncoderPos) <= encoderDistance) {sleep(1);}
+        waitWhile(new Supplier<Boolean>() {
+            @Override
+            public Boolean get() {
+                return Math.abs(left.getCurrentPosition() - startEncoderPos) <= encoderDistance;
+            }
+        });
         stopMovement();
     }
 
@@ -328,22 +329,32 @@ public class TankDrive extends SubSystem {
      * @param encoderDistance - Encoder distance to travel.
      * @param power - double from (-1)-(1) that represents the speed of turn (positive for counterclockwise negative for clockwise).
      */
-    public void turnEncoders(int encoderDistance, double power) throws InterruptedException{
+    public void turnEncoders(final int encoderDistance, double power){
 
         if(encoderDistance < 0) {
             throw new DumpsterFireException("Where you're going, you don't need roads! (distance must be positive)");
         }
 
-        int leftStartEncoderPos = left.getCurrentPosition();
-        int rightStartEncoderPos = right.getCurrentPosition();
+        final int leftStartEncoderPos = left.getCurrentPosition();
+        final int rightStartEncoderPos = right.getCurrentPosition();
         if(power > 0) {
             turn(power);
-            while (Math.abs(left.getCurrentPosition() - leftStartEncoderPos) <= encoderDistance) {sleep(1);}
+            waitWhile(new Supplier<Boolean>() {
+                @Override
+                public Boolean get() {
+                    return Math.abs(left.getCurrentPosition() - leftStartEncoderPos) <= encoderDistance;
+                }
+            });
             stopMovement();
         }
         if (power < 0){
             turn(power);
-            while (Math.abs(right.getCurrentPosition() - rightStartEncoderPos) <= encoderDistance){sleep(1);}
+            waitWhile(new Supplier<Boolean>() {
+                @Override
+                public Boolean get() {
+                    return Math.abs(right.getCurrentPosition() - rightStartEncoderPos) <= encoderDistance;
+                }
+            });
             stopMovement();
         }
     }
@@ -354,16 +365,21 @@ public class TankDrive extends SubSystem {
      * @param encoderDistance - Encoder distance to travel.
      * @param input - Sets direction and rotational speed. (X is left and right, Y is forward and backwards)
      */
-    public void turnAndMoveEncoders(int encoderDistance, Vector input) throws InterruptedException{
+    public void turnAndMoveEncoders(final int encoderDistance, Vector input) {
 
         if(encoderDistance < 0) {
             throw new DumpsterFireException("Where you're going, you don't need roads! (distance must be positive)");
         }
 
-        int leftStartEncoderPos = left.getCurrentPosition();
-        int rightStartEncoderPos = right.getCurrentPosition();
+        final int leftStartEncoderPos = left.getCurrentPosition();
+        final int rightStartEncoderPos = right.getCurrentPosition();
         turnAndMove(input);
-        while(Math.abs((left.getCurrentPosition() - leftStartEncoderPos)/2 + (right.getCurrentPosition() - rightStartEncoderPos)/2) <= encoderDistance) {sleep(1);}
+        waitWhile(new Supplier<Boolean>() {
+            @Override
+            public Boolean get() {
+                return Math.abs((left.getCurrentPosition() - leftStartEncoderPos)/2 + (right.getCurrentPosition() - rightStartEncoderPos)/2) <= encoderDistance;
+            }
+        });
         stopMovement();
     }
 
@@ -381,10 +397,6 @@ public class TankDrive extends SubSystem {
     public void PIDTurn(double kp, double ki, double kd, double targetAngle) {
         PIDController pid = new PIDController(kp, ki, kd);
         pid.setSetpoint(targetAngle);
-
-
-
-        //turnClockwise(-pid.getCorrection());
     }
 
     /**
@@ -475,12 +487,12 @@ public class TankDrive extends SubSystem {
      */
     private void setUsingConfigs() {
         inputs = robot.pullControls(this);
-        Map<String, Object> settingsData = robot.pullNonGamepad(this);
+        ConfigData data = robot.pullNonGamepad(this);
 
-        setTurnAndMove((boolean) settingsData.get("Turn and Move"));
+        setTurnAndMove(data.getData("Turn and Move",Boolean.class));
         if (!useSpecific) {
-            setConstantSpeedModifier((double) settingsData.get("ConstantSpeedModifier"));
-            setSpeedModeModifier((double) settingsData.get("SpeedModeModifier"));
+            setConstantSpeedModifier(data.getData("ConstantSpeedModifier",Double.class));
+            setSpeedModeModifier(data.getData("SpeedModeModifier",Double.class));
         }
     }
 
@@ -488,9 +500,9 @@ public class TankDrive extends SubSystem {
      * Pulls the config settings for autonomous.
      */
     private void setUsingConfigsAutonomous(){
-        Map<String, Object> settingsData = robot.pullNonGamepad(this);
+        ConfigData data = robot.pullNonGamepad(this);
 
-        setConstantSpeedModifier((double) settingsData.get("ConstantSpeedModifier"));
+        setConstantSpeedModifier(data.getData("ConstantSpeedModifier",Double.class));
     }
 
     /**
@@ -500,6 +512,15 @@ public class TankDrive extends SubSystem {
      */
     public int getLeftMotorEncoderPos(){
         return left.getCurrentPosition();
+    }
+
+    /**
+     * Gets an array containing all of the motors.
+     *
+     * @return An array containing all of the motors. (left, right)
+     */
+    public DcMotor[] getMotors(){
+        return new DcMotor[]{left, right};
     }
 
     /**
@@ -622,6 +643,8 @@ public class TankDrive extends SubSystem {
          *
          * @param driveStick - The drivestick button.
          * @return This instance of Params.
+         *
+         * @throws NotDoubleInputException Throws this exception when the drivestick button is not a double input.
          */
         public Params setDriveStick(Button driveStick) {
             if(!driveStick.isDouble) {
@@ -637,6 +660,8 @@ public class TankDrive extends SubSystem {
          *
          * @param turnStick - The turnstick button.
          * @return This instance of Params.
+         *
+         * @throws NotDoubleInputException Throws this exception when the turnstick button is not a double input.
          */
         public Params setTurnStick(Button turnStick) {
             if(!turnStick.isDouble) {
@@ -651,6 +676,8 @@ public class TankDrive extends SubSystem {
          *
          * @param speedModeButton - The speed mode button.
          * @return This instance of Params.
+         *
+         * @throws NotBooleanInputException Throws this exception when the speed mode button is not a boolean input.
          */
         public Params setSpeedModeButton(Button speedModeButton) {
             if(!speedModeButton.isBoolean) {

@@ -1,10 +1,3 @@
-/*
- * Filename: Robot.java
- * Author: Andrew Liang, Dylan Zueck, Cole Savage
- * Team Name: Level Up
- * Date: 2017
- */
-
 package com.SCHSRobotics.HAL9001.system.source.BaseRobot;
 
 import android.os.Environment;
@@ -18,6 +11,7 @@ import com.SCHSRobotics.HAL9001.util.annotations.TeleopConfig;
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
+import com.SCHSRobotics.HAL9001.util.misc.ConfigData;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigParam;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -48,13 +42,21 @@ import java.util.Map;
 
 /**
  * An abstract class representing the physical robot.
+ *
+ * @author Andrew Liang, Level Up
+ * @author Dylan Zueck, Crow Force
+ * @author Cole Savage, Level Up
+ * @since 0.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 2017
  */
 public abstract class Robot {
 
+    //The name of the button used to cycle between vision pipelines.
     private static final String VISION_CYCLE = "VisionCycler";
-
+    //The resolution of each camera frame.
     private static Size cameraSize;
-
     //A map relating the name of each subsystem in the robot to that subsystem's corresponding autonomous config
     public static Map<String, List<ConfigParam>> autonomousConfig = new HashMap<>();
     //A map relating the name of each subsystem in the robot to that subsystem's corresponding teleop config
@@ -75,21 +77,25 @@ public abstract class Robot {
     public final Telemetry telemetry;
     //The hardwaremap used to map software representations of hardware to the actual hardware.
     public final HardwareMap hardwareMap;
-
+    //The camera used to get frames for computer vision.
     private OpenCvCamera camera;
+    //The gamepad used to cycle between vision pipelines.
     private final CustomizableGamepad visionCycler;
+    //Boolean values determining different camera states and parameters.
     private boolean useViewport, pipelineSet, cameraStarted;
+    //The cameraMonitorViewId for displaying frames on the phone.
     private final int cameraMonitorViewId;
-
+    //A list of Vision-Based subsystems.
     private List<VisionSubSystem> visionSubSystems;
-
-    private static boolean errorThrown = false;
-    private static Exception thrownException;
+    //Whether or not a program has thrown an error.
+    private boolean errorThrown;
+    //The exception that was thrown (if an exception was thrown).
+    private Exception thrownException;
 
     /**
      * Constructor for robot.
      *
-     * @param opMode - The opmode the robot is currently running.
+     * @param opMode The opmode the robot is currently running.
      */
     public Robot(OpMode opMode)
     {
@@ -110,15 +116,18 @@ public abstract class Robot {
 
         cameraSize = new Size(320, 240);
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId","id", hardwareMap.appContext.getPackageName());
+
+        thrownException = new Exception();
+        errorThrown = false;
     }
 
     /**
      * Adds a subsystem to the robot's hashmap of subsystems and, if the subsystem uses config, load the default config.
      *
-     * @param name - The name of the subsystem.
-     * @param subSystem - The subsystem object.
+     * @param name The name of the subsystem.
+     * @param subSystem The subsystem object.
      */
-    protected final void putSubSystem(String name,  SubSystem subSystem)
+    protected final void putSubSystem(String name, SubSystem subSystem)
     {
         subSystems.put(name, subSystem);
 
@@ -138,6 +147,7 @@ public abstract class Robot {
                     //method must be annotated as TeleopConfig, have no parameters, be public and static, and return an array of config params
                     if(!foundTeleopConfig && m.isAnnotationPresent(TeleopConfig.class) && m.getReturnType() == ConfigParam[].class && m.getParameterTypes().length == 0 && Modifier.isStatic(m.getModifiers()) && Modifier.isPublic(m.getModifiers())) {
                         teleopConfig.put(subSystem.getClass().getSimpleName(),Arrays.asList((ConfigParam[]) m.invoke(null)));
+                        Log.wtf(teleopConfig.keySet().toString(), "   " + teleopConfig.values().toString());
                         if(!useGui) {
                             gui = new GUI(this, new Button(1, Button.BooleanInputs.noButton));
                             useGui = true;
@@ -149,6 +159,7 @@ public abstract class Robot {
                     //method must be annotated as AutonomousConfig, have no parameters, be public and static, and return an array of config params
                     if(!foundAutonomousConfig && m.isAnnotationPresent(AutonomousConfig.class) && m.getReturnType() == ConfigParam[].class && m.getParameterTypes().length == 0 && Modifier.isStatic(m.getModifiers()) && Modifier.isPublic(m.getModifiers())) {
                         autonomousConfig.put(subSystem.getClass().getSimpleName(),Arrays.asList((ConfigParam[]) m.invoke(null)));
+                        Log.wtf(teleopConfig.keySet().toString(), "   " + teleopConfig.values().toString());
                         if(!useGui) {
                             gui = new GUI(this, new Button(1, Button.BooleanInputs.noButton));
                             useGui = true;
@@ -171,7 +182,7 @@ public abstract class Robot {
     /**
      * Instantiates the GUI and allows the robot to use a GUI.
      *
-     * @param cycleButton - The button used to cycle through multiple menus in GUI.
+     * @param cycleButton The button used to cycle through multiple menus in GUI.
      */
     protected final void startGui(Button cycleButton) {
         if(!useGui) {
@@ -183,6 +194,13 @@ public abstract class Robot {
         }
     }
 
+    /**
+     * Enables the viewport for displaying frames for computer vision.
+     *
+     * @param cycleButton The button used to cycle between vision pipelines.
+     *
+     * @throws NotBooleanInputException Throws this exception if the button is not a boolean input.
+     */
     protected final void enableViewport(Button cycleButton) {
         if(!cycleButton.isBoolean) {
             throw new NotBooleanInputException("Vision cycle button must be a boolean input");
@@ -197,6 +215,11 @@ public abstract class Robot {
         }
     }
 
+    /**
+     * Returns whether the viewport is enabled.
+     *
+     * @return Whether the viewport is enabled.
+     */
     public final boolean isViewportEnabled() {
         return useViewport;
     }
@@ -204,7 +227,7 @@ public abstract class Robot {
     /**
      * Returns whether the robot has already been set up to use the GUI.
      *
-     * @return - Whether the GUI has been instantiated.
+     * @return Whether the GUI has been instantiated.
      */
     public final boolean usesGUI() {
         return useGui;
@@ -521,8 +544,8 @@ public abstract class Robot {
     /**
      * Gets a specific subsystem from the hashmap.
      *
-     * @param name - The name of the subsystem.
-     * @return - The subsystem with the given identifier in the hashmap.
+     * @param name The name of the subsystem.
+     * @return The subsystem with the given identifier in the hashmap.
      */
     public final SubSystem getSubSystem(String name)
     {
@@ -532,9 +555,9 @@ public abstract class Robot {
     /**
      * Replaces a subsystem already in the hashmap with another subsystem.
      *
-     * @param name - The name of the subsystem to be replaced.
-     * @param subSystem - The new subsystem.
-     * @return - The new subsystem that was passed in as a parameter.
+     * @param name The name of the subsystem to be replaced.
+     * @param subSystem The new subsystem.
+     * @return The new subsystem that was passed in as a parameter.
      */
     public final SubSystem eOverrideSubSystem(String name,  SubSystem subSystem)
     {
@@ -545,7 +568,7 @@ public abstract class Robot {
     /**
      * Gets the opmode the robot is currently running.
      *
-     * @return - The opmode the robot is running.
+     * @return The opmode the robot is running.
      */
     public final OpMode getOpMode() {
         return opMode;
@@ -554,8 +577,8 @@ public abstract class Robot {
     /**
      * Pulls a customizable gamepad object from the teleop config map. Allows for easily getting gamepad data from the configuration.
      *
-     * @param subsystem - The subsystem to pull the gamepad controls for.
-     * @return - A customizable gamepad containing the configured controls for that subsystem.
+     * @param subsystem The subsystem to pull the gamepad controls for.
+     * @return A customizable gamepad containing the configured controls for that subsystem.
      */
     public final CustomizableGamepad pullControls(SubSystem subsystem) {
         return pullControls(subsystem.getClass().getSimpleName());
@@ -564,8 +587,8 @@ public abstract class Robot {
     /**
      * Pulls a customizable gamepad object from the teleop config map. Allows for easily getting gamepad data from the configuration.
      *
-     * @param subsystem - The name of the subsystem to pull the gamepad controls for.
-     * @return - A customizable gamepad containing the configured controls for that subsystem.
+     * @param subsystem The name of the subsystem to pull the gamepad controls for.
+     * @return A customizable gamepad containing the configured controls for that subsystem.
      */
     public final CustomizableGamepad pullControls(String subsystem) {
         List<ConfigParam> configParams = teleopConfig.get(subsystem);
@@ -579,23 +602,22 @@ public abstract class Robot {
     }
 
     /**
-     * Pulls a map of all non-gamepad-related config settings from the global config. The map format is (option name) -> (option value)
+     * Pulls the data of non-gamepad-related config settings from the global config. The map format is (option name) -> (option value)
      *
-     * @param subsystem - The subsystem to pull the gamepad controls for.
-     * @return - A map relating the name of each non-gamepad option to that option's value.
+     * @param subsystem The subsystem to get config from.
+     * @return The non-gamepad configuration data for that subsystem.
      */
-    public final Map<String,Object> pullNonGamepad(SubSystem subsystem) {
+    public final ConfigData pullNonGamepad(SubSystem subsystem) {
         return pullNonGamepad(subsystem.getClass().getSimpleName());
     }
 
     /**
-     * Pulls a map of all non-gamepad-related config settings from the global config. The map format is (option name) -> (option value)
+     * Pulls the data of non-gamepad-related config settings from the global config. The map format is (option name) -> (option value)
      *
-     * @param subsystem - The name of the subsystem to pull the gamepad controls for.
-     * @return - A map relating the name of each non-gamepad option to that option's value.
+     * @param subsystem The name of the subsystem to get config from.
+     * @return The non-gamepad configuration data for that subsystem.
      */
-    public final Map<String,Object> pullNonGamepad(String subsystem) {
-
+    public final ConfigData pullNonGamepad(String subsystem) {
         List<ConfigParam> configParamsTeleop = new ArrayList<>();
         List<ConfigParam> configParamsAuto = new ArrayList<>();
 
@@ -604,6 +626,13 @@ public abstract class Robot {
         }
         if(autonomousConfig.keySet().contains(subsystem)) {
             configParamsAuto = autonomousConfig.get(subsystem);
+        }
+
+        if(configParamsAuto == null) {
+            configParamsAuto = new ArrayList<>();
+        }
+        if(configParamsTeleop == null) {
+            configParamsTeleop = new ArrayList<>();
         }
 
         Map<String,Object> output = new HashMap<>();
@@ -620,7 +649,7 @@ public abstract class Robot {
             }
         }
 
-        return output;
+        return new ConfigData(output);
     }
 
     /**
@@ -680,8 +709,8 @@ public abstract class Robot {
     /**
      * Writes data to a specified filepath. Creates the file if it doesn't exist, overwrites it if it does.
      *
-     * @param filePath - The path of the file to write to.
-     * @param data - The data to write to the file/
+     * @param filePath The path of the file to write to.
+     * @param data The data to write to the file
      */
     private void writeFile(String filePath,  String data) {
 
@@ -723,6 +752,11 @@ public abstract class Robot {
         }
     }
 
+    /**
+     * Returns whether any vision subsystem has requested to enable their pipelines.
+     *
+     * @return Whether any vision subsystem has requested to enable their pipelines.
+     */
     private boolean enableVisionRequested() {
         boolean anythingEnabled = false;
         for(VisionSubSystem visionSubsystem : visionSubSystems) {
@@ -731,10 +765,20 @@ public abstract class Robot {
         return anythingEnabled;
     }
 
+    /**
+     * Sets the camera resolution. Only valid for specific values.
+     *
+     * @param width The frame width in pixels.
+     * @param height The frame height in pixels.
+     */
     protected void setCameraSize(int width, int height) {
         cameraSize = new Size(width, height);
     }
 
+    /**
+     * A global vision pipeline that runs all the vision subsystem pipelines
+     * @TODO Make different cameras for pipelines that request it instead of all running them one after the other.
+     */
     private class Pipeline extends OpenCvPipeline {
 
         @Override

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 public class BasicSampleBot extends Robot {
 
     public MechanumDrive drive;
+    public SubSystem1 s1;
     /**
      * Constructor for robot.
      *
@@ -36,7 +37,9 @@ public class BasicSampleBot extends Robot {
         //PIDController controller = new PIDController(0.01,0,0);
         //controller.setDeadband(5);
         //calib = new AnglePIDTunerSystem(this, new MechanumDrive.Params("forwardLeftMotor","forwardRightMotor","backLeftMotor","backRightMotor"), controller,45, AngleUnit.DEGREES);
-        drive = new MechanumDrive(this, "topLeft","topRight","botLeft","botRight");
+        drive = new MechanumDrive(this, new MechanumDrive.SpecificParams("topLeft","topRight","botLeft","botRight"),false);
+        s1 = new SubSystem1(this);
         putSubSystem("Tank", drive);
+        putSubSystem("Test",s1);
     }
 }

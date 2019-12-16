@@ -1,10 +1,3 @@
-/*
- * Filename: DefaultCursor.java
- * Author: Dylan Zueck and Cole Savage
- * Team Name: Crow Force, Level Up
- * Date: 7/20/19
- */
-
 package com.SCHSRobotics.HAL9001.system.subsystems.cursors;
 
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
@@ -17,10 +10,15 @@ import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 
 /**
  * A default cursor object with normal movement and selection operations.
+ *
+ * @author Dylan Zueck, Crow Force
+ * @author Cole Savage, Level Up
+ * @since 1.0.0, Creation Date: 7/20/19
+ * @version 1.0.0
  */
 public class DefaultCursor extends Cursor {
 
-    //The customizeable set of inputs used to control the cursor.
+    //The customizable set of inputs used to control the cursor.
     private CustomizableGamepad inputs;
     //The names of the controls that are used to interact with the cursor.
     public static final String UP = "up", DOWN = "down", LEFT = "left", RIGHT = "right", SELECT = "select";
@@ -30,7 +28,7 @@ public class DefaultCursor extends Cursor {
     /**
      * Constructor for default cursor.
      *
-     * @param robot - The robot the cursor is associated with.
+     * @param robot The robot the cursor is associated with.
      */
     public DefaultCursor(Robot robot, Params params) {
         super(params.x, params.y, params.blinkSpeedMs, params.cursorIcon);
@@ -44,13 +42,13 @@ public class DefaultCursor extends Cursor {
     /**
      * Sets which buttons will be used to control the cursor.
      *
-     * @param up - The up button.
-     * @param down - The down button.
-     * @param left - The left button.
-     * @param right - The right button.
-     * @param select - The select button
+     * @param up The up button.
+     * @param down The down button.
+     * @param left The left button.
+     * @param right The right button.
+     * @param select The select button
      *
-     * @throws NotBooleanInputException - Throws an exception if button does not return boolean values.
+     * @throws NotBooleanInputException Throws an exception if button does not return boolean values.
      */
     public void setInputs(Button up, Button down, Button left, Button right, Button select){
         if(up.isBoolean && down.isBoolean && left.isBoolean && right.isBoolean && select.isBoolean) {
@@ -123,7 +121,7 @@ public class DefaultCursor extends Cursor {
         /**
          * Sets the cursor's blink speed.
          *
-         * @param blinkSpeedMs - The blink speed in miliseconds.
+         * @param blinkSpeedMs The blink speed in miliseconds.
          * @return This instance of the params class.
          */
         public Params setBlinkSpeedMs(int blinkSpeedMs) {
@@ -134,7 +132,7 @@ public class DefaultCursor extends Cursor {
         /**
          * Sets the cursor's up button.
          *
-         * @param button - The up button.
+         * @param button The up button.
          * @return This instance of the params class.
          */
         public Params setUpButton(Button button) {
@@ -145,7 +143,7 @@ public class DefaultCursor extends Cursor {
         /**
          * Sets the cursor's down button.
          *
-         * @param button - The down button.
+         * @param button The down button.
          * @return This instance of the params class.
          */
         public Params setDownButton(Button button) {
@@ -156,7 +154,7 @@ public class DefaultCursor extends Cursor {
         /**
          * Sets the cursor's left button.
          *
-         * @param button - The left button.
+         * @param button The left button.
          * @return This instance of the params class.
          */
         public Params setLeftButton(Button button) {
@@ -167,7 +165,7 @@ public class DefaultCursor extends Cursor {
         /**
          * Set the cursor's right button.
          *
-         * @param button - The right button.
+         * @param button The right button.
          * @return This instance of the params class.
          */
         public Params setRightButton(Button button) {
@@ -178,7 +176,7 @@ public class DefaultCursor extends Cursor {
         /**
          * Sets the cursor's select button.
          *
-         * @param button - The select button.
+         * @param button The select button.
          * @return This instance of the params class.
          */
         public Params setSelectButton(Button button) {
@@ -189,7 +187,7 @@ public class DefaultCursor extends Cursor {
         /**
          * Sets the cursor's blink icon.
          *
-         * @param cursorIcon - The cursor's blink icon.
+         * @param cursorIcon The cursor's blink icon.
          * @return This instance of the params class.
          */
         public Params setCursorIcon(char cursorIcon) {
@@ -200,7 +198,7 @@ public class DefaultCursor extends Cursor {
         /**
          * Sets whether the cursor should blink.
          *
-         * @param doBlink - Whether the cursor should blink.
+         * @param doBlink Whether the cursor should blink.
          * @return This instance of the params class.
          */
         public Params setDoBlink(boolean doBlink) {
@@ -211,7 +209,7 @@ public class DefaultCursor extends Cursor {
         /**
          * Sets the cursor's initial x coordinate.
          *
-         * @param x - The cursor's initial x coordinate.
+         * @param x The cursor's initial x coordinate.
          * @return This instance of the params class.
          */
         public Params setX(int x) {
@@ -222,7 +220,7 @@ public class DefaultCursor extends Cursor {
         /**
          * Sets the cursor's initial y coordinate.
          *
-         * @param y - The cursor's initial y coordinate.
+         * @param y The cursor's initial y coordinate.
          * @return This instance of the params class.
          */
         public Params setY(int y) {

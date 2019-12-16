@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @StandAlone
 //@Disabled should be removed when using
 //@Disabled
-@TeleOp(name = "Tank Sample")
+@TeleOp(name = "Basic Sample Bot Teleop")
 //extends BaseTeleop means it is a TeleOp program
 public class BasicSampleTeleop extends BaseTeleop {
 

@@ -29,6 +29,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A menu for debugging all robot configuration files.
+ *
+ * @author Cole Savage, Level Up
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 8/13/19
+ */
 public class ConfigDebugMenu extends ScrollingListMenu {
 
     /**
@@ -75,7 +84,12 @@ public class ConfigDebugMenu extends ScrollingListMenu {
     //The GuiLine use to enter config names. It is saved here so that if the back button is pressed the config name can be edited.
     private GuiLine nameLine;
     //A custom version of the modulo function that allows negative numbers to wrap around.
-    private BiFunction<Integer,Integer,Integer> customMod = (Integer x, Integer m) -> (x % m + m) % m;
+    private BiFunction<Integer,Integer,Integer> customMod = new BiFunction<Integer, Integer, Integer>() {
+        @Override
+        public Integer apply(Integer x, Integer m) {
+            return (x % m + m) % m;
+        }
+    };
     //The path to the robot folder.
     private String robotFilepath;
 

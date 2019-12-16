@@ -1,10 +1,3 @@
-/*
- * Filename: Menu.java
- * Author: Cole Savage and Dylan Zueck
- * Team Name: Level Up, Crow Force
- * Date: 7/20/19
- */
-
 package com.SCHSRobotics.HAL9001.system.source.GUI;
 
 import android.util.Log;
@@ -20,6 +13,13 @@ import java.util.List;
 
 /**
  * An abstract class representing a menu that can be displayed on the driver station.
+ *
+ * @author Cole Savage, Level Up
+ * @author Dylan Zueck, Crow Force
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 7/20/19
  */
 public abstract class Menu {
 
@@ -37,13 +37,13 @@ public abstract class Menu {
     /**
      * Constructor for menu class.
      *
-     * @param gui - The GUI that will be used to render the menu.
-     * @param cursor - The cursor assigned to the menu.
-     * @param startingLines - The list of lines that will be displayed when the menu is first rendered.
-     * @param selectionZoneWidth - The maximum x value that the cursor will be able to travel to inside the selection zone.
-     *                             Note: This is not the actual width of the zone itself, but a boundary for the index.
-     * @param selectionZoneHeight - The maximum y value that the cursor will be able to travel to inside the selection zone.
-     *                              Note: This is not the actual height of the zone itself, but a boundary for the index.
+     * @param gui The GUI that will be used to render the menu.
+     * @param cursor The cursor assigned to the menu.
+     * @param startingLines The list of lines that will be displayed when the menu is first rendered.
+     * @param selectionZoneWidth The maximum x value that the cursor will be able to travel to inside the selection zone.
+     *                           Note: This is not the actual width of the zone itself, but a boundary for the index.
+     * @param selectionZoneHeight The maximum y value that the cursor will be able to travel to inside the selection zone.
+     *                            Note: This is not the actual height of the zone itself, but a boundary for the index.
      *
      * @throws InvalidSelectionZoneException - Throws this exception if the provided selection zone is impossible.
      */
@@ -63,15 +63,15 @@ public abstract class Menu {
     /**
      * Constructor for menu class.
      *
-     * @param gui - The GUI that will be used to render the menu.
-     * @param cursor - The cursor assigned to the menu.
-     * @param startingLines - The list of lines that will be displayed when the menu is first rendered.
-     * @param selectionZoneWidth - The maximum x value that the cursor will be able to travel to inside the selection zone.
-     *                             Note: This is not the actual width of the zone itself, but a boundary for the index.
-     * @param selectionZoneHeight - The maximum y value that the cursor will be able to travel to inside the selection zone.
-     *                              Note: This is not the actual height of the zone itself, but a boundary for the index.
+     * @param gui The GUI that will be used to render the menu.
+     * @param cursor The cursor assigned to the menu.
+     * @param startingLines The list of lines that will be displayed when the menu is first rendered.
+     * @param selectionZoneWidth The maximum x value that the cursor will be able to travel to inside the selection zone.
+     *                           Note: This is not the actual width of the zone itself, but a boundary for the index.
+     * @param selectionZoneHeight The maximum y value that the cursor will be able to travel to inside the selection zone.
+     *                            Note: This is not the actual height of the zone itself, but a boundary for the index.
      *
-     * @throws InvalidSelectionZoneException - Throws this exception if the provided selection zone is impossible.
+     * @throws InvalidSelectionZoneException Throws this exception if the provided selection zone is impossible.
      */
     public Menu(GUI gui, Cursor cursor, ArrayList<GuiLine> startingLines, int selectionZoneWidth, int selectionZoneHeight) {
         this.gui = gui;
@@ -131,8 +131,8 @@ public abstract class Menu {
     /**
      * Displays a line to the screen. Calls an identically-named method in GUI.
      *
-     * @param line - The line to display.
-     * @param lineNumber - The index of the line on the screen.
+     * @param line The line to display.
+     * @param lineNumber The index of the line on the screen.
      */
     protected void displayLine(GuiLine line, int lineNumber){
         gui.displayLine(line, lineNumber);
@@ -141,9 +141,9 @@ public abstract class Menu {
     /**
      * Displays multiple lines to the screen.
      *
-     * @param lines - The lines to display.
+     * @param lines The lines to display.
      *
-     * @throws SkyscraperTooTallException - Throws this exception when the number of lines to draw is greater than the number that can fit on the screen.
+     * @throws SkyscraperTooTallException Throws this exception when the number of lines to draw is greater than the number that can fit on the screen.
      */
     protected void displayLines(GuiLine[] lines){
         if(lines.length > MAXLINESPERSCREEN) {
@@ -162,10 +162,10 @@ public abstract class Menu {
     /**
      * Displays multiple lines to the screen.
      *
-     * @param lines - The lines to display.
-     * @param lineNumbers - The indexes of the lines to display.
+     * @param lines The lines to display.
+     * @param lineNumbers The indexes of the lines to display.
      *
-     * @throws SkyscraperTooTallException - Throws this exception when the number of lines to draw is greater than the number that can fit on the screen.
+     * @throws SkyscraperTooTallException Throws this exception when the number of lines to draw is greater than the number that can fit on the screen.
      */
     protected void displayLines(GuiLine[] lines, List<Integer> lineNumbers){
         if(lineNumbers.size() > MAXLINESPERSCREEN) {
@@ -184,9 +184,9 @@ public abstract class Menu {
     /**
      * Displays multiple lines to the screen.
      *
-     * @param lines - The lines to display.
+     * @param lines The lines to display.
      *
-     * @throws SkyscraperTooTallException - Throws this exception when the number of lines to draw is greater than the number that can fit on the screen.
+     * @throws SkyscraperTooTallException Throws this exception when the number of lines to draw is greater than the number that can fit on the screen.
      */
     protected void displayLines(List<GuiLine> lines){
         if(lines.size() > MAXLINESPERSCREEN) {
@@ -205,10 +205,10 @@ public abstract class Menu {
     /**
      * Displays multiple lines to the screen.
      *
-     * @param lines - The lines to display.
-     * @param lineNumbers - The indexes of the lines to display.
+     * @param lines The lines to display.
+     * @param lineNumbers The indexes of the lines to display.
      *
-     * @throws SkyscraperTooTallException - Throws this exception when the number of lines to draw is greater than the number that can fit on the screen.
+     * @throws SkyscraperTooTallException Throws this exception when the number of lines to draw is greater than the number that can fit on the screen.
      */
     protected void displayLines(List<GuiLine> lines, List<Integer> lineNumbers){
         if(lineNumbers.size() > MAXLINESPERSCREEN) {
@@ -234,7 +234,7 @@ public abstract class Menu {
     /**
      * Gets the selection zone width.
      *
-     * @return - The selection zone width.
+     * @return The selection zone width.
      */
     public int getSelectionZoneWidth() {
         return selectionZoneWidth;
@@ -243,7 +243,7 @@ public abstract class Menu {
     /**
      * Gets the selection zone height.
      *
-     * @return - The selection zone height.
+     * @return The selection zone height.
      */
     public int getSelectionZoneHeight() {
         return selectionZoneHeight;
@@ -252,8 +252,8 @@ public abstract class Menu {
     /**
      * Sets the selection zone width.
      *
-     * @param selectionZoneWidth - The desired selection zone width.
-     * @param newLines - The list of lines to display on the menu with the new format.
+     * @param selectionZoneWidth The desired selection zone width.
+     * @param newLines The list of lines to display on the menu with the new format.
      */
     public void setSelectionZoneWidth(int selectionZoneWidth, List<GuiLine> newLines){
         this.selectionZoneWidth = selectionZoneWidth;
@@ -266,8 +266,8 @@ public abstract class Menu {
     /**
      * Sets the selection zone width.
      *
-     * @param selectionZoneWidth - The desired selection zone width.
-     * @param newLines - The list of lines to display on the menu with the new format.
+     * @param selectionZoneWidth The desired selection zone width.
+     * @param newLines The list of lines to display on the menu with the new format.
      */
     public void setSelectionZoneWidth(int selectionZoneWidth, GuiLine[] newLines){
         this.selectionZoneWidth = selectionZoneWidth;
@@ -281,8 +281,8 @@ public abstract class Menu {
     /**
      * Sets the selection zone height.
      *
-     * @param selectionZoneHeight - The desired selection zone height.
-     * @param newLines - The list of lines to display on the menu with the new format.
+     * @param selectionZoneHeight The desired selection zone height.
+     * @param newLines The list of lines to display on the menu with the new format.
      */
     public void setSelectionZoneHeight(int selectionZoneHeight, List<GuiLine> newLines) {
         this.selectionZoneHeight = selectionZoneHeight;
@@ -295,8 +295,8 @@ public abstract class Menu {
     /**
      * Sets the selection zone height.
      *
-     * @param selectionZoneHeight - The desired selection zone height.
-     * @param newLines - The list of lines to display on the menu with the new format.
+     * @param selectionZoneHeight The desired selection zone height.
+     * @param newLines The list of lines to display on the menu with the new format.
      */
     public void setSelectionZoneHeight(int selectionZoneHeight, GuiLine[] newLines) {
         this.selectionZoneHeight = selectionZoneHeight;
@@ -309,9 +309,9 @@ public abstract class Menu {
     /**
      * Sets the selection zone width and height.
      *
-     * @param selectionZoneWidth - The desired selection zone width.
-     * @param selectionZoneHeight - The desired selection zone height.
-     * @param newLines - The list of lines to display on the menu with the new format.
+     * @param selectionZoneWidth The desired selection zone width.
+     * @param selectionZoneHeight The desired selection zone height.
+     * @param newLines The list of lines to display on the menu with the new format.
      */
     public void setSelectionZoneWidthAndHeight(int selectionZoneWidth, int selectionZoneHeight, GuiLine[] newLines){
         this.selectionZoneWidth = selectionZoneWidth;
@@ -326,9 +326,9 @@ public abstract class Menu {
     /**
      * Sets the selection zone width and height.
      *
-     * @param selectionZoneWidth - The desired selection zone width.
-     * @param selectionZoneHeight - The desired selection zone height.
-     * @param newLines - The list of lines to display on the menu with the new format.
+     * @param selectionZoneWidth The desired selection zone width.
+     * @param selectionZoneHeight The desired selection zone height.
+     * @param newLines The list of lines to display on the menu with the new format.
      */
     public void setSelectionZoneWidthAndHeight(int selectionZoneWidth, int selectionZoneHeight, List<GuiLine> newLines){
         this.selectionZoneWidth = selectionZoneWidth;
@@ -343,11 +343,11 @@ public abstract class Menu {
     /**
      * Updates the menu's lines with new values.
      *
-     * @param lines - The list of lines that the menu will display.
+     * @param lines The list of lines that the menu will display.
      *
-     * @throws InvalidSelectionZoneException - Throws this exception if the selection zone width is not equal to the length of the
-     *                                         text to display in the selection zone.
-     * @throws WrongSkyscraperBlueprintException - Throws this exception if there are not enough lines in newLines to fill the selection zone.
+     * @throws InvalidSelectionZoneException Throws this exception if the selection zone width is not equal to the length of the
+     *                                       text to display in the selection zone.
+     * @throws WrongSkyscraperBlueprintException Throws this exception if there are not enough lines in newLines to fill the selection zone.
      */
     public void setLines(GuiLine[] lines){
         if(lines.length == selectionZoneHeight) {
@@ -367,11 +367,11 @@ public abstract class Menu {
     /**
      * Updates the menu's lines with new values.
      *
-     * @param lines - The list of lines that the menu will display.
+     * @param lines The list of lines that the menu will display.
      *
-     * @throws InvalidSelectionZoneException - Throws this exception if the selection zone width is not equal to the length of the
-     *                                         text to display in the selection zone.
-     * @throws WrongSkyscraperBlueprintException - Throws this exception if there are not enough or too many lines in newLines to fill the selection zone.
+     * @throws InvalidSelectionZoneException Throws this exception if the selection zone width is not equal to the length of the
+     *                                       text to display in the selection zone.
+     * @throws WrongSkyscraperBlueprintException Throws this exception if there are not enough or too many lines in newLines to fill the selection zone.
      */
     public void setLines(List<GuiLine> lines){
         if(lines.size() == selectionZoneHeight) {

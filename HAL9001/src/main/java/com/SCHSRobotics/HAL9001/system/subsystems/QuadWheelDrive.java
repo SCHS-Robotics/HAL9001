@@ -1,10 +1,3 @@
-/*
- * Filename: TankDrive.java
- * Author: Dylan Zueck
- * Team Name: Crow Force
- * Date: 7/17/19
- */
-
 package com.SCHSRobotics.HAL9001.system.subsystems;
 
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
@@ -19,18 +12,24 @@ import com.SCHSRobotics.HAL9001.util.exceptions.NotDoubleInputException;
 import com.SCHSRobotics.HAL9001.util.math.Vector;
 import com.SCHSRobotics.HAL9001.util.misc.BaseParam;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
+import com.SCHSRobotics.HAL9001.util.misc.ConfigData;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigParam;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 import com.SCHSRobotics.HAL9001.util.misc.Toggle;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import java.util.ArrayList;
-import java.util.Map;
+import org.firstinspires.ftc.robotcore.external.Supplier;
 
-import static java.lang.Thread.sleep;
+import java.util.ArrayList;
 
 /**
  * A customizable tankdrive subsystem.
+ *
+ * @author Dylan Zueck, Crow Force
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 7/17/19.
  */
 public class QuadWheelDrive extends SubSystem {
 
@@ -52,8 +51,8 @@ public class QuadWheelDrive extends SubSystem {
     /**
      * This constructor creates the drive system without using config.
      *
-     * @param robot - The robot we will be using.
-     * @param params - The parameters for the drive system.
+     * @param robot The robot we will be using.
+     * @param params The parameters for the drive system.
      */
     public QuadWheelDrive(Robot robot, Params params){
         super(robot);
@@ -72,8 +71,8 @@ public class QuadWheelDrive extends SubSystem {
     /**
      * This constructor creates the drive system using config for values that are not numbers.
      *
-     * @param robot - The robot we will be using.
-     * @param params - The parameters for the drive system.
+     * @param robot The robot we will be using.
+     * @param params The parameters for the drive system.
      */
     public QuadWheelDrive(Robot robot, NumberParams params){
         super(robot);
@@ -89,11 +88,11 @@ public class QuadWheelDrive extends SubSystem {
     /**
      * This constructor creates the drive system using config.
      *
-     * @param robot - The robot we will be using.
-     * @param topLeftConfiguration - The top left motor's configuration name.
-     * @param topRightConfiguration - The top right motor's configuration name.
-     * @param botLeftConfiguration - The bottom left motor's configuration name.
-     * @param botRightConfiguration - The bottom right motor's configuration name.
+     * @param robot The robot we will be using.
+     * @param topLeftConfiguration The top left motor's configuration name.
+     * @param topRightConfiguration The top right motor's configuration name.
+     * @param botLeftConfiguration The bottom left motor's configuration name.
+     * @param botRightConfiguration The bottom right motor's configuration name.
      */
     public QuadWheelDrive(Robot robot, String topLeftConfiguration, String topRightConfiguration, String botLeftConfiguration, String botRightConfiguration){
         super(robot);
@@ -104,7 +103,7 @@ public class QuadWheelDrive extends SubSystem {
     }
 
     @Override
-    public void init() throws InterruptedException
+    public void init()
     {
         normalDirection();
         resetEncoders();
@@ -202,7 +201,7 @@ public class QuadWheelDrive extends SubSystem {
     /**
      * Makes the robot drive.
      *
-     * @param speed - Speed to drive forward is positive and reverse is negative.
+     * @param speed Speed to drive forward is positive and reverse is negative.
      */
     public void drive(double speed){
         botLeft.setPower((speed * constantSpeedModifier) * currentSpeedModeModifier);
@@ -214,7 +213,7 @@ public class QuadWheelDrive extends SubSystem {
     /**
      * Makes the robot turn. (Counterclockwise Positive)
      *
-     * @param speed - Speed to turn at(-1)-(1) (positive speed is turn right & negative speed is turn left).
+     * @param speed Speed to turn at(-1)-(1) (positive speed is turn right & negative speed is turn left).
      */
     public void turn(double speed){
         botLeft.setPower(-(speed * constantSpeedModifier) * currentSpeedModeModifier);
@@ -226,7 +225,7 @@ public class QuadWheelDrive extends SubSystem {
     /**
      * Drives and turns at the same time.
      *
-     * @param input - A vector that determines linear/rotational speed and direction. First component is linear speed second is rotational speed (counterclockwise +)
+     * @param input A vector that determines linear/rotational speed and direction. First component is linear speed second is rotational speed (counterclockwise +)
      */
     public void turnAndMove(Vector input){
         botLeft.setPower(((input.x - input.y) * constantSpeedModifier) * currentSpeedModeModifier);
@@ -248,7 +247,7 @@ public class QuadWheelDrive extends SubSystem {
     /**
      * Sets the power of the left motors.
      *
-     * @param speed - Power to set the motor to(-1)-(1).
+     * @param speed Power to set the motor to(-1)-(1).
      */
     public void setPowerLeft(double speed){
         botLeft.setPower((speed * constantSpeedModifier) * currentSpeedModeModifier);
@@ -258,7 +257,7 @@ public class QuadWheelDrive extends SubSystem {
     /**
      * Sets the power of the right motors.
      *
-     * @param speed - Power to set the motor to(-1)-(1).
+     * @param speed Power to set the motor to(-1)-(1).
      */
     public void setPowerRight(double speed){
         botRight.setPower((speed * constantSpeedModifier) * currentSpeedModeModifier);
@@ -268,72 +267,68 @@ public class QuadWheelDrive extends SubSystem {
     /**
      * Moves forward or backwards for a set time.
      *
-     * @param timeMs - time to drive for in milliseconds.
-     * @param power - power to drive at positive power for forward, negative for backwards.
+     * @param timeMs time to drive for in milliseconds.
+     * @param power power to drive at positive power for forward, negative for backwards.
      *
-     * @throws InterruptedException - Throws this exception if the program is unexpectedly interrupted.
+     * @throws DumpsterFireException Throws this exception if time is negative.
      */
-    public void driveTime(double timeMs, double power) throws InterruptedException{
+    public void driveTime(long timeMs, double power) {
         if(timeMs < 0) {
             throw new DumpsterFireException("HAL is cool, but can't travel back in time. Time must be positive.");
         }
 
-        double startTime = System.currentTimeMillis();
         drive(power);
-        while (System.currentTimeMillis() - startTime <= timeMs) {
-            sleep(1);
-        }
+        waitTime(timeMs);
         stopMovement();
     }
 
     /**
      * Turns for a set time.
      *
-     * @param timeMs - time to turn for in milliseconds.
-     * @param power - power to turn at. positive for counterClockwise and negative for clockwise.
+     * @param timeMs time to turn for in milliseconds.
+     * @param power power to turn at. positive for counterClockwise and negative for clockwise.
      *
-     * @throws InterruptedException - Throws this exception if the program is unexpectedly interrupted.
+     * @throws DumpsterFireException Throws this exception if time is negative.
      */
-    public void turnTime(double timeMs, double power) throws InterruptedException{
-
+    public void turnTime(long timeMs, double power) {
         if(timeMs < 0) {
             throw new DumpsterFireException("HAL is cool, but can't travel back in time. Time must be positive.");
         }
 
         double startTime = System.currentTimeMillis();
         turn(power);
-        while(System.currentTimeMillis() - startTime <= timeMs){sleep(1);}
+        waitTime(timeMs);
         stopMovement();
     }
 
     /**
      * Drives and turns for a set time.
      *
-     * @param timeMs - time to turn and drive for in milliseconds.
-     * @param input - Vector that determines direction and rotational speed. (x component is linear speed y is rotational speed)
+     * @param timeMs Time to turn and drive for in milliseconds.
+     * @param input Vector that determines direction and rotational speed. (x component is linear speed y is rotational speed)
      *
-     * @throws InterruptedException - Throws this exception if the program is unexpectedly interrupted.
+     * @throws DumpsterFireException Throws this exception if time is negative.
      */
-    public void turnAndMoveTime(double timeMs, Vector input) throws InterruptedException{
+    public void turnAndMoveTime(long timeMs, Vector input) {
         if(timeMs < 0) {
             throw new DumpsterFireException("HAL is cool, but can't travel back in time. Time must be positive.");
         }
 
-        double startTime = System.currentTimeMillis();
         turnAndMove(input);
-        while(System.currentTimeMillis() - startTime <= timeMs){sleep(1);}
+        waitTime(timeMs);
         stopMovement();
     }
 
     /**
      * Dives using encoders.
      *
-     * @param encoderDistance - Encoder distance to travel.
-     * @param power - Double from (-1)-(1) of intensity of the movement positive for forward and negative for reverse.
+     * @param encoderDistance Encoder distance to travel.
+     * @param power Double from (-1)-(1) of intensity of the movement positive for forward and negative for reverse.
      *
-     * @throws InterruptedException - Throws this exception if the program is unexpectedly interrupted.
+     * @throws InvalidMoveCommandException Throws this error if the encoders to travel is nonzero and the power is 0.
+     * @throws DumpsterFireException Throws this exception if the encoder count is negative.
      */
-    public void driveEncoders(int encoderDistance, double power) throws InterruptedException{
+    public void driveEncoders(final int encoderDistance, double power) {
         if(power == 0 && encoderDistance != 0) {
             throw new InvalidMoveCommandException("Power cannot be zero with a non zero target");
         }
@@ -342,36 +337,51 @@ public class QuadWheelDrive extends SubSystem {
             throw new DumpsterFireException("Where you're going, you don't need roads! (distance must be positive)");
         }
 
-        int startEncoderPos = topLeft.getCurrentPosition();
+        final int startEncoderPos = topLeft.getCurrentPosition();
         drive(power);
-        while(Math.abs(topLeft.getCurrentPosition() - startEncoderPos) <= encoderDistance) {sleep(1);}
+        waitWhile(new Supplier<Boolean>() {
+            @Override
+            public Boolean get() {
+                return Math.abs(topLeft.getCurrentPosition() - startEncoderPos) <= encoderDistance;
+            }
+        });
         stopMovement();
     }
 
     /**
      * Turns using encoders.
      *
-     * @param encoderDistance - Encoder distance to travel.
-     * @param power - double from (-1)-(1) of intensity of turn in the turn move(positive for counterclockwise negative for clockwise).
+     * @param encoderDistance Encoder distance to travel.
+     * @param power Double from (-1)-(1) of intensity of turn in the turn move(positive for counterclockwise negative for clockwise).
      *
-     * @throws InterruptedException - Throws this exception if the program is unexpectedly interrupted.
+     * @throws DumpsterFireException Throws this exception if the encoder count is negative.
      */
-    public void turnEncoders(int encoderDistance, double power) throws InterruptedException{
+    public void turnEncoders(final int encoderDistance, double power) {
 
         if(encoderDistance < 0) {
             throw new DumpsterFireException("Where you're going, you don't need roads! (distance must be positive)");
         }
 
-        int leftStartEncoderPos = topLeft.getCurrentPosition();
-        int rightStartEncoderPos = topRight.getCurrentPosition();
+        final int leftStartEncoderPos = topLeft.getCurrentPosition();
+        final int rightStartEncoderPos = topRight.getCurrentPosition();
         if(power > 0) {
             turn(power);
-            while (Math.abs(topLeft.getCurrentPosition() - leftStartEncoderPos) <= encoderDistance) {sleep(1);}
+            waitWhile(new Supplier<Boolean>() {
+                @Override
+                public Boolean get() {
+                    return Math.abs(topLeft.getCurrentPosition() - leftStartEncoderPos) <= encoderDistance;
+                }
+            });
             stopMovement();
         }
         if (power < 0){
             turn(power);
-            while (Math.abs(topRight.getCurrentPosition() - rightStartEncoderPos) <= encoderDistance){sleep(1);}
+            waitWhile(new Supplier<Boolean>() {
+                @Override
+                public Boolean get() {
+                    return Math.abs(topRight.getCurrentPosition() - rightStartEncoderPos) <= encoderDistance;
+                }
+            });
             stopMovement();
         }
     }
@@ -379,21 +389,26 @@ public class QuadWheelDrive extends SubSystem {
     /**
      * Turn while driving using encoders.
      *
-     * @param encoderDistance - Encoder distance to travel.
-     * @param input - Vector that determines direction and rotational speed. (x component is linear speed y is rotational speed)
+     * @param encoderDistance Encoder distance to travel.
+     * @param input Vector that determines direction and rotational speed. (x component is linear speed y is rotational speed)
      *
-     * @throws InterruptedException - Throws this exception if the program is unexpectedly interrupted.
+     * @throws DumpsterFireException Throws this exception if the encoder count is negative.
      */
-    public void turnAndMoveEncoders(int encoderDistance, Vector input) throws InterruptedException{
+    public void turnAndMoveEncoders(final int encoderDistance, Vector input) {
 
         if(encoderDistance < 0) {
             throw new DumpsterFireException("Where you're going, you don't need roads! (distance must be positive)");
         }
 
-        int leftStartEncoderPos = topLeft.getCurrentPosition();
-        int rightStartEncoderPos = topRight.getCurrentPosition();
+        final int leftStartEncoderPos = topLeft.getCurrentPosition();
+        final int rightStartEncoderPos = topRight.getCurrentPosition();
         turnAndMove(input);
-        while(Math.abs((topLeft.getCurrentPosition() - leftStartEncoderPos)/2 + (topRight.getCurrentPosition() - rightStartEncoderPos)/2) <= encoderDistance) {sleep(1);}
+        waitWhile(new Supplier<Boolean>() {
+            @Override
+            public Boolean get() {
+                return Math.abs((topLeft.getCurrentPosition() - leftStartEncoderPos)/2 + (topRight.getCurrentPosition() - rightStartEncoderPos)/2) <= encoderDistance;
+            }
+        });
         stopMovement();
     }
 
@@ -411,19 +426,15 @@ public class QuadWheelDrive extends SubSystem {
     public void PIDTurn(double kp, double ki, double kd, double targetAngle) {
         PIDController pid = new PIDController(kp, ki, kd);
         pid.setSetpoint(targetAngle);
-
-
-
-        //turnClockwise(-pid.getCorrection());
     }
 
     /**
      * Configures the motors.
      *
-     * @param topLeftConfigurationName - Configuration name for topLeftMotor
-     * @param topRightConfigurationName - Configuration name for topRightMotor
-     * @param botLeftConfigurationName - Configuration name for botLeftMotor
-     * @param botRightConfigurationName - Configuration name for botRightMotor
+     * @param topLeftConfigurationName Configuration name for topLeftMotor
+     * @param topRightConfigurationName Configuration name for topRightMotor
+     * @param botLeftConfigurationName Configuration name for botLeftMotor
+     * @param botRightConfigurationName Configuration name for botRightMotor
      */
     public void setMotorConfiguration(String topLeftConfigurationName, String topRightConfigurationName, String botLeftConfigurationName, String botRightConfigurationName){
         topLeft = robot.hardwareMap.dcMotor.get(topLeftConfigurationName);
@@ -435,30 +446,30 @@ public class QuadWheelDrive extends SubSystem {
     /**
      * Sets speedModeModifier.
      *
-     * @param speedModeModifier - Value to set speedModeModifier to.
+     * @param speedModeModifier Value to set speedModeModifier to.
      */
     public void setSpeedModeModifier(double speedModeModifier){ this.speedModeModifier = speedModeModifier; }
 
     /**
      * Sets constantSpeedModifier.
      *
-     * @param constantSpeedModifier - Value to set constantSpeedModeModifier to.
+     * @param constantSpeedModifier Value to set constantSpeedModeModifier to.
      */
     public void setConstantSpeedModifier(double constantSpeedModifier){ this.constantSpeedModifier = constantSpeedModifier; }
 
     /**
      * Sets wether or not to be able to turn and move at the same time.
      *
-     * @param turnAndMove - Should the robot turn and move at the same time true or false.
+     * @param turnAndMove Should the robot turn and move at the same time true or false.
      */
     public void setTurnAndMove(boolean turnAndMove) { this.turnAndMove = turnAndMove; }
 
     /**
      * Sets the double input responsible for moving forward and backwards.
      *
-     * @param button - Double input responsible for moving forward and backwards.
+     * @param button Double input responsible for moving forward and backwards.
      *
-     * @throws NotDoubleInputException - Throws an exception if button does not return double values.
+     * @throws NotDoubleInputException Throws an exception if button does not return double values.
      */
     public void setDriveStick(Button button){
         if(button.isDouble) {
@@ -472,9 +483,9 @@ public class QuadWheelDrive extends SubSystem {
     /**
      * Sets the double input responsible for turning right and left.
      *
-     * @param button - Double input responsible for turning right and left.
+     * @param button Double input responsible for turning right and left.
      *
-     * @throws NotDoubleInputException - Throws an exception if button does not return double values.
+     * @throws NotDoubleInputException Throws an exception if button does not return double values.
      */
     public void setTurnStick(Button button){
         if(button.isDouble) {
@@ -488,9 +499,9 @@ public class QuadWheelDrive extends SubSystem {
     /**
      * Sets the boolean input responsible for toggling speedMode.
      *
-     * @param button - The boolean input responsible for toggling speedMode.
+     * @param button The boolean input responsible for toggling speedMode.
      *
-     * @throws NotBooleanInputException - Throws an exception if button does not return boolean values.
+     * @throws NotBooleanInputException Throws an exception if button does not return boolean values.
      */
     public void setSpeedMode(Button button){
         if(button.isBoolean) {
@@ -506,22 +517,22 @@ public class QuadWheelDrive extends SubSystem {
      */
     private void setUsingConfigs() {
         inputs = robot.pullControls(this);
-        Map<String, Object> settingsData = robot.pullNonGamepad(this);
+        ConfigData data = robot.pullNonGamepad(this);
 
-        setTurnAndMove((boolean) settingsData.get("Turn and Move"));
+        setTurnAndMove(data.getData("Turn and Move",Boolean.class));
         if (!useSpecific) {
-            setConstantSpeedModifier((double) settingsData.get("ConstantSpeedModifier"));
-            setSpeedModeModifier((double) settingsData.get("SpeedModeModifier"));
+            setConstantSpeedModifier(data.getData("ConstantSpeedModifier",Double.class));
+            setSpeedModeModifier(data.getData("SpeedModeModifier",Double.class));
         }
     }
 
     /**
      * Pulls autonomous config settings.
      */
-    private void setUsingConfigsAutonomous(){
-        Map<String, Object> settingsData = robot.pullNonGamepad(this);
+    private void setUsingConfigsAutonomous() {
+        ConfigData data = robot.pullNonGamepad(this);
 
-        setConstantSpeedModifier((double) settingsData.get("ConstantSpeedModifier"));
+        setConstantSpeedModifier(data.getData("ConstantSpeedModifier",Double.class));
     }
 
     /**
@@ -567,6 +578,15 @@ public class QuadWheelDrive extends SubSystem {
      */
     public int[] getMotorEncoderPoses(){
         return new int[]{topLeft.getCurrentPosition(), topRight.getCurrentPosition(), botLeft.getCurrentPosition(), botRight.getCurrentPosition()};
+    }
+
+    /**
+     * Gets an array containing all of the motors.
+     *
+     * @return An array containing all of the motors. (topLeft, topRight, botLeft, botRight)
+     */
+    public DcMotor[] getMotors(){
+        return new DcMotor[]{topLeft, topRight, botLeft, botRight};
     }
 
     /**
@@ -626,10 +646,10 @@ public class QuadWheelDrive extends SubSystem {
         /**
          * Constructor for Params.
          *
-         * @param topLeftMotorConfiguration - The top left motor's configuration name.
-         * @param topRightMotorConfiguration - The top right motor's configuration name.
-         * @param botLeftMotorConfiguration - The bottom left motor's configuration name.
-         * @param botRightMotorConfiguration - The bottom right motor's configuration name.
+         * @param topLeftMotorConfiguration The top left motor's configuration name.
+         * @param topRightMotorConfiguration The top right motor's configuration name.
+         * @param botLeftMotorConfiguration The bottom left motor's configuration name.
+         * @param botRightMotorConfiguration The bottom right motor's configuration name.
          */
         public Params(String topLeftMotorConfiguration, String topRightMotorConfiguration, String botLeftMotorConfiguration, String botRightMotorConfiguration) {
             topLeftMotor = topLeftMotorConfiguration;
@@ -642,7 +662,7 @@ public class QuadWheelDrive extends SubSystem {
         /**
          * Set whether the drive can turn and move at the same time.
          *
-         * @param turnAndMove - Whether the drive can turn and move at the same time.
+         * @param turnAndMove Whether the drive can turn and move at the same time.
          * @return This instance of Params.
          */
         public Params setTurnAndMove(boolean turnAndMove) {
@@ -653,7 +673,7 @@ public class QuadWheelDrive extends SubSystem {
         /**
          * Set the drive's speed mode modifier.
          *
-         * @param speedModeModifier - The drive's speed mode modifier.
+         * @param speedModeModifier The drive's speed mode modifier.
          * @return This instance of Params.
          */
         public Params setSpeedModeModifier(double speedModeModifier) {
@@ -664,7 +684,7 @@ public class QuadWheelDrive extends SubSystem {
         /**
          * set the drive's constant speed modifier.
          *
-         * @param constantSpeedModifier - The drive's constant speed modifier.
+         * @param constantSpeedModifier The drive's constant speed modifier.
          * @return This instance of Params.
          */
         public Params setConstantSpeedModifier(double constantSpeedModifier) {
@@ -675,10 +695,10 @@ public class QuadWheelDrive extends SubSystem {
         /**
          * Set the drive's drivestick button.
          *
-         * @param driveStick - The drive button.
+         * @param driveStick The drive button.
          * @return This instance of Params.
          *
-         * @throws NotDoubleInputException - Throws this exception when the provided button does not return double values.
+         * @throws NotDoubleInputException Throws this exception when the provided button does not return double values.
          */
         public Params setDriveStick(Button driveStick) {
             if(!driveStick.isDouble) {
@@ -692,10 +712,10 @@ public class QuadWheelDrive extends SubSystem {
         /**
          * Set the drive's turnstick button.
          *
-         * @param turnStick - The turnstick button.
+         * @param turnStick The turnstick button.
          * @return This instance of Params.
          *
-         * @throws NotDoubleInputException - Throws this exception when the provided button does not return double values.
+         * @throws NotDoubleInputException Throws this exception when the provided button does not return double values.
          */
         public Params setTurnStick(Button turnStick) {
             if(!turnStick.isDouble) {
@@ -708,10 +728,10 @@ public class QuadWheelDrive extends SubSystem {
         /**
          * Set the drive's speed mode button.
          *
-         * @param speedModeButton - The speed mode button.
+         * @param speedModeButton The speed mode button.
          * @return This instance of Params.
          *
-         * @throws NotBooleanInputException - Throws this exception when the provided button does not return boolean values.
+         * @throws NotBooleanInputException Throws this exception when the provided button does not return boolean values.
          */
         public Params setSpeedModeButton(Button speedModeButton) {
             if(!speedModeButton.isBoolean) {
@@ -744,10 +764,10 @@ public class QuadWheelDrive extends SubSystem {
         /**
          * Constructor for NumberParams.
          *
-         * @param topLeftMotorConfiguration - The top left motor's configuration name.
-         * @param topRightMotorConfiguration - The top right motor's configuration name.
-         * @param botLeftMotorConfiguration - The bottom left motor's configuration name.
-         * @param botRightMotorConfiguration - The bottom right motor's configuration name.
+         * @param topLeftMotorConfiguration The top left motor's configuration name.
+         * @param topRightMotorConfiguration The top right motor's configuration name.
+         * @param botLeftMotorConfiguration The bottom left motor's configuration name.
+         * @param botRightMotorConfiguration The bottom right motor's configuration name.
          */
         public NumberParams(String topLeftMotorConfiguration, String topRightMotorConfiguration, String botLeftMotorConfiguration, String botRightMotorConfiguration) {
             topLeftMotor = topLeftMotorConfiguration;
@@ -761,7 +781,7 @@ public class QuadWheelDrive extends SubSystem {
         /**
          * Set the drive's speed mode modifier.
          *
-         * @param speedModeModifier - The drive's speed mode modifier.
+         * @param speedModeModifier The drive's speed mode modifier.
          * @return This instance of Params.
          */
         public NumberParams setSpeedModeModifier(double speedModeModifier) {
@@ -772,7 +792,7 @@ public class QuadWheelDrive extends SubSystem {
         /**
          * set the drive's constant speed modifier.
          *
-         * @param constantSpeedModifier - The drive's constant speed modifier.
+         * @param constantSpeedModifier The drive's constant speed modifier.
          * @return This instance of Params.
          */
         public NumberParams setConstantSpeedModifier(double constantSpeedModifier) {

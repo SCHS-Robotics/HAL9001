@@ -1,10 +1,3 @@
-/*
- * Filename: AnglePIDTunerSystem.java
- * Author: Cole Savage
- * Team Name: Level Up
- * Date: 8/11/19
- */
-
 package com.SCHSRobotics.HAL9001.util.calib;
 
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
@@ -29,6 +22,12 @@ import org.opencv.core.Mat;
 
 /**
  * A subsystem used to tune turn-to-angle PID controllers.
+ *
+ * @author Cole Savage, Level Up
+ * @since 1.0.0
+ * @version 1.0.0
+ *
+ * Creation Date: 8/11/19
  */
 public class AnglePIDTunerSystem extends VisionSubSystem {
 
@@ -43,7 +42,7 @@ public class AnglePIDTunerSystem extends VisionSubSystem {
     //The gyroscope used to track the robot's angle.
     private BNO055IMU imu;
     //The menu used to display the current kp, ki, and kd values.
-    //private DisplayMenu display;
+    //private DisplayMenu display; TODO displaymenu broken :(
     //The last time in milliseconds that the PID coefficients were changed.
     private long lastActivatedTimestamp;
     //The PID coefficients.
@@ -61,9 +60,9 @@ public class AnglePIDTunerSystem extends VisionSubSystem {
         TANK, FOUR_WHEEL, MECHANUM, OMNIWHEEL
     }
     private DriveTrain driveType;
-
+    //The angle unit that the PID controller is using.
     private AngleUnit units;
-
+    //The various different types of drive systems that can be tuned.
     private TankDrive tankDrive;
     private QuadWheelDrive quadWheelDrive;
     private MechanumDrive mechanumDrive;
