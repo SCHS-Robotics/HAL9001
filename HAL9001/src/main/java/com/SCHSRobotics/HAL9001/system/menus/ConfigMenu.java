@@ -8,6 +8,7 @@ import com.SCHSRobotics.HAL9001.system.source.GUI.GuiLine;
 import com.SCHSRobotics.HAL9001.system.source.GUI.ScrollingListMenu;
 import com.SCHSRobotics.HAL9001.system.subsystems.cursors.ConfigCursor;
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
+import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.functional_interfaces.BiFunction;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigParam;
@@ -18,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -127,7 +129,7 @@ public class ConfigMenu extends ScrollingListMenu {
                     menuState = MenuState.AUTO_RUN;
 
                     String autorunName = filepath2ConfigName(autorunFilepath);
-                    String message = "Auto using config " + autorunName + ".\r\nPress center button to change.";
+                    String message = "Auto using config " + autorunName + ".\r\nPress left bumper to change.";
                     cursor.setDoBlink(false);
 
                     exportConfigFile(autorunFilepath);
@@ -387,10 +389,7 @@ public class ConfigMenu extends ScrollingListMenu {
                             }
                         }
 
-                        if(currentParam.options.size() == 0) {
-                            throw new DumpsterFireException("Couldn't find options for configParam");
-                        }
-
+                        ExceptionChecker.assertFalse(currentParam.options.size() == 0,  new DumpsterFireException("Couldn't find options for configParam"));
                         lines.set(cursor.y, new GuiLine("#", currentParam.usesGamepad ? data[0] + " | " + currentParam.options.get((currentParam.options.indexOf(data[1]) + 1) % currentParam.options.size()) + " | " + data[2] : data[0] + " | " + currentParam.options.get((currentParam.options.indexOf(data[1]) + 1) % currentParam.options.size())));
                     }
                     //If done is selected, update the config map and transition back to select_subsystem.
@@ -423,10 +422,7 @@ public class ConfigMenu extends ScrollingListMenu {
                         }
                     }
 
-                    if(currentParam.options.size() == 0) {
-                        throw new DumpsterFireException("Couldn't find options for configParam");
-                    }
-
+                    ExceptionChecker.assertFalse(currentParam.options.size() == 0,  new DumpsterFireException("Couldn't find options for configParam"));
                     lines.set(cursor.y, new GuiLine("#", currentParam.usesGamepad ? data[0] + " | " + currentParam.options.get(customMod.apply((currentParam.options.indexOf(data[1])-1), currentParam.options.size())) + " | " + data[2] : data[0] + " | " + currentParam.options.get(customMod.apply((currentParam.options.indexOf(data[1])-1), currentParam.options.size()))));
                 }
                 //If done isn't selected and the cycle gamepad button is pressed, cycle the setting's gamepad option if possible.
@@ -458,10 +454,7 @@ public class ConfigMenu extends ScrollingListMenu {
                             }
                         }
 
-                        if(currentParam.options.size() == 0) {
-                            throw new DumpsterFireException("Couldn't find options for configParam");
-                        }
-
+                        ExceptionChecker.assertFalse(currentParam.options.size() == 0,  new DumpsterFireException("Couldn't find options for configParam"));
                         lines.set(cursor.y, new GuiLine("#", currentParam.usesGamepad ? currentOptionName + " | " + currentOptionValue + " | " + currentParam.gamepadOptions.get((currentParam.gamepadOptions.indexOf(currentGamepadOptionValue) + 1) % currentParam.gamepadOptions.size()) : currentOptionName + " | " + currentOptionValue));
                     }
                 }
@@ -692,7 +685,7 @@ public class ConfigMenu extends ScrollingListMenu {
     }
 
     /**
-     * Pulls default config from Robot's global teleop and autonomous config maps.
+     * Pulls default config from MainRobot's global teleop and autonomous config maps.
      */
     private void genDefaultConfigMap() {
         config = new HashMap<>();
@@ -752,7 +745,7 @@ public class ConfigMenu extends ScrollingListMenu {
     }
 
     /**
-     * Export the data in a config file to the Robot autonomous and teleop config maps.
+     * Export the data in a config file to the MainRobot autonomous and teleop config maps.
      *
      * @param filepath The path to the config file being exported.
      */
@@ -814,19 +807,26 @@ public class ConfigMenu extends ScrollingListMenu {
             FileReader fReader;
             BufferedReader bufferedReader;
 
+            //TODO: Make this a bit less jank. Right now throwing errors is perfectly fine here because that's how it fixes out of date config files.
+
             try {
                 fReader = new FileReader(fis.getFD());
                 bufferedReader = new BufferedReader(fReader);
 
                 int i = 0;
+                String lastSubsystem = "\n";
                 String line;
                 while((line = bufferedReader.readLine()) != null) {
                     String[] data = line.split(":");
+                    if(!data[0].equals(lastSubsystem)) {
+                        i = 0;
+                    }
                     config.get(data[0]).get(i).name = data[1].trim();
                     config.get(data[0]).get(i).currentOption = data[2].trim();
                     if(config.get(data[0]).get(i).usesGamepad) {
                         config.get(data[0]).get(i).currentGamepadOption = data[3].trim();
                     }
+                    lastSubsystem = data[0];
                     i++;
                 }
 
@@ -838,7 +838,7 @@ public class ConfigMenu extends ScrollingListMenu {
                 fis.getFD().sync();
                 fis.close();
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

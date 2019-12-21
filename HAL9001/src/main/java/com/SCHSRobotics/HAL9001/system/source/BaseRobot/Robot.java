@@ -6,20 +6,32 @@ import android.util.Log;
 import com.SCHSRobotics.HAL9001.system.menus.ConfigMenu;
 import com.SCHSRobotics.HAL9001.system.source.GUI.GUI;
 import com.SCHSRobotics.HAL9001.util.annotations.AutonomousConfig;
+import com.SCHSRobotics.HAL9001.util.annotations.DisableSubSystem;
+import com.SCHSRobotics.HAL9001.util.annotations.LinkTo;
+import com.SCHSRobotics.HAL9001.util.annotations.ProgramOptions;
 import com.SCHSRobotics.HAL9001.util.annotations.StandAlone;
 import com.SCHSRobotics.HAL9001.util.annotations.TeleopConfig;
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
+import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
+import com.SCHSRobotics.HAL9001.util.exceptions.InvalidLinkException;
+import com.SCHSRobotics.HAL9001.util.exceptions.NotAnAlchemistException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
+import com.SCHSRobotics.HAL9001.util.exceptions.NothingToSeeHereException;
+import com.SCHSRobotics.HAL9001.util.math.ArrayMath;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigData;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigParam;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.internal.opmode.RegisteredOpModes;
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
@@ -32,11 +44,13 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,9 +72,9 @@ public abstract class Robot {
     //The resolution of each camera frame.
     private static Size cameraSize;
     //A map relating the name of each subsystem in the robot to that subsystem's corresponding autonomous config
-    public static Map<String, List<ConfigParam>> autonomousConfig = new HashMap<>();
+    public static Map<String, List<ConfigParam>> autonomousConfig = new LinkedHashMap<>();
     //A map relating the name of each subsystem in the robot to that subsystem's corresponding teleop config
-    public static Map<String, List<ConfigParam>> teleopConfig = new HashMap<>();
+    public static Map<String, List<ConfigParam>> teleopConfig = new LinkedHashMap<>();
     //A hashmap mapping the name of a subsystem to the actual subsystem object.
     private final Map<String, SubSystem> subSystems;
     //The opmode the robot is running.
@@ -84,20 +98,22 @@ public abstract class Robot {
     //Boolean values determining different camera states and parameters.
     private boolean useViewport, pipelineSet, cameraStarted;
     //The cameraMonitorViewId for displaying frames on the phone.
-    private final int cameraMonitorViewId;
+    private int cameraMonitorViewId;
     //A list of Vision-Based subsystems.
     private List<VisionSubSystem> visionSubSystems;
     //Whether or not a program has thrown an error.
     private boolean errorThrown;
     //The exception that was thrown (if an exception was thrown).
-    private Exception thrownException;
+    private Throwable thrownException;
+    //The name of the opmode as put in the class annotation.
+    private String opmodeName;
 
     /**
      * Constructor for robot.
      *
      * @param opMode The opmode the robot is currently running.
      */
-    public Robot(OpMode opMode)
+    public Robot(@NotNull OpMode opMode)
     {
         this.opMode = opMode;
         telemetry = opMode.telemetry;
@@ -117,8 +133,111 @@ public abstract class Robot {
         cameraSize = new Size(320, 240);
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId","id", hardwareMap.appContext.getPackageName());
 
-        thrownException = new Exception();
+        thrownException = new Throwable();
         errorThrown = false;
+
+        if (opMode.getClass().isAnnotationPresent(TeleOp.class)) {
+            opmodeName = opMode.getClass().getAnnotation(TeleOp.class).name();
+        } else if (opMode.getClass().isAnnotationPresent(Autonomous.class)) {
+            opmodeName = opMode.getClass().getAnnotation(Autonomous.class).name();
+        }
+        else {
+            throw new DumpsterFireException("You are running this program without @Teleop or @Autonomous ... how did this even happen???");
+        }
+
+        addSettings(opMode);
+    }
+
+    private void addSettings(OpMode opMode) {
+        addSettings(opMode,new ArrayList<String>());
+    }
+
+    private void addSettings(@NotNull OpMode opMode, List<String> visitedOpmodes) {
+
+        ExceptionChecker.assertTrue(opMode.getClass().isAnnotationPresent(TeleOp.class) || opMode.getClass().isAnnotationPresent(Autonomous.class), new NothingToSeeHereException("You forgot to add @" + (isTeleop() ? "Teleop" : isAutonomous() ? "Autonomous" : "... oh wait this isn't a HAL opmode... how did this even happen???")));
+        ExceptionChecker.assertTrue(opMode instanceof BaseAutonomous || opMode instanceof BaseTeleop, new NotAnAlchemistException("Hey, one of your programs or linked programs is not a HAL program"));
+
+        String name;
+        if (opMode.getClass().isAnnotationPresent(TeleOp.class)) {
+            name = opMode.getClass().getAnnotation(TeleOp.class).name();
+        } else {
+            name = opMode.getClass().getAnnotation(Autonomous.class).name();
+        }
+
+        if(opMode.getClass().isAnnotationPresent(LinkTo.class) && !visitedOpmodes.contains(name)) {
+            LinkTo link = opMode.getClass().getAnnotation(LinkTo.class);
+            visitedOpmodes.add(name);
+            OpMode linkedOpmode = RegisteredOpModes.getInstance().getOpMode(link.destination());
+            ExceptionChecker.assertNonNull(linkedOpmode, new InvalidLinkException("Link to nonexistent opmode. '"+link.destination()+"' does not exist"));
+            addSettings(linkedOpmode, visitedOpmodes);
+        }
+        if(opMode.getClass().isAnnotationPresent(ProgramOptions.class)) {
+            ProgramOptions settings = opMode.getClass().getAnnotation(ProgramOptions.class);
+            String[] nonDuplicatedSettings = ArrayMath.removeDuplicates(settings.options());
+
+            if (nonDuplicatedSettings.length > 0) {
+                if (opMode instanceof BaseTeleop) {
+                    teleopConfig.put(name, Arrays.asList((ConfigParam[]) new ConfigParam[]{new ConfigParam("Options", nonDuplicatedSettings, nonDuplicatedSettings[0])}));
+                } else {
+                    autonomousConfig.put(name, Arrays.asList((ConfigParam[]) new ConfigParam[]{new ConfigParam("Options", nonDuplicatedSettings, nonDuplicatedSettings[0])}));
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Adds a subsystem to the robot's hashmap of subsystems and, if the subsystem uses config, load the default config.
+     *
+     * @param subSystem The subsystem object.
+     */
+    protected final void addSubSystem(SubSystem subSystem) {
+        subSystems.put(subSystem.getClass().getSimpleName(), subSystem);
+
+        if(subSystem instanceof VisionSubSystem) {
+            visionSubSystems.add((VisionSubSystem) subSystem);
+        }
+
+        if(subSystem.usesConfig) {
+
+            boolean foundTeleopConfig = false;
+            boolean foundAutonomousConfig = false;
+
+            try {
+                Method[] methods = subSystem.getClass().getDeclaredMethods();
+                for(Method m : methods) {
+
+                    //method must be annotated as TeleopConfig, have no parameters, be public and static, and return an array of config params
+                    if(!foundTeleopConfig && m.isAnnotationPresent(TeleopConfig.class) && m.getReturnType() == ConfigParam[].class && m.getParameterTypes().length == 0 && Modifier.isStatic(m.getModifiers()) && Modifier.isPublic(m.getModifiers())) {
+                        teleopConfig.put(subSystem.getClass().getSimpleName(),Arrays.asList((ConfigParam[]) m.invoke(null)));
+                        if(!useGui) {
+                            gui = new GUI(this, new Button(1, Button.BooleanInputs.noButton));
+                            useGui = true;
+                        }
+                        useConfig = true;
+                        foundTeleopConfig = true;
+                    }
+
+                    //method must be annotated as AutonomousConfig, have no parameters, be public and static, and return an array of config params
+                    if(!foundAutonomousConfig && m.isAnnotationPresent(AutonomousConfig.class) && m.getReturnType() == ConfigParam[].class && m.getParameterTypes().length == 0 && Modifier.isStatic(m.getModifiers()) && Modifier.isPublic(m.getModifiers())) {
+                        autonomousConfig.put(subSystem.getClass().getSimpleName(),Arrays.asList((ConfigParam[]) m.invoke(null)));
+                        if(!useGui) {
+                            gui = new GUI(this, new Button(1, Button.BooleanInputs.noButton));
+                            useGui = true;
+                        }
+                        useConfig = true;
+                        foundAutonomousConfig = true;
+                    }
+
+                    if(foundTeleopConfig && foundAutonomousConfig) {
+                        break;
+                    }
+                }
+            }
+            catch (Throwable e) {
+                Log.e("Error","Problem loading config for subsystem "+subSystem.getClass().getSimpleName(),e);
+            }
+        }
     }
 
     /**
@@ -126,7 +245,9 @@ public abstract class Robot {
      *
      * @param name The name of the subsystem.
      * @param subSystem The subsystem object.
+     * @deprecated Renamed to add SubSystem
      */
+    @Deprecated
     protected final void putSubSystem(String name, SubSystem subSystem)
     {
         subSystems.put(name, subSystem);
@@ -147,7 +268,6 @@ public abstract class Robot {
                     //method must be annotated as TeleopConfig, have no parameters, be public and static, and return an array of config params
                     if(!foundTeleopConfig && m.isAnnotationPresent(TeleopConfig.class) && m.getReturnType() == ConfigParam[].class && m.getParameterTypes().length == 0 && Modifier.isStatic(m.getModifiers()) && Modifier.isPublic(m.getModifiers())) {
                         teleopConfig.put(subSystem.getClass().getSimpleName(),Arrays.asList((ConfigParam[]) m.invoke(null)));
-                        Log.wtf(teleopConfig.keySet().toString(), "   " + teleopConfig.values().toString());
                         if(!useGui) {
                             gui = new GUI(this, new Button(1, Button.BooleanInputs.noButton));
                             useGui = true;
@@ -159,7 +279,6 @@ public abstract class Robot {
                     //method must be annotated as AutonomousConfig, have no parameters, be public and static, and return an array of config params
                     if(!foundAutonomousConfig && m.isAnnotationPresent(AutonomousConfig.class) && m.getReturnType() == ConfigParam[].class && m.getParameterTypes().length == 0 && Modifier.isStatic(m.getModifiers()) && Modifier.isPublic(m.getModifiers())) {
                         autonomousConfig.put(subSystem.getClass().getSimpleName(),Arrays.asList((ConfigParam[]) m.invoke(null)));
-                        Log.wtf(teleopConfig.keySet().toString(), "   " + teleopConfig.values().toString());
                         if(!useGui) {
                             gui = new GUI(this, new Button(1, Button.BooleanInputs.noButton));
                             useGui = true;
@@ -172,8 +291,25 @@ public abstract class Robot {
                         break;
                     }
                 }
+/*
+                Field[] fields = subSystem.getClass().getDeclaredFields();
+                for(Field field : fields) {
+                    if(field.isAnnotationPresent(ConfigurableButton.class)) {
+                        ConfigurableButton button = field.getAnnotation(ConfigurableButton.class);
+                        ConfigButtonType buttonType = button.default_value();
+
+                        if(button.program_type() == ConfigProgramType.TELEOP) {
+                            teleopConfig.put(subSystem.getClass().getSimpleName(),Arrays.asList((ConfigParam[]) new ConfigParam[] {new ConfigParam(button.name(),)}));
+                        }
+                        else {
+
+                        }
+                    }
+                    Log.println(Log.ASSERT,"name",field.getName());
+                }
+                */
             }
-            catch (Exception e) {
+            catch (Throwable e) {
                 Log.e("Error","Problem loading config for subsystem "+name,e);
             }
         }
@@ -201,10 +337,9 @@ public abstract class Robot {
      *
      * @throws NotBooleanInputException Throws this exception if the button is not a boolean input.
      */
-    protected final void enableViewport(Button cycleButton) {
-        if(!cycleButton.isBoolean) {
-            throw new NotBooleanInputException("Vision cycle button must be a boolean input");
-        }
+    protected final void enableViewport(@NotNull Button cycleButton) {
+        ExceptionChecker.assertTrue(cycleButton.isBoolean,new NotBooleanInputException("Vision cycle button must be a boolean input"));
+
         if(!useViewport) {
             visionCycler.addButton(VISION_CYCLE, cycleButton);
             useViewport = true;
@@ -238,6 +373,24 @@ public abstract class Robot {
      */
     public final void init()
     {
+
+        Field[] fields = this.getClass().getDeclaredFields();
+        for(Field f : fields) {
+            if(SubSystem.class.isAssignableFrom(f.getType())) {
+                if(!f.isAnnotationPresent(DisableSubSystem.class)) {
+                    Object obj;
+                    try {
+                        obj = f.get(this);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                        throw new DumpsterFireException("Tried to access your subsystem, but you made it protected or private. SHARE!!!");
+                    }
+                    if(obj != null) {
+                        addSubSystem((SubSystem) obj);
+                    }
+                }
+            }
+        }
 
         this.gamepad1 = opMode.gamepad1;
         this.gamepad2 = opMode.gamepad2;
@@ -287,10 +440,10 @@ public abstract class Robot {
 
             //If the opmode is annotated as StandAlone, add the config menu in standalone mode.
             if(opMode.getClass().isAnnotationPresent(StandAlone.class)) {
-                if(opMode instanceof BaseAutonomous) {
+                if(isAutonomous()) {
                     gui.addMenu("config",new ConfigMenu(gui,autoDir.getPath(),true));
                 }
-                else if(opMode instanceof BaseTeleop) {
+                else if(isTeleop()) {
                     gui.addMenu("config",new ConfigMenu(gui,teleopDir.getPath(),true));
                 }
             }
@@ -311,7 +464,7 @@ public abstract class Robot {
             {
                 subSystem.init();
             }
-            catch (Exception ex)
+            catch (Throwable ex)
             {
                 telemetry.clearAll();
                 telemetry.addData("ERROR!!!", ex.getMessage());
@@ -364,7 +517,7 @@ public abstract class Robot {
 
                 try {
                     subSystem.init_loop();
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     telemetry.clearAll();
                     telemetry.addData("ERROR!!!", ex.getMessage());
                     telemetry.update();
@@ -418,7 +571,7 @@ public abstract class Robot {
             for (SubSystem subSystem : subSystems.values()) {
                 try {
                     subSystem.start();
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     telemetry.clearAll();
                     telemetry.addData("ERROR!!!", ex.getMessage());
                     telemetry.update();
@@ -469,7 +622,7 @@ public abstract class Robot {
             for (SubSystem subSystem : subSystems.values()) {
                 try {
                     subSystem.handle();
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     telemetry.clearAll();
                     telemetry.addData("ERROR!!!", ex.getMessage());
                     telemetry.update();
@@ -517,7 +670,7 @@ public abstract class Robot {
             for (SubSystem subSystem : subSystems.values()) {
                 try {
                     subSystem.stop();
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     telemetry.clearAll();
                     telemetry.addData("ERROR!!!", ex.getMessage());
                     telemetry.update();
@@ -533,6 +686,13 @@ public abstract class Robot {
                 camera.stopStreaming();
                 camera.closeCameraDevice();
             }
+
+            for(SubSystem subSystem : subSystems.values()) {
+                teleopConfig.remove(subSystem.getClass().getSimpleName());
+                autonomousConfig.remove(subSystem.getClass().getSimpleName());
+            }
+            teleopConfig.remove(opmodeName);
+            autonomousConfig.remove(opmodeName);
         }
         else {
             telemetry.clearAll();
@@ -559,10 +719,14 @@ public abstract class Robot {
      * @param subSystem The new subsystem.
      * @return The new subsystem that was passed in as a parameter.
      */
-    public final SubSystem eOverrideSubSystem(String name,  SubSystem subSystem)
+    public final SubSystem eOverrideSubSystem(String name, SubSystem subSystem)
     {
         subSystems.put(name, subSystem);
         return subSystem;
+    }
+
+    public final boolean getUsingConfig() {
+        return useConfig;
     }
 
     /**
@@ -652,6 +816,16 @@ public abstract class Robot {
         return new ConfigData(output);
     }
 
+    public String pullProgramSetting() {
+        ExceptionChecker.assertTrue(teleopConfig.containsKey(opmodeName) || autonomousConfig.containsKey(opmodeName), new NothingToSeeHereException("You are not using @ProgramOptions, but are trying pull program settings"));
+        if(isTeleop()) {
+            return teleopConfig.get(opmodeName).get(0).currentOption;
+        }
+        else {
+            return autonomousConfig.get(opmodeName).get(0).currentOption;
+        }
+    }
+
     /**
      * Gets if the program the robot is running is a teleop program.
      *
@@ -676,9 +850,7 @@ public abstract class Robot {
      * @return Whether the robot's current program is running.
      */
     public final boolean opModeIsActive() {
-        if(!isTeleop() && !isAutonomous()) {
-            throw new DumpsterFireException("Program is not an instance of BaseAutonomous or BaseTeleop, cannot tell if its running. A lot of other things are probably broken too if you're seeing this.");
-        }
+        ExceptionChecker.assertTrue(isTeleop() || isAutonomous(), new DumpsterFireException("Program is not an instance of BaseAutonomous or BaseTeleop, cannot tell if its running. A lot of other things are probably broken too if you're seeing this."));
         return ((LinearOpMode) opMode).opModeIsActive();
     }
 
@@ -688,9 +860,7 @@ public abstract class Robot {
      * @return Whether the robot's current program has requested to be stopped.
      */
     public final boolean isStopRequested() {
-        if(!isTeleop() && !isAutonomous()) {
-            throw new DumpsterFireException("Program is not an instance of BaseAutonomous or BaseTeleop, cannot tell if its running. A lot of other things are probably broken too if you're seeing this.");
-        }
+        ExceptionChecker.assertTrue(isTeleop() || isAutonomous(), new DumpsterFireException("Program is not an instance of BaseAutonomous or BaseTeleop, cannot tell if its running. A lot of other things are probably broken too if you're seeing this."));
         return ((LinearOpMode) opMode).isStopRequested();
     }
 
@@ -700,9 +870,7 @@ public abstract class Robot {
      * @return Whether the robot's current program has been started.
      */
     public final boolean isStarted() {
-        if(!isTeleop() && !isAutonomous()) {
-            throw new DumpsterFireException("Program is not an instance of BaseAutonomous or BaseTeleop, cannot tell if its running. A lot of other things are probably broken too if you're seeing this.");
-        }
+        ExceptionChecker.assertTrue(isTeleop() || isAutonomous(), new DumpsterFireException("Program is not an instance of BaseAutonomous or BaseTeleop, cannot tell if its running. A lot of other things are probably broken too if you're seeing this."));
         return ((LinearOpMode) opMode).isStarted();
     }
 

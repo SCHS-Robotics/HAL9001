@@ -653,7 +653,7 @@ public class ConfigDebugMenu extends ScrollingListMenu {
     }
 
     /**
-     * Generates the default configuration map based on the values contained in Robot.
+     * Generates the default configuration map based on the values contained in MainRobot.
      */
     private void genDefaultConfigMap() {
         config = new HashMap<>();

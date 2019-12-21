@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.util.Log;
-
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem;
+import com.SCHSRobotics.HAL9001.util.annotations.ConfigButtonType;
+import com.SCHSRobotics.HAL9001.util.annotations.ConfigurableButton;
 import com.SCHSRobotics.HAL9001.util.annotations.TeleopConfig;
+import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigData;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigParam;
 
@@ -14,6 +15,7 @@ public class SubSystem1 extends SubSystem {
         A, B, C, D
     }
     TESTING test;
+    private @ConfigurableButton(name = "hah", default_value = ConfigButtonType.a) Button b;
 
     public SubSystem1(Robot robot) {
         super(robot);
@@ -37,8 +39,8 @@ public class SubSystem1 extends SubSystem {
     }
 
     @Override
-    public void handle() {
-        Log.w("BAM",test.name());
+    public void handle(){
+
     }
 
     @Override
@@ -49,9 +51,9 @@ public class SubSystem1 extends SubSystem {
     @TeleopConfig
     public static ConfigParam[] teleopConfig() {
         return new ConfigParam[] {
-                new ConfigParam("TEST", SubSystem3.TESTING.A),
-                new ConfigParam("TEST2", SubSystem3.TESTING.A),
-                new ConfigParam("TEST3", SubSystem3.TESTING.A)
+                new ConfigParam("TEST", TESTING.A),
+                new ConfigParam("TEST2", TESTING.A),
+                new ConfigParam("TEST3", TESTING.A)
         };
     }
 }

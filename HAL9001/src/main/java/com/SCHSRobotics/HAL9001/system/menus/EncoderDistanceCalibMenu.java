@@ -5,6 +5,7 @@ import com.SCHSRobotics.HAL9001.system.source.GUI.GuiLine;
 import com.SCHSRobotics.HAL9001.system.source.GUI.Menu;
 import com.SCHSRobotics.HAL9001.system.subsystems.cursors.DefaultCursor;
 import com.SCHSRobotics.HAL9001.util.calib.EncoderDistanceCalib;
+import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
 import com.SCHSRobotics.HAL9001.util.math.Units;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
@@ -62,9 +63,8 @@ public class EncoderDistanceCalibMenu extends Menu {
         this.calib = calib;
 
         inputs = new CustomizableGamepad(gui.robot);
-        if(!speedToggleButton.isBoolean){
-            throw new NotBooleanInputException("SpeedToggleButton must be a boolean button");
-        }
+
+        ExceptionChecker.assertTrue(speedToggleButton.isBoolean, new NotBooleanInputException("SpeedToggleButton must be a boolean button"));
         inputs.addButton(SPEED_MODE_TOGGLE, speedToggleButton);
         
         GuiLine[] newerLines = {

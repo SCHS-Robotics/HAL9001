@@ -1,6 +1,7 @@
 package com.SCHSRobotics.HAL9001.system.source.GUI;
 
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
+import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
@@ -63,13 +64,9 @@ public class GUI {
         this.inputs = new CustomizableGamepad(robot);
 
         menuKeys = new ArrayList<>();
-        
-        if(flipMenu.isBoolean) {
-            this.inputs.addButton(CYCLE_MENUS, flipMenu);
-        }
-        else {
-            throw new NotBooleanInputException("A non-boolean input was passed to the controller as a boolean input");
-        }
+
+        ExceptionChecker.assertTrue(flipMenu.isBoolean, new NotBooleanInputException("A non-boolean input was passed to the controller as a boolean input"));
+        this.inputs.addButton(CYCLE_MENUS, flipMenu);
 
         cursorBlinkState = 0;
         lastBlinkTimeMs = System.currentTimeMillis();
@@ -90,6 +87,7 @@ public class GUI {
     public final void start() {
         if(menus.size() > 0){
             Menu menu = menus.get(menuKeys.get(activeMenuIdx));
+            ExceptionChecker.assertNonNull(menu, new NullPointerException("Requested Active Menu does not exist."));
             if(menu == null) {
                 throw new NullPointerException("Requested Active Menu does not exist.");
             }

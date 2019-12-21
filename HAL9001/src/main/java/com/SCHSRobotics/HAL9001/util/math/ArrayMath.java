@@ -2,7 +2,12 @@ package com.SCHSRobotics.HAL9001.util.math;
 
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A class for doing mathematical operations on arrays. Basically numpy, but less good.
@@ -632,5 +637,31 @@ public class ArrayMath {
             output[i] = Math.abs(array[i]);
         }
         return output;
+    }
+
+    public static <T> boolean checkForDuplicates(T... array) {
+        Set<T> set = new HashSet<>();
+        for(T element : array) {
+            if(set.contains(element)) {
+                return true;
+            }
+            if(element != null) {
+                set.add(element);
+            }
+        }
+        return false;
+    }
+
+    public static <T> T[] removeDuplicates(T... array)
+    {
+        Set<T> set = new LinkedHashSet<>(Arrays.asList(array));
+
+        List<T> lst = new ArrayList<>(set);
+
+        T[] arrOut = slice(array.clone(),0,lst.size()-1);
+        for(int i = 0; i < lst.size(); i++) {
+            arrOut[i] = lst.get(i);
+        }
+        return arrOut;
     }
 }

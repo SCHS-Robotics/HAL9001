@@ -93,18 +93,10 @@ public class MechanumDrive extends SubSystem {
         REVERSE_LEFT, REVERSE_RIGHT, REVERSE_FRONT, REVERSE_BACK
     }
     private ReverseType reverseType;
-    //What value to shift the IMU reading by
-    public enum IMUShift {
-        ZERO(0);
-
-        double val;
-        IMUShift(double val) {
-            this.val = val;
-        }
-    }
-
     //Whether the rev hubs are inverted.
     private boolean invertedHubs;
+    //What value to shift the rotation by for field centric drive.
+    private double imuShift;
 
     /**
      * A constructor for the mechanum drive that takes parameters as input.
@@ -199,6 +191,8 @@ public class MechanumDrive extends SubSystem {
             displayMenu = new DisplayMenu(robot.gui);
             robot.gui.addMenu("Mechanum Display",displayMenu);
         }
+        
+        imuShift = 0;
     }
 
     /**
@@ -259,6 +253,8 @@ public class MechanumDrive extends SubSystem {
             displayMenu = new DisplayMenu(robot.gui);
             robot.gui.addMenu("Mechanum Display",displayMenu);
         }
+        
+        imuShift = 0;
     }
 
     /**
@@ -893,7 +889,7 @@ public class MechanumDrive extends SubSystem {
                 break;
             case FIELD_CENTRIC:
             case FIELD_CENTRIC_TTA:
-                vcpy.rotate(-((PI / 4) + getCurrentAngle()));
+                vcpy.rotate(-((PI / 4) + getCurrentAngle() + imuShift));
                 setPower(vcpy.x + turnPower, vcpy.y - turnPower, vcpy.y + turnPower, vcpy.x - turnPower);
                 break;
         }
@@ -1041,7 +1037,7 @@ public class MechanumDrive extends SubSystem {
                 break;
             case FIELD_CENTRIC_TTA:
             case FIELD_CENTRIC:
-                displacement.rotate(-((PI / 4) + getCurrentAngle()));
+                displacement.rotate(-((PI / 4) + getCurrentAngle() + imuShift));
 
                 thresh1 = Math.abs(displacement.x);
                 thresh2 = Math.abs(displacement.y);
@@ -1114,7 +1110,7 @@ public class MechanumDrive extends SubSystem {
                 break;
             case FIELD_CENTRIC_TTA:
             case FIELD_CENTRIC:
-                vcpy.rotate(-((PI / 4) + getCurrentAngle()));
+                vcpy.rotate(-((PI / 4) + getCurrentAngle() + imuShift));
                 setPower(vcpy.x - correction, vcpy.y + correction, vcpy.y - correction, vcpy.x + correction);
                 break;
             case ARCADE_TTA:
@@ -1318,6 +1314,15 @@ public class MechanumDrive extends SubSystem {
             stabilityPID.init(angle, angle);
         }
         usesGyro = useGyro;
+    }
+
+    /**
+     * Sets the shift on the imu for field centric mode
+     * 
+     * @param imuShift The imuShift to be set.
+     */
+    public void setImuShift(double imuShift) {
+        this.imuShift = imuShift;
     }
 
     /**

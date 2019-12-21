@@ -2,6 +2,8 @@ package com.SCHSRobotics.HAL9001.system.source.BaseRobot;
 
 import android.util.Log;
 
+import com.SCHSRobotics.HAL9001.util.annotations.LinkTo;
+import com.SCHSRobotics.HAL9001.util.misc.AutoTransitioner;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Supplier;
@@ -60,6 +62,13 @@ public abstract class BaseTeleop extends LinearOpMode {
     @Override
     public final void runOpMode() {
         robot = buildRobot();
+
+        if(this.getClass().isAnnotationPresent(LinkTo.class)) {
+            if(this.getClass().getAnnotation(LinkTo.class).auto_transition()) {
+                AutoTransitioner.transitionOnStop(this, this.getClass().getAnnotation(LinkTo.class).destination());
+            }
+        }
+
         try {
             robot.init();
             onInit();

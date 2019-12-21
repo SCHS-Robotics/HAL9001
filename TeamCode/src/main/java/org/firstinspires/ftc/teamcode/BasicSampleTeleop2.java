@@ -1,20 +1,23 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.BaseTeleop;
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
-import com.SCHSRobotics.HAL9001.util.annotations.StandAlone;
+import com.SCHSRobotics.HAL9001.util.annotations.ProgramOptions;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 //@StandAlone is not required but stops it from auto using configs from autonomous
-@StandAlone
+//@StandAlone
 //@Disabled should be removed when using
 //@Disabled
+@ProgramOptions(options = {"g","h","i"})
 @TeleOp(name = "Basic Sample Bot Teleop 2")
 //extends BaseTeleop means it is a TeleOp program
 public class BasicSampleTeleop2 extends BaseTeleop {
 
     private BasicSampleBot2 robot;
-
+    private String setting;
     //return the robot that will be used
     @Override
     protected Robot buildRobot() {
@@ -24,7 +27,9 @@ public class BasicSampleTeleop2 extends BaseTeleop {
 
     //Not necessary to have this (you can delete it), basically if you want to do something special on init you would put it here
     @Override
-    protected void onInit() {}
+    protected void onInit() {
+        setting = robot.pullProgramSetting();
+    }
 
     //Not necessary to have this (you can delete it), basically if you want to do something special on init in a loop you would put it here
     @Override
@@ -37,7 +42,12 @@ public class BasicSampleTeleop2 extends BaseTeleop {
 
     //Not necessary to have this (you can delete it), basically if you want to do something special in a loop after pressing start you would put it here
     @Override
-    protected void onUpdate() {}
+    protected void onUpdate() {
+        telemetry.clearAll();
+        telemetry.addLine(setting);
+        telemetry.update();
+        Log.wtf("SHABAM",setting);
+    }
 
     //Not necessary to have this (you can delete it), basically if you want to do something special on stop you would put it here
     @Override

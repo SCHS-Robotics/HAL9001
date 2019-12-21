@@ -15,7 +15,7 @@ package com.SCHSRobotics.HAL9001.util.functional_interfaces;
  * @param <Q> The datatype of the fourth input.
  * @param <P> The datatype of the output.
  */
+@FunctionalInterface
 public interface QuadFunction<T,R,S,Q,P> {
-
     P apply(T arg1, R arg2, S arg3, Q arg4);
 }

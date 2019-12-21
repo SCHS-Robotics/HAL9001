@@ -2,6 +2,10 @@ package com.SCHSRobotics.HAL9001.system.source.BaseRobot;
 
 import android.util.Log;
 
+import com.SCHSRobotics.HAL9001.util.annotations.LinkTo;
+import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
+import com.SCHSRobotics.HAL9001.util.exceptions.NothingToSeeHereException;
+import com.SCHSRobotics.HAL9001.util.misc.AutoTransitioner;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Supplier;
@@ -19,6 +23,10 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
     //The robot running the opmode.
     private Robot robot;
+    //An exception thrown from main.
+    private Throwable exception;
+    //Whether an exception has been thrown.
+    private boolean exceptionThrown = false;
 
     /**
      * An abstract method that is used to instantiate the robot.
@@ -53,36 +61,77 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
     @Override
     public final void runOpMode() {
-        robot = buildRobot();
 
         try {
-            robot.init();
-            onInit();
-            while(!isStarted() && !isStopRequested()) {
-                robot.init_loop();
-                onInitLoop();
+            robot = buildRobot();
+            ExceptionChecker.assertNonNull(robot,new NothingToSeeHereException("Robot is null. You need a robot to run the program."));
+        }
+        catch (Exception ex) {
+            exceptionThrown = true;
+            exception = ex;
+            Log.e(this.getClass().getSimpleName(), ex.getMessage(), ex);
+        }
+
+        if(this.getClass().isAnnotationPresent(LinkTo.class)) {
+            if(this.getClass().getAnnotation(LinkTo.class).auto_transition()) {
+                AutoTransitioner.transitionOnStop(this, this.getClass().getAnnotation(LinkTo.class).destination());
             }
-        } catch (Exception ex) {
+        }
+
+        try {
+            if(!exceptionThrown) {
+                robot.init();
+                onInit();
+            }
+            while(!isStarted() && !isStopRequested()) {
+                if(!exceptionThrown) {
+                    robot.init_loop();
+                    onInitLoop();
+                }
+                else {
+                    telemetry.clearAll();
+                    telemetry.addData("ERROR!!!", exception.getMessage());
+                    telemetry.update();
+                }
+            }
+        } catch (Throwable ex) {
             telemetry.clearAll();
             telemetry.addData("ERROR!!!", ex.getMessage());
             telemetry.update();
-            Log.e(this.getClass().getSimpleName(), ex.getMessage(), ex);
+            if(!exceptionThrown) {
+                Log.e(this.getClass().getSimpleName(), ex.getMessage(), ex);
+                exceptionThrown = true;
+                exception = ex;
+            }
         }
 
         if(!isStopRequested()) {
             try {
-                robot.onStart();
-                main();
-            } catch (Exception ex) {
-                telemetry.clearAll();
-                telemetry.addData("ERROR!", ex.getMessage());
-                telemetry.update();
+                if(!exceptionThrown) {
+                    robot.onStart();
+                    main();
+                }
+                else {
+                    while(opModeIsActive()) {
+                        telemetry.clearAll();
+                        telemetry.addData("ERROR!", exception.getMessage());
+                        telemetry.update();
+                    }
+                }
+            } catch (Throwable ex) {
                 Log.e(this.getClass().getSimpleName(), ex.getMessage(), ex);
+                while(opModeIsActive()) {
+                    telemetry.clearAll();
+                    telemetry.addData("ERROR!", ex.getMessage());
+                    telemetry.update();
+                }
             }
         }
 
-        onStop();
-        robot.stopAllComponents();
+        if(!exceptionThrown) {
+            onStop();
+            robot.stopAllComponents();
+        }
     }
 
     /**

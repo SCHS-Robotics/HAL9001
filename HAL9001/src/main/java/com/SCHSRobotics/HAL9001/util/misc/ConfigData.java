@@ -41,10 +41,10 @@ public class ConfigData {
     public <T> T getData(String name, Class<T> clazz) {
         Object val = map.get(name);
         if(val == null) {
-            throw new NullPointerException("No such value in config with name "+name+"!");
+            throw new NullPointerException("No such value in config with name "+name);
         }
         if(!clazz.isInstance(val)) {
-            throw new NotAnAlchemistException("Wrong type parameter provided for config parameter "+name+"!");
+            throw new NotAnAlchemistException("Wrong type parameter provided for config parameter "+name);
         }
         return clazz.cast(val);
     }

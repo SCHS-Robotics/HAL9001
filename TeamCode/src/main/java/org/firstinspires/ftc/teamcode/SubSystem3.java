@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.util.Log;
-
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem;
 import com.SCHSRobotics.HAL9001.util.annotations.TeleopConfig;
@@ -37,9 +35,7 @@ public class SubSystem3 extends SubSystem {
     }
 
     @Override
-    public void handle() {
-        Log.w("BAM",test.name());
-    }
+    public void handle() {}
 
     @Override
     public void stop() {
