@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.util.exceptions;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * An exception thrown if an object is null that is not supposed to be null.
  *
@@ -16,7 +18,7 @@ public class NothingToSeeHereException extends RuntimeException {
      *
      * @param message The message to print to the screen.
      */
-    public NothingToSeeHereException(String message) {
+    public NothingToSeeHereException(@Nullable String message) {
         super(message);
     }
 }

@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.util.exceptions;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * An exception thrown if a GUI is needed, but is not present.
  *
@@ -16,7 +18,7 @@ public class GuiNotPresentException extends RuntimeException {
      *
      * @param message The error message to print to the screen.
      */
-    public GuiNotPresentException(String message) {
+    public GuiNotPresentException(@Nullable String message) {
         super(message);
     }
 }

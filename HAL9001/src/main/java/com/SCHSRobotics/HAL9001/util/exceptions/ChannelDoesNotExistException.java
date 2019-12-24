@@ -1,5 +1,8 @@
 package com.SCHSRobotics.HAL9001.util.exceptions;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * An exception thrown if a channel in a color image does not exist.
  *
@@ -17,7 +20,7 @@ public class ChannelDoesNotExistException extends RuntimeException {
      * @param message The message to print to the screen.
      * @param cause The cause of the error.
      */
-    public ChannelDoesNotExistException(String message, Throwable cause) {
+    public ChannelDoesNotExistException(@Nullable String message, @NotNull Throwable cause) {
         super(message,cause);
     }
 }

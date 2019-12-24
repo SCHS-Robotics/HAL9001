@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.util.exceptions;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * An exception that is thrown when things cannot be converted into other things or made out of nothing.
  *
@@ -16,7 +18,7 @@ public class NotAnAlchemistException extends RuntimeException {
      *
      * @param message The error message to print to the screen.
      */
-    public NotAnAlchemistException(String message) {
+    public NotAnAlchemistException(@Nullable String message) {
         super(message);
     }
 }

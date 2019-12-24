@@ -22,8 +22,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface ConfigurableDouble {
     String name();
-    double default_value();
-    double lowerBound();
+    double lowerBound() default 0.0;
     double upperBound();
     double increment() default 0.1;
+    ConfigProgramType program_type();
 }

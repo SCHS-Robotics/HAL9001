@@ -34,6 +34,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import static java.lang.Math.PI;
 
@@ -47,6 +49,7 @@ import static java.lang.Math.PI;
  *
  * Creation Date: 9/1/19
  */
+@SuppressWarnings({"WeakerAccess","unused"})
 public class MechanumDrive extends SubSystem {
 
     //Names of all the controls.
@@ -104,7 +107,7 @@ public class MechanumDrive extends SubSystem {
      * @param robot  The robot the drive is currently being used on.
      * @param params The parameters for the drive.
      */
-    public MechanumDrive(Robot robot, Params params) {
+    public MechanumDrive(Robot robot, @NotNull Params params) {
         super(robot);
 
         driveType = params.driveType;
@@ -202,7 +205,7 @@ public class MechanumDrive extends SubSystem {
      * @param params        The parameters for the drive.
      * @param usingSpecific Whether or not specific parameters were used instead of the configuration increment system.
      */
-    public MechanumDrive(Robot robot, SpecificParams params, boolean usingSpecific) {
+    public MechanumDrive(Robot robot, @NotNull SpecificParams params, boolean usingSpecific) {
         super(robot);
         usesConfig = true;
         useSpecific = usingSpecific;
@@ -628,6 +631,7 @@ public class MechanumDrive extends SubSystem {
     /**
      * Resets all encoders affiliated with the drive train.
      */
+    @SuppressWarnings("WeakerAccess")
     public void resetAllEncoders() {
         topLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         topRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -728,7 +732,7 @@ public class MechanumDrive extends SubSystem {
      * @throws InvalidMoveCommandException Throws this exception if you tried to move the robot in an impossible way. (ex: 0 power, move 2000 encoder ticks).
      * @throws DumpsterFireException Throws this exception if you try and move negative encoder distances. Change the power to change direction.
      */
-    public void turnAndMoveEncoders(Vector leftVector, Vector rightVector, double encodersLeft, double encodersRight) {
+    public void turnAndMoveEncoders(@NotNull Vector leftVector, Vector rightVector, double encodersLeft, double encodersRight) {
             if ((leftVector.isZeroVector() && encodersLeft != 0) || (rightVector.isZeroVector() && encodersRight != 0)) {
                 throw new InvalidMoveCommandException("You can't move anywhere if you aren't trying to move ;)");
             }
@@ -859,7 +863,7 @@ public class MechanumDrive extends SubSystem {
      * @param v The robot's velocity vector.
      * @param turnPower The power to turn at.
      */
-    public void turnAndMove(Vector v, double turnPower) {
+    public void turnAndMove(@NotNull Vector v, double turnPower) {
         Vector vcpy = v.clone();
         vcpy.scalarMultiply(Math.sqrt(2));
 
@@ -902,7 +906,7 @@ public class MechanumDrive extends SubSystem {
      * @param leftVector  The left input vector.
      * @param rightVector The right input vector.
      */
-    public void drive(Vector leftVector, Vector rightVector) {
+    public void drive(@NotNull Vector leftVector, @NotNull Vector rightVector) {
 
         leftVector.scalarMultiply(constantSpeedMultiplier * Math.sqrt(2));
         rightVector.scalarMultiply(constantSpeedMultiplier * Math.sqrt(2));
@@ -991,7 +995,7 @@ public class MechanumDrive extends SubSystem {
      * @throws InvalidMoveCommandException Throws this exception if you tried to move the robot in an impossible way. (ex: 0 power, move 2000 encoder ticks).
      * @throws DumpsterFireException Throws this exception if you try and move negative encoder distances. Change the power to change direction.
      */
-    public void driveEncoders(Vector v, double encoders, boolean stabilityControl) {
+    public void driveEncoders(@NotNull Vector v, double encoders, boolean stabilityControl) {
         if (v.isZeroVector() && encoders != 0) {
             throw new InvalidMoveCommandException("You can't move anywhere if you aren't trying to move ;)");
         }
@@ -1093,7 +1097,7 @@ public class MechanumDrive extends SubSystem {
      * @param v The direction and power that the robot should move at.
      * @param stabilityControl Whether or not to use the drive's stability control system.
      */
-    public void drive(Vector v, boolean stabilityControl){
+    public void drive(@NotNull Vector v, boolean stabilityControl){
 
         Vector vcpy = v.clone();
 
@@ -1217,7 +1221,6 @@ public class MechanumDrive extends SubSystem {
         turnPID.setDeadband(tolerance);
         turnPID.setSetpoint(angle);
         double correction = 1;
-        //TODO replace with waitTime statement
         while(robot.opModeIsActive() && correction != 0) {
             correction = turnPID.getCorrection(getCurrentAngle(useDegreesTurn ? AngleUnit.DEGREES : AngleUnit.RADIANS));
             turn(correction);
@@ -1640,6 +1643,8 @@ public class MechanumDrive extends SubSystem {
      *
      * @return The teleop configuration.
      */
+    @NotNull
+    @Contract(" -> new")
     @TeleopConfig
     public static ConfigParam[] teleopConfig() {
         if(useSpecific) {
@@ -1701,6 +1706,8 @@ public class MechanumDrive extends SubSystem {
      *
      * @return The teleop configuration.
      */
+    @NotNull
+    @Contract(" -> new")
     @AutonomousConfig
     public static ConfigParam[] autonomousConfig() {
         if(useSpecific) {
@@ -1838,6 +1845,7 @@ public class MechanumDrive extends SubSystem {
          * @param driveType The driveType that will be used.
          * @return This instance of Params.
          */
+        @Contract("_ -> this")
         public Params setDriveType(DriveType driveType) {
             this.driveType = driveType;
             useGyro = driveType == DriveType.STANDARD_TTA || driveType == DriveType.FIELD_CENTRIC || driveType == DriveType.FIELD_CENTRIC_TTA || driveType == DriveType.ARCADE_TTA;
@@ -1850,6 +1858,7 @@ public class MechanumDrive extends SubSystem {
          * @param inverted True if the hubs are inverted.
          * @return This instance of Params.
          */
+        @Contract("_ -> this")
         public Params setRevHubsInverted(boolean inverted){
             revHubsInverted = inverted;
             return this;
@@ -1863,7 +1872,8 @@ public class MechanumDrive extends SubSystem {
          *
          * @throws NotVectorInputException Throws this if the input button is not a vector input.
          */
-        public Params setDriveStick(Button driveStick) {
+        @Contract("_ -> this")
+        public Params setDriveStick(@NotNull Button driveStick) {
             if (!driveStick.isVector) {
                 throw new NotVectorInputException("DriveStick must be a vector input");
             }
@@ -1879,7 +1889,8 @@ public class MechanumDrive extends SubSystem {
          *
          * @throws NotVectorInputException Throws this if input button is not a vector input.
          */
-        public Params setDriveStickLeft(Button driveStickLeft) {
+        @Contract("_ -> this")
+        public Params setDriveStickLeft(@NotNull Button driveStickLeft) {
             if (!driveStickLeft.isVector) {
                 throw new NotVectorInputException("DriveStickLeft must be a vector input.");
             }
@@ -1895,7 +1906,8 @@ public class MechanumDrive extends SubSystem {
          *
          * @throws NotVectorInputException Throws this if input button is not a vector input.
          */
-        public Params setDriveStickRight(Button driveStickRight) {
+        @Contract("_ -> this")
+        public Params setDriveStickRight(@NotNull Button driveStickRight) {
             if (!driveStickRight.isVector) {
                 throw new NotVectorInputException("DriveStickRight must be a vector input.");
             }
@@ -1911,7 +1923,8 @@ public class MechanumDrive extends SubSystem {
          *
          * @throws NotDoubleInputException Throws this if the input button is not a double input.
          */
-        public Params setTurnStick(Button turnStick) {
+        @Contract("_ -> this")
+        public Params setTurnStick(@NotNull Button turnStick) {
             if (!turnStick.isDouble) {
                 throw new NotDoubleInputException("TurnStick must be a double input.");
             }
@@ -1927,6 +1940,7 @@ public class MechanumDrive extends SubSystem {
          *
          * @throws NotVectorInputException Throws this is the input button is not a vector input.
          */
+        @Contract("_ -> this")
         public Params setTTAStick(Button ttaStick) {
             if (!driveStickRight.isVector) {
                 throw new NotVectorInputException("TTA Stick must be a vector input.");
@@ -1944,7 +1958,8 @@ public class MechanumDrive extends SubSystem {
          *
          * @throws NotBooleanInputException Throws this if the input button is not a boolean input.
          */
-        public Params setTurnLeftButton(Button turnLeft, double turnSpeed) {
+        @Contract("_, _ -> this")
+        public Params setTurnLeftButton(@NotNull Button turnLeft, double turnSpeed) {
             if (!turnLeft.isBoolean) {
                 throw new NotBooleanInputException("TurnLeft button must be a boolean input.");
             }
@@ -1962,7 +1977,8 @@ public class MechanumDrive extends SubSystem {
          *
          * @throws NotBooleanInputException Throws this if the input button is not a boolean input.
          */
-        public Params setTurnRightButton(Button turnRight, double turnSpeed) {
+        @Contract("_, _ -> this")
+        public Params setTurnRightButton(@NotNull Button turnRight, double turnSpeed) {
             if (!turnRight.isBoolean) {
                 throw new NotBooleanInputException("TurnRight button must be a boolean input");
             }
@@ -1979,7 +1995,8 @@ public class MechanumDrive extends SubSystem {
          *
          * @throws NotBooleanInputException Throws this exception if the speedmode button is not a boolean input.
          */
-        public Params setSpeedModeButton(Button speedMode) {
+        @Contract("_ -> this")
+        public Params setSpeedModeButton(@NotNull Button speedMode) {
             if (!speedMode.isBoolean) {
                 throw new NotBooleanInputException("SpeedMode button must be a boolean input");
             }
@@ -1995,6 +2012,7 @@ public class MechanumDrive extends SubSystem {
          *
          * @throws NotBooleanInputException Throws this exception if the speedmode button is not a boolean input.
          */
+        @Contract("_ -> this")
         public Params setTurnSpeedModeButton(Button turnSpeedMode) {
             if (!speedMode.isBoolean) {
                 throw new NotBooleanInputException("TurnSpeedMode button must be a boolean input");
@@ -2011,6 +2029,7 @@ public class MechanumDrive extends SubSystem {
          *
          * @throws NotAnAlchemistException Throws this if the imu number is not 1 or 2. Can't make something out of nothing.
          */
+        @Contract("_ -> this")
         public Params setImuNumber(int imuNumber) {
             if (imuNumber != 1 && imuNumber != 2) {
                 throw new NotAnAlchemistException("IMU number must be either 1 or 2");
@@ -2099,6 +2118,7 @@ public class MechanumDrive extends SubSystem {
          * @param turnPID The PID to use for turning to specific angles.
          * @return This instance of Params.
          */
+        @Contract("_ -> this")
         public Params setTurnPID(PIDController turnPID) {
             return setTurnPID(turnPID, false);
         }
@@ -2110,6 +2130,7 @@ public class MechanumDrive extends SubSystem {
          * @param useDegrees Whether the PID controller uses degrees.
          * @return This instance of Params.
          */
+        @Contract("_, _ -> this")
         public Params setTurnPID(PIDController turnPID, boolean useDegrees) {
             useGyro = true;
             useDegreesTurn = useDegrees;
@@ -2196,6 +2217,7 @@ public class MechanumDrive extends SubSystem {
          * @param stabilityPID The PID to use for stability control.
          * @return This instance of Params.
          */
+        @Contract("_ -> this")
         public Params setStabilityPID(PIDController stabilityPID) {
             return setStabilityPID(stabilityPID, false);
         }
@@ -2207,6 +2229,7 @@ public class MechanumDrive extends SubSystem {
          * @param useDegrees   Whether or not the PID controller uses degrees.
          * @return This instance of SpecificParams.
          */
+        @Contract("_, _ -> this")
         public Params setStabilityPID(PIDController stabilityPID, boolean useDegrees) {
             useGyro = true;
             useDegreesStability = useDegrees;
@@ -2223,6 +2246,7 @@ public class MechanumDrive extends SubSystem {
          * @param kf Feedforward gain.
          * @return This instance of Params.
          */
+        @Contract("_, _, _, _ -> this")
         public Params setVelocityPID(double kp, double ki, double kd, double kf) {
             changeVelocityPID = true;
             vkp = kp;
@@ -2238,6 +2262,7 @@ public class MechanumDrive extends SubSystem {
          * @param encodersPerMeter The number of encoder ticks per meter distance traveled.
          * @return This instance of Params.
          */
+        @Contract("_ -> this")
         public Params setEncodersPerMeter(double encodersPerMeter) {
             this.encodersPerMeter = encodersPerMeter;
             return this;
@@ -2249,6 +2274,7 @@ public class MechanumDrive extends SubSystem {
          * @param constantSpeedModifier The value to multiply the speed by.
          * @return This instance of Params.
          */
+        @Contract("_ -> this")
         public Params setConstantSpeedModifier(double constantSpeedModifier) {
             this.constantSpeedMultiplier = constantSpeedModifier;
             return this;
@@ -2260,6 +2286,7 @@ public class MechanumDrive extends SubSystem {
          * @param speedModeMultiplier The multiplier that will be applied when speed mode is entered.
          * @return This instance of Params.
          */
+        @Contract("_ -> this")
         public Params setSpeedModeMultiplier(double speedModeMultiplier) {
             this.slowModeMultiplier = speedModeMultiplier;
             return this;
@@ -2271,6 +2298,7 @@ public class MechanumDrive extends SubSystem {
          * @param constantTurnSpeedMultiplier The constant turn speed multiplier.
          * @return This instance of params.
          */
+        @Contract("_ -> this")
         public Params setConstantTurnSpeedMultiplier(double constantTurnSpeedMultiplier) {
             this.constantTurnSpeedMultiplier = constantTurnSpeedMultiplier;
             return this;
@@ -2282,6 +2310,7 @@ public class MechanumDrive extends SubSystem {
          * @param turnSpeedModeMultiplier The turn speed mode multiplier.
          * @return This instance of params.
          */
+        @Contract("_ -> this")
         public Params setTurnSpeedModeMultiplier(double turnSpeedModeMultiplier) {
             this.turnSpeedModeMultiplier = turnSpeedModeMultiplier;
             return this;
@@ -2293,6 +2322,7 @@ public class MechanumDrive extends SubSystem {
          * @param runMode The desired runmode.
          * @return This instance of Params.
          */
+        @Contract("_ -> this")
         public Params setMotorRunMode(DcMotor.RunMode runMode) {
             this.runMode = runMode;
             return this;
@@ -2304,6 +2334,7 @@ public class MechanumDrive extends SubSystem {
          * @param behavior The desired zero power behavior.
          * @return This instance of Params.
          */
+        @Contract("_ -> this")
         public Params setZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior) {
             zeroPowerBehavior = behavior;
             return this;
@@ -2315,6 +2346,7 @@ public class MechanumDrive extends SubSystem {
          * @param reverseType Which motors should be reversed.
          * @return This instance of params.
          */
+        @Contract("_ -> this")
         public Params setReverseType(ReverseType reverseType) {
             this.reverseType = reverseType;
             return this;
@@ -2383,6 +2415,7 @@ public class MechanumDrive extends SubSystem {
          * @param encodersPerMeter The number of encoders ticks per meter distance
          * @return This instance of SpecificParams.
          */
+        @Contract("_ -> this")
         public SpecificParams setEncodersPerMeter(double encodersPerMeter) {
             this.encodersPerMeter = encodersPerMeter;
             return this;
@@ -2394,6 +2427,7 @@ public class MechanumDrive extends SubSystem {
          * @param turnLeftPower The turn left power.
          * @return This instance of SpecificParams.
          */
+        @Contract("_ -> this")
         public SpecificParams setTurnLeftPower(double turnLeftPower) {
             this.turnLeftPower = turnLeftPower;
             return this;
@@ -2405,6 +2439,7 @@ public class MechanumDrive extends SubSystem {
          * @param turnRightPower The turn right power.
          * @return This instance of SpecificParams.
          */
+        @Contract("_ -> this")
         public SpecificParams setTurnRightPower(double turnRightPower) {
             this.turnRightPower = turnRightPower;
             return this;
@@ -2416,6 +2451,7 @@ public class MechanumDrive extends SubSystem {
          * @param constantSpeedMultiplier The constant speed multiplier. Always multiplied by velocity.
          * @return This instance of SpecificParams.
          */
+        @Contract("_ -> this")
         public SpecificParams setConstantSpeedMultiplier(double constantSpeedMultiplier) {
             this.constantSpeedMultiplier = constantSpeedMultiplier;
             return this;
@@ -2427,6 +2463,7 @@ public class MechanumDrive extends SubSystem {
          * @param slowModeMultiplier The slow mode multiplier. Applied to velocity when in slow/speed mode.
          * @return This instance of SpecificParams.
          */
+        @Contract("_ -> this")
         public SpecificParams setSlowModeMultiplier(double slowModeMultiplier) {
             this.slowModeMultiplier = slowModeMultiplier;
             return this;
@@ -2438,6 +2475,7 @@ public class MechanumDrive extends SubSystem {
          * @param constantTurnSpeedMultiplier The constant turn speed multiplier.
          * @return This instance of params.
          */
+        @Contract("_ -> this")
         public SpecificParams setConstantTurnSpeedMultiplier(double constantTurnSpeedMultiplier) {
             this.constantTurnSpeedMultiplier = constantTurnSpeedMultiplier;
             return this;
@@ -2449,6 +2487,7 @@ public class MechanumDrive extends SubSystem {
          * @param slowTurnModeMultiplier The turn speed mode multiplier.
          * @return This instance of params.
          */
+        @Contract("_ -> this")
         public SpecificParams setSlowTurnModeMultiplier(double slowTurnModeMultiplier) {
             this.slowTurnModeMultiplier = slowTurnModeMultiplier;
             return this;
@@ -2463,6 +2502,7 @@ public class MechanumDrive extends SubSystem {
          * @param kf Feedforward gain for velocity PID.
          * @return This instance of SpecificParams.
          */
+        @Contract("_, _, _, _ -> this")
         public SpecificParams setVelocityPID(double kp, double ki, double kd, double kf) {
             changeVelocityPID = true;
             vkp = kp;
@@ -2551,6 +2591,7 @@ public class MechanumDrive extends SubSystem {
          * @param turnPID The PID controller that will be used for turning.
          * @return This instance of SpecificParams.
          */
+        @Contract("_ -> this")
         public SpecificParams setTurnPID(PIDController turnPID) {
             return setTurnPID(turnPID, false);
         }
@@ -2562,6 +2603,7 @@ public class MechanumDrive extends SubSystem {
          * @param useDegrees Whether or not the PID controller uses degrees.
          * @return This instance of SpecificParams.
          */
+        @Contract("_, _ -> this")
         public SpecificParams setTurnPID(PIDController turnPID, boolean useDegrees) {
             useDegreesTurn = useDegrees;
             this.turnPID = turnPID;
@@ -2647,6 +2689,7 @@ public class MechanumDrive extends SubSystem {
          * @param stabilityPID The PID controller that will be used for stability control.
          * @return This instance of SpecificParams.
          */
+        @Contract("_ -> this")
         public SpecificParams setStabilityPID(PIDController stabilityPID) {
             return setStabilityPID(stabilityPID, false);
         }
@@ -2658,6 +2701,7 @@ public class MechanumDrive extends SubSystem {
          * @param useDegrees Whether or not the PID controller uses degrees.
          * @return This instance of SpecificParams.
          */
+        @Contract("_, _ -> this")
         public SpecificParams setStabilityPID(PIDController stabilityPID, boolean useDegrees) {
             useDegreesStability = useDegrees;
             this.stabilityPID = stabilityPID;

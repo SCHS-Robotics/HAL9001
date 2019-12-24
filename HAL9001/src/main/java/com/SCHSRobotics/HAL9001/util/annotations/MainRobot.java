@@ -7,23 +7,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Not yet implemented
- *
- * @// TODO: 12/19/2019
- *
- * @author Cole Savage, Level Up
- * @since 1.0.6
- * @version 1.0.0
- *
- * Creation Date: 12/19/19
+ * @// TODO: 12/23/2019
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface ConfigurableInteger {
-    String name();
-    int lowerBound() default 0;
-    int upperBound();
-    int increment() default 1;
-    ConfigProgramType program_type();
-}
+public @interface MainRobot {}

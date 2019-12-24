@@ -31,6 +31,7 @@ import java.util.ArrayList;
  *
  * Creation Date: 7/17/19.
  */
+@SuppressWarnings({"WeakerAccess","unused"})
 public class QuadWheelDrive extends SubSystem {
 
     //Whether or not the config is being set up with specific values.
@@ -705,7 +706,7 @@ public class QuadWheelDrive extends SubSystem {
                 throw new NotDoubleInputException("DriveStick must be a double input.");
             }
             buttonsToSet[0] = driveStick;
-            ArrayList<String> s = new ArrayList<String>();
+            ArrayList<String> s = new ArrayList<>();
             return this;
         }
 

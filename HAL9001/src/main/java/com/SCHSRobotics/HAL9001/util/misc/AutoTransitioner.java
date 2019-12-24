@@ -26,6 +26,7 @@ public class AutoTransitioner extends Thread {
     }
 
     @Override
+    @SuppressWarnings({"InfiniteLoopStatement","EmptyCatchBlock"})
     public void run() {
         try {
             while (true) { //Loop

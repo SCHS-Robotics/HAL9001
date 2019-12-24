@@ -2,6 +2,8 @@ package com.SCHSRobotics.HAL9001.util.misc;
 
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Rect;
 
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import java.util.List;
  *
  * Creation Date: 1/15/19
  */
+@SuppressWarnings("unused")
 public class NonMaxSuppressor {
 
     //The area overlap threshold.
@@ -28,8 +31,8 @@ public class NonMaxSuppressor {
      *
      * @param thresh The area overlap threshold.
      */
+    @Contract(pure = true)
     public NonMaxSuppressor(double thresh) {
-
         this.thresh = thresh;
     }
 
@@ -39,7 +42,7 @@ public class NonMaxSuppressor {
      * @param boxes A list of bounding boxes.
      * @return A list of merged bounding boxes.
      */
-    public List<Rect> suppressNonMax(List<Rect> boxes) {
+    public List<Rect> suppressNonMax(@NotNull List<Rect> boxes) {
         if(boxes.size() == 0) {
             return boxes;
         }
@@ -106,7 +109,7 @@ public class NonMaxSuppressor {
      * @param idxes The indexes of the bounding boxes to use to populate the list.
      * @return A list containing all the bounding boxes referenced by idxes.
      */
-    private List<Rect> populateList(List<Rect> boxes, List<Integer> idxes) {
+    private List<Rect> populateList(@NotNull List<Rect> boxes, @NotNull List<Integer> idxes) {
         List<Rect> output = new ArrayList<>();
         for(int idx : idxes) {
             output.add(boxes.get(idx));
@@ -121,7 +124,8 @@ public class NonMaxSuppressor {
      * @param x The constant to add.
      * @return The original list where every value has a constant added.
      */
-    private List<Double> addListConstant(List<Double> lst, double x) {
+    @SuppressWarnings("SameParameterValue")
+    private List<Double> addListConstant(@NotNull List<Double> lst, double x) {
         List<Double> output = new ArrayList<>();
         for(double val : lst) {
             output.add(val+x);
@@ -136,7 +140,7 @@ public class NonMaxSuppressor {
      * @param lst2 The second list.
      * @return list1 list2.
      */
-    private List<Double> subtractLists(List<Double> lst1, List<Double> lst2) {
+    private List<Double> subtractLists(@NotNull List<Double> lst1, @NotNull List<Double> lst2) {
         if(lst1.size() != lst2.size()) {
             throw new DumpsterFireException("Lists not the same size!");
         }
@@ -155,7 +159,7 @@ public class NonMaxSuppressor {
      * @param mask The indexes that should be divided.
      * @return list1/list2 for the indexes in mask.
      */
-    private List<Double> divideLists(List<Double> lst1, List<Double> lst2, List<Integer> mask) {
+    private List<Double> divideLists(@NotNull List<Double> lst1, @NotNull List<Double> lst2, @NotNull List<Integer> mask) {
         List<Double> output = new ArrayList<>();
         for (int i = 0; i < mask.size(); i++) {
             output.add(lst1.get(i)/lst2.get(mask.get(i)));
@@ -170,7 +174,7 @@ public class NonMaxSuppressor {
      * @param lst2 The second list.
      * @return list1 * list2.
      */
-    private List<Double> multiplyLists(List<Double> lst1, List<Double> lst2) {
+    private List<Double> multiplyLists(@NotNull List<Double> lst1, @NotNull List<Double> lst2) {
         if(lst1.size() != lst2.size()) {
             throw new DumpsterFireException("Lists not the same size!");
         }
@@ -188,7 +192,7 @@ public class NonMaxSuppressor {
      * @param idxes The list of indexes of the bounding boxes.
      * @param overlaps The list of area overlap ratios for the bounding boxes.
      */
-    private void deleteBadIndexes(List<Integer> idxes, List<Double> overlaps) {
+    private void deleteBadIndexes(@NotNull List<Integer> idxes, @NotNull List<Double> overlaps) {
         for(int i = 0; i < overlaps.size(); i++) {
             if(overlaps.get(i) > thresh ) {
                 idxes.remove(i);
@@ -205,7 +209,7 @@ public class NonMaxSuppressor {
      * @param mask A list of valid indexes for the max() operation to take place.
      * @return A list where all elements < x are replaced with x.
      */
-    private List<Double> listMax(double x, List<Double> lst, List<Integer> mask) {
+    private List<Double> listMax(double x, @NotNull List<Double> lst, @NotNull List<Integer> mask) {
         List<Double> output = new ArrayList<>();
         for(int idx : mask) {
             output.add(Math.max(x,lst.get(idx)));
@@ -220,7 +224,8 @@ public class NonMaxSuppressor {
      * @param lst The list.
      * @return A list where all elements < x are replaced with x.
      */
-    private List<Double> listMax(double x, List<Double> lst) {
+    @SuppressWarnings("SameParameterValue")
+    private List<Double> listMax(double x, @NotNull List<Double> lst) {
         List<Double> output = new ArrayList<>();
         for(double val : lst) {
             output.add(Math.max(x,val));
@@ -236,7 +241,7 @@ public class NonMaxSuppressor {
      * @param mask A list of valid indexes for the min() operation to take place.
      * @return A list where all elements > x are replaced with x.
      */
-    private List<Double> listMin(double x, List<Double> lst, List<Integer> mask) {
+    private List<Double> listMin(double x, @NotNull List<Double> lst, @NotNull List<Integer> mask) {
         List<Double> output = new ArrayList<>();
         for(int idx : mask) {
             output.add(Math.min(x,lst.get(idx)));
@@ -250,7 +255,7 @@ public class NonMaxSuppressor {
      * @param input The input list.
      * @return A list of the indexes of each of the elements in the sorted list (in the sorted order).
      */
-    private List<Integer> argsort(List<Double> input) {
+    private List<Integer> argsort(@NotNull List<Double> input) {
         List<Integer> output = new ArrayList<>();
         List<Double> cpy = new ArrayList<>(input);
         List<Double> lstSorted = new ArrayList<>(input);

@@ -1,6 +1,10 @@
 package com.SCHSRobotics.HAL9001.util.misc;
 
+import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotAnAlchemistException;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -23,7 +27,8 @@ public class ConfigData {
      *
      * @param map A hashmap containing raw data pulled from the config.
      */
-    public ConfigData(Map<String,Object> map) {
+    @Contract(pure = true)
+    public ConfigData(@NotNull Map<String,Object> map) {
         this.map = map;
     }
 
@@ -38,14 +43,10 @@ public class ConfigData {
      * @throws NullPointerException Throws this exception if the config option does not exist.
      * @throws NotAnAlchemistException Throws this exception if the wrong type parameter was provided for the config option.
      */
-    public <T> T getData(String name, Class<T> clazz) {
+    public <T> T getData(@NotNull String name, @NotNull Class<T> clazz) {
         Object val = map.get(name);
-        if(val == null) {
-            throw new NullPointerException("No such value in config with name "+name);
-        }
-        if(!clazz.isInstance(val)) {
-            throw new NotAnAlchemistException("Wrong type parameter provided for config parameter "+name);
-        }
+        ExceptionChecker.assertNonNull(val,new NullPointerException("No such value in config with name "+name));
+        ExceptionChecker.assertTrue(clazz.isInstance(val),new NotAnAlchemistException("Wrong type parameter provided for config parameter "+name));
         return clazz.cast(val);
     }
 }

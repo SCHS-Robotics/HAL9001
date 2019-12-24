@@ -3,10 +3,14 @@ package com.SCHSRobotics.HAL9001.system.subsystems.cursors;
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
 import com.SCHSRobotics.HAL9001.system.source.GUI.Cursor;
 import com.SCHSRobotics.HAL9001.system.source.GUI.Menu;
+import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
 import com.SCHSRobotics.HAL9001.util.misc.BaseParam;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A default cursor object with normal movement and selection operations.
@@ -16,6 +20,7 @@ import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
  * @since 1.0.0, Creation Date: 7/20/19
  * @version 1.0.0
  */
+@SuppressWarnings({"WeakerAccess","unused"})
 public class DefaultCursor extends Cursor {
 
     //The customizable set of inputs used to control the cursor.
@@ -30,7 +35,7 @@ public class DefaultCursor extends Cursor {
      *
      * @param robot The robot the cursor is associated with.
      */
-    public DefaultCursor(Robot robot, Params params) {
+    public DefaultCursor(@NotNull Robot robot, @NotNull Params params) {
         super(params.x, params.y, params.blinkSpeedMs, params.cursorIcon);
         inputs = new CustomizableGamepad(robot);
 
@@ -50,17 +55,13 @@ public class DefaultCursor extends Cursor {
      *
      * @throws NotBooleanInputException Throws an exception if button does not return boolean values.
      */
-    public void setInputs(Button up, Button down, Button left, Button right, Button select){
-        if(up.isBoolean && down.isBoolean && left.isBoolean && right.isBoolean && select.isBoolean) {
-            inputs.addButton(UP, up);
-            inputs.addButton(DOWN, down);
-            inputs.addButton(LEFT, left);
-            inputs.addButton(RIGHT, right);
-            inputs.addButton(SELECT, select);
-        }
-        else{
-            throw new NotBooleanInputException("DefaultCursor requires all boolean inputs");
-        }
+    public void setInputs(@NotNull Button up, @NotNull Button down, @NotNull Button left, @NotNull Button right, @NotNull Button select){
+        ExceptionChecker.assertTrue(up.isBoolean && down.isBoolean && left.isBoolean && right.isBoolean && select.isBoolean, new NotBooleanInputException("DefaultCursor requires all boolean inputs"));
+        inputs.addButton(UP, up);
+        inputs.addButton(DOWN, down);
+        inputs.addButton(LEFT, left);
+        inputs.addButton(RIGHT, right);
+        inputs.addButton(SELECT, select);
     }
 
     @Override
@@ -124,6 +125,7 @@ public class DefaultCursor extends Cursor {
          * @param blinkSpeedMs The blink speed in miliseconds.
          * @return This instance of the params class.
          */
+        @Contract("_ -> this")
         public Params setBlinkSpeedMs(int blinkSpeedMs) {
             this.blinkSpeedMs = blinkSpeedMs;
             return this;
@@ -135,7 +137,8 @@ public class DefaultCursor extends Cursor {
          * @param button The up button.
          * @return This instance of the params class.
          */
-        public Params setUpButton(Button button) {
+        @Contract("_ -> this")
+        public Params setUpButton(@NotNull Button button) {
             buttons[0] = button;
             return this;
         }
@@ -146,7 +149,8 @@ public class DefaultCursor extends Cursor {
          * @param button The down button.
          * @return This instance of the params class.
          */
-        public Params setDownButton(Button button) {
+        @Contract("_ -> this")
+        public Params setDownButton(@NotNull Button button) {
             buttons[1] = button;
             return this;
         }
@@ -157,7 +161,8 @@ public class DefaultCursor extends Cursor {
          * @param button The left button.
          * @return This instance of the params class.
          */
-        public Params setLeftButton(Button button) {
+        @Contract("_ -> this")
+        public Params setLeftButton(@NotNull Button button) {
             buttons[2] = button;
             return this;
         }
@@ -168,7 +173,8 @@ public class DefaultCursor extends Cursor {
          * @param button The right button.
          * @return This instance of the params class.
          */
-        public Params setRightButton(Button button) {
+        @Contract("_ -> this")
+        public Params setRightButton(@NotNull Button button) {
             buttons[3] = button;
             return this;
         }
@@ -179,7 +185,8 @@ public class DefaultCursor extends Cursor {
          * @param button The select button.
          * @return This instance of the params class.
          */
-        public Params setSelectButton(Button button) {
+        @Contract("_ -> this")
+        public Params setSelectButton(@NotNull Button button) {
             buttons[4] = button;
             return this;
         }
@@ -190,6 +197,7 @@ public class DefaultCursor extends Cursor {
          * @param cursorIcon The cursor's blink icon.
          * @return This instance of the params class.
          */
+        @Contract("_ -> this")
         public Params setCursorIcon(char cursorIcon) {
             this.cursorIcon = cursorIcon;
             return this;
@@ -201,6 +209,7 @@ public class DefaultCursor extends Cursor {
          * @param doBlink Whether the cursor should blink.
          * @return This instance of the params class.
          */
+        @Contract("_ -> this")
         public Params setDoBlink(boolean doBlink) {
             this.doBlink = doBlink;
             return this;
@@ -212,6 +221,7 @@ public class DefaultCursor extends Cursor {
          * @param x The cursor's initial x coordinate.
          * @return This instance of the params class.
          */
+        @Contract("_ -> this")
         public Params setX(int x) {
             this.x = x;
             return this;
@@ -223,6 +233,7 @@ public class DefaultCursor extends Cursor {
          * @param y The cursor's initial y coordinate.
          * @return This instance of the params class.
          */
+        @Contract("_ -> this")
         public Params setY(int y) {
             this.y = y;
             return this;

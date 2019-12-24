@@ -6,6 +6,8 @@ import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +22,7 @@ import java.util.Map;
  *
  * Creation Date: 7/20/19
  */
+@SuppressWarnings({"WeakerAccess","unused"})
 public class GUI {
 
     //The current active menu.
@@ -32,8 +35,6 @@ public class GUI {
     private Cursor cursor;
     //A boolean value that becomes true when the user attempts to cycle menus.
     private boolean cycle;
-    //The character to be drawn to the screen at the coordinates of the cursor.
-    private char drawChar;
     //The time at which the last render action occurred in milliseconds.
     private long lastRenderTime;
     //The current state of the cursor's blinking and the index of the active menu in a list of the hashmap's values.
@@ -57,7 +58,7 @@ public class GUI {
      *
      * @throws NotBooleanInputException Throws an exception if button does not return boolean values.
      */
-    public GUI(Robot robot, Button flipMenu) {
+    public GUI(@NotNull Robot robot, @NotNull Button flipMenu) {
         this.robot = robot;
         this.menus = new HashMap<>();
 
@@ -88,9 +89,6 @@ public class GUI {
         if(menus.size() > 0){
             Menu menu = menus.get(menuKeys.get(activeMenuIdx));
             ExceptionChecker.assertNonNull(menu, new NullPointerException("Requested Active Menu does not exist."));
-            if(menu == null) {
-                throw new NullPointerException("Requested Active Menu does not exist.");
-            }
             cursor = menu.cursor;
         }
         for(Menu m : menus.values()) {
@@ -128,7 +126,7 @@ public class GUI {
                 cycle = false;
             }
 
-            if (System.currentTimeMillis() - lastRenderTime >= cursor.blinkSpeedMs || cursor.cursorUpdated || cycle) {
+            if (System.currentTimeMillis() - lastRenderTime >= cursor.getBlinkSpeedMs() || cursor.cursorUpdated || cycle) {
 
                 if (cursor.cursorUpdated) {
                     cursorBlinkState = 0;
@@ -163,7 +161,7 @@ public class GUI {
                 cycle = false;
             }
 
-            if (System.currentTimeMillis() - lastRenderTime >= cursor.blinkSpeedMs || cursor.cursorUpdated || cycle) {
+            if (System.currentTimeMillis() - lastRenderTime >= cursor.getBlinkSpeedMs() || cursor.cursorUpdated || cycle) {
 
                 if (cursor.cursorUpdated) {
                     cursorBlinkState = 0;
@@ -193,7 +191,7 @@ public class GUI {
      * @param name - The menu object to be added.
      * @param menu - The name of the menu.
      */
-    public void addMenu(String name, Menu menu){
+    public void addMenu(@NotNull String name, @NotNull Menu menu){
         menus.put(name, menu);
         menuKeys.add(name);
         if(menus.size() == 1){
@@ -206,7 +204,7 @@ public class GUI {
      *
      * @param name - The name of the menu to be removed.
      */
-    public void removeMenu(String name) {
+    public void removeMenu(@NotNull String name) {
 
         if(name.equals(menuKeys.get(activeMenuIdx))) {
             robot.telemetry.clearAll();
@@ -233,18 +231,15 @@ public class GUI {
      * @param menuName - The name of the menu to be set as the active menu.
      * @throws NullPointerException Throws this exception when the requested active menu does not exist.
      */
-    public void setActiveMenu(String menuName){
+    public void setActiveMenu(@NotNull String menuName){
 
         this.activeMenu = menus.get(menuName);
         this.activeMenuIdx = menuKeys.indexOf(menuName);
         Menu menu = menus.get(menuName);
-        if(menu == null) {
-            throw new NullPointerException("Requested active menu does not exist.");
-        }
-        else {
-            menu.open();
-            cursor = menu.cursor;
-        }
+        ExceptionChecker.assertNonNull(menu, new NullPointerException("Requested active menu does not exist."));
+
+        menu.open();
+        cursor = menu.cursor;
     }
 
     /**
@@ -252,8 +247,8 @@ public class GUI {
      *
      * @param line - The line object where the cursor is currently located.
      */
-    private void blinkCursor(GuiLine line) {
-        char[] chars = line.selectionZoneText.toCharArray();
+    private void blinkCursor(@NotNull GuiLine line) {
+        char[] chars = line.getSelectionZoneText().toCharArray();
 
         if(System.currentTimeMillis() - lastBlinkTimeMs >= cursor.getBlinkSpeedMs()) {
             cursorBlinkState++;
@@ -266,7 +261,7 @@ public class GUI {
         }
 
         if(chars.length != 0) {
-            drawChar = cursorBlinkState == 0 ? cursor.getCursorIcon() : chars[cursor.getX()];
+            char drawChar = cursorBlinkState == 0 ? cursor.getCursorIcon() : chars[cursor.getX()];
             chars[cursor.getX()] = drawChar;
         }
 
@@ -287,7 +282,7 @@ public class GUI {
      * @param line - The line object to display.
      * @param lineNumber - The line number (starts at 0 at the top).
      */
-    protected void displayLine(GuiLine line, int lineNumber){
+    protected void displayLine(@NotNull GuiLine line, int lineNumber){
         if(cursor.getY() == lineNumber){
             blinkCursor(line);
         }
@@ -302,7 +297,7 @@ public class GUI {
      * @param menuName - The name of the menu in the GUI.
      * @return - The menu object corresponding to menuName in the GUI.
      */
-    public Menu getMenu(String menuName) {
+    public Menu getMenu(@NotNull String menuName) {
         return menus.get(menuName);
     }
 
@@ -311,7 +306,7 @@ public class GUI {
      *
      * @param cycleButton - The button that will be used to cycle through menus.
      */
-    public void overrideCycleButton(Button cycleButton) {
+    public void overrideCycleButton(@NotNull Button cycleButton) {
         inputs.removeButton(CYCLE_MENUS);
         inputs.addButton(CYCLE_MENUS,cycleButton);
     }
@@ -322,7 +317,7 @@ public class GUI {
      * @param menuName - The name of the menu to search for.
      * @return Whether or not the menu is in the GUI.
      */
-    public boolean isMenuPresent(String menuName) {
+    public boolean isMenuPresent(@NotNull String menuName) {
         return menuKeys.contains(menuName);
     }
 }

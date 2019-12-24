@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.util.exceptions;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * An exception thrown if an invalid link is used in the LinkTo annotation.
  *
@@ -16,7 +18,7 @@ public class InvalidLinkException extends RuntimeException {
      *
      * @param message The error message to print to the screen.
      */
-    public InvalidLinkException(String message) {
+    public InvalidLinkException(@Nullable String message) {
         super(message);
     }
 }

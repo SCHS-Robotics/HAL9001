@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.util.exceptions;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * An exception thrown when a selection zone is filled with too many or too few lines.
  *
@@ -17,5 +19,5 @@ public class WrongSkyscraperBlueprintException extends RuntimeException{
      *
      * @param message The message to print to the screen.
      */
-    public WrongSkyscraperBlueprintException(String message) {super(message);}
+    public WrongSkyscraperBlueprintException(@Nullable String message) {super(message);}
 }

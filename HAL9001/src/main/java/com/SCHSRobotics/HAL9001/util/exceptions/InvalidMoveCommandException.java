@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.util.exceptions;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * An exception thrown if a drive train is given an invalid movement command.
  *
@@ -16,7 +18,7 @@ public class InvalidMoveCommandException extends RuntimeException {
      *
      * @param message The error message to print to the screen.
      */
-    public InvalidMoveCommandException(String message) {
+    public InvalidMoveCommandException(@Nullable String message) {
         super(message);
     }
 }

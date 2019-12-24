@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.util.exceptions;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * An exception thrown if a channel in a color image does not exist.
  *
@@ -16,7 +18,7 @@ public class ViewportDisabledException extends RuntimeException {
      *
      * @param message The message to print to the screen.
      */
-    public ViewportDisabledException(String message) {
+    public ViewportDisabledException(@Nullable String message) {
         super(message);
     }
 }

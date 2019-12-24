@@ -24,6 +24,7 @@ import java.io.PrintStream;
  *
  * Creation Date: 8/3/19
  */
+@SuppressWarnings("unused")
 public class Grapher {
 
     //The x and y data of the graph.

@@ -1,6 +1,10 @@
 package com.SCHSRobotics.HAL9001.util.math;
 
-import android.util.Log;
+import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,11 +22,13 @@ import java.util.Set;
  *
  * Creation Date: 10/19/20.
  */
+@SuppressWarnings("unused")
 public class ArrayMath {
 
     /**
      * Private default constructor to make class basically static.
      */
+    @Contract(pure = true)
     private ArrayMath() {}
 
     /**
@@ -32,9 +38,9 @@ public class ArrayMath {
      * @param <T> The element type of the array.
      * @return The maximum of the array.
      */
-    public static <T extends Comparable<? super T>> T max(T[] array) {
+    @Nullable
+    public static <T extends Comparable<? super T>> T max(@NotNull T[] array) {
         if(array.length == 0) {
-            Log.w("Array Math Warning","Warning! Finding the maximum number of an empty array will return null!");
             return null;
         }
         return max(array,array.length);
@@ -48,7 +54,7 @@ public class ArrayMath {
      * @param <T> The element type of the array.
      * @return The maximum of the array.
      */
-    private static <T extends Comparable<? super T>> T max(T[] array, int n) {
+    private static <T extends Comparable<? super T>> T max(@NotNull T[] array, int n) {
         if(n == 1) {
             return array[0];
         }
@@ -62,7 +68,7 @@ public class ArrayMath {
      * @param array The input array.
      * @return The maximum of the array.
      */
-    public static double max(double[] array) {
+    public static double max(@NotNull double[] array) {
         if(array.length == 0) {
             return 0;
         }
@@ -76,7 +82,7 @@ public class ArrayMath {
      * @param n The maximum index of the elements in the array that will be compared.
      * @return The maximum of the array.
      */
-    private static double max(double[] array, int n) {
+    private static double max(@NotNull double[] array, int n) {
         if(n == 1) {
             return array[0];
         }
@@ -89,7 +95,7 @@ public class ArrayMath {
      * @param array The input array.
      * @return The maximum of the array.
      */
-    public static int max(int[] array) {
+    public static int max(@NotNull int[] array) {
         if(array.length == 0) {
             return 0;
         }
@@ -103,7 +109,7 @@ public class ArrayMath {
      * @param n The maximum index of the elements in the array that will be compared.
      * @return The maximum of the array.
      */
-    private static int max(int[] array, int n) {
+    private static int max(@NotNull int[] array, int n) {
         if(n == 1) {
             return array[0];
         }
@@ -116,7 +122,7 @@ public class ArrayMath {
      * @param array The input array.
      * @return The maximum of the array.
      */
-    public static float max(float[] array) {
+    public static float max(@NotNull float[] array) {
         if(array.length == 0) {
             return 0;
         }
@@ -130,7 +136,7 @@ public class ArrayMath {
      * @param n The maximum index of the elements in the array that will be compared.
      * @return The maximum of the array.
      */
-    private static float max(float[] array, int n) {
+    private static float max(@NotNull float[] array, int n) {
         if(n == 1) {
             return array[0];
         }
@@ -143,7 +149,7 @@ public class ArrayMath {
      * @param array The input array.
      * @return The maximum of the array.
      */
-    public static long max(long[] array) {
+    public static long max(@NotNull long[] array) {
         if(array.length == 0) {
             return 0;
         }
@@ -157,7 +163,7 @@ public class ArrayMath {
      * @param n The maximum index of the elements in the array that will be compared.
      * @return The maximum of the array.
      */
-    private static long max(long[] array, int n) {
+    private static long max(@NotNull long[] array, int n) {
         if(n == 1) {
             return array[0];
         }
@@ -170,7 +176,7 @@ public class ArrayMath {
      * @param array The input array.
      * @return The maximum of the array.
      */
-    public static short max(short[] array) {
+    public static short max(@NotNull short[] array) {
         if(array.length == 0) {
             return 0;
         }
@@ -184,7 +190,7 @@ public class ArrayMath {
      * @param n The maximum index of the elements in the array that will be compared.
      * @return The maximum of the array.
      */
-    private static short max(short[] array, int n) {
+    private static short max(@NotNull short[] array, int n) {
         if(n == 1) {
             return array[0];
         }
@@ -198,7 +204,8 @@ public class ArrayMath {
      * @param <T> The element type of the array.
      * @return The minimum of the array.
      */
-    public static <T extends Comparable<? super T>> T min(T[] array) {
+    @Nullable
+    public static <T extends Comparable<? super T>> T min(@NotNull T[] array) {
         if(array.length == 0) {
             return null;
         }
@@ -213,7 +220,7 @@ public class ArrayMath {
      * @param <T> The element type of the array.
      * @return The minimum of the array.
      */
-    private static <T extends Comparable<? super T>> T min(T[] array, int n) {
+    private static <T extends Comparable<? super T>> T min(@NotNull T[] array, int n) {
         if(n == 1) {
             return array[0];
         }
@@ -227,7 +234,7 @@ public class ArrayMath {
      * @param array The input array.
      * @return The minimum of the array.
      */
-    public static double min(double[] array) {
+    public static double min(@NotNull double[] array) {
         if(array.length == 0) {
             return 0;
         }
@@ -241,7 +248,7 @@ public class ArrayMath {
      * @param n The maximum index of the elements in the array that will be compared.
      * @return The minimum of the array.
      */
-    private static double min(double[] array, int n) {
+    private static double min(@NotNull double[] array, int n) {
         if(n == 1) {
             return array[0];
         }
@@ -254,7 +261,7 @@ public class ArrayMath {
      * @param array The input array.
      * @return The minimum of the array.
      */
-    public static int min(int[] array) {
+    public static int min(@NotNull int[] array) {
         if(array.length == 0) {
             return 0;
         }
@@ -268,7 +275,7 @@ public class ArrayMath {
      * @param n The maximum index of the elements in the array that will be compared.
      * @return The minimum of the array.
      */
-    private static int min(int[] array, int n) {
+    private static int min(@NotNull int[] array, int n) {
         if(n == 1) {
             return array[0];
         }
@@ -281,7 +288,7 @@ public class ArrayMath {
      * @param array The input array.
      * @return The minimum of the array.
      */
-    public static float min(float[] array) {
+    public static float min(@NotNull float[] array) {
         if(array.length == 0) {
             return 0;
         }
@@ -295,7 +302,7 @@ public class ArrayMath {
      * @param n The maximum index of the elements in the array that will be compared.
      * @return The minimum of the array.
      */
-    private static float min(float[] array, int n) {
+    private static float min(@NotNull float[] array, int n) {
         if(n == 1) {
             return array[0];
         }
@@ -308,7 +315,7 @@ public class ArrayMath {
      * @param array The input array.
      * @return The minimum of the array.
      */
-    public static long min(long[] array) {
+    public static long min(@NotNull long[] array) {
         if(array.length == 0) {
             return 0;
         }
@@ -322,7 +329,7 @@ public class ArrayMath {
      * @param n The maximum index of the elements in the array that will be compared.
      * @return The minimum of the array.
      */
-    private static long min(long[] array, int n) {
+    private static long min(@NotNull long[] array, int n) {
         if(n == 1) {
             return array[0];
         }
@@ -335,7 +342,7 @@ public class ArrayMath {
      * @param array The input array.
      * @return The minimum of the array.
      */
-    public static short min(short[] array) {
+    public static short min(@NotNull short[] array) {
         if(array.length == 0) {
             return 0;
         }
@@ -349,7 +356,7 @@ public class ArrayMath {
      * @param n The maximum index of the elements in the array that will be compared.
      * @return The minimum of the array.
      */
-    private static short min(short[] array, int n) {
+    private static short min(@NotNull short[] array, int n) {
         if(n == 1) {
             return array[0];
         }
@@ -365,7 +372,7 @@ public class ArrayMath {
      * @param <T> The element type of the array.
      * @return The slice of the array that goes from startIdx to endIdx (inclusive).
      */
-    public static <T> T[] slice(T[] array, int startIdx, int endIdx) {
+    public static <T> T[] slice(@NotNull T[] array, int startIdx, int endIdx) {
         return Arrays.copyOfRange(array, startIdx, endIdx + 1);
     }
 
@@ -377,7 +384,7 @@ public class ArrayMath {
      * @param endIdx The ending index for the slice.
      * @return The slice of the array that goes from startIdx to endIdx (inclusive).
      */
-    public static double[] slice(double[] array, int startIdx, int endIdx) {
+    public static double[] slice(@NotNull double[] array, int startIdx, int endIdx) {
         return Arrays.copyOfRange(array, startIdx, endIdx + 1);
     }
 
@@ -389,7 +396,7 @@ public class ArrayMath {
      * @param endIdx The ending index for the slice.
      * @return The slice of the array that goes from startIdx to endIdx (inclusive).
      */
-    public static int[] slice(int[] array, int startIdx, int endIdx) {
+    public static int[] slice(@NotNull int[] array, int startIdx, int endIdx) {
         return Arrays.copyOfRange(array, startIdx, endIdx + 1);
     }
 
@@ -401,7 +408,7 @@ public class ArrayMath {
      * @param endIdx The ending index for the slice.
      * @return The slice of the array that goes from startIdx to endIdx (inclusive).
      */
-    public static float[] slice(float[] array, int startIdx, int endIdx) {
+    public static float[] slice(@NotNull float[] array, int startIdx, int endIdx) {
         return Arrays.copyOfRange(array, startIdx, endIdx + 1);
     }
 
@@ -413,7 +420,7 @@ public class ArrayMath {
      * @param endIdx The ending index for the slice.
      * @return The slice of the array that goes from startIdx to endIdx (inclusive).
      */
-    public static long[] slice(long[] array, int startIdx, int endIdx) {
+    public static long[] slice(@NotNull long[] array, int startIdx, int endIdx) {
         return Arrays.copyOfRange(array, startIdx, endIdx + 1);
     }
 
@@ -425,7 +432,7 @@ public class ArrayMath {
      * @param endIdx The ending index for the slice.
      * @return The slice of the array that goes from startIdx to endIdx (inclusive).
      */
-    public static short[] slice(short[] array, int startIdx, int endIdx) {
+    public static short[] slice(@NotNull short[] array, int startIdx, int endIdx) {
         return Arrays.copyOfRange(array, startIdx, endIdx + 1);
     }
 
@@ -435,7 +442,7 @@ public class ArrayMath {
      * @param array The input array.
      * @param multiplier The constant to multiply by.
      */
-    public static void multiply(double[] array, double multiplier) {
+    public static void multiply(@NotNull double[] array, double multiplier) {
         for(int i = 0; i < array.length; i++) {
             array[i] = array[i]*multiplier;
         }
@@ -447,7 +454,7 @@ public class ArrayMath {
      * @param array The input array.
      * @param multiplier The constant to multiply by.
      */
-    public static void multiply(int[] array, int multiplier) {
+    public static void multiply(@NotNull int[] array, int multiplier) {
         for(int i = 0; i < array.length; i++) {
             array[i] = array[i]*multiplier;
         }
@@ -459,7 +466,7 @@ public class ArrayMath {
      * @param array The input array.
      * @param multiplier The constant to multiply by.
      */
-    public static void multiply(float[] array, float multiplier) {
+    public static void multiply(@NotNull float[] array, float multiplier) {
         for(int i = 0; i < array.length; i++) {
             array[i] = array[i]*multiplier;
         }
@@ -471,7 +478,7 @@ public class ArrayMath {
      * @param array The input array.
      * @param multiplier The constant to multiply by.
      */
-    public static void multiply(long[] array, long multiplier) {
+    public static void multiply(@NotNull long[] array, long multiplier) {
         for(int i = 0; i < array.length; i++) {
             array[i] = array[i]*multiplier;
         }
@@ -483,7 +490,7 @@ public class ArrayMath {
      * @param array The input array.
      * @param multiplier The constant to multiply by.
      */
-    public static void multiply(int[] array, double multiplier) {
+    public static void multiply(@NotNull int[] array, double multiplier) {
         for(int i = 0; i < array.length; i++) {
             array[i] = (int) Math.round(array[i]*multiplier);
         }
@@ -495,7 +502,7 @@ public class ArrayMath {
      * @param array The input array.
      * @param multiplier The constant to multiply by.
      */
-    public static void multiply(float[] array, double multiplier) {
+    public static void multiply(@NotNull float[] array, double multiplier) {
         for(int i = 0; i < array.length; i++) {
             array[i] = array[i]*(float) multiplier;
         }
@@ -507,9 +514,9 @@ public class ArrayMath {
      * @param array The input array.
      * @param multiplier The constant to multiply by.
      */
-    public static void multiply(long[] array, double multiplier) {
+    public static void multiply(@NotNull long[] array, double multiplier) {
         for(int i = 0; i < array.length; i++) {
-            array[i] = array[i]*(long) multiplier;
+            array[i] = Math.round(array[i]*multiplier);
         }
     }
 
@@ -519,7 +526,8 @@ public class ArrayMath {
      * @param array The input array.
      * @param multiplier The constant to divide by.
      */
-    public static void divide(double[] array, double multiplier) {
+    public static void divide(@NotNull double[] array, double multiplier) {
+        ExceptionChecker.assertNotEqual(multiplier,0.0,new ArithmeticException("You can't divide by zero."));
         multiply(array, 1.0/multiplier);
     }
 
@@ -529,7 +537,8 @@ public class ArrayMath {
      * @param array The input array.
      * @param multiplier The constant to divide by.
      */
-    public static void divide(int[] array, int multiplier) {
+    public static void divide(@NotNull int[] array, int multiplier) {
+        ExceptionChecker.assertNotEqual(multiplier,0,new ArithmeticException("You can't divide by zero."));
         multiply(array, 1.0/multiplier);
     }
 
@@ -539,7 +548,8 @@ public class ArrayMath {
      * @param array The input array.
      * @param multiplier The constant to divide by.
      */
-    public static void divide(float[] array, float multiplier) {
+    public static void divide(@NotNull float[] array, float multiplier) {
+        ExceptionChecker.assertNotEqual(multiplier,0.0f,new ArithmeticException("You can't divide by zero."));
         multiply(array, 1.0/multiplier);
     }
 
@@ -549,7 +559,8 @@ public class ArrayMath {
      * @param array The input array.
      * @param multiplier The constant to divide by.
      */
-    public static void divide(long[] array, long multiplier) {
+    public static void divide(@NotNull long[] array, long multiplier) {
+        ExceptionChecker.assertNotEqual(multiplier,0L,new ArithmeticException("You can't divide by zero."));
         multiply(array, 1.0/multiplier);
     }
 
@@ -559,7 +570,8 @@ public class ArrayMath {
      * @param array The input array.
      * @param multiplier The constant to divide by.
      */
-    public static void divide(int[] array, double multiplier) {
+    public static void divide(@NotNull int[] array, double multiplier) {
+        ExceptionChecker.assertNotEqual(multiplier,0.0,new ArithmeticException("You can't divide by zero."));
         multiply(array, 1.0/multiplier);
     }
 
@@ -569,7 +581,8 @@ public class ArrayMath {
      * @param array The input array.
      * @param multiplier The constant to divide by.
      */
-    public static void divide(float[] array, double multiplier) {
+    public static void divide(@NotNull float[] array, double multiplier) {
+        ExceptionChecker.assertNotEqual(multiplier,0.0,new ArithmeticException("You can't divide by zero."));
         multiply(array, 1.0/multiplier);
     }
 
@@ -579,7 +592,8 @@ public class ArrayMath {
      * @param array The input array.
      * @param multiplier The constant to divide by.
      */
-    public static void divide(long[] array, double multiplier) {
+    public static void divide(@NotNull long[] array, double multiplier) {
+        ExceptionChecker.assertNotEqual(multiplier,0.0,new ArithmeticException("You can't divide by zero."));
         multiply(array, 1.0/multiplier);
     }
 
@@ -589,7 +603,7 @@ public class ArrayMath {
      * @param array The input array.
      * @return The absolute value of the input array.
      */
-    public static double[] abs(double[] array) {
+    public static double[] abs(@NotNull double[] array) {
         double[] output = new double[array.length];
         for (int i = 0; i < array.length; i++) {
             output[i] = Math.abs(array[i]);
@@ -603,7 +617,7 @@ public class ArrayMath {
      * @param array The input array.
      * @return The absolute value of the input array.
      */
-    public static int[] abs(int[] array) {
+    public static int[] abs(@NotNull int[] array) {
         int[] output = new int[array.length];
         for (int i = 0; i < array.length; i++) {
             output[i] = Math.abs(array[i]);
@@ -617,7 +631,7 @@ public class ArrayMath {
      * @param array The input array.
      * @return The absolute value of the input array.
      */
-    public static float[] abs(float[] array) {
+    public static float[] abs(@NotNull float[] array) {
         float[] output = new float[array.length];
         for (int i = 0; i < array.length; i++) {
             output[i] = Math.abs(array[i]);
@@ -631,7 +645,7 @@ public class ArrayMath {
      * @param array The input array.
      * @return The absolute value of the input array.
      */
-    public static long[] abs(long[] array) {
+    public static long[] abs(@NotNull long[] array) {
         long[] output = new long[array.length];
         for (int i = 0; i < array.length; i++) {
             output[i] = Math.abs(array[i]);
@@ -639,20 +653,18 @@ public class ArrayMath {
         return output;
     }
 
-    public static <T> boolean checkForDuplicates(T... array) {
+    public static <T> boolean checkForDuplicates(@NotNull T[] array) {
         Set<T> set = new HashSet<>();
         for(T element : array) {
             if(set.contains(element)) {
                 return true;
             }
-            if(element != null) {
-                set.add(element);
-            }
+            set.add(element);
         }
         return false;
     }
 
-    public static <T> T[] removeDuplicates(T... array)
+    public static <T> T[] removeDuplicates(@NotNull T[] array)
     {
         Set<T> set = new LinkedHashSet<>(Arrays.asList(array));
 

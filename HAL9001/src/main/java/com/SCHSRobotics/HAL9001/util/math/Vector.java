@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.util.math;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A class for doing mathematical operations on 2 dimensional vectors.
  *
@@ -9,6 +11,7 @@ package com.SCHSRobotics.HAL9001.util.math;
  *
  * Creation Date: 7/11/17
  */
+@SuppressWarnings({"WeakerAccess","unused"})
 public class Vector {
 
     /**
@@ -28,7 +31,7 @@ public class Vector {
      * @param iny The second input component.
      * @param inCoord The enum specifying the input format.
      */
-    public Vector(double inx, double iny, CoordinateType inCoord) {
+    public Vector(double inx, double iny, @NotNull CoordinateType inCoord) {
         if (inCoord == CoordinateType.CARTESIAN) {
             this.x = inx;
             this.y = iny;

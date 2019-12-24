@@ -1,5 +1,10 @@
 package com.SCHSRobotics.HAL9001.util.misc;
 
+import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
+import com.SCHSRobotics.HAL9001.util.exceptions.NotARealGamepadException;
+
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A class representing a button on the gamepad.
  *
@@ -9,20 +14,21 @@ package com.SCHSRobotics.HAL9001.util.misc;
  *
  * Creation Date: 7/20/19
  */
+@SuppressWarnings({"WeakerAccess","unused"})
 public class Button {
 
     //IsBoolean is ture if is is a boolean input button, isDouble is true if it is a double input button.
     public boolean isBoolean, isDouble, isVector;
     //Number of gamepad to use 1 or 2.
-    public int gamepadNumber;
+    private int gamepadNumber;
     //Double input to use if it is a double input button.
-    public DoubleInputs doubleInput;
+    private DoubleInputs doubleInput;
     //Boolean input to use if it is a boolean input button.
-    public BooleanInputs booleanInput;
+    private BooleanInputs booleanInput;
     //Vector input to use if it is a vector input.
-    public VectorInputs vectorInput;
+    private VectorInputs vectorInput;
     //Deadzone to use for the boolean version of the double inputs.
-    public double deadzone = 0;
+    private double deadzone = 0;
 
     /**
      * Represents the allowed input methods for controls that return double values.
@@ -48,7 +54,7 @@ public class Button {
      * @param gamepadNumber Number of gamepad this button will use.
      * @param inputName DoubleInput that this button will output.
      */
-    public Button(int gamepadNumber, DoubleInputs inputName){
+    public Button(int gamepadNumber, @NotNull DoubleInputs inputName){
         this(gamepadNumber,inputName,0.0);
     }
 
@@ -59,7 +65,7 @@ public class Button {
      * @param inputName DoubleInput that this button will output.
      * @param deadzone Double between 0 and 1 that sets the deadzone.
      */
-    public Button(int gamepadNumber, DoubleInputs inputName, Double deadzone){
+    public Button(int gamepadNumber, @NotNull DoubleInputs inputName, double deadzone){
         this.gamepadNumber = gamepadNumber;
         this.doubleInput = inputName;
         this.isDouble = true;
@@ -75,7 +81,7 @@ public class Button {
      * @param gamepadNumber Number of gamepad this button will use.
      * @param inputName BooleanInput that this button will output.
      */
-    public Button(int gamepadNumber, BooleanInputs inputName){
+    public Button(int gamepadNumber, @NotNull BooleanInputs inputName){
         this(gamepadNumber, inputName, 0.0);
     }
 
@@ -86,7 +92,7 @@ public class Button {
      * @param inputName BooleanInput that this button will output.
      * @param deadzone Double between 0 and 1 that sets the deadzone.
      */
-    public Button(int gamepadNumber, BooleanInputs inputName, Double deadzone){
+    public Button(int gamepadNumber, @NotNull BooleanInputs inputName, double deadzone){
         this.gamepadNumber = gamepadNumber;
         this.booleanInput = inputName;
         this.isDouble = false;
@@ -101,21 +107,12 @@ public class Button {
      * @param gamepadNumber Number of gamepad this button will use.
      *  @param inputName VectorInput that this button will output.
      */
-    public Button(int gamepadNumber, VectorInputs inputName){
+    public Button(int gamepadNumber, @NotNull VectorInputs inputName){
         this.gamepadNumber = gamepadNumber;
         this.vectorInput = inputName;
         this.isDouble = false;
         this.isBoolean = false;
         this.isVector = true;
-    }
-
-    /**
-     * Sets the deadzone for the boolean version of the double inputs.
-     *
-     * @param deadzone Double between 0 and 1 that sets the deadzone.
-     */
-    public void setDeadzone(double deadzone){
-        this.deadzone = deadzone;
     }
 
     /**
@@ -131,5 +128,39 @@ public class Button {
         else {
             return vectorInput;
         }
+    }
+
+    public boolean isBoolean() {
+        return isBoolean;
+    }
+
+    public boolean isDouble() {
+        return isDouble;
+    }
+
+    public boolean isVector() {
+        return isVector;
+    }
+
+    public int getGamepadNumber() {
+        return gamepadNumber;
+    }
+
+    public double getDeadzone() {
+        return deadzone;
+    }
+
+    /**
+     * Sets the deadzone for the boolean version of the double inputs.
+     *
+     * @param deadzone Double between 0 and 1 that sets the deadzone.
+     */
+    public void setDeadzone(double deadzone){
+        this.deadzone = deadzone;
+    }
+
+    public void setGamepadNumber(int gamepadNumber) {
+        ExceptionChecker.assertTrue(gamepadNumber == 1 || gamepadNumber == 2, new NotARealGamepadException("You must use either gamepad 1 or gamepad 2."));
+        this.gamepadNumber = gamepadNumber;
     }
 }

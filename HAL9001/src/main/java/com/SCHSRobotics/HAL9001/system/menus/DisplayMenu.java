@@ -13,6 +13,9 @@ import com.SCHSRobotics.HAL9001.system.source.GUI.GuiLine;
 import com.SCHSRobotics.HAL9001.system.subsystems.cursors.DefaultCursor;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 //TODO make synchronized/multithreaded
@@ -32,7 +35,7 @@ public class DisplayMenu extends BaseDisplayMenu {
      *
      * @param gui The GUI used to render the menu.
      */
-    public DisplayMenu(GUI gui) {
+    public DisplayMenu(@NotNull GUI gui) {
         super(gui, new DefaultCursor(gui.robot,new DefaultCursor.Params().setBlinkSpeedMs(0)), new GuiLine[]{});
     }
 
@@ -42,7 +45,7 @@ public class DisplayMenu extends BaseDisplayMenu {
     }
 
     @Override
-    public void onButton(String name, Button button) {}
+    public void onButton(@NotNull String name, @NotNull Button button) {}
 
     /**
      * Adds a line with a caption and a data value to the end of the menu's lines.
@@ -50,12 +53,12 @@ public class DisplayMenu extends BaseDisplayMenu {
      * @param caption The data's caption.
      * @param data The data to print to the screen.
      */
-    public void addData(String caption, Object data){
-        if(lines.size() == 1 && lines.get(0).postSelectionText.equals("")) {
+    public void addData(@NotNull String caption, @Nullable Object data){
+        if(lines.size() == 1 && lines.get(0).getPostSelectionText().equals("")) {
             clear();
         }
         List<GuiLine> newLines = lines;
-        newLines.add(new GuiLine("", caption + ": " + data.toString(), ""));
+        newLines.add(new GuiLine("", caption + ": " + (data != null ? data.toString() : "null"), ""));
         super.setSelectionZoneHeight(super.getSelectionZoneHeight() + 1, newLines);
     }
 
@@ -64,9 +67,9 @@ public class DisplayMenu extends BaseDisplayMenu {
      *
      * @param text The text to add.
      */
-    public void addLine(String text) {
+    public void addLine(@NotNull String text) {
 
-        if(lines.size() == 1 && lines.get(0).postSelectionText.equals("")) {
+        if(lines.size() == 1 && lines.get(0).getPostSelectionText().equals("")) {
             clear();
         }
         List<GuiLine> newLines = lines;

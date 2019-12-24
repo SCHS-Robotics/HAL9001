@@ -25,5 +25,4 @@ import java.lang.annotation.Target;
 public @interface ConfigurableButton {
     String name();
     ConfigProgramType program_type() default ConfigProgramType.TELEOP;
-    ConfigButtonType default_value();
 }

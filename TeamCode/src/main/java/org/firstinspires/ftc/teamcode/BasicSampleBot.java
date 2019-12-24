@@ -2,13 +2,12 @@ package org.firstinspires.ftc.teamcode;
 
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
 import com.SCHSRobotics.HAL9001.system.subsystems.MechanumDrive;
-import com.SCHSRobotics.HAL9001.util.annotations.DisableSubSystem;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 public class BasicSampleBot extends Robot {
 
     public MechanumDrive drive;
-    public @DisableSubSystem SubSystem1 s1;
+    public SubSystem1 s1;
     /**
      * Constructor for robot.
      *

@@ -3,12 +3,15 @@ package com.SCHSRobotics.HAL9001.util.misc;
 import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
 
+import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-//TODO add more features and test class.
 /**
  * A class for managing, playing, and editing songs.
  *
@@ -19,6 +22,7 @@ import java.util.Random;
  *
  * Creation Date: 8/10/19
  */
+@SuppressWarnings("unused")
 public class BeatBox {
 
     //A hashmap mapping song names to the actual song classes.
@@ -37,7 +41,7 @@ public class BeatBox {
      * @param songName The name of the song.
      * @param song The song class.
      */
-    public void addSong(String songName, MediaPlayer song){
+    public void addSong(@NotNull String songName, @NotNull MediaPlayer song){
         songs.put(songName, song);
     }
 
@@ -46,7 +50,7 @@ public class BeatBox {
      *
      * @param songName The name of the song to remove.
      */
-    public void removeSong(String songName){
+    public void removeSong(@NotNull String songName){
         songs.remove(songName);
     }
 
@@ -55,8 +59,10 @@ public class BeatBox {
      *
      * @param songName The name of the song to play.
      */
-    public void playSong(String songName){
-        songs.get(songName).start();
+    public void playSong(@NotNull String songName){
+        MediaPlayer song = songs.get(songName);
+        ExceptionChecker.assertNonNull(song,new NullPointerException("No song with name "+songName+" is present in this beatbox."));
+        song.start();
     }
 
     /**
@@ -64,8 +70,10 @@ public class BeatBox {
      *
      * @param songName The name of the song to stop playing.
      */
-    public void stopSong(String songName){
-        songs.get(songName).stop();
+    public void stopSong(@NotNull String songName){
+        MediaPlayer song = songs.get(songName);
+        ExceptionChecker.assertNonNull(song,new NullPointerException("No song with name "+songName+" is present in this beatbox."));
+        song.stop();
     }
 
     /**
@@ -74,8 +82,10 @@ public class BeatBox {
      * @param songName The name of the song to loop.
      * @param loop Whether or not the song should infinitely loop.
      */
-    public void setSongLoop(String songName, boolean loop){
-        songs.get(songName).setLooping(loop);
+    public void setSongLoop(@NotNull String songName, boolean loop){
+        MediaPlayer song = songs.get(songName);
+        ExceptionChecker.assertNonNull(song,new NullPointerException("No song with name "+songName+" is present in this beatbox."));
+        song.setLooping(loop);
     }
 
     /**
@@ -101,15 +111,18 @@ public class BeatBox {
     /**
      * Base boost a song.
      *
-     * @param name The name of the song to base boost.
+     * @param songName The name of the song to base boost.
      * @param level The level of base boost, between 0 and 1.
      */
-    public void baseBoost(String name, int level) {
+    public void baseBoost(@NotNull String songName, int level) {
 
         level = level*1000;
 
-        BassBoost bassBoost = new BassBoost(0,songs.get(name).getAudioSessionId());
-        songs.get(name).attachAuxEffect(bassBoost.getId());
-        songs.get(name).setAuxEffectSendLevel(level);
+        MediaPlayer song = songs.get(songName);
+        ExceptionChecker.assertNonNull(song,new NullPointerException("No song with name "+songName+" is present in this beatbox."));
+
+        BassBoost bassBoost = new BassBoost(0,song.getAudioSessionId());
+        song.attachAuxEffect(bassBoost.getId());
+        song.setAuxEffectSendLevel(level);
     }
 }

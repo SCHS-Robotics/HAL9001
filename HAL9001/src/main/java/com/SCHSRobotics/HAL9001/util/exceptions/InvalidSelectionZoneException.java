@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.util.exceptions;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * An exception thrown if the specified command produces or requires an illegal selection zone.
  *
@@ -16,7 +18,7 @@ public class InvalidSelectionZoneException extends RuntimeException {
      *
      * @param message The message to print to the screen.
      */
-    public InvalidSelectionZoneException(String message) {
+    public InvalidSelectionZoneException(@Nullable String message) {
         super(message);
     }
 }

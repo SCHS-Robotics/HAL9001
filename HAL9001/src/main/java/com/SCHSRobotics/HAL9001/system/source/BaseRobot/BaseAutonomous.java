@@ -3,12 +3,20 @@ package com.SCHSRobotics.HAL9001.system.source.BaseRobot;
 import android.util.Log;
 
 import com.SCHSRobotics.HAL9001.util.annotations.LinkTo;
+import com.SCHSRobotics.HAL9001.util.annotations.MainRobot;
+import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.exceptions.NothingToSeeHereException;
 import com.SCHSRobotics.HAL9001.util.misc.AutoTransitioner;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.Supplier;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
  * An abstract class used to more easily create opmodes.
@@ -19,6 +27,7 @@ import org.firstinspires.ftc.robotcore.external.Supplier;
  *
  * Creation Date: 2017
  */
+@SuppressWarnings({"WeakerAccess","unused"})
 public abstract class BaseAutonomous extends LinearOpMode {
 
     //The robot running the opmode.
@@ -33,7 +42,9 @@ public abstract class BaseAutonomous extends LinearOpMode {
      *
      * @return The robot being used in the opmode.
      */
-    protected abstract Robot buildRobot();
+    protected Robot buildRobot() {
+        return null;
+    }
 
     /**
      * Method that runs when the robot is initialized. It is not an abstract method so that it does not have to be implemented if it
@@ -61,9 +72,33 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
     @Override
     public final void runOpMode() {
+        boolean buildRobotPresent;
+        try {
+            Method m = this.getClass().getDeclaredMethod("buildRobot");
+            buildRobotPresent = true;
+        }
+        catch (NoSuchMethodException e) {
+            buildRobotPresent = false;
+        }
 
         try {
-            robot = buildRobot();
+            if(buildRobotPresent) {
+                robot = buildRobot();
+            }
+            else {
+                Field[] fields = this.getClass().getDeclaredFields();
+                for(Field field : fields) {
+                    if(field.isAnnotationPresent(MainRobot.class) && Robot.class.isAssignableFrom(field.getType())) {
+                        robot = (Robot) field.getType().getConstructor(OpMode.class).newInstance(this);
+                        try {
+                            field.set(this, robot);
+                        }
+                        catch (IllegalAccessException e) {
+                            throw new DumpsterFireException("Your robot isn't public, and so @MainRobot won't work. The program can't access it. SHARE!!!!");
+                        }
+                    }
+                }
+            }
             ExceptionChecker.assertNonNull(robot,new NothingToSeeHereException("Robot is null. You need a robot to run the program."));
         }
         catch (Exception ex) {
@@ -73,8 +108,10 @@ public abstract class BaseAutonomous extends LinearOpMode {
         }
 
         if(this.getClass().isAnnotationPresent(LinkTo.class)) {
-            if(this.getClass().getAnnotation(LinkTo.class).auto_transition()) {
-                AutoTransitioner.transitionOnStop(this, this.getClass().getAnnotation(LinkTo.class).destination());
+            LinkTo link = this.getClass().getAnnotation(LinkTo.class);
+            ExceptionChecker.assertNonNull(link, new NullPointerException("If you are seeing this, Java broke, and your problem isn't fixable. Good luck!"));
+            if (link.auto_transition()) {
+                AutoTransitioner.transitionOnStop(this, link.destination());
             }
         }
 
@@ -139,6 +176,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
      *
      * @return The robot running this program.
      */
+    @Contract(pure = true)
     protected final Robot getRobot() {
         return robot;
     }
@@ -161,7 +199,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
      * @param millis The number of milliseconds to wait.
      * @param runner The code to run each loop while waiting.
      */
-    protected final void waitTime(long millis, Runnable runner) {
+    protected final void waitTime(long millis, @NotNull Runnable runner) {
         long stopTime = System.currentTimeMillis() + millis;
         while (robot.opModeIsActive() && System.currentTimeMillis() < stopTime) {
             runner.run();
@@ -174,7 +212,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
      *
      * @param condition The boolean condition that must be true in order for the program to stop waiting.
      */
-    protected final void waitUntil(Supplier<Boolean> condition) {
+    protected final void waitUntil(@NotNull Supplier<Boolean> condition) {
         while (robot.opModeIsActive() && !condition.get()) {
             sleep(1);
         }
@@ -186,7 +224,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
      * @param condition The boolean condition that must be true in order for the program to stop waiting.
      * @param runner The code to run each loop while waiting.
      */
-    protected final void waitUntil(Supplier<Boolean> condition, Runnable runner) {
+    protected final void waitUntil(@NotNull Supplier<Boolean> condition, @NotNull Runnable runner) {
         while (robot.opModeIsActive() && !condition.get()) {
             runner.run();
             sleep(1);
@@ -198,7 +236,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
      *
      * @param condition The boolean condition that must become false for the program to stop waiting.
      */
-    protected final void waitWhile(Supplier<Boolean> condition) {
+    protected final void waitWhile(@NotNull Supplier<Boolean> condition) {
         while (robot.opModeIsActive() && condition.get()) {
             sleep(1);
         }
@@ -210,7 +248,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
      * @param condition The boolean condition that must become false for the program to stop waiting.
      * @param runner The code to run each loop while waiting.
      */
-    protected final void waitWhile(Supplier<Boolean> condition, Runnable runner) {
+    protected final void waitWhile(@NotNull Supplier<Boolean> condition, @NotNull Runnable runner) {
         while (robot.opModeIsActive() && condition.get()) {
             runner.run();
             sleep(1);

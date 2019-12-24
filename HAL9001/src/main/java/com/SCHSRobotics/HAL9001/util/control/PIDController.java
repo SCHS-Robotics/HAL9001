@@ -3,6 +3,8 @@ package com.SCHSRobotics.HAL9001.util.control;
 import com.SCHSRobotics.HAL9001.util.functional_interfaces.BiFunction;
 import com.qualcomm.robotcore.util.Range;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A PID controller class with multiple modes.
  *
@@ -12,6 +14,7 @@ import com.qualcomm.robotcore.util.Range;
  *
  * Creation Date: 7/17/19
  */
+@SuppressWarnings("unused")
 public class PIDController {
 
     //Function used to calculate error value.
@@ -35,6 +38,7 @@ public class PIDController {
     //A boolean specifying if the controller is currently active.
     private boolean active;
 
+    //The controller's deadband value. Controller will return 0 correction if the error is within +- deadband of 0.
     public double deadband;
 
     /**
@@ -69,7 +73,7 @@ public class PIDController {
      * @param kd Derivative control coefficient
      * @param errorFunction Specified error function to use for control
      */
-    public PIDController(double kp, double ki, double kd, BiFunction<Double,Double,Double> errorFunction) {
+    public PIDController(double kp, double ki, double kd, @NotNull BiFunction<Double,Double,Double> errorFunction) {
         this(kp,ki,kd,errorFunction, Type.STANDARD);
     }
 
@@ -81,7 +85,7 @@ public class PIDController {
      * @param kd Derivative control coefficient.
      * @param type Type of control system to use.
      */
-    public PIDController(double kp, double ki, double kd, Type type) {
+    public PIDController(double kp, double ki, double kd, @NotNull Type type) {
         this(kp,ki,kd,new BiFunction<Double, Double, Double>() {
             @Override
             public Double apply(Double target, Double current) {
@@ -99,7 +103,7 @@ public class PIDController {
      * @param errorFunction Specified error function to use for control
      * @param type Type of control system to use
      */
-    public PIDController(double kp, double ki, double kd, BiFunction<Double,Double,Double> errorFunction, Type type) {
+    public PIDController(double kp, double ki, double kd, @NotNull BiFunction<Double,Double,Double> errorFunction, @NotNull Type type) {
         this.kp = kp;
         this.ki = ki;
         this.kd = kd;
@@ -118,7 +122,7 @@ public class PIDController {
      * @param kf Feedforward control coefficient.
      * @param errorFunction Specified error function to use for control.
      */
-    public PIDController(double kp, double ki, double kd, double kf, BiFunction<Double,Double,Double> errorFunction) {
+    public PIDController(double kp, double ki, double kd, double kf, @NotNull BiFunction<Double,Double,Double> errorFunction) {
         this(kp,ki,kd,kf,errorFunction, Type.FEED_FORWARD);
     }
 
@@ -131,7 +135,7 @@ public class PIDController {
      * @param kf Feedforward control coefficient.
      * @param type The type of the PID(F) controller.
      */
-    public PIDController(double kp, double ki, double kd, double kf, Type type) {
+    public PIDController(double kp, double ki, double kd, double kf, @NotNull Type type) {
         this(kp,ki,kd,kf,new BiFunction<Double, Double, Double>() {
             @Override
             public Double apply(Double target, Double current) {
@@ -167,7 +171,7 @@ public class PIDController {
      * @param errorFunction Specified error function to use for control.
      * @param type The type of the PID(F) controller.
      */
-    public PIDController(double kp, double ki, double kd, double kf, BiFunction<Double,Double,Double> errorFunction, Type type) {
+    public PIDController(double kp, double ki, double kd, double kf, @NotNull BiFunction<Double,Double,Double> errorFunction, @NotNull Type type) {
         this.kp = kp;
         this.ki = ki;
         this.kd = kd;
@@ -349,5 +353,9 @@ public class PIDController {
 
     public double[] getTunings() {
         return type == Type.FEED_FORWARD ? new double[] {kp, ki, kd, kf} : new double[] {kp, ki, kd};
+    }
+
+    public double getLastOutput() {
+        return lastOutput;
     }
 }

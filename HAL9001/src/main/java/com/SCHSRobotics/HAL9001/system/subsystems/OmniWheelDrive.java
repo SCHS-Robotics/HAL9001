@@ -47,6 +47,7 @@ import static java.lang.Math.PI;
  *
  * Creation Date: 9/1/19
  */
+@SuppressWarnings({"WeakerAccess","unused"})
 public class OmniWheelDrive extends SubSystem {
 
     //Names of all the controls.
@@ -1205,7 +1206,6 @@ public class OmniWheelDrive extends SubSystem {
         turnPID.setDeadband(tolerance);
         turnPID.setSetpoint(angle);
         double correction = 1;
-        //TODO replace with waitTime statement
         while(robot.opModeIsActive() && correction != 0) {
             correction = turnPID.getCorrection(getCurrentAngle(useDegreesTurn ? AngleUnit.DEGREES : AngleUnit.RADIANS));
             turn(correction);

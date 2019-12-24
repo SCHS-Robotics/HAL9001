@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.util.misc;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A toggle class used to add toggle switches.
  *
@@ -30,7 +32,7 @@ public class Toggle {
      * 
      * @param currentState - Initial toggle state.
      */
-    public Toggle(ToggleTypes toggleType, boolean currentState){
+    public Toggle(@NotNull ToggleTypes toggleType, boolean currentState){
         this.currentState = currentState;
         this.toggleType = toggleType;
         flag = true;

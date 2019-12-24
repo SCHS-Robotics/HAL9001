@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.util.exceptions;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * An exception thrown when a selection zone is filled with too many or too few lines.
  *
@@ -12,9 +14,9 @@ package com.SCHSRobotics.HAL9001.util.exceptions;
 public class SkyscraperTooTallException extends RuntimeException{
 
     /**
-     * Ctor for SkyscraperTooTallException.
+     * Constructor for SkyscraperTooTallException.
      *
      * @param message The message to print to the screen.
      */
-    public SkyscraperTooTallException(String message) {super(message);}
+    public SkyscraperTooTallException(@Nullable String message) {super(message);}
 }

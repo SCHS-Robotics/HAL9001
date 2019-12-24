@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.BaseAutonomous;
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
 import com.SCHSRobotics.HAL9001.util.annotations.LinkTo;
@@ -13,13 +15,15 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 //extends BaseTeleop means it is a TeleOp program
 public class BasicSampleAutonomous extends BaseAutonomous {
 
-    private BasicSampleBot robot;
+    public BasicSampleBot robot;
 
     private String setting;
-    //return the robot that will be used
+
+    //returns the robot that will be used
     @Override
     protected Robot buildRobot() {
         robot = new BasicSampleBot(this);
+        Log.wtf("ran","ran");
         return robot;
     }
 

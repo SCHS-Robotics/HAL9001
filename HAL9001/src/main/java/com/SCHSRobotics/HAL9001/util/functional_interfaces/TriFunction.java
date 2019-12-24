@@ -16,6 +16,5 @@ package com.SCHSRobotics.HAL9001.util.functional_interfaces;
  */
 @FunctionalInterface
 public interface TriFunction<T,R,S,Q> {
-
     Q apply(T arg1, R arg2, S arg3);
 }

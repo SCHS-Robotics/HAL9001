@@ -29,6 +29,7 @@ import org.firstinspires.ftc.robotcore.external.Supplier;
  *
  * Creation Date: 7/17/19.
  */
+@SuppressWarnings({"WeakerAccess","unused"})
 public class TankDrive extends SubSystem {
 
     //A boolean specifying whether to set numbers to specific values or to use config.
