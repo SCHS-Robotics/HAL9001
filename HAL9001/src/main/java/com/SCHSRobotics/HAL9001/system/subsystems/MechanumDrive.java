@@ -88,7 +88,7 @@ public class MechanumDrive extends SubSystem {
     private DisplayMenu displayMenu;
     //Specifies the type of drive the user will use.
     public enum DriveType {
-        STANDARD, FIELD_CENTRIC, MATTHEW, ARCADE, STANDARD_TTA, FIELD_CENTRIC_TTA, ARCADE_TTA
+        STANDARD, FIELD_CENTRIC, MATTHEW, STANDARD_TTA, FIELD_CENTRIC_TTA
     }
     private DriveType driveType;
     //Which motors on the mechanum drive are reversed.
@@ -328,7 +328,7 @@ public class MechanumDrive extends SubSystem {
             inputs = robot.pullControls(this);
             ConfigData data = robot.pullNonGamepad(this);
 
-            imuNumber = (int) Math.round(data.getData("ImuNumber",Double.class));
+            imuNumber = data.getData("ImuNumber",Integer.class);
 
             setDriveMode(data.getData("DriveType", DriveType.class));
             setUseGyro(data.getData("UseGyro",Boolean.class), imuNumber);
@@ -368,7 +368,7 @@ public class MechanumDrive extends SubSystem {
         else if (usesConfig && robot.isAutonomous()) {
             ConfigData data = robot.pullNonGamepad(this);
 
-            imuNumber = (int) Math.round(data.getData("ImuNumber",Double.class));
+            imuNumber = data.getData("ImuNumber",Integer.class);
 
             setDriveMode(data.getData("DriveType", DriveType.class));
             setUseGyro(data.getData("UseGyro", Boolean.class), imuNumber);
@@ -488,82 +488,6 @@ public class MechanumDrive extends SubSystem {
                 }
                 else {
                     turnAndMove(input, turnRightPower*currentTurnSpeedModeMultiplier);
-                }
-
-                break;
-
-            //Arcade drive.
-            case ARCADE:
-                correction = usesGyro ? stabilityPID.getCorrection(getCurrentAngle(useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS)) : 0;
-
-                if ((turnPower != 0 || turnLeft || turnRight) && usesGyro) {
-                    stabilityPID.setSetpoint(getCurrentAngle(useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS));
-                    correction = 0;
-                }
-
-                if (!turnLeft && !turnRight) {
-                    if (input.isZeroVector()) {
-                        turn(-turnPower*constantTurnSpeedMultiplier*currentTurnSpeedModeMultiplier);
-                    }
-                    else {
-                        turnAndMove(input,(turnPower*constantTurnSpeedMultiplier*currentTurnSpeedModeMultiplier) - correction);
-                    }
-                } else if (turnLeft) {
-                    if (input.isZeroVector()) {
-                        turn(turnLeftPower*currentTurnSpeedModeMultiplier);
-                    }
-                    else {
-                        turnAndMove(input,-turnLeftPower*currentTurnSpeedModeMultiplier);
-                    }
-                } else {
-                    if (input.isZeroVector()) {
-                        turn(-turnRightPower*currentTurnSpeedModeMultiplier);
-                    }
-                    else {
-                        turnAndMove(input,turnRightPower*currentTurnSpeedModeMultiplier);
-                    }
-                }
-
-                break;
-
-            //Arcade drive with turn to angle functionality.
-            case ARCADE_TTA:
-                double angleStabilityArcade = getCurrentAngle(useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS);
-                double angleTurnArcade = getCurrentAngle(useDegreesTurn ? AngleUnit.DEGREES : AngleUnit.RADIANS);
-
-                correction = stabilityPID.getCorrection(angleStabilityArcade);
-                turnCorrection = turnPID.getCorrection(angleTurnArcade);
-
-                if ((!tta.isZeroVector() || turnLeft || turnRight) && usesGyro) {
-                    turnPID.setSetpoint(useDegreesTurn ? Math.toDegrees(tta.theta) : tta.theta);
-                    stabilityPID.setSetpoint(angleStabilityArcade);
-                    correction = 0;
-                    turnCorrection = 0;
-                }
-
-                if(!turnLeft && !turnRight) {
-                    if(input.isZeroVector()) {
-                        turn(turnCorrection);
-                    }
-                    else {
-                        turnAndMove(input, -turnCorrection - correction);
-                    }
-                }
-                else if(turnLeft) {
-                    if(input.isZeroVector()) {
-                        turn(turnLeftPower*currentTurnSpeedModeMultiplier);
-                    }
-                    else {
-                        turnAndMove(input, -turnLeftPower*currentTurnSpeedModeMultiplier);
-                    }
-                }
-                else {
-                    if(input.isZeroVector()) {
-                        turn(-turnRightPower*currentTurnSpeedModeMultiplier);
-                    }
-                    else {
-                        turnAndMove(input, turnRightPower*currentTurnSpeedModeMultiplier);
-                    }
                 }
 
                 break;
@@ -873,31 +797,12 @@ public class MechanumDrive extends SubSystem {
                 vcpy.rotate(-PI / 4);
                 setPower(vcpy.x + turnPower, vcpy.y - turnPower, vcpy.y + turnPower, vcpy.x - turnPower);
                 break;
-            case ARCADE:
-            case ARCADE_TTA:
-                if(vcpy.isZeroVector()) {
-                    stopAllMotors();
-                }
-                else if (vcpy.theta < PI / 4 || vcpy.theta > (7 * PI) / 4) { //right side of the square
-                    setPower(vcpy.x + turnPower, -vcpy.y - turnPower, -vcpy.y + turnPower, vcpy.x - turnPower);
-                }
-                else if (vcpy.theta > PI / 4 && vcpy.theta < (3 * PI) / 4) { //top side of the square
-                    setPower(vcpy.r + turnPower,vcpy.r - turnPower,vcpy.r + turnPower,vcpy.r - turnPower);
-                }
-                else if (vcpy.theta > (3 * PI) / 4 && vcpy.theta < (5 * PI) / 4) { //left side of the square
-                    setPower(-vcpy.r + turnPower,vcpy.r - turnPower,vcpy.r + turnPower,-vcpy.r - turnPower);
-                }
-                else if (vcpy.theta > (5 * PI) / 4 && vcpy.theta < (7 * PI) / 4) { //Bottom side of the square
-                    setPower(-vcpy.r + turnPower,-vcpy.r - turnPower,-vcpy.r + turnPower,-vcpy.r - turnPower);
-                }
-                break;
             case FIELD_CENTRIC:
             case FIELD_CENTRIC_TTA:
                 vcpy.rotate(-((PI / 4) + getCurrentAngle() + imuShift));
                 setPower(vcpy.x + turnPower, vcpy.y - turnPower, vcpy.y + turnPower, vcpy.x - turnPower);
                 break;
         }
-
     }
 
     /**
@@ -1059,24 +964,6 @@ public class MechanumDrive extends SubSystem {
                             }
                         });
                 break;
-            case ARCADE_TTA:
-            case ARCADE:
-
-                final double thresh = encoders * Math.sqrt(2) / 2;
-
-                waitWhile(new Supplier<Boolean>() {
-                              @Override
-                              public Boolean get() {
-                                  return Math.abs(getTopLeftEncoderPos() - initVals[0]) < thresh && Math.abs(getTopRightEncoderPos() - initVals[1]) < thresh && Math.abs(getBotLeftEncoderPos() - initVals[2]) < thresh && Math.abs(getBotRightEncoderPos() - initVals[3]) < thresh;
-                              }
-                          },
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                drive(vcpy, stabilityCtrl);
-                            }
-                        });
-                break;
         }
         stopAllMotors();
     }
@@ -1116,21 +1003,6 @@ public class MechanumDrive extends SubSystem {
             case FIELD_CENTRIC:
                 vcpy.rotate(-((PI / 4) + getCurrentAngle() + imuShift));
                 setPower(vcpy.x - correction, vcpy.y + correction, vcpy.y - correction, vcpy.x + correction);
-                break;
-            case ARCADE_TTA:
-            case ARCADE:
-                if (vcpy.isZeroVector()) {
-                    stopAllMotors();
-                }
-                else if (vcpy.theta < PI / 4 || vcpy.theta > (7 * PI) / 4) { //right side of the square
-                    setPower(vcpy.r - correction, -vcpy.r + correction, -vcpy.r - correction, vcpy.r + correction);
-                } else if (vcpy.theta > PI / 4 && vcpy.theta < (3 * PI) / 4) { //top side of the square
-                    setPower(vcpy.r - correction, vcpy.r + correction, vcpy.r - correction, vcpy.r + correction);
-                } else if (vcpy.theta > (3 * PI) / 4 && vcpy.theta < (5 * PI) / 4) { //left side of the square
-                    setPower(-vcpy.r - correction, vcpy.r + correction, vcpy.r - correction, -vcpy.r + correction);
-                } else if (vcpy.theta > (5 * PI) / 4 && vcpy.theta < (7 * PI) / 4) { //Bottom side of the square
-                    setPower(-vcpy.r - correction, -vcpy.r + correction, -vcpy.r - correction, -vcpy.r + correction);
-                }
                 break;
         }
     }
@@ -1289,7 +1161,7 @@ public class MechanumDrive extends SubSystem {
      * @param driveType The driving mode that the drivetrain will be set to.
      */
     public void setDriveMode(DriveType driveType) {
-        boolean useGyro = driveType == DriveType.STANDARD_TTA || driveType == DriveType.FIELD_CENTRIC || driveType == DriveType.FIELD_CENTRIC_TTA || driveType == DriveType.ARCADE_TTA;
+        boolean useGyro = driveType == DriveType.STANDARD_TTA || driveType == DriveType.FIELD_CENTRIC || driveType == DriveType.FIELD_CENTRIC_TTA;
         setUseGyro(useGyro, imuNumber);
         this.driveType = driveType;
     }
@@ -1848,7 +1720,7 @@ public class MechanumDrive extends SubSystem {
         @Contract("_ -> this")
         public Params setDriveType(DriveType driveType) {
             this.driveType = driveType;
-            useGyro = driveType == DriveType.STANDARD_TTA || driveType == DriveType.FIELD_CENTRIC || driveType == DriveType.FIELD_CENTRIC_TTA || driveType == DriveType.ARCADE_TTA;
+            useGyro = driveType == DriveType.STANDARD_TTA || driveType == DriveType.FIELD_CENTRIC || driveType == DriveType.FIELD_CENTRIC_TTA;
             return this;
         }
 
@@ -2093,6 +1965,8 @@ public class MechanumDrive extends SubSystem {
                 @Override
                 public Double apply(Double target, Double current) {
                     BiFunction<Double, Double, Double> mod = new BiFunction<Double, Double, Double>() {
+                        @NotNull
+                        @Contract(pure = true)
                         @Override
                         public Double apply(Double x, Double m) {
                             return (x % m + m) % m;
@@ -2192,6 +2066,8 @@ public class MechanumDrive extends SubSystem {
                 @Override
                 public Double apply(Double target, Double current) {
                     BiFunction<Double, Double, Double> mod = new BiFunction<Double, Double, Double>() {
+                        @NotNull
+                        @Contract(pure = true)
                         @Override
                         public Double apply(Double x, Double m) {
                             return (x % m + m) % m;
@@ -2566,6 +2442,8 @@ public class MechanumDrive extends SubSystem {
                 @Override
                 public Double apply(Double target, Double current) {
                     BiFunction<Double, Double, Double> mod = new BiFunction<Double, Double, Double>() {
+                        @NotNull
+                        @Contract(pure = true)
                         @Override
                         public Double apply(Double x, Double m) {
                             return (x % m + m) % m;
@@ -2664,6 +2542,8 @@ public class MechanumDrive extends SubSystem {
                 @Override
                 public Double apply(Double target, Double current) {
                     BiFunction<Double, Double, Double> mod = new BiFunction<Double, Double, Double>() {
+                        @NotNull
+                        @Contract(pure = true)
                         @Override
                         public Double apply(Double x, Double m) {
                             return (x % m + m) % m;
