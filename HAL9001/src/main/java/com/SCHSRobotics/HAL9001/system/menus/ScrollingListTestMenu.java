@@ -6,6 +6,8 @@ import com.SCHSRobotics.HAL9001.system.source.GUI.GuiLine;
 import com.SCHSRobotics.HAL9001.system.source.GUI.ScrollingListMenu;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 /**
@@ -31,20 +33,20 @@ public class ScrollingListTestMenu extends ScrollingListMenu {
     };
 
     /**
-     * Ctor for ScrollingListTestMenu.
+     * Constructor for ScrollingListTestMenu.
      *
      * @param gui - The gui used to render the menu.
      */
-    public ScrollingListTestMenu(GUI gui, Cursor cursor) {
+    public ScrollingListTestMenu(@NotNull GUI gui, @NotNull Cursor cursor) {
         super(gui, cursor, STARTING_LINES, 1, 6);
     }
     
     @Override
     public void onSelect() {
-        if(cursor.y == 0){
+        if(cursor.getY() == 0){
             addLine();
         }
-        else if(cursor.y == 1 && super.getSelectionZoneHeight() > 2){
+        else if(cursor.getY() == 1 && super.getSelectionZoneHeight() > 2){
             removeLine();
         }
     }

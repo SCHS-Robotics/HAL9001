@@ -13,7 +13,7 @@ package com.SCHSRobotics.HAL9001.util.functional_interfaces;
  * @param <R> The datatype of the second input.
  * @param <S> The datatype of the output.
  */
+@FunctionalInterface
 public interface BiFunction<T,R,S> {
-
     S apply(T arg1, R arg2);
 }

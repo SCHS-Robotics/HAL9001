@@ -1,5 +1,8 @@
 package com.SCHSRobotics.HAL9001.util.math;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A calculator that calculates encoder ticks per meter and uses that to find.
  *
@@ -9,6 +12,7 @@ package com.SCHSRobotics.HAL9001.util.math;
  *
  * Creation Date: 7/19/19
  */
+@SuppressWarnings("unused")
 public class EncoderToDistanceProcessor {
 
     //Conversion of 1 encoder per meter.
@@ -20,7 +24,8 @@ public class EncoderToDistanceProcessor {
      * @param diameter Diameter of wheel.
      * @param unit Units of the diameter.
      */
-    public EncoderToDistanceProcessor(double diameter, Units unit){
+    @Contract(pure = true)
+    public EncoderToDistanceProcessor(double diameter, @NotNull Units unit){
         encoderPerMeter = 1440 / (Math.PI * (diameter*unit.conversionFactor));
     }
 
@@ -31,7 +36,8 @@ public class EncoderToDistanceProcessor {
      * @param encoderPerRotation number of encoders per one rotation of the wheel.
      * @param unit Units of the diameter.
      * */
-    public EncoderToDistanceProcessor(double diameter, int encoderPerRotation, Units unit){
+    @Contract(pure = true)
+    public EncoderToDistanceProcessor(double diameter, int encoderPerRotation, @NotNull Units unit){
         encoderPerMeter = encoderPerRotation / (Math.PI * (diameter*unit.conversionFactor));
     }
 
@@ -40,6 +46,7 @@ public class EncoderToDistanceProcessor {
      *
      * @param encoderPerMeter Experimentally gotten value.
      * */
+    @Contract(pure = true)
     public EncoderToDistanceProcessor(double encoderPerMeter){
         this.encoderPerMeter = encoderPerMeter;
     }
@@ -50,7 +57,7 @@ public class EncoderToDistanceProcessor {
      * @param distance Distance wished to travel.
      * @param unit Units of distance.
      * */
-    public int getEncoderAmount(double distance, Units unit){
+    public int getEncoderAmount(double distance, @NotNull Units unit){
         return (int) Math.round(unit.conversionFactor * distance * encoderPerMeter);
     }
 
@@ -60,7 +67,7 @@ public class EncoderToDistanceProcessor {
      * @param encoderAmount Amount of encoder.
      * @param unit Units of returned distance.
      * */
-    public double getDistanceFromEncoders(int encoderAmount, Units unit){
+    public double getDistanceFromEncoders(int encoderAmount, @NotNull Units unit){
         return (encoderAmount/encoderPerMeter)*unit.conversionFactor;
     }
 }

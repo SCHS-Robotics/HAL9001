@@ -8,12 +8,15 @@ import com.SCHSRobotics.HAL9001.system.subsystems.MechanumDrive;
 import com.SCHSRobotics.HAL9001.system.subsystems.OmniWheelDrive;
 import com.SCHSRobotics.HAL9001.system.subsystems.QuadWheelDrive;
 import com.SCHSRobotics.HAL9001.system.subsystems.TankDrive;
+import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.exceptions.GuiNotPresentException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotAnAlchemistException;
 import com.SCHSRobotics.HAL9001.util.math.Units;
 import com.SCHSRobotics.HAL9001.util.math.Vector;
 import com.SCHSRobotics.HAL9001.util.misc.BaseParam;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
 
@@ -30,6 +33,7 @@ import java.util.LinkedHashMap;
  *
  * Creation Date: 9/1/19
  */
+@SuppressWarnings("unused")
 public class EncoderDistanceCalib extends SubSystem {
 
     //The drivetrain subsystem being used.
@@ -71,7 +75,7 @@ public class EncoderDistanceCalib extends SubSystem {
      * @throws GuiNotPresentException Throws this exception if the GUI is not activated on the robot.
      * @throws NotAnAlchemistException Throws this exception if the provided parameters are not from a drivetrain.
      */
-    public EncoderDistanceCalib(Robot robot, DriveTrain driveTrain, Units unit, BaseParam params, Button switchSpeedButton) {
+    public EncoderDistanceCalib(@NotNull Robot robot, @NotNull DriveTrain driveTrain, @NotNull Units unit, @NotNull BaseParam params, @NotNull Button switchSpeedButton) {
         super(robot);
 
         this.unit = unit;
@@ -173,7 +177,11 @@ public class EncoderDistanceCalib extends SubSystem {
             DisplayMenu displayMenu1 = new DisplayMenu(robot.gui);
             robot.gui.addMenu("DisplayMenu1", displayMenu1);
             for (String key: startEncoderPos.keySet()) {
-                displayMenu1.addData(key, (endingEncoderPos.get(key) - startEncoderPos.get(key))/distance);
+                Integer end = endingEncoderPos.get(key);
+                Integer start = startEncoderPos.get(key);
+                ExceptionChecker.assertNonNull(end, new NullPointerException("Ending encoder value was null."));
+                ExceptionChecker.assertNonNull(start, new NullPointerException("Starting encoder value was null."));
+                displayMenu1.addData(key, (end - start)/distance);
             }
         }
     }

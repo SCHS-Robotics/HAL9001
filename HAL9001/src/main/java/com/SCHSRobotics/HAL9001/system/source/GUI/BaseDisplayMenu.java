@@ -76,7 +76,7 @@ public abstract class BaseDisplayMenu extends Menu {
 
         if(menuNumber < 0) {
             menuNumber = (int) Math.floor((lines.size() * 1.0) / Menu.MAXLINESPERSCREEN);
-            cursor.y = Math.min(lines.size() - 1,(menuNumber*Menu.MAXLINESPERSCREEN)-1);
+            cursor.setY(Math.min(lines.size() - 1,(menuNumber*Menu.MAXLINESPERSCREEN)-1));
         }
     }
 
@@ -87,7 +87,7 @@ public abstract class BaseDisplayMenu extends Menu {
 
         if(menuNumber >= (int) Math.ceil((lines.size() * 1.0) / Menu.MAXLINESPERSCREEN)) {
             menuNumber = 0;
-            cursor.y = 0;
+            cursor.setY(0);
         }
     }
 
@@ -107,7 +107,7 @@ public abstract class BaseDisplayMenu extends Menu {
     /**
      * Clears the screen.
      */
-    public void clear() {
+    protected void clear() {
         super.setSelectionZoneHeight(0,new GuiLine[]{});
     }
 }

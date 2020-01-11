@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.system.source.GUI;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,10 +14,11 @@ import java.util.List;
  *
  * Creation Date: 7/20/19
  */
+@SuppressWarnings("unused")
 public abstract class ScrollingListMenu extends Menu {
 
     //The current "level" of screen in the menu. If the number of lines in the menu exceeds the maximum number, menunumber will increase by one for every screen the menu takes up.
-    protected int menuNumber;
+    private int menuNumber;
 
     /**
      * Constructor for ScrollingListMenu class.
@@ -57,7 +60,7 @@ public abstract class ScrollingListMenu extends Menu {
     @Override
     protected void open() {
         menuNumber = 0;
-        cursor.y = 0;
+        cursor.setY(0);
     }
 
     @Override
@@ -81,7 +84,7 @@ public abstract class ScrollingListMenu extends Menu {
 
         if(menuNumber < 0) {
             menuNumber = (int) Math.floor((lines.size() * 1.0) / Menu.MAXLINESPERSCREEN);
-            cursor.y = Math.min(lines.size() - 1,(menuNumber*Menu.MAXLINESPERSCREEN)-1);
+            cursor.setY(Math.min(lines.size() - 1,(menuNumber*Menu.MAXLINESPERSCREEN)-1));
         }
     }
 
@@ -92,32 +95,32 @@ public abstract class ScrollingListMenu extends Menu {
 
         if(menuNumber >= (int) Math.ceil((lines.size() * 1.0) / Menu.MAXLINESPERSCREEN)) {
             menuNumber = 0;
-            cursor.y = 0;
+            cursor.setY(0);
         }
     }
 
     @Override
-    public void setSelectionZoneHeight(int selectionZoneHeight, List<GuiLine> newLines) {
+    public void setSelectionZoneHeight(int selectionZoneHeight, @NotNull List<GuiLine> newLines) {
         super.setSelectionZoneHeight(selectionZoneHeight, newLines);
-        menuNumber = (int) Math.floor((cursor.y * 1.0)/Menu.MAXLINESPERSCREEN);
+        menuNumber = (int) Math.floor((cursor.getY() * 1.0)/Menu.MAXLINESPERSCREEN);
     }
 
     @Override
-    public void setSelectionZoneHeight(int selectionZoneHeight, GuiLine[] newLines) {
+    public void setSelectionZoneHeight(int selectionZoneHeight, @NotNull GuiLine[] newLines) {
         super.setSelectionZoneHeight(selectionZoneHeight, newLines);
-        menuNumber = (int) Math.floor((cursor.y * 1.0)/Menu.MAXLINESPERSCREEN);
+        menuNumber = (int) Math.floor((cursor.getY() * 1.0)/Menu.MAXLINESPERSCREEN);
     }
 
     @Override
-    public void setSelectionZoneWidthAndHeight(int selectionZoneWidth, int selectionZoneHeight, GuiLine[] newLines) {
+    public void setSelectionZoneWidthAndHeight(int selectionZoneWidth, int selectionZoneHeight, @NotNull GuiLine[] newLines) {
         super.setSelectionZoneWidthAndHeight(selectionZoneWidth, selectionZoneHeight, newLines);
-        menuNumber = (int) Math.floor((cursor.y * 1.0)/Menu.MAXLINESPERSCREEN);
+        menuNumber = (int) Math.floor((cursor.getY() * 1.0)/Menu.MAXLINESPERSCREEN);
     }
 
     @Override
-    public void setSelectionZoneWidthAndHeight(int selectionZoneWidth, int selectionZoneHeight, List<GuiLine> newLines) {
+    public void setSelectionZoneWidthAndHeight(int selectionZoneWidth, int selectionZoneHeight, @NotNull List<GuiLine> newLines) {
         super.setSelectionZoneWidthAndHeight(selectionZoneWidth, selectionZoneHeight, newLines);
-        menuNumber = (int) Math.floor((cursor.y * 1.0)/Menu.MAXLINESPERSCREEN);
+        menuNumber = (int) Math.floor((cursor.getY() * 1.0)/Menu.MAXLINESPERSCREEN);
     }
 
     /**
@@ -129,5 +132,13 @@ public abstract class ScrollingListMenu extends Menu {
             lineNums.add(i);
         }
         displayLines(lines,lineNums);
+    }
+
+    public int getMenuNumber() {
+        return menuNumber;
+    }
+
+    public void setMenuNumber(int menuNumber) {
+        this.menuNumber = menuNumber;
     }
 }

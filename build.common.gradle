@@ -62,12 +62,14 @@ android {
         def vCode = Integer.parseInt(matcher.group(1))
         //
         def vNamePattern = Pattern.compile("versionName=\"(.*)\"")
-        matcher = vNamePattern.matcher(manifestText);
+        matcher = vNamePattern.matcher(manifestText)
         matcher.find()
         def vName = matcher.group(1)
         //
         versionCode vCode
         versionName vName
+
+        multiDexEnabled true
     }
 
     // Advanced user code might just want to use Vuforia directly, so we set up the libs as needed
@@ -107,4 +109,5 @@ repositories {
     }
     jcenter()
 }
+
 apply from: 'build.release.gradle'

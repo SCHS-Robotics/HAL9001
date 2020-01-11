@@ -14,7 +14,7 @@ package com.SCHSRobotics.HAL9001.util.functional_interfaces;
  * @param <S> The datatype of the third input.
  * @param <Q> The datatype of the output.
  */
+@FunctionalInterface
 public interface TriFunction<T,R,S,Q> {
-
     Q apply(T arg1, R arg2, S arg3);
 }

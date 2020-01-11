@@ -3,9 +3,12 @@ package com.SCHSRobotics.HAL9001.system.subsystems.cursors;
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
 import com.SCHSRobotics.HAL9001.system.source.GUI.Cursor;
 import com.SCHSRobotics.HAL9001.system.source.GUI.Menu;
+import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A cursor object used in config menus. Contains all the controls needed to use the config system.
@@ -17,6 +20,7 @@ import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
  *
  * Creation Date: 8/13/19
  */
+@SuppressWarnings({"WeakerAccess","unused"})
 public class ConfigCursor extends Cursor {
 
     //The customizable set of inputs used to control the cursor.
@@ -33,13 +37,13 @@ public class ConfigCursor extends Cursor {
     /**
      * Constructor for config cursor.
      *
-     * @param robot The robot the cursor is associataed with.
+     * @param robot The robot the cursor is associated with.
      * @param x The cursor's initial x coordinate.
      * @param y The cursor's initial y coordinate.
      * @param blinkSpeedMs The cursor's blink speed in milliseconds.
      * @param cursorIcon The icon used to represent the cursor.
      */
-    public ConfigCursor(Robot robot, int x, int y, int blinkSpeedMs, char cursorIcon) {
+    public ConfigCursor(@NotNull Robot robot, int x, int y, int blinkSpeedMs, char cursorIcon) {
         super(x, y, blinkSpeedMs, cursorIcon);
         inputs = new CustomizableGamepad(robot);
 
@@ -60,11 +64,11 @@ public class ConfigCursor extends Cursor {
     /**
      * Constructor for config cursor.
      *
-     * @param robot The robot the cursor is associataed with.
+     * @param robot The robot the cursor is associated with.
      * @param blinkSpeedMs The cursor's blink speed in milliseconds.
      * @param cursorIcon The icon used to represent the cursor.
      */
-    public ConfigCursor(Robot robot, int blinkSpeedMs, char cursorIcon) {
+    public ConfigCursor(@NotNull Robot robot, int blinkSpeedMs, char cursorIcon) {
         super(blinkSpeedMs, cursorIcon);
         inputs = new CustomizableGamepad(robot);
 
@@ -85,10 +89,10 @@ public class ConfigCursor extends Cursor {
     /**
      * Constructor for config cursor.
      *
-     * @param robot The robot the cursor is associataed with.
+     * @param robot The robot the cursor is associated with.
      * @param blinkSpeedMs The cursor's blink speed in milliseconds.
      */
-    public ConfigCursor(Robot robot, int blinkSpeedMs) {
+    public ConfigCursor(@NotNull Robot robot, int blinkSpeedMs) {
         super(blinkSpeedMs);
         inputs = new CustomizableGamepad(robot);
 
@@ -109,12 +113,12 @@ public class ConfigCursor extends Cursor {
     /**
      * Constructor for config cursor.
      *
-     * @param robot The robot the cursor is associataed with.
+     * @param robot The robot the cursor is associated with.
      * @param x The cursor's initial x coordinate.
      * @param y = The cursor's initial y coordinate.
      * @param blinkSpeedMs The cursor's blink speed in milliseconds.
      */
-    public ConfigCursor(Robot robot, int x, int y, int blinkSpeedMs) {
+    public ConfigCursor(@NotNull Robot robot, int x, int y, int blinkSpeedMs) {
         super(x, y, blinkSpeedMs);
         inputs = new CustomizableGamepad(robot);
 
@@ -143,22 +147,18 @@ public class ConfigCursor extends Cursor {
      *
      * @throws NotBooleanInputException Throws an exception if button does not return boolean values.
      */
-    public void setInputs(Button up, Button down, Button left, Button right, Button select, Button reverseSelect, Button switchGamepad, Button backButton){
-
-        if(up.isBoolean && down.isBoolean && left.isBoolean && right.isBoolean && select.isBoolean && reverseSelect.isBoolean && switchGamepad.isBoolean && backButton.isBoolean) {
-            inputs.addButton(UP, up);
-            inputs.addButton(DOWN, down);
-            inputs.addButton(LEFT, left);
-            inputs.addButton(RIGHT, right);
-            inputs.addButton(SELECT, select);
-            inputs.addButton(REVERSE_SELECT, reverseSelect);
-            inputs.addButton(SWITCH_GAMEPAD, switchGamepad);
-            inputs.addButton(BACK_BUTTON, backButton);
-            inputs.addButton(DISABLE_AUTORUN, new Button(1, Button.BooleanInputs.left_bumper));
-        }
-        else{
-            throw new NotBooleanInputException("ConfigCursor requires all boolean inputs");
-        }
+    @SuppressWarnings("unused")
+    public void setInputs(@NotNull Button up, @NotNull Button down, @NotNull Button left, @NotNull Button right, @NotNull Button select, @NotNull Button reverseSelect, @NotNull Button switchGamepad, @NotNull Button backButton){
+        ExceptionChecker.assertTrue(up.isBoolean && down.isBoolean && left.isBoolean && right.isBoolean && select.isBoolean && reverseSelect.isBoolean && switchGamepad.isBoolean && backButton.isBoolean, new NotBooleanInputException("ConfigCursor requires all boolean inputs"));
+        inputs.addButton(UP, up);
+        inputs.addButton(DOWN, down);
+        inputs.addButton(LEFT, left);
+        inputs.addButton(RIGHT, right);
+        inputs.addButton(SELECT, select);
+        inputs.addButton(REVERSE_SELECT, reverseSelect);
+        inputs.addButton(SWITCH_GAMEPAD, switchGamepad);
+        inputs.addButton(BACK_BUTTON, backButton);
+        inputs.addButton(DISABLE_AUTORUN, new Button(1, Button.BooleanInputs.left_bumper));
     }
 
     /**

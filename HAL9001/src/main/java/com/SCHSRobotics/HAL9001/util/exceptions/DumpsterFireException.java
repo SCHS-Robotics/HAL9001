@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.util.exceptions;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * An exception thrown if something really bad happens.
  *
@@ -16,7 +18,7 @@ public class DumpsterFireException extends RuntimeException {
      *
      * @param message The error message to print to the screen.
      */
-    public DumpsterFireException(String message) {
+    public DumpsterFireException(@Nullable String message) {
         super(message);
     }
 }

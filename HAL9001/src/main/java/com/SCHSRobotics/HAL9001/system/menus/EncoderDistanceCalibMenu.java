@@ -5,10 +5,14 @@ import com.SCHSRobotics.HAL9001.system.source.GUI.GuiLine;
 import com.SCHSRobotics.HAL9001.system.source.GUI.Menu;
 import com.SCHSRobotics.HAL9001.system.subsystems.cursors.DefaultCursor;
 import com.SCHSRobotics.HAL9001.util.calib.EncoderDistanceCalib;
+import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
 import com.SCHSRobotics.HAL9001.util.math.Units;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A Menu used in the EncoderDistanceCalibrator to display and calculate the number of encoder ticks per meter.
@@ -26,6 +30,8 @@ public class EncoderDistanceCalibMenu extends Menu {
         FAST(25), MEDIUM(10), SLOW(1), PRECISION(.1);
 
         public double increment;
+
+        @Contract(pure = true)
         SpeedMode(double increment) {
             this.increment = increment;
         }
@@ -52,7 +58,7 @@ public class EncoderDistanceCalibMenu extends Menu {
      *
      * @throws NotBooleanInputException Throws this exception if the speed toggle button is not a boolean button.
      */
-    public EncoderDistanceCalibMenu(GUI gui, Units unit, Button speedToggleButton, EncoderDistanceCalib calib){
+    public EncoderDistanceCalibMenu(@NotNull GUI gui, @NotNull Units unit, @NotNull Button speedToggleButton, @NotNull EncoderDistanceCalib calib){
         super(gui, new DefaultCursor(gui.robot, new DefaultCursor.Params()), new GuiLine[]{new GuiLine("<#>", ""), new GuiLine("###", "Done  " + "Increment: " + "Fast")},3,2);
 
         speedMode = SpeedMode.FAST;
@@ -62,13 +68,12 @@ public class EncoderDistanceCalibMenu extends Menu {
         this.calib = calib;
 
         inputs = new CustomizableGamepad(gui.robot);
-        if(!speedToggleButton.isBoolean){
-            throw new NotBooleanInputException("SpeedToggleButton must be a boolean button");
-        }
+
+        ExceptionChecker.assertTrue(speedToggleButton.isBoolean, new NotBooleanInputException("SpeedToggleButton must be a boolean button"));
         inputs.addButton(SPEED_MODE_TOGGLE, speedToggleButton);
         
         GuiLine[] newerLines = {
-                new GuiLine("<#>", "I traveled: " + "0" + unit.abreviation),
+                new GuiLine("<#>", "I traveled: " + "0" + unit.abbreviation),
                 lines.get(1)
         };
         setLines(newerLines);
@@ -86,27 +91,27 @@ public class EncoderDistanceCalibMenu extends Menu {
 
     @Override
     public void onSelect() {
-        if(cursor.y == 1){
+        if(cursor.getY() == 1){
             calib.numberSelected(Units.convert(distance, unit, Units.METERS));
         }
     }
 
     @Override
-    public void onButton(String name, Button button) {
+    public void onButton(@NotNull String name, @NotNull Button button) {
         if(name.equals(DefaultCursor.LEFT) || name.equals(DefaultCursor.RIGHT)){
-            if(cursor.y == 0 && cursor.x == 0){
+            if(cursor.getY() == 0 && cursor.getX() == 0){
                 distance -= speedMode.increment;
                 cursor.setX(1);
                 updateLinesForIncrement();
             }
-            else if(cursor.y == 0 && cursor.x == 2){
+            else if(cursor.getY() == 0 && cursor.getX() == 2){
                 distance += speedMode.increment;
                 cursor.setX(1);
                 updateLinesForIncrement();
             }
         }
         if(name.equals(DefaultCursor.UP)){
-            if(cursor.x == 0 || cursor.x == 2){
+            if(cursor.getX() == 0 || cursor.getX() == 2){
                 cursor.setX(1);
             }
         }
@@ -118,19 +123,19 @@ public class EncoderDistanceCalibMenu extends Menu {
             switch (speedMode){
                 case FAST:
                     speedMode = SpeedMode.MEDIUM;
-                    setLines(new GuiLine[]{lines.get(0), new GuiLine(lines.get(1).selectionZoneText, lines.get(1).postSelectionText.substring(0, 6) + "Medium")});
+                    setLines(new GuiLine[]{lines.get(0), new GuiLine(lines.get(1).getSelectionZoneText(), lines.get(1).getPostSelectionText().substring(0, 6) + "Medium")});
                     break;
                 case MEDIUM:
                     speedMode = SpeedMode.SLOW;
-                    setLines(new GuiLine[]{lines.get(0), new GuiLine(lines.get(1).selectionZoneText, lines.get(1).postSelectionText.substring(0, 6) + "Slow")});
+                    setLines(new GuiLine[]{lines.get(0), new GuiLine(lines.get(1).getSelectionZoneText(), lines.get(1).getPostSelectionText().substring(0, 6) + "Slow")});
                     break;
                 case SLOW:
                     speedMode = SpeedMode.PRECISION;
-                    setLines(new GuiLine[]{lines.get(0), new GuiLine(lines.get(1).selectionZoneText, lines.get(1).postSelectionText.substring(0, 6) + "Precision")});
+                    setLines(new GuiLine[]{lines.get(0), new GuiLine(lines.get(1).getSelectionZoneText(), lines.get(1).getPostSelectionText().substring(0, 6) + "Precision")});
                     break;
                 case PRECISION:
                     speedMode = SpeedMode.FAST;
-                    setLines(new GuiLine[]{lines.get(0), new GuiLine(lines.get(1).selectionZoneText, lines.get(1).postSelectionText.substring(0, 6) + "Fast")});
+                    setLines(new GuiLine[]{lines.get(0), new GuiLine(lines.get(1).getSelectionZoneText(), lines.get(1).getPostSelectionText().substring(0, 6) + "Fast")});
                     break;
             }
         }
@@ -157,7 +162,7 @@ public class EncoderDistanceCalibMenu extends Menu {
      */
     private void updateLinesForIncrement(){
         setLines(new GuiLine[]{
-                new GuiLine(lines.get(0).selectionZoneText, "I traveled: " + distance + unit.abreviation),
+                new GuiLine(lines.get(0).getSelectionZoneText(), "I traveled: " + distance + unit.abbreviation),
                 lines.get(1)
         });
     }

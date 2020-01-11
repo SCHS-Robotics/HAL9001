@@ -1,6 +1,9 @@
 package com.SCHSRobotics.HAL9001.system.source.GUI;
 
+import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.exceptions.InvalidSelectionZoneException;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A class representing a line printed on a menu.
@@ -11,10 +14,11 @@ import com.SCHSRobotics.HAL9001.util.exceptions.InvalidSelectionZoneException;
  *
  * Creation Date: 7/20/19
  */
+@SuppressWarnings({"WeakerAccess","unused"})
 public class GuiLine {
 
     //SelectionZoneText is text for the selection zone, PostSelectionText is text to go after selection zone, divider is text between the two of them.
-    public String selectionZoneText, postSelectionText, divider;
+    private String selectionZoneText, postSelectionText, divider;
     //True if custom divider is used.
     private boolean hasDivider;
 
@@ -27,13 +31,11 @@ public class GuiLine {
      *
      * @throws InvalidSelectionZoneException Throws this exception when the text within the selection zone exceeds the length of the selection zone.
      */
-    public GuiLine(Menu menu, String selectionZoneText, String postSelectionText){
+    public GuiLine(@NotNull Menu menu, @NotNull String selectionZoneText, @NotNull String postSelectionText){
         this.selectionZoneText = selectionZoneText;
         this.postSelectionText= postSelectionText;
         hasDivider = false;
-        if(menu.getSelectionZoneHeight() != selectionZoneText.length()){
-            throw new InvalidSelectionZoneException("The selection zone does not match the given selection zone text size.");
-        }
+        ExceptionChecker.assertTrue(menu.getSelectionZoneHeight() == selectionZoneText.length(), new InvalidSelectionZoneException("The selection zone does not match the given selection zone text size."));
     }
 
     /**
@@ -42,7 +44,7 @@ public class GuiLine {
      * @param selectionZoneText Text for the selection zone.
      * @param postSelectionText Text for the post selection zone area.
      */
-    public GuiLine(String selectionZoneText, String postSelectionText){
+    public GuiLine(@NotNull String selectionZoneText, @NotNull String postSelectionText){
         this.selectionZoneText = selectionZoneText;
         this.postSelectionText= postSelectionText;
         hasDivider = false;
@@ -55,7 +57,7 @@ public class GuiLine {
      * @param postSelectionText Text for the post selection zone area.
      * @param divider Text that will divide the selection and post selection text.
      */
-    public GuiLine(String selectionZoneText, String postSelectionText, String divider){
+    public GuiLine(@NotNull String selectionZoneText, @NotNull String postSelectionText, @NotNull String divider){
         this.selectionZoneText = selectionZoneText;
         this.postSelectionText= postSelectionText;
         this.divider = divider;
@@ -72,21 +74,19 @@ public class GuiLine {
      *
      * @throws InvalidSelectionZoneException Throws this exception when the text within the selection zone exceeds the length of the selection zone.
      */
-    public GuiLine(Menu menu, String selectionZoneText, String postSelectionText, String divider){
+    public GuiLine(@NotNull Menu menu, @NotNull String selectionZoneText, @NotNull String postSelectionText, @NotNull String divider){
         this.selectionZoneText = selectionZoneText;
-        this.postSelectionText= postSelectionText;
+        this.postSelectionText = postSelectionText;
         this.divider = divider;
         hasDivider = true;
-        if(menu.getSelectionZoneHeight() != selectionZoneText.length()){
-            throw new InvalidSelectionZoneException("The selection zone does not match the given selection zone text size.");
-        }
+        ExceptionChecker.assertTrue(menu.getSelectionZoneHeight() == selectionZoneText.length(), new InvalidSelectionZoneException("The selection zone does not match the given selection zone text size."));
     }
 
     /**
      * Returns the full line text.
      */
+    @SuppressWarnings("WeakerAccess")
     public String getLineText() {
-
         if (hasDivider) {
             return selectionZoneText + divider + postSelectionText;
         } else {
@@ -99,7 +99,8 @@ public class GuiLine {
      *
      * @param selectionZoneText - Text to replace the selectionZoneText with.
      */
-    public String FormatSelectionZoneText(String selectionZoneText){
+    @SuppressWarnings("WeakerAccess")
+    public String FormatSelectionZoneText(@NotNull String selectionZoneText){
         if(hasDivider){
             return selectionZoneText + divider + postSelectionText;
         }
@@ -113,7 +114,7 @@ public class GuiLine {
      *
      * @param menu - Menu to check the selectionZoneText against.
      */
-    public boolean checkSelectionWidthSize(Menu menu){
+    public boolean checkSelectionWidthSize(@NotNull Menu menu){
         return menu.getSelectionZoneWidth() == selectionZoneText.length();
     }
 
@@ -122,11 +123,37 @@ public class GuiLine {
      *
      * @param wantedSize - Wanted length of text.
      */
+    @SuppressWarnings("WeakerAccess")
     public boolean checkSelectionWidthSize(int wantedSize){
         return wantedSize == selectionZoneText.length();
     }
 
+    public String getSelectionZoneText() {
+        return selectionZoneText;
+    }
+
+    public void setSelectionZoneText(String selectionZoneText) {
+        this.selectionZoneText = selectionZoneText;
+    }
+
+    public String getPostSelectionText() {
+        return postSelectionText;
+    }
+
+    public void setPostSelectionText(String postSelectionText) {
+        this.postSelectionText = postSelectionText;
+    }
+
+    public String getDivider() {
+        return divider;
+    }
+
+    public void setDivider(String divider) {
+        this.divider = divider;
+    }
+
     @Override
+    @NotNull
     public String toString() {
         return getLineText();
     }

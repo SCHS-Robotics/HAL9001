@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.util.exceptions;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * An exception thrown when a button meant to return double data is mapped to a button that does not return double data.
  *
@@ -16,7 +18,7 @@ public class NotDoubleInputException extends RuntimeException {
      *
      * @param message The message to print to the screen.
      */
-    public NotDoubleInputException(String message) {
+    public NotDoubleInputException(@Nullable String message) {
         super(message);
     }
 }

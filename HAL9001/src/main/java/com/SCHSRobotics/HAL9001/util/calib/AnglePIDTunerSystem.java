@@ -18,6 +18,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 
 /**
@@ -29,6 +30,7 @@ import org.opencv.core.Mat;
  *
  * Creation Date: 8/11/19
  */
+@SuppressWarnings("unused")
 public class AnglePIDTunerSystem extends VisionSubSystem {
 
     //The PID controller used to control the robot's angle.
@@ -76,7 +78,7 @@ public class AnglePIDTunerSystem extends VisionSubSystem {
      *
      * @throws GuiNotPresentException - Throws this exception if the GUI was not started before this subsystem was created.
      */
-    public AnglePIDTunerSystem(Robot robot, BaseParam driveParams, PIDController pidController, double setPoint, AngleUnit angleUnit) {
+    public AnglePIDTunerSystem(@NotNull Robot robot, @NotNull BaseParam driveParams, @NotNull PIDController pidController, double setPoint, @NotNull AngleUnit angleUnit) {
         super(robot);
 
         slowModeToggle = new Toggle(Toggle.ToggleTypes.flipToggle, false);
@@ -114,7 +116,7 @@ public class AnglePIDTunerSystem extends VisionSubSystem {
         robot.gui.addMenu("display",display);
         robot.gui.setActiveMenu("display");*/
 
-        driveType = driveParams instanceof TankDrive.Params ? DriveTrain.TANK : driveParams instanceof QuadWheelDrive ? DriveTrain.FOUR_WHEEL : driveParams instanceof MechanumDrive.Params ? DriveTrain.MECHANUM : DriveTrain.OMNIWHEEL;
+        driveType = driveParams instanceof TankDrive.Params ? DriveTrain.TANK : driveParams instanceof QuadWheelDrive.Params ? DriveTrain.FOUR_WHEEL : driveParams instanceof MechanumDrive.Params ? DriveTrain.MECHANUM : DriveTrain.OMNIWHEEL;
 
         switch(driveType) {
             case TANK: tankDrive = new TankDrive(robot,(TankDrive.Params) driveParams); break;
@@ -197,7 +199,7 @@ public class AnglePIDTunerSystem extends VisionSubSystem {
     }
 
     @Override
-    public Mat onCameraFrame(Mat input) {
+    public Mat onCameraFrame(@NotNull Mat input) {
         input.release();
 
         return grapher.getNextFrame(pidTuner.getError(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, units).firstAngle));

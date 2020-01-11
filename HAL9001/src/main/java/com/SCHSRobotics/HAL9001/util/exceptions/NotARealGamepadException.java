@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.util.exceptions;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * An exception that is thrown when someone tries to use an invalid gamepad to control the robot.
  *
@@ -16,7 +18,7 @@ public class NotARealGamepadException extends RuntimeException {
      *
      * @param message The error message to print to the screen.
      */
-    public NotARealGamepadException(String message) {
+    public NotARealGamepadException(@Nullable String message) {
         super(message);
     }
 }

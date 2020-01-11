@@ -39,11 +39,11 @@ public class BasicSampleBot2 extends Robot {
         //PIDController controller = new PIDController(0.01,0,0);
         //controller.setDeadband(5);
         //calib = new AnglePIDTunerSystem(this, new MechanumDrive.Params("forwardLeftMotor","forwardRightMotor","backLeftMotor","backRightMotor"), controller,45, AngleUnit.DEGREES);
-        drive = new MechanumDrive(this, new MechanumDrive.SpecificParams("topLeft","topRight","botLeft","botRight"),false);
+        //drive = new MechanumDrive(this, new MechanumDrive.SpecificParams("topLeft","topRight","botLeft","botRight"),false);
         s1 = new SubSystem1(this);
         s2 = new SubSystem2(this);
         s3 = new SubSystem3(this);
-        putSubSystem("Tank", drive);
+        //putSubSystem("Tank", drive);
         putSubSystem("Test",s1);
         putSubSystem("Test2",s2);
         putSubSystem("Test3",s3);

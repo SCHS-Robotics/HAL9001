@@ -3,6 +3,7 @@ package com.SCHSRobotics.HAL9001.system.source.BaseRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Supplier;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An abstract class representing a subsystem on the robot.
@@ -25,7 +26,7 @@ public abstract class SubSystem {
      *
      * @param robot - The robot the subsystem is contained within.
      */
-    public SubSystem(Robot robot) {
+    public SubSystem(@NotNull Robot robot) {
         this.robot = robot;
         usesConfig = false;
         initVars();
@@ -79,7 +80,7 @@ public abstract class SubSystem {
      * @param millis The number of milliseconds to wait.
      * @param runner The code to run each loop while waiting.
      */
-    protected final void waitTime(long millis, Runnable runner) {
+    protected final void waitTime(long millis, @NotNull Runnable runner) {
         long stopTime = System.currentTimeMillis() + millis;
         while (robot.opModeIsActive() && System.currentTimeMillis() < stopTime) {
             runner.run();
@@ -92,7 +93,7 @@ public abstract class SubSystem {
      *
      * @param condition The boolean condition that must be true in order for the program to stop waiting.
      */
-    protected final void waitUntil(Supplier<Boolean> condition) {
+    protected final void waitUntil(@NotNull Supplier<Boolean> condition) {
         while (robot.opModeIsActive() && !condition.get()) {
             ((LinearOpMode) robot.getOpMode()).sleep(1);
         }
@@ -104,7 +105,7 @@ public abstract class SubSystem {
      * @param condition The boolean condition that must be true in order for the program to stop waiting.
      * @param runner The code to run each loop while waiting.
      */
-    protected final void waitUntil(Supplier<Boolean> condition, Runnable runner) {
+    protected final void waitUntil(@NotNull Supplier<Boolean> condition, @NotNull Runnable runner) {
         while (robot.opModeIsActive() && !condition.get()) {
             runner.run();
             ((LinearOpMode) robot.getOpMode()).sleep(1);
@@ -116,7 +117,7 @@ public abstract class SubSystem {
      *
      * @param condition The boolean condition that must become false for the program to stop waiting.
      */
-    protected final void waitWhile(Supplier<Boolean> condition) {
+    protected final void waitWhile(@NotNull Supplier<Boolean> condition) {
         while (robot.opModeIsActive() && condition.get()) {
             ((LinearOpMode) robot.getOpMode()).sleep(1);
         }
@@ -128,7 +129,7 @@ public abstract class SubSystem {
      * @param condition The boolean condition that must become false for the program to stop waiting.
      * @param runner The code to run each loop while waiting.
      */
-    protected final void waitWhile(Supplier<Boolean> condition, Runnable runner) {
+    protected final void waitWhile(@NotNull Supplier<Boolean> condition, @NotNull Runnable runner) {
         while (robot.opModeIsActive() && condition.get()) {
             runner.run();
             ((LinearOpMode) robot.getOpMode()).sleep(1);

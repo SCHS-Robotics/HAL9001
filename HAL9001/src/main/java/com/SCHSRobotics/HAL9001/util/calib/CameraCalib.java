@@ -8,6 +8,7 @@ import com.SCHSRobotics.HAL9001.util.exceptions.ViewportDisabledException;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 
+import org.jetbrains.annotations.NotNull;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -30,6 +31,7 @@ import java.util.List;
  *
  * Creation Date: 8/24/19
  */
+@SuppressWarnings("unused")
 public class CameraCalib extends VisionSubSystem {
 
     //The customizable gamepad holding all the controls for the calibration class.
@@ -61,7 +63,7 @@ public class CameraCalib extends VisionSubSystem {
      * @param robot The robot using this subsystem.
      * @param chessboardSize The size of the chessboard pattern.
      */
-    public CameraCalib(Robot robot, Size chessboardSize) {
+    public CameraCalib(@NotNull Robot robot, @NotNull Size chessboardSize) {
         super(robot);
 
         if(!robot.isViewportEnabled()) {
@@ -146,7 +148,7 @@ public class CameraCalib extends VisionSubSystem {
     }
 
     @Override
-    public Mat onCameraFrame(Mat inputFrame) {
+    public Mat onCameraFrame(@NotNull Mat inputFrame) {
         Mat gray = new Mat();
 
         Imgproc.cvtColor(inputFrame,gray,Imgproc.COLOR_RGBA2GRAY);

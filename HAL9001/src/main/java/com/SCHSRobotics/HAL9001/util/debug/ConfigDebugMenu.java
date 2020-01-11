@@ -11,9 +11,13 @@ import com.SCHSRobotics.HAL9001.system.subsystems.cursors.ConfigCursor;
 import com.SCHSRobotics.HAL9001.util.annotations.AutonomousConfig;
 import com.SCHSRobotics.HAL9001.util.annotations.TeleopConfig;
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
+import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.functional_interfaces.BiFunction;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigParam;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -38,6 +42,7 @@ import java.util.Map;
  *
  * Creation Date: 8/13/19
  */
+@SuppressWarnings("unused")
 public class ConfigDebugMenu extends ScrollingListMenu {
 
     /**
@@ -85,6 +90,8 @@ public class ConfigDebugMenu extends ScrollingListMenu {
     private GuiLine nameLine;
     //A custom version of the modulo function that allows negative numbers to wrap around.
     private BiFunction<Integer,Integer,Integer> customMod = new BiFunction<Integer, Integer, Integer>() {
+        @NotNull
+        @Contract(pure = true)
         @Override
         public Integer apply(Integer x, Integer m) {
             return (x % m + m) % m;
@@ -98,7 +105,7 @@ public class ConfigDebugMenu extends ScrollingListMenu {
      *
      * @param gui - The GUI being used to render the menu.
      */
-    public ConfigDebugMenu(GUI gui) {
+    public ConfigDebugMenu(@NotNull GUI gui) {
         super(gui, new ConfigCursor(gui.robot,500), genInitialLines(Environment.getExternalStorageDirectory().getPath()+"/System64/"),1,genInitialLines(Environment.getExternalStorageDirectory().getPath()+"/System64/").size());
         menuState = MenuState.START;
         currentFilepath = Environment.getExternalStorageDirectory().getPath()+"/System64/";
@@ -107,20 +114,18 @@ public class ConfigDebugMenu extends ScrollingListMenu {
     }
 
     @Override
-    public void onSelect() {
-
-    }
+    public void onSelect() {}
 
     @Override
-    public void onButton(String name, Button button) {
+    public void onButton(@NotNull String name, @NotNull Button button) {
 
         switch (menuState) {
             //startup, shows all robot directories.
             case START:
                 if(name.equals(ConfigCursor.SELECT)) {
-                    if(!lines.get(cursor.y).postSelectionText.equals("Delete")) {
+                    if(!lines.get(cursor.getY()).getPostSelectionText().equals("Delete")) {
                         menuState = MenuState.TELEOP_AUTO_SELECT;
-                        currentFilepath += lines.get(cursor.y).postSelectionText;
+                        currentFilepath += lines.get(cursor.getY()).getPostSelectionText();
 
                         robotFilepath = currentFilepath;
 
@@ -142,7 +147,7 @@ public class ConfigDebugMenu extends ScrollingListMenu {
                 if(name.equals(ConfigCursor.SELECT)) {
                     menuState = MenuState.START;
 
-                    deleteDirectory(currentFilepath+lines.get(cursor.y).postSelectionText);
+                    deleteDirectory(currentFilepath+lines.get(cursor.getY()).getPostSelectionText());
 
                     resetCursorPos();
                     setRootDirLines();
@@ -159,9 +164,9 @@ public class ConfigDebugMenu extends ScrollingListMenu {
                 if(name.equals(ConfigCursor.SELECT)) {
                     menuState = MenuState.ROOT_DIR;
 
-                    configState = lines.get(cursor.y).postSelectionText.equals("autonomous") ? ConfigurationState.AUTONOMOUS : ConfigurationState.TELEOP;
+                    configState = lines.get(cursor.getY()).getPostSelectionText().equals("autonomous") ? ConfigurationState.AUTONOMOUS : ConfigurationState.TELEOP;
 
-                    currentFilepath += '/'+lines.get(cursor.y).postSelectionText;
+                    currentFilepath += '/'+lines.get(cursor.getY()).getPostSelectionText();
 
                     resetCursorPos();
                     setRobotDirLines();
@@ -179,14 +184,14 @@ public class ConfigDebugMenu extends ScrollingListMenu {
             //robot directory has been selected, showing all config files in the directory and new/edit/delete options.
             case ROOT_DIR:
                 if(name.equals(ConfigCursor.SELECT)) {
-                    if ((lines.get(cursor.y).postSelectionText.equals("Delete Config") || lines.get(cursor.y).postSelectionText.equals("Edit Config")) && genLines(currentFilepath,"robot_info.txt").size() > 0) {
-                        menuState = lines.get(cursor.y).postSelectionText.equals("Delete Config") ? MenuState.DELETE_CONFIG : MenuState.CHOOSE_EDIT_CONFIG;
+                    if ((lines.get(cursor.getY()).getPostSelectionText().equals("Delete Config") || lines.get(cursor.getY()).getPostSelectionText().equals("Edit Config")) && genLines(currentFilepath,"robot_info.txt").size() > 0) {
+                        menuState = lines.get(cursor.getY()).getPostSelectionText().equals("Delete Config") ? MenuState.DELETE_CONFIG : MenuState.CHOOSE_EDIT_CONFIG;
 
                         genDefaultConfigMap();
                         resetCursorPos();
                         setConfigListLines();
 
-                    } else if (lines.get(cursor.y).postSelectionText.equals("New Config")) {
+                    } else if (lines.get(cursor.getY()).getPostSelectionText().equals("New Config")) {
                         menuState = MenuState.NEW_CONFIG;
 
                         genDefaultConfigMap();
@@ -209,7 +214,7 @@ public class ConfigDebugMenu extends ScrollingListMenu {
                 if(name.equals(ConfigCursor.SELECT)) {
                     menuState = MenuState.ROOT_DIR;
 
-                    String configPath = currentFilepath + '/' + lines.get(cursor.y).postSelectionText + ".txt";
+                    String configPath = currentFilepath + '/' + lines.get(cursor.getY()).getPostSelectionText() + ".txt";
                     File configFile = new File(configPath);
 
                     if (!configFile.delete()) {
@@ -233,17 +238,17 @@ public class ConfigDebugMenu extends ScrollingListMenu {
             case NEW_CONFIG:
 
                 if(name.equals(ConfigCursor.SELECT)) {
-                    if (!lines.get(cursor.y).postSelectionText.equals("Done")) {
+                    if (!lines.get(cursor.getY()).getPostSelectionText().equals("Done")) {
                         ((ConfigCursor) cursor).setWriteMode(true);
-                        char[] currentNameText = lines.get(0).selectionZoneText.toCharArray();
-                        currentNameText[cursor.x] = VALID_CHARS.get((VALID_CHARS.indexOf(currentNameText[cursor.x]) + 1) % VALID_CHARS.size());
+                        char[] currentNameText = lines.get(0).getSelectionZoneText().toCharArray();
+                        currentNameText[cursor.getX()] = VALID_CHARS.get((VALID_CHARS.indexOf(currentNameText[cursor.getX()]) + 1) % VALID_CHARS.size());
 
                         setConfigNamingLines(new GuiLine(new String(currentNameText), "Config Name"));
                     }
                     else {
                         ((ConfigCursor) cursor).setWriteMode(false);
 
-                        String newConfigName = parseName(lines.get(0).selectionZoneText);
+                        String newConfigName = parseName(lines.get(0).getSelectionZoneText());
 
                         if (!newConfigName.equals("") && !newConfigName.equals("robot_info")) {
 
@@ -267,10 +272,10 @@ public class ConfigDebugMenu extends ScrollingListMenu {
                     }
                 }
 
-                else if(name.equals(ConfigCursor.REVERSE_SELECT) && !lines.get(cursor.y).postSelectionText.equals("Done")) {
+                else if(name.equals(ConfigCursor.REVERSE_SELECT) && !lines.get(cursor.getY()).getPostSelectionText().equals("Done")) {
                     ((ConfigCursor) cursor).setWriteMode(true);
-                    char[] currentNameText = lines.get(0).selectionZoneText.toCharArray();
-                    currentNameText[cursor.x] = VALID_CHARS.get(customMod.apply((VALID_CHARS.indexOf(currentNameText[cursor.x]) - 1),VALID_CHARS.size()));
+                    char[] currentNameText = lines.get(0).getSelectionZoneText().toCharArray();
+                    currentNameText[cursor.getX()] = VALID_CHARS.get(customMod.apply((VALID_CHARS.indexOf(currentNameText[cursor.getX()]) - 1),VALID_CHARS.size()));
 
                     setConfigNamingLines(new GuiLine(new String(currentNameText), "Config Name"));
                 }
@@ -289,7 +294,7 @@ public class ConfigDebugMenu extends ScrollingListMenu {
 
                 if(name.equals(ConfigCursor.SELECT)) {
 
-                    selectedConfigPath = currentFilepath + '/' + lines.get(cursor.y).postSelectionText + ".txt";
+                    selectedConfigPath = currentFilepath + '/' + lines.get(cursor.getY()).getPostSelectionText() + ".txt";
 
                     readConfigFile(selectedConfigPath);
 
@@ -309,9 +314,9 @@ public class ConfigDebugMenu extends ScrollingListMenu {
                 break;
             case SELECT_SUBSYSTEM:
                 if(name.equals(ConfigCursor.SELECT)) {
-                    if (!lines.get(cursor.y).postSelectionText.equals("Done")) {
+                    if (!lines.get(cursor.getY()).getPostSelectionText().equals("Done")) {
                         menuState = MenuState.CONFIGURE_SUBSYSTEM;
-                        selectedSubsystemName = lines.get(cursor.y).postSelectionText;
+                        selectedSubsystemName = lines.get(cursor.getY()).getPostSelectionText();
 
                         resetCursorPos();
                         setSubsystemOptionsLines();
@@ -345,11 +350,12 @@ public class ConfigDebugMenu extends ScrollingListMenu {
 
             case CONFIGURE_SUBSYSTEM:
                 if(name.equals(ConfigCursor.SELECT)) {
-                    if (!lines.get(cursor.y).postSelectionText.equals("Done")) {
+                    if (!lines.get(cursor.getY()).getPostSelectionText().equals("Done")) {
 
-                        String[] data = parseOptionLine(lines.get(cursor.y));
+                        String[] data = parseOptionLine(lines.get(cursor.getY()));
 
                         List<ConfigParam> subsystemParams = config.get(selectedSubsystemName);
+                        ExceptionChecker.assertNonNull(subsystemParams, new NullPointerException("Could not get config for subsystem "+selectedSubsystemName));
                         ConfigParam currentParam = new ConfigParam("", new String[]{}, "");
 
                         for (ConfigParam param : subsystemParams) {
@@ -363,7 +369,7 @@ public class ConfigDebugMenu extends ScrollingListMenu {
                             throw new DumpsterFireException("Couldn't find options for configParam");
                         }
 
-                        lines.set(cursor.y, new GuiLine("#", currentParam.usesGamepad ? data[0] + " | " + currentParam.options.get((currentParam.options.indexOf(data[1]) + 1) % currentParam.options.size()) + " | " + data[2] : data[0] + " | " + currentParam.options.get((currentParam.options.indexOf(data[1]) + 1) % currentParam.options.size())));
+                        lines.set(cursor.getY(), new GuiLine("#", currentParam.usesGamepad ? data[0] + " | " + currentParam.options.get((currentParam.options.indexOf(data[1]) + 1) % currentParam.options.size()) + " | " + data[2] : data[0] + " | " + currentParam.options.get((currentParam.options.indexOf(data[1]) + 1) % currentParam.options.size())));
                     }
                     else {
                         menuState = MenuState.SELECT_SUBSYSTEM;
@@ -374,11 +380,12 @@ public class ConfigDebugMenu extends ScrollingListMenu {
                         setSubsystemSelectionLines();
                     }
                 }
-                else if(name.equals(ConfigCursor.REVERSE_SELECT) && !lines.get(cursor.y).postSelectionText.equals("Done")) {
+                else if(name.equals(ConfigCursor.REVERSE_SELECT) && !lines.get(cursor.getY()).getPostSelectionText().equals("Done")) {
 
-                    String[] data = parseOptionLine(lines.get(cursor.y));
+                    String[] data = parseOptionLine(lines.get(cursor.getY()));
 
                     List<ConfigParam> subsystemParams = config.get(selectedSubsystemName);
+                    ExceptionChecker.assertNonNull(subsystemParams, new NullPointerException("Could not get config for subsystem "+selectedSubsystemName));
                     ConfigParam currentParam = new ConfigParam("", new String[]{}, "");
 
                     for (ConfigParam param : subsystemParams) {
@@ -392,11 +399,11 @@ public class ConfigDebugMenu extends ScrollingListMenu {
                         throw new DumpsterFireException("Couldn't find options for configParam");
                     }
 
-                    lines.set(cursor.y, new GuiLine("#", currentParam.usesGamepad ? data[0] + " | " + currentParam.options.get(customMod.apply((currentParam.options.indexOf(data[1])-1), currentParam.options.size())) + " | " + data[2] : data[0] + " | " + currentParam.options.get(customMod.apply((currentParam.options.indexOf(data[1])-1), currentParam.options.size()))));
+                    lines.set(cursor.getY(), new GuiLine("#", currentParam.usesGamepad ? data[0] + " | " + currentParam.options.get(customMod.apply((currentParam.options.indexOf(data[1])-1), currentParam.options.size())) + " | " + data[2] : data[0] + " | " + currentParam.options.get(customMod.apply((currentParam.options.indexOf(data[1])-1), currentParam.options.size()))));
                 }
 
-                else if(name.equals(ConfigCursor.SWITCH_GAMEPAD) && !lines.get(cursor.y).postSelectionText.equals("Done")) {
-                    String unparsedLine = lines.get(cursor.y).postSelectionText;
+                else if(name.equals(ConfigCursor.SWITCH_GAMEPAD) && !lines.get(cursor.getY()).getPostSelectionText().equals("Done")) {
+                    String unparsedLine = lines.get(cursor.getY()).getPostSelectionText();
                     String currentOptionName = unparsedLine.substring(0, unparsedLine.indexOf('|')).trim();
 
                     int tempIdx = unparsedLine.substring(unparsedLine.indexOf('|') + 1).indexOf('|'); //This number is the index of the vertical bar in the substring formed by taking all the text after the first vertical bar.
@@ -407,7 +414,9 @@ public class ConfigDebugMenu extends ScrollingListMenu {
                     if (tempIdx != -1) {
                         currentOptionValue = unparsedLine.substring(unparsedLine.indexOf('|') + 1, unparsedLine.indexOf('|') + tempIdx).trim();
                         currentGamepadOptionValue = unparsedLine.substring(unparsedLine.indexOf('|') + tempIdx + 3).trim();
+
                         List<ConfigParam> subsystemParams = config.get(selectedSubsystemName);
+                        ExceptionChecker.assertNonNull(subsystemParams, new NullPointerException("Could not get params for subsystem "+selectedSubsystemName));
                         ConfigParam currentParam = new ConfigParam("", new String[]{}, "");
 
                         for (ConfigParam param : subsystemParams) {
@@ -421,7 +430,7 @@ public class ConfigDebugMenu extends ScrollingListMenu {
                             throw new DumpsterFireException("Couldn't find options for configParam");
                         }
 
-                        lines.set(cursor.y, new GuiLine("#", currentParam.usesGamepad ? currentOptionName + " | " + currentOptionValue + " | " + currentParam.gamepadOptions.get((currentParam.gamepadOptions.indexOf(currentGamepadOptionValue) + 1) % currentParam.gamepadOptions.size()) : currentOptionName + " | " + currentOptionValue));
+                        lines.set(cursor.getY(), new GuiLine("#", currentParam.usesGamepad ? currentOptionName + " | " + currentOptionValue + " | " + ConfigParam.getGamepadOptions()[(Arrays.asList(ConfigParam.getGamepadOptions()).indexOf(currentGamepadOptionValue) + 1) % ConfigParam.getGamepadOptions().length] : currentOptionName + " | " + currentOptionValue));
                     }
                 }
 
@@ -480,7 +489,10 @@ public class ConfigDebugMenu extends ScrollingListMenu {
 
         List<GuiLine> newLines = new ArrayList<>();
 
-        for(ConfigParam param : config.get(selectedSubsystemName)) {
+        List<ConfigParam> params = config.get(selectedSubsystemName);
+        ExceptionChecker.assertNonNull(params, new NullPointerException("Could not get config for subsystem "+selectedSubsystemName));
+
+        for(ConfigParam param : params) {
             newLines.add(new GuiLine("#",param.usesGamepad ? param.name+ " | " + param.currentOption + " | " + param.currentGamepadOption : param.name+ " | " + param.currentOption));
         }
         newLines.add(new GuiLine("#","Done"));
@@ -503,7 +515,7 @@ public class ConfigDebugMenu extends ScrollingListMenu {
         List<GuiLine> newLines = new ArrayList<>();
         newLines.add(new GuiLine("###############", "Config Name"));
         newLines.add(new GuiLine("###############", "Done"));
-        super.setSelectionZoneWidthAndHeight(newLines.get(0).selectionZoneText.length(), newLines.size(), newLines);
+        super.setSelectionZoneWidthAndHeight(newLines.get(0).getSelectionZoneText().length(), newLines.size(), newLines);
     }
 
     /**
@@ -511,11 +523,11 @@ public class ConfigDebugMenu extends ScrollingListMenu {
      *
      * @param initName - The nameLine value to initialize the nameline as.
      */
-    private void setConfigNamingLines(GuiLine initName) {
+    private void setConfigNamingLines(@NotNull GuiLine initName) {
         List<GuiLine> newLines = new ArrayList<>();
         newLines.add(initName);
         newLines.add(new GuiLine("###############", "Done"));
-        super.setSelectionZoneWidthAndHeight(newLines.get(0).selectionZoneText.length(), newLines.size(), newLines);
+        super.setSelectionZoneWidthAndHeight(newLines.get(0).getSelectionZoneText().length(), newLines.size(), newLines);
     }
 
     /**
@@ -543,7 +555,7 @@ public class ConfigDebugMenu extends ScrollingListMenu {
      *
      * @param filePath - The filepath to the folder to delete.
      */
-    private void deleteDirectory(String filePath) {
+    private void deleteDirectory(@NotNull String filePath) {
         File dir = new File(filePath);
         File[] contents = dir.listFiles();
         if (contents != null) {
@@ -551,7 +563,7 @@ public class ConfigDebugMenu extends ScrollingListMenu {
                 deleteDirectory(f.getPath()); //recursion :)
             }
         }
-        dir.delete();
+        Log.i("HAL9001","Directory "+filePath+" Deleted: "+dir.delete());
     }
 
     /**
@@ -559,7 +571,7 @@ public class ConfigDebugMenu extends ScrollingListMenu {
      *
      * @param filepath - The path to the config file.
      */
-    private void readConfigFile(String filepath) {
+    private void readConfigFile(@NotNull String filepath) {
 
         FileInputStream fis;
 
@@ -574,15 +586,25 @@ public class ConfigDebugMenu extends ScrollingListMenu {
                 bufferedReader = new BufferedReader(fReader);
 
                 int i = 0;
+                String lastSubsystem = "\n";
                 String line;
                 while((line = bufferedReader.readLine()) != null) {
                     String[] data = line.split(":");
-                    config.get(data[0]).get(i).name = data[1];
-                    config.get(data[0]).get(i).currentOption = data[2];
-                    if(config.get(data[0]).get(i).usesGamepad) {
-                        config.get(data[0]).get(i).currentGamepadOption = data[3].substring(0,data[3].indexOf('d')+1) + ' ' + data[3].substring(data[3].indexOf('d')+1); //adds a space in between the d in gamepad and the number
+                    if(!data[0].equals(lastSubsystem)) {
+                        i = 0;
                     }
-                    i++;
+                    List<ConfigParam> params = config.get(data[0]);
+                    if(params != null) {
+                        if(params.get(i).name.equals(data[1].trim())) {
+                            params.get(i).name = data[1];
+                            params.get(i).currentOption = data[2];
+                            if (params.get(i).usesGamepad) {
+                                params.get(i).currentGamepadOption = data[3].substring(0, data[3].indexOf('d') + 1) + ' ' + data[3].substring(data[3].indexOf('d') + 1); //adds a space in between the d in gamepad and the number
+                            }
+                            lastSubsystem = data[0];
+                            i++;
+                        }
+                    }
                 }
 
                 bufferedReader.close();
@@ -653,7 +675,7 @@ public class ConfigDebugMenu extends ScrollingListMenu {
     }
 
     /**
-     * Generates the default configuration map based on the values contained in Robot.
+     * Generates the default configuration map based on the values contained in MainRobot.
      */
     private void genDefaultConfigMap() {
         config = new HashMap<>();
@@ -661,8 +683,12 @@ public class ConfigDebugMenu extends ScrollingListMenu {
         if(configState == ConfigurationState.AUTONOMOUS) {
             for (String subsystem : Robot.autonomousConfig.keySet()) {
                 List<ConfigParam> params = new ArrayList<>();
-                for (ConfigParam param : Robot.autonomousConfig.get(subsystem)) {
-                    params.add(param.clone());
+                List<ConfigParam> pulledParams = Robot.autonomousConfig.get(subsystem);
+                ExceptionChecker.assertNonNull(pulledParams, new NullPointerException("autonomous config does not contain subsystem "+subsystem));
+                for (ConfigParam param : pulledParams) {
+                    ConfigParam p = param.clone();
+                    p.currentOption = p.getDefaultOption();
+                    params.add(p);
                 }
                 config.put(subsystem, params);
             }
@@ -670,8 +696,12 @@ public class ConfigDebugMenu extends ScrollingListMenu {
         else  {
             for (String subsystem : Robot.teleopConfig.keySet()) {
                 List<ConfigParam> params = new ArrayList<>();
-                for (ConfigParam param : Robot.teleopConfig.get(subsystem)) {
-                    params.add(param.clone());
+                List<ConfigParam> pulledParams = Robot.teleopConfig.get(subsystem);
+                ExceptionChecker.assertNonNull(pulledParams, new NullPointerException("teleop config does not contain subsystem "+subsystem));
+                for (ConfigParam param : pulledParams) {
+                    ConfigParam p = param.clone();
+                    p.currentOption = p.getDefaultOption();
+                    params.add(p);
                 }
                 config.put(subsystem, params);
             }
@@ -684,17 +714,19 @@ public class ConfigDebugMenu extends ScrollingListMenu {
      * @param newConfig - The new configuration settings.
      * @param subsystemName - The subsystem being configured.
      */
-    private void updateConfigMapSubsystem(List<GuiLine> newConfig, String subsystemName) {
+    private void updateConfigMapSubsystem(@NotNull List<GuiLine> newConfig, @NotNull String subsystemName) {
         removeDone(newConfig); //gets rid of the Done line
 
         for(int i = 0; i < newConfig.size(); i++) {
             String[] data = parseOptionLine(newConfig.get(i));
+            List<ConfigParam> params = config.get(subsystemName);
+            if(params != null) {
+                params.get(i).name = data[0];
+                params.get(i).currentOption = data[1];
 
-            config.get(subsystemName).get(i).name = data[0];
-            config.get(subsystemName).get(i).currentOption = data[1];
-
-            if(config.get(subsystemName).get(i).usesGamepad) {
-                config.get(subsystemName).get(i).currentGamepadOption = data[2];
+                if (params.get(i).usesGamepad) {
+                    params.get(i).currentGamepadOption = data[2];
+                }
             }
         }
     }
@@ -704,9 +736,9 @@ public class ConfigDebugMenu extends ScrollingListMenu {
      *
      * @param lines - The lines to search for "Done" in.
      */
-    private void removeDone(List<GuiLine> lines) {
+    private void removeDone(@NotNull List<GuiLine> lines) {
         for(GuiLine line : lines) {
-            if(line.postSelectionText.equals("Done")) {
+            if(line.getPostSelectionText().equals("Done")) {
                 lines.remove(line);
                 break;
             }
@@ -723,8 +755,8 @@ public class ConfigDebugMenu extends ScrollingListMenu {
         FileOutputStream fos;
 
         try {
-            configFile.delete();
-            configFile.createNewFile();
+            Log.i("HAL","File "+selectedConfigPath+" Deleted: "+configFile.delete());
+            Log.i("HAL","File "+selectedConfigPath+" Created: "+configFile.createNewFile());
 
             fos = new FileOutputStream(selectedConfigPath, true);
 
@@ -732,7 +764,9 @@ public class ConfigDebugMenu extends ScrollingListMenu {
 
             StringBuilder sb = new StringBuilder();
             for(String subsystem : config.keySet()) {
-                for(ConfigParam param : config.get(subsystem)) {
+                List<ConfigParam> params = config.get(subsystem);
+                ExceptionChecker.assertNonNull(params,new NullPointerException("Could not get config for subsystem "+subsystem));
+                for(ConfigParam param : params) {
                     sb.append(subsystem);
                     sb.append(':');
                     sb.append(param.name);
@@ -771,7 +805,8 @@ public class ConfigDebugMenu extends ScrollingListMenu {
      * @param input - The unparsed name of the new config file.
      * @return The parsed name of the new config file.
      */
-    private String parseName(String input) {
+    @NotNull
+    private String parseName(@NotNull String input) {
 
         int startIdx = 0;
         int endIdx = 0;
@@ -817,7 +852,7 @@ public class ConfigDebugMenu extends ScrollingListMenu {
      * @param filePath - The filepath to use to generate the initial lines.
      * @return The program's initial lines.
      */
-    private static ArrayList<GuiLine> genInitialLines(String filePath) {
+    private static ArrayList<GuiLine> genInitialLines(@NotNull String filePath) {
         File rootDirectory = new File(filePath);
         File[] dirs = rootDirectory.listFiles();
         ArrayList<GuiLine> startingLines = new ArrayList<>();
@@ -834,7 +869,7 @@ public class ConfigDebugMenu extends ScrollingListMenu {
      * @param filePath - The path to the folder to generate GuiLines for.
      * @return The list of GuiLines representing all the folders/files in that directory.
      */
-    private static ArrayList<GuiLine> genLines(String filePath) {
+    private static ArrayList<GuiLine> genLines(@NotNull String filePath) {
         File rootDirectory = new File(filePath);
         File[] dirs = rootDirectory.listFiles();
         ArrayList<GuiLine> startingLines = new ArrayList<>();
@@ -851,7 +886,8 @@ public class ConfigDebugMenu extends ScrollingListMenu {
      * @param exclude - A certain file or folder name to exclude from the list of GuiLines.
      * @return The list of GuiLines representing all the folders/files in that directory.
      */
-    private static ArrayList<GuiLine> genLines(String filePath, String exclude) {
+    @SuppressWarnings("SameParameterValue")
+    private static ArrayList<GuiLine> genLines(@NotNull String filePath, @NotNull String exclude) {
         File rootDirectory = new File(filePath);
         File[] dirs = rootDirectory.listFiles();
         ArrayList<GuiLine> startingLines = new ArrayList<>();
@@ -869,8 +905,10 @@ public class ConfigDebugMenu extends ScrollingListMenu {
      * @param line - The GuiLine to be parsed.
      * @return - A string array containing the name of the config param, the config param's current option, and, if applicable, the config param's current gamepad option.
      */
-    private static String[] parseOptionLine(GuiLine line) {
-        String unparsedLine = line.postSelectionText;
+    @NotNull
+    @Contract("_ -> new")
+    private static String[] parseOptionLine(@NotNull GuiLine line) {
+        String unparsedLine = line.getPostSelectionText();
         String currentOptionName = unparsedLine.substring(0, unparsedLine.indexOf('|')).trim();
 
         int tempIdx = unparsedLine.substring(unparsedLine.indexOf('|') + 1).indexOf('|'); //This number is the index of the vertical bar in the substring formed by taking all the text after the first vertical bar.

@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.util.exceptions;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * An exception thrown when a button meant to return boolean data is mapped to a button that does not return boolean data.
  *
@@ -12,11 +14,11 @@ package com.SCHSRobotics.HAL9001.util.exceptions;
 public class NotBooleanInputException extends RuntimeException {
 
     /**
-     * Ctor for NotBooleanInputException.
+     * Constructor for NotBooleanInputException.
      *
      * @param message The message to print to the screen.
      */
-    public NotBooleanInputException(String message) {
+    public NotBooleanInputException(@Nullable String message) {
         super(message);
     }
 }

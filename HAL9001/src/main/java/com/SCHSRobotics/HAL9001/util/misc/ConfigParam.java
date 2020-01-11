@@ -3,6 +3,10 @@ package com.SCHSRobotics.HAL9001.util.misc;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotARealGamepadException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotAnAlchemistException;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,6 +23,7 @@ import java.util.Map;
  *
  * Creation Date: 8/13/19
  */
+@SuppressWarnings("unused")
 public class ConfigParam {
 
     //A map mapping the words true and false to the booleans true and false.
@@ -29,7 +34,7 @@ public class ConfigParam {
     //The name of the option
     public String name;
     //The option's default value.
-    public String defaultOption;
+    private String defaultOption;
     //The current value of the option.
     public String currentOption;
     //A list of possible values the option can take on.
@@ -37,11 +42,16 @@ public class ConfigParam {
     //A list of values used for conversion when pulling inputs.
     public List<Object> vals;
     //The option's default gamepad to use.
-    public String defaultGamepadOption;
+    private String defaultGamepadOption;
     //The gamepad that the option is currently using.
     public String currentGamepadOption;
     //The list of possible gamepads for the option to use.
-    public List<String> gamepadOptions;
+    private static final String[] gamepadOptions = new String[] {"Gamepad 1", "Gamepad 2"};
+    private static final String[] boolOptions = new String[] {"noButton","a","b","x","y","dpad_left","dpad_right","dpad_up","dpad_down","left_bumper","right_bumper","bool_left_trigger","bool_right_trigger","left_stick_button","right_stick_button","bool_left_stick_x","bool_left_stick_y","bool_right_stick_x","bool_right_stick_y","bool_left_stick_x_left","bool_left_stick_x_right","bool_left_stick_y_up","bool_left_stick_y_down","bool_right_stick_x_left","bool_right_stick_x_right","bool_right_stick_y_up","bool_right_stick_y_down","back","start","guide"};
+    private static final String[] doubleOptions = new String[] {"noButton","left_stick_x","left_stick_y","right_stick_x","right_stick_y","left_trigger","right_trigger"};
+    private static final String[] vectorOptions = new String[] {"noButton","left_stick", "right_stick"};
+
+
     //A boolean value specifying if the option uses a gamepad.
     public boolean usesGamepad;
     //A boolean value specifying if the option is a boolean button on a gamepad.
@@ -55,7 +65,7 @@ public class ConfigParam {
      * @param name The name of the option.
      * @param defaultOption The default value of the option.
      */
-    public ConfigParam(String name, Button.BooleanInputs defaultOption) {
+    public ConfigParam(@NotNull String name, @NotNull Button.BooleanInputs defaultOption) {
         this.name = name;
         String[] boolOptions = new String[] {"noButton","a","b","x","y","dpad_left","dpad_right","dpad_up","dpad_down","left_bumper","right_bumper","bool_left_trigger","bool_right_trigger","left_stick_button","right_stick_button","bool_left_stick_x","bool_left_stick_y","bool_right_stick_x","bool_right_stick_y","bool_left_stick_x_left","bool_left_stick_x_right","bool_left_stick_y_up","bool_left_stick_y_down","bool_right_stick_x_left","bool_right_stick_x_right","bool_right_stick_y_up","bool_right_stick_y_down","back","start","guide"};
         options = new ArrayList<>(Arrays.asList(boolOptions));
@@ -69,9 +79,7 @@ public class ConfigParam {
 
         usesGamepad = true;
 
-        String[] gamepadOpts = new String[] {"Gamepad 1", "Gamepad 2"};
-        gamepadOptions = new ArrayList<>(Arrays.asList(gamepadOpts));
-        defaultGamepadOption = "Gamepad 1";
+        defaultGamepadOption = gamepadOptions[0];
         currentGamepadOption = this.defaultGamepadOption;
     }
 
@@ -82,9 +90,8 @@ public class ConfigParam {
      * @param defaultOption The default value of the option.
      * @param gamepadDefault The default gamepad value.
      */
-    public ConfigParam(String name, Button.BooleanInputs defaultOption, int gamepadDefault) {
+    public ConfigParam(@NotNull String name, @NotNull Button.BooleanInputs defaultOption, int gamepadDefault) {
         this.name = name;
-        String[] boolOptions = new String[] {"noButton","a","b","x","y","dpad_left","dpad_right","dpad_up","dpad_down","left_bumper","right_bumper","bool_left_trigger","bool_right_trigger","left_stick_button","right_stick_button","bool_left_stick_x","bool_left_stick_y","bool_right_stick_x","bool_right_stick_y","bool_left_stick_x_left","bool_left_stick_x_right","bool_left_stick_y_up","bool_left_stick_y_down","bool_right_stick_x_left","bool_right_stick_x_right","bool_right_stick_y_up","bool_right_stick_y_down","back","start","guide"};
         options = new ArrayList<>(Arrays.asList(boolOptions));
         this.defaultOption = defaultOption.name();
         currentOption = this.defaultOption;
@@ -100,9 +107,7 @@ public class ConfigParam {
             throw new NotARealGamepadException("Unless you are violating FTC rules, that isn't a real gamepad number!");
         }
 
-        String[] gamepadOpts = new String[] {"Gamepad 1", "Gamepad 2"};
-        gamepadOptions = new ArrayList<>(Arrays.asList(gamepadOpts));
-        defaultGamepadOption = "Gamepad " + gamepadDefault;
+        defaultGamepadOption = gamepadOptions[gamepadDefault-1];
         currentGamepadOption = this.defaultGamepadOption;
     }
 
@@ -112,9 +117,8 @@ public class ConfigParam {
      * @param name The name of the option.
      * @param defaultOption The default value of the option.
      */
-    public ConfigParam(String name, Button.DoubleInputs defaultOption) {
+    public ConfigParam(@NotNull String name, @NotNull Button.DoubleInputs defaultOption) {
         this.name = name;
-        String[] doubleOptions = new String[] {"noButton","left_stick_x","left_stick_y","right_stick_x","right_stick_y","left_trigger","right_trigger"};
         options = new ArrayList<>(Arrays.asList(doubleOptions));
         this.defaultOption = defaultOption.name();
         currentOption = this.defaultOption;
@@ -126,9 +130,7 @@ public class ConfigParam {
 
         usesGamepad = true;
 
-        String[] gamepadOpts = new String[] {"Gamepad 1", "Gamepad 2"};
-        gamepadOptions = new ArrayList<>(Arrays.asList(gamepadOpts));
-        defaultGamepadOption = "Gamepad 1";
+        defaultGamepadOption = gamepadOptions[0];
         currentGamepadOption = this.defaultGamepadOption;
     }
 
@@ -139,9 +141,8 @@ public class ConfigParam {
      * @param defaultOption The default value of the option.
      * @param gamepadDefault The default gamepad value.
      */
-    public ConfigParam(String name, Button.DoubleInputs defaultOption, int gamepadDefault) {
+    public ConfigParam(@NotNull String name, @NotNull Button.DoubleInputs defaultOption, int gamepadDefault) {
         this.name = name;
-        String[] doubleOptions = new String[] {"noButton","left_stick_x","left_stick_y","right_stick_x","right_stick_y","left_trigger","right_trigger"};
         options = new ArrayList<>(Arrays.asList(doubleOptions));
         this.defaultOption = defaultOption.name();
         currentOption = this.defaultOption;
@@ -157,9 +158,7 @@ public class ConfigParam {
             throw new NotARealGamepadException("Unless you are violating FTC rules, that isn't a real gamepad number!");
         }
 
-        String[] gamepadOpts = new String[] {"Gamepad 1", "Gamepad 2"};
-        gamepadOptions = new ArrayList<>(Arrays.asList(gamepadOpts));
-        defaultGamepadOption = "Gamepad " + gamepadDefault;
+        defaultGamepadOption = gamepadOptions[gamepadDefault-1];
         currentGamepadOption = this.defaultGamepadOption;
     }
 
@@ -169,10 +168,9 @@ public class ConfigParam {
      * @param name The name of the parameter.
      * @param defaultOption The parameter's default option.
      */
-    public ConfigParam(String name, Button.VectorInputs defaultOption) {
+    public ConfigParam(@NotNull String name, @NotNull Button.VectorInputs defaultOption) {
         this.name = name;
-        String[] doubleOptions = new String[] {"noButton","left_stick", "right_stick"};
-        options = new ArrayList<>(Arrays.asList(doubleOptions));
+        options = new ArrayList<>(Arrays.asList(vectorOptions));
         this.defaultOption = defaultOption.name();
         currentOption = this.defaultOption;
 
@@ -183,9 +181,7 @@ public class ConfigParam {
 
         usesGamepad = true;
 
-        String[] gamepadOpts = new String[] {"Gamepad 1", "Gamepad 2"};
-        gamepadOptions = new ArrayList<>(Arrays.asList(gamepadOpts));
-        defaultGamepadOption = "Gamepad 1";
+        defaultGamepadOption = gamepadOptions[0];
         currentGamepadOption = this.defaultGamepadOption;
     }
 
@@ -196,10 +192,9 @@ public class ConfigParam {
      * @param defaultOption The parameter's default option.
      * @param gamepadDefault The default gamepad setting.
      */
-    public ConfigParam(String name, Button.VectorInputs defaultOption, int gamepadDefault) {
+    public ConfigParam(@NotNull String name, @NotNull Button.VectorInputs defaultOption, int gamepadDefault) {
         this.name = name;
-        String[] doubleOptions = new String[] {"noButton","left_stick", "right_stick"};
-        options = new ArrayList<>(Arrays.asList(doubleOptions));
+        options = new ArrayList<>(Arrays.asList(vectorOptions));
         this.defaultOption = defaultOption.name();
         currentOption = this.defaultOption;
 
@@ -210,9 +205,7 @@ public class ConfigParam {
 
         usesGamepad = true;
 
-        String[] gamepadOpts = new String[] {"Gamepad 1", "Gamepad 2"};
-        gamepadOptions = new ArrayList<>(Arrays.asList(gamepadOpts));
-        defaultGamepadOption = "Gamepad " + gamepadDefault;
+        defaultGamepadOption = gamepadOptions[gamepadDefault-1];
         currentGamepadOption = this.defaultGamepadOption;
     }
 
@@ -223,7 +216,7 @@ public class ConfigParam {
      * @param options An ArrayList of all possible values the option could take on.
      * @param defaultOption The option's default value.
      */
-    public ConfigParam(String name, ArrayList<String> options, String defaultOption) {
+    public ConfigParam(@NotNull String name, @NotNull ArrayList<String> options, @NotNull String defaultOption) {
         this.name = name;
         this.options = options;
         this.defaultOption = defaultOption;
@@ -244,7 +237,7 @@ public class ConfigParam {
      * @param options An array of all possible values the option could take on.
      * @param defaultOption The option's default value.
      */
-    public ConfigParam(String name, String[] options, String defaultOption) {
+    public ConfigParam(@NotNull String name, @NotNull String[] options, @NotNull String defaultOption) {
         this.name = name;
         this.options = new ArrayList<>(Arrays.asList(options));
         this.defaultOption = defaultOption;
@@ -265,7 +258,7 @@ public class ConfigParam {
      * @param map The map of strings to objects, representing the mappings of string options for the parameter and more program-friendly representations of the data (ex: int, enum).
      * @param defaultOption The option's default option.
      */
-    public ConfigParam(String name, Map<String,Object> map, String defaultOption) {
+    public ConfigParam(@NotNull String name, @NotNull Map<String,Object> map, @NotNull String defaultOption) {
         this.name = name;
 
         this.options = new ArrayList<>(map.keySet());
@@ -287,7 +280,7 @@ public class ConfigParam {
      * @param map The map of strings to objects, representing the mappings of string options for the parameter and more program-friendly representations of the data (ex: int, enum).
      * @param defaultOption The option's default option.
      */
-    public ConfigParam(String name, Map<String,Object> map, Object defaultOption) {
+    public ConfigParam(@NotNull String name, @NotNull Map<String,Object> map, @NotNull Object defaultOption) {
         this.name = name;
 
         options = new ArrayList<>(map.keySet());
@@ -308,7 +301,7 @@ public class ConfigParam {
      * @param name The name of the config parameter.
      * @param defaultOption The default value for the enum.
      */
-    public ConfigParam(String name, Enum<?> defaultOption) {
+    public ConfigParam(@NotNull String name, @NotNull Enum<?> defaultOption) {
         this.name = name;
 
         options = Arrays.asList(Arrays.toString(defaultOption.getDeclaringClass().getEnumConstants()).replaceAll("^.|.$", "").split(", "));
@@ -330,7 +323,7 @@ public class ConfigParam {
      * @param enums The list of allowed enums.
      * @param defaultOption The default enum.
      */
-    public ConfigParam(String name, Enum<?>[] enums, Enum<?> defaultOption) {
+    public ConfigParam(@NotNull String name, @NotNull Enum<?>[] enums, @NotNull Enum<?> defaultOption) {
         this.name = name;
 
         options = Arrays.asList(Arrays.toString(enums).replaceAll("^.|.$", "").split(", "));
@@ -353,19 +346,18 @@ public class ConfigParam {
      * @param vals The list of all possible values the option could take on, but in actual object form instead of string form.
      * @param defaultOption The option's default value.
      * @param currentOption The option's current value.
-     * @param gamepadOptions The list of all possible gamepad values.
      * @param defaultGamepadOption The option's default gamepad value.
      * @param currentGamepadOption The option's current gamepad value.
      * @param usesGamepad Whether or not the option uses the gamepad.
      * @param isBoolButton Whether or not the option is a boolean button on the gamepad.
      */
-    private ConfigParam(String name, List<String> options, List<Object> vals, String defaultOption, String currentOption, List<String> gamepadOptions, String defaultGamepadOption, String currentGamepadOption, boolean usesGamepad, boolean isBoolButton, boolean isDoubleButton) {
+    @Contract(pure = true)
+    private ConfigParam(@NotNull String name, @NotNull List<String> options, @NotNull List<Object> vals, @NotNull String defaultOption, @NotNull String currentOption, @Nullable String defaultGamepadOption, @Nullable String currentGamepadOption, boolean usesGamepad, boolean isBoolButton, boolean isDoubleButton) {
         this.name = name;
         this.options = options;
         this.vals = vals;
         this.defaultOption = defaultOption;
         this.currentOption = currentOption;
-        this.gamepadOptions = gamepadOptions;
         this.defaultGamepadOption = defaultGamepadOption;
         this.currentGamepadOption = currentGamepadOption;
         this.usesGamepad = usesGamepad;
@@ -432,13 +424,42 @@ public class ConfigParam {
         return numMap;
     }
 
+    public String getDefaultOption() {
+        return defaultOption;
+    }
+
+    public String getDefaultGamepadOption() {
+        return defaultGamepadOption;
+    }
+
+    @Contract(pure = true)
+    public static String[] getGamepadOptions() {
+        return gamepadOptions;
+    }
+
+    @Contract(pure = true)
+    public static String[] getBoolOptions() {
+        return boolOptions;
+    }
+
+    @Contract(pure = true)
+    public static String[] getDoubleOptions() {
+        return doubleOptions;
+    }
+
+    @Contract(pure = true)
+    public static String[] getVectorOptions() {
+        return vectorOptions;
+    }
+
     @Override
+    @NotNull
     public String toString() {
         return usesGamepad ? name+':'+currentOption+':'+currentGamepadOption : name+':'+currentOption;
     }
 
     @Override
     public ConfigParam clone() {
-        return new ConfigParam(name,options,vals,defaultOption,currentOption,gamepadOptions,defaultGamepadOption,currentGamepadOption,usesGamepad,isBoolButton,isDoubleButton);
+        return new ConfigParam(name,options,vals,defaultOption,currentOption,defaultGamepadOption,currentGamepadOption,usesGamepad,isBoolButton,isDoubleButton);
     }
 }

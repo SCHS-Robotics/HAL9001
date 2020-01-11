@@ -10,10 +10,13 @@ package com.SCHSRobotics.HAL9001.system.source.GUI;
  *
  * Creation Date: 7/20/19
  */
+@SuppressWarnings({"WeakerAccess","unused"})
 public abstract class Cursor {
 
-    //The cursor's x and y coordinate and blink speed.
-    public int x, y, blinkSpeedMs;
+    //The cursor's x and y coordinate.
+    protected int x, y;
+    //The cursor's blink speed.
+    private int blinkSpeedMs;
     //The menu the cursor belongs to.
     protected Menu menu;
     //The cursor's display icon.

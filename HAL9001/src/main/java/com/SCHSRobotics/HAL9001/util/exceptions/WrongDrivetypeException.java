@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.util.exceptions;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * An exception that is thrown when the drivetype does not meet the criteria needed to perform a specific function.
  *
@@ -16,7 +18,7 @@ public class WrongDrivetypeException extends RuntimeException {
      *
      * @param message The error message to print to the screen.
      */
-    public WrongDrivetypeException(String message) {
+    public WrongDrivetypeException(@Nullable String message) {
         super(message);
     }
 }

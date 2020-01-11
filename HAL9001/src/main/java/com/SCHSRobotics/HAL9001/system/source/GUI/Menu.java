@@ -2,11 +2,14 @@ package com.SCHSRobotics.HAL9001.system.source.GUI;
 
 import android.util.Log;
 
+import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.exceptions.InvalidSelectionZoneException;
 import com.SCHSRobotics.HAL9001.util.exceptions.SkyscraperTooTallException;
 import com.SCHSRobotics.HAL9001.util.exceptions.WrongSkyscraperBlueprintException;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.qualcomm.robotcore.util.Range;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +24,7 @@ import java.util.List;
  *
  * Creation Date: 7/20/19
  */
+@SuppressWarnings("unused")
 public abstract class Menu {
 
     //The GUI being used to render the menu.
@@ -47,13 +51,11 @@ public abstract class Menu {
      *
      * @throws InvalidSelectionZoneException - Throws this exception if the provided selection zone is impossible.
      */
-    public Menu(GUI gui, Cursor cursor, GuiLine[] startingLines, int selectionZoneWidth, int selectionZoneHeight) {
+    public Menu(@NotNull GUI gui, @NotNull Cursor cursor, @NotNull GuiLine[] startingLines, int selectionZoneWidth, int selectionZoneHeight) {
         this.gui = gui;
         this.cursor = cursor;
         this.cursor.setMenu(this);
-        if(selectionZoneWidth < 0 || selectionZoneHeight < 0) {
-            throw new InvalidSelectionZoneException("Error: Invalid selection zone");
-        }
+        ExceptionChecker.assertTrue(selectionZoneWidth >= 0 || selectionZoneHeight >= 0, new InvalidSelectionZoneException("Error: Invalid selection zone"));
         this.selectionZoneWidth = selectionZoneWidth;
         this.selectionZoneHeight = selectionZoneHeight;
 
@@ -73,13 +75,11 @@ public abstract class Menu {
      *
      * @throws InvalidSelectionZoneException Throws this exception if the provided selection zone is impossible.
      */
-    public Menu(GUI gui, Cursor cursor, ArrayList<GuiLine> startingLines, int selectionZoneWidth, int selectionZoneHeight) {
+    public Menu(@NotNull GUI gui, @NotNull Cursor cursor, @NotNull ArrayList<GuiLine> startingLines, int selectionZoneWidth, int selectionZoneHeight) {
         this.gui = gui;
         this.cursor = cursor;
         this.cursor.setMenu(this);
-        if(selectionZoneWidth < 0 || selectionZoneHeight < 0) {
-            throw new InvalidSelectionZoneException("Error: Invalid selection zone");
-        }
+        ExceptionChecker.assertTrue(selectionZoneWidth >= 0 || selectionZoneHeight >= 0, new InvalidSelectionZoneException("Error: Invalid selection zone"));
         this.selectionZoneWidth = selectionZoneWidth;
         this.selectionZoneHeight = selectionZoneHeight;
 
@@ -134,7 +134,7 @@ public abstract class Menu {
      * @param line The line to display.
      * @param lineNumber The index of the line on the screen.
      */
-    protected void displayLine(GuiLine line, int lineNumber){
+    protected void displayLine(@NotNull GuiLine line, int lineNumber){
         gui.displayLine(line, lineNumber);
     }
 
@@ -145,18 +145,15 @@ public abstract class Menu {
      *
      * @throws SkyscraperTooTallException Throws this exception when the number of lines to draw is greater than the number that can fit on the screen.
      */
-    protected void displayLines(GuiLine[] lines){
-        if(lines.length > MAXLINESPERSCREEN) {
-            throw new SkyscraperTooTallException("Lines passed to displayLines were more than "+MAXLINESPERSCREEN+" lines");
-        }
-            if (lines.length != 0) {
-                for (int i = 0; i < lines.length; i++) {
-                    displayLine(lines[i], i);
-                }
-            } else {
-                displayNothing();
+    protected void displayLines(@NotNull GuiLine[] lines){
+        ExceptionChecker.assertTrue(lines.length <= MAXLINESPERSCREEN, new SkyscraperTooTallException("Lines passed to displayLines were more than "+MAXLINESPERSCREEN+" lines"));
+        if (lines.length != 0) {
+            for (int i = 0; i < lines.length; i++) {
+                displayLine(lines[i], i);
             }
-
+        } else {
+            displayNothing();
+        }
     }
 
     /**
@@ -167,10 +164,8 @@ public abstract class Menu {
      *
      * @throws SkyscraperTooTallException Throws this exception when the number of lines to draw is greater than the number that can fit on the screen.
      */
-    protected void displayLines(GuiLine[] lines, List<Integer> lineNumbers){
-        if(lineNumbers.size() > MAXLINESPERSCREEN) {
-            throw new SkyscraperTooTallException("More than "+MAXLINESPERSCREEN+" lines were selected for display");
-        }
+    protected void displayLines(@NotNull GuiLine[] lines, @NotNull List<Integer> lineNumbers){
+        ExceptionChecker.assertTrue(lines.length <= MAXLINESPERSCREEN, new SkyscraperTooTallException("Lines passed to displayLines were more than "+MAXLINESPERSCREEN+" lines"));
         if(lines.length != 0 && lineNumbers.size() != 0) {
             for (int i = 0; i < lineNumbers.size(); i++) {
                 displayLine(lines[lineNumbers.get(i)], lineNumbers.get(i));
@@ -188,10 +183,8 @@ public abstract class Menu {
      *
      * @throws SkyscraperTooTallException Throws this exception when the number of lines to draw is greater than the number that can fit on the screen.
      */
-    protected void displayLines(List<GuiLine> lines){
-        if(lines.size() > MAXLINESPERSCREEN) {
-            throw new SkyscraperTooTallException("Lines passed to displayLines were more than 8 lines");
-        }
+    protected void displayLines(@NotNull List<GuiLine> lines){
+        ExceptionChecker.assertTrue(lines.size() <= MAXLINESPERSCREEN, new SkyscraperTooTallException("Lines passed to displayLines were more than "+MAXLINESPERSCREEN+" lines"));
         if(lines.size() != 0) {
             for (int i = 0; i < lines.size(); i++) {
                 displayLine(lines.get(i), i);
@@ -210,10 +203,8 @@ public abstract class Menu {
      *
      * @throws SkyscraperTooTallException Throws this exception when the number of lines to draw is greater than the number that can fit on the screen.
      */
-    protected void displayLines(List<GuiLine> lines, List<Integer> lineNumbers){
-        if(lineNumbers.size() > MAXLINESPERSCREEN) {
-            throw new SkyscraperTooTallException("More than 8 lines were selected for display");
-        }
+    protected void displayLines(@NotNull List<GuiLine> lines, @NotNull List<Integer> lineNumbers){
+        ExceptionChecker.assertTrue(lines.size() <= MAXLINESPERSCREEN, new SkyscraperTooTallException("Lines passed to displayLines were more than "+MAXLINESPERSCREEN+" lines"));
         if(lines.size() != 0 && lineNumbers.size() != 0) {
             for (int i = 0; i < lineNumbers.size(); i++) {
                 displayLine(lines.get(lineNumbers.get(i)), lineNumbers.get(i));
@@ -255,11 +246,9 @@ public abstract class Menu {
      * @param selectionZoneWidth The desired selection zone width.
      * @param newLines The list of lines to display on the menu with the new format.
      */
-    public void setSelectionZoneWidth(int selectionZoneWidth, List<GuiLine> newLines){
+    public void setSelectionZoneWidth(int selectionZoneWidth, @NotNull List<GuiLine> newLines){
         this.selectionZoneWidth = selectionZoneWidth;
-
-        cursor.x = Range.clip(cursor.x,0,selectionZoneWidth);
-
+        cursor.setX(Range.clip(cursor.getX(),0,selectionZoneWidth));
         setLines(newLines);
     }
 
@@ -269,10 +258,10 @@ public abstract class Menu {
      * @param selectionZoneWidth The desired selection zone width.
      * @param newLines The list of lines to display on the menu with the new format.
      */
-    public void setSelectionZoneWidth(int selectionZoneWidth, GuiLine[] newLines){
+    public void setSelectionZoneWidth(int selectionZoneWidth, @NotNull GuiLine[] newLines){
         this.selectionZoneWidth = selectionZoneWidth;
 
-        cursor.x = Range.clip(cursor.x,0,selectionZoneWidth);
+        cursor.setX(Range.clip(cursor.getX(),0,selectionZoneWidth));
 
         setLines(newLines);
     }
@@ -286,9 +275,7 @@ public abstract class Menu {
      */
     public void setSelectionZoneHeight(int selectionZoneHeight, List<GuiLine> newLines) {
         this.selectionZoneHeight = selectionZoneHeight;
-
-        cursor.y = Range.clip(cursor.y,0,selectionZoneHeight);
-
+        cursor.setY(Range.clip(cursor.getY(),0,selectionZoneHeight));
         setLines(newLines);
     }
 
@@ -300,9 +287,7 @@ public abstract class Menu {
      */
     public void setSelectionZoneHeight(int selectionZoneHeight, GuiLine[] newLines) {
         this.selectionZoneHeight = selectionZoneHeight;
-
-        cursor.y = Range.clip(cursor.y,0,selectionZoneHeight);
-
+        cursor.setY(Range.clip(cursor.getY(),0,selectionZoneHeight));
         setLines(newLines);
     }
 
@@ -317,8 +302,8 @@ public abstract class Menu {
         this.selectionZoneWidth = selectionZoneWidth;
         this.selectionZoneHeight = selectionZoneHeight;
 
-        cursor.x = Range.clip(cursor.x,0,selectionZoneWidth);
-        cursor.y = Range.clip(cursor.y,0,selectionZoneHeight);
+        cursor.setX(Range.clip(cursor.getX(),0,selectionZoneWidth));
+        cursor.setY(Range.clip(cursor.getY(),0,selectionZoneHeight));
 
         setLines(newLines);
     }
@@ -334,8 +319,8 @@ public abstract class Menu {
         this.selectionZoneWidth = selectionZoneWidth;
         this.selectionZoneHeight = selectionZoneHeight;
 
-        cursor.x = Range.clip(cursor.x,0,selectionZoneWidth);
-        cursor.y = Range.clip(cursor.y,0,selectionZoneHeight);
+        cursor.setX(Range.clip(cursor.getX(),0,selectionZoneWidth));
+        cursor.setY(Range.clip(cursor.getY(),0,selectionZoneHeight));
 
         setLines(newLines);
     }
@@ -349,18 +334,12 @@ public abstract class Menu {
      *                                       text to display in the selection zone.
      * @throws WrongSkyscraperBlueprintException Throws this exception if there are not enough lines in newLines to fill the selection zone.
      */
-    public void setLines(GuiLine[] lines){
-        if(lines.length == selectionZoneHeight) {
-            this.lines = new ArrayList<>();
-            for (GuiLine line : lines) {
-                if (!line.checkSelectionWidthSize(this.getSelectionZoneWidth())) {
-                    throw new InvalidSelectionZoneException("Selection zone text width must match menu selection zone width");
-                }
-                this.lines.add(line);
-            }
-        }
-        else {
-            throw new WrongSkyscraperBlueprintException("New lines do not match the height of selection zone");
+    public void setLines(@NotNull GuiLine[] lines){
+        ExceptionChecker.assertTrue(lines.length == selectionZoneHeight, new WrongSkyscraperBlueprintException("New lines do not match the height of selection zone"));
+        this.lines = new ArrayList<>();
+        for (GuiLine line : lines) {
+            ExceptionChecker.assertTrue(line.checkSelectionWidthSize(this.getSelectionZoneWidth()), new InvalidSelectionZoneException("Selection zone text width must match menu selection zone width"));
+            this.lines.add(line);
         }
     }
 
@@ -373,25 +352,19 @@ public abstract class Menu {
      *                                       text to display in the selection zone.
      * @throws WrongSkyscraperBlueprintException Throws this exception if there are not enough or too many lines in newLines to fill the selection zone.
      */
-    public void setLines(List<GuiLine> lines){
-        if(lines.size() == selectionZoneHeight) {
-            for(GuiLine line: lines) {
-                if (!line.checkSelectionWidthSize(this.getSelectionZoneWidth())) {
-                    throw new InvalidSelectionZoneException("Selection zone text width must match menu selection zone width");
-                }
-            }
-
-            if(lines.size() == 0) {
-                selectionZoneHeight = 1;
-                lines.add(new GuiLine("","",""));
-                Log.w("Menu Warning", "Warning: setLines() was passed an empty list. Side effects may include: headache, sad times, and a skyscraper collapse (Wrong skyscraper blueprint exception)");
-            }
-
-            this.lines = lines;
+    public void setLines(@NotNull List<GuiLine> lines){
+        ExceptionChecker.assertTrue(lines.size() == selectionZoneHeight, new WrongSkyscraperBlueprintException("New lines do not match the height of selection zone"));
+        for(GuiLine line: lines) {
+            ExceptionChecker.assertTrue(line.checkSelectionWidthSize(this.getSelectionZoneWidth()), new InvalidSelectionZoneException("Selection zone text width must match menu selection zone width"));
         }
-        else {
-            throw new WrongSkyscraperBlueprintException("New lines do not match the height of selection zone");
+
+        if(lines.size() == 0) {
+            selectionZoneHeight = 1;
+            lines.add(new GuiLine("","",""));
+            Log.w("Menu Warning", "Warning: setLines() was passed an empty list. Side effects may include: headache, sad times, and a skyscraper collapse (Wrong skyscraper blueprint exception)");
         }
+
+        this.lines = lines;
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.util.math;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * An enum representing different common units of distance.
  *
@@ -14,19 +16,19 @@ public enum Units {
 
     //The number that you multiply by to get meters.
     public double conversionFactor;
-    //Their common abreviation.
-    public String abreviation;
+    //Their common abbreviation.
+    public String abbreviation;
 
     /**
      * Constructor for Units.
      *
      * @param meterConversion The conversion factor used to convert that unit to meters.
-     * @param abreviation The abbreviation of the unit.
+     * @param abbreviation The abbreviation of the unit.
      */
-    Units(double meterConversion, String abreviation)
+    Units(double meterConversion, @NotNull String abbreviation)
     {
         conversionFactor = meterConversion;
-        this.abreviation = abreviation;
+        this.abbreviation = abbreviation;
     }
 
     /**
@@ -37,7 +39,7 @@ public enum Units {
      * @param toUnit The unit to convert to.
      * @return The converted value.
      */
-    public static double convert(double input, Units fromUnit, Units toUnit) {
+    public static double convert(double input, @NotNull Units fromUnit, @NotNull Units toUnit) {
         double meters = input * fromUnit.conversionFactor;
         return  meters/toUnit.conversionFactor;
     }

@@ -16,6 +16,8 @@ import com.SCHSRobotics.HAL9001.util.misc.Toggle;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Function;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Core;
 import org.opencv.core.CvException;
 import org.opencv.core.Mat;
@@ -32,6 +34,7 @@ import org.opencv.imgproc.Imgproc;
  *
  * Creation Date: 7/18/19
  */
+@SuppressWarnings("unused")
 public class ColorspaceCalib extends VisionSubSystem {
 
     //The upper and lower limits for the x, y, z values for the color spaces.
@@ -44,7 +47,7 @@ public class ColorspaceCalib extends VisionSubSystem {
     private Toggle slowModeToggle, upperLimit;
     //Key names used with the CustomizableGamepad.
     private static final String SLOWMODE = "slowMode", X_INCREMENT = "XUp", X_DECREMENT = "XDown", Y_INCREMENT = "YUp", Y_DECREMENT = "YDown", Z_INCREMENT = "ZUp", Z_DECREMENT = "ZDown", CHANGELIMIT = "ChangeLimit";
-    //A user-specified function that converts an RGB image to a cusstom colorspace.
+    //A user-specified function that converts an RGB image to a custom colorspace.
     private Function<Mat, Mat> converter;
     //Selected colorspace that will be used.
     private ColorSpace colorSpace;
@@ -71,13 +74,12 @@ public class ColorspaceCalib extends VisionSubSystem {
         SINGLE_CHANNEL, COLOR
     }
 
-
     /**
      * Constructor that uses configuration to set everything.
      *
      * @param robot The robot running the program.
      */
-    public ColorspaceCalib(Robot robot) {
+    public ColorspaceCalib(@NotNull Robot robot) {
         super(robot);
 
         if(!robot.usesGUI()){
@@ -101,7 +103,7 @@ public class ColorspaceCalib extends VisionSubSystem {
      * @param robot The robot running the program.
      * @param colorSpace Enum that determine what 3 chanel color space to use.
      */
-    public ColorspaceCalib(Robot robot, ColorSpace colorSpace){
+    public ColorspaceCalib(@NotNull Robot robot, @NotNull ColorSpace colorSpace){
         super(robot);
 
         if(!robot.usesGUI()){
@@ -130,7 +132,7 @@ public class ColorspaceCalib extends VisionSubSystem {
      * @param imageType An enum that specifies if a single channel or multi-channel image is being filtered.
      * @param channelIdx The index of the filtered channel within the colorspace.
      */
-    public ColorspaceCalib(Robot robot, ColorSpace colorSpace, ImageType imageType, int channelIdx){
+    public ColorspaceCalib(@NotNull Robot robot, @NotNull ColorSpace colorSpace, @NotNull ImageType imageType, int channelIdx){
         super(robot);
 
         if(!robot.usesGUI()){
@@ -158,7 +160,7 @@ public class ColorspaceCalib extends VisionSubSystem {
      * @param robot The robot running the program.
      * @param converter The custom conversion function.
      */
-    public ColorspaceCalib(Robot robot, Function<Mat, Mat> converter){
+    public ColorspaceCalib(@NotNull Robot robot, @NotNull Function<Mat, Mat> converter){
         super(robot);
 
         if(!robot.usesGUI()){
@@ -187,7 +189,7 @@ public class ColorspaceCalib extends VisionSubSystem {
      * @param imageType An enum that specifies if a single channel or multi-channel image is being filtered.
      * @param channelIdx The index of the filtered channel within the colorspace.
      */
-    public ColorspaceCalib(Robot robot, Function<Mat, Mat> converter, ImageType imageType, int channelIdx){
+    public ColorspaceCalib(@NotNull Robot robot, @NotNull Function<Mat, Mat> converter, @NotNull ImageType imageType, int channelIdx){
         super(robot);
 
         if(!robot.usesGUI()){
@@ -223,7 +225,7 @@ public class ColorspaceCalib extends VisionSubSystem {
      * @param changeLimit Toggle button for changing between changing upper values and lower values.
      * @param colorSpace Enum that determines what 3 chanel color space to use.
      */
-    public ColorspaceCalib(Robot robot, Button XUp, Button XDown, Button YUp, Button YDown, Button ZUp, Button ZDown, Button slowMode, Button changeLimit, ColorSpace colorSpace){
+    public ColorspaceCalib(@NotNull Robot robot, @NotNull Button XUp, @NotNull Button XDown, @NotNull Button YUp, @NotNull Button YDown, @NotNull Button ZUp, @NotNull Button ZDown, @NotNull Button slowMode, @NotNull Button changeLimit, @NotNull ColorSpace colorSpace){
         super(robot);
 
         if(!robot.usesGUI()){
@@ -259,7 +261,7 @@ public class ColorspaceCalib extends VisionSubSystem {
      * @param imageType An enum that specifies if a single channel or multi-channel image is being filtered.
      * @param channelIdx The index of the filtered channel within the colorspace.
      */
-    public ColorspaceCalib(Robot robot, Button XUp, Button XDown, Button YUp, Button YDown, Button ZUp, Button ZDown, Button slowMode, Button changeLimit, ColorSpace colorSpace, ImageType imageType, int channelIdx){
+    public ColorspaceCalib(@NotNull Robot robot, @NotNull Button XUp, @NotNull Button XDown, @NotNull Button YUp, @NotNull Button YDown, @NotNull Button ZUp, @NotNull Button ZDown, @NotNull Button slowMode, @NotNull Button changeLimit, @NotNull ColorSpace colorSpace, @NotNull ImageType imageType, int channelIdx){
         super(robot);
 
         if(!robot.usesGUI()){
@@ -294,7 +296,7 @@ public class ColorspaceCalib extends VisionSubSystem {
      * @param changeLimit Toggle button for changing between changing upper values and lower values.
      * @param converter The custom conversion function.
      */
-    public ColorspaceCalib(Robot robot, Button XUp, Button XDown, Button YUp, Button YDown, Button ZUp, Button ZDown, Button slowMode, Button changeLimit, Function<Mat, Mat> converter){
+    public ColorspaceCalib(@NotNull Robot robot, @NotNull Button XUp, @NotNull Button XDown, @NotNull Button YUp, @NotNull Button YDown, @NotNull Button ZUp, @NotNull Button ZDown, @NotNull Button slowMode, @NotNull Button changeLimit, @NotNull Function<Mat, Mat> converter) {
         super(robot);
 
         if(!robot.usesGUI()){
@@ -331,7 +333,7 @@ public class ColorspaceCalib extends VisionSubSystem {
      * @param imageType An enum that specifies if a single channel or multi-channel image is being filtered.
      * @param channelIdx The index of the filtered channel within the colorspace.
      */
-    public ColorspaceCalib(Robot robot, Button XUp, Button XDown, Button YUp, Button YDown, Button ZUp, Button ZDown, Button slowMode, Button changeLimit, Function<Mat, Mat> converter, ImageType imageType, int channelIdx){
+    public ColorspaceCalib(@NotNull Robot robot, @NotNull Button XUp, @NotNull Button XDown, @NotNull Button YUp, @NotNull Button YDown, @NotNull Button ZUp, @NotNull Button ZDown, @NotNull Button slowMode, @NotNull Button changeLimit, @NotNull Function<Mat, Mat> converter, @NotNull ImageType imageType, int channelIdx){
         super(robot);
 
         if(!robot.usesGUI()){
@@ -377,7 +379,6 @@ public class ColorspaceCalib extends VisionSubSystem {
     @Override
     public void handle() {
 
-        displayMenu.addData("test",isEnabled());
         displayMenu.addData("x_upper",x_upper);
         displayMenu.addData("x_lower",x_lower);
         displayMenu.addData("y_upper",y_upper);
@@ -449,7 +450,7 @@ public class ColorspaceCalib extends VisionSubSystem {
      * Blacks out pixels outside of the color space range and displays image on phones.
      */
     @Override
-    public Mat onCameraFrame(Mat inputFrame) {
+    public Mat onCameraFrame(@NotNull Mat inputFrame) {
 
         Mat converted = new Mat();
         Mat rgb = new Mat();
@@ -534,7 +535,7 @@ public class ColorspaceCalib extends VisionSubSystem {
      * @param src Source image that needs converting.
      * @param dst Output of the image conversion.
      */
-    private void convertImage(Mat src, Mat dst, ColorSpace colorSpace){
+    private void convertImage(@NotNull Mat src, @NotNull Mat dst, @NotNull ColorSpace colorSpace){
         switch (colorSpace){
             case HSV: Imgproc.cvtColor(src, dst, Imgproc.COLOR_RGB2HSV); break;
             case BGR: Imgproc.cvtColor(src, dst, Imgproc.COLOR_RGB2BGR); break;
@@ -594,7 +595,7 @@ public class ColorspaceCalib extends VisionSubSystem {
      *                    
      * @throws NotBooleanInputException Throws an exception if button does not return boolean values.
      */
-    private void setInputs(Button XUp, Button XDown, Button YUp, Button YDown, Button ZUp, Button ZDown, Button slowMode, Button changeLimit){
+    private void setInputs(@NotNull Button XUp, @NotNull Button XDown, @NotNull Button YUp, @NotNull Button YDown, @NotNull Button ZUp, @NotNull Button ZDown, @NotNull Button slowMode, @NotNull Button changeLimit){
         if(XUp.isBoolean && XDown.isBoolean && YUp.isBoolean && YDown.isBoolean && ZUp.isBoolean && ZDown.isBoolean && slowMode.isBoolean && changeLimit.isBoolean) {
             inputs.addButton(X_INCREMENT, XUp);
             inputs.addButton(X_DECREMENT, XDown);
@@ -615,6 +616,8 @@ public class ColorspaceCalib extends VisionSubSystem {
      *
      * @return The settings this program needs to be configured for teleop.
      */
+    @NotNull
+    @Contract(" -> new")
     @TeleopConfig
     public static ConfigParam[] teleopConfig() {
         return new ConfigParam[] {
