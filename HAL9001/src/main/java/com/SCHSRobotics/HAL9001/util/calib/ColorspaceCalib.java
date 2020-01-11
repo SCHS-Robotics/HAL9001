@@ -47,7 +47,7 @@ public class ColorspaceCalib extends VisionSubSystem {
     private Toggle slowModeToggle, upperLimit;
     //Key names used with the CustomizableGamepad.
     private static final String SLOWMODE = "slowMode", X_INCREMENT = "XUp", X_DECREMENT = "XDown", Y_INCREMENT = "YUp", Y_DECREMENT = "YDown", Z_INCREMENT = "ZUp", Z_DECREMENT = "ZDown", CHANGELIMIT = "ChangeLimit";
-    //A user-specified function that converts an RGB image to a cusstom colorspace.
+    //A user-specified function that converts an RGB image to a custom colorspace.
     private Function<Mat, Mat> converter;
     //Selected colorspace that will be used.
     private ColorSpace colorSpace;
@@ -73,7 +73,6 @@ public class ColorspaceCalib extends VisionSubSystem {
     public enum ImageType {
         SINGLE_CHANNEL, COLOR
     }
-
 
     /**
      * Constructor that uses configuration to set everything.
@@ -380,7 +379,6 @@ public class ColorspaceCalib extends VisionSubSystem {
     @Override
     public void handle() {
 
-        displayMenu.addData("test",isEnabled());
         displayMenu.addData("x_upper",x_upper);
         displayMenu.addData("x_lower",x_lower);
         displayMenu.addData("y_upper",y_upper);
