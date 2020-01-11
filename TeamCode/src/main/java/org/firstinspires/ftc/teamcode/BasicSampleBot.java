@@ -38,6 +38,7 @@ public class BasicSampleBot extends Robot {
         //controller.setDeadband(5);
         //calib = new AnglePIDTunerSystem(this, new MechanumDrive.Params("forwardLeftMotor","forwardRightMotor","backLeftMotor","backRightMotor"), controller,45, AngleUnit.DEGREES);
         //drive = new MechanumDrive(this, new MechanumDrive.SpecificParams("topLeft","topRight","botLeft","botRight"),false);
+        drive = new MechanumDrive(this,"topLeft","topRight","botLeft","botRight");
         s1 = new SubSystem1(this);
         //putSubSystem("Tank", drive);
        // putSubSystem("Test",s1);

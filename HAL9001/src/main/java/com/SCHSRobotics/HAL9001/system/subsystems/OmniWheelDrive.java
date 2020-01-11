@@ -34,6 +34,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import static java.lang.Math.PI;
 
@@ -86,22 +88,26 @@ public class OmniWheelDrive extends SubSystem {
     private DisplayMenu displayMenu;
     //Specifies the type of drive the user will use.
     public enum DriveType {
-        STANDARD, FIELD_CENTRIC, MATTHEW, ARCADE, STANDARD_TTA, FIELD_CENTRIC_TTA, ARCADE_TTA
+        STANDARD, FIELD_CENTRIC, MATTHEW, STANDARD_TTA, FIELD_CENTRIC_TTA
     }
     private DriveType driveType;
-    //Which motors on the OmniWheel drive are reversed.
+    //Which motors on the mechanum drive are reversed.
     public enum ReverseType {
         REVERSE_LEFT, REVERSE_RIGHT, REVERSE_FRONT, REVERSE_BACK
     }
     private ReverseType reverseType;
+    //Whether the rev hubs are inverted.
+    private boolean invertedHubs;
+    //What value to shift the rotation by for field centric drive.
+    private double imuShift;
 
     /**
-     * A constructor for the OmniWheel drive that takes parameters as input.
+     * A constructor for the mechanum drive that takes parameters as input.
      *
      * @param robot  The robot the drive is currently being used on.
      * @param params The parameters for the drive.
      */
-    public OmniWheelDrive(Robot robot, Params params) {
+    public OmniWheelDrive(Robot robot, @NotNull Params params) {
         super(robot);
 
         driveType = params.driveType;
@@ -186,18 +192,20 @@ public class OmniWheelDrive extends SubSystem {
         useDisplayMenu = robot.usesGUI();
         if(useDisplayMenu) {
             displayMenu = new DisplayMenu(robot.gui);
-            robot.gui.addMenu("OmniWheel Display",displayMenu);
+            robot.gui.addMenu("Mechanum Display",displayMenu);
         }
+
+        imuShift = 0;
     }
 
     /**
-     * A constructor for the OmniWheel drive that takes parameters as input and uses config.
+     * A constructor for the mechanum drive that takes parameters as input and uses config.
      *
      * @param robot         The robot the drive is currently being used on.
      * @param params        The parameters for the drive.
      * @param usingSpecific Whether or not specific parameters were used instead of the configuration increment system.
      */
-    public OmniWheelDrive(Robot robot, SpecificParams params, boolean usingSpecific) {
+    public OmniWheelDrive(Robot robot, @NotNull SpecificParams params, boolean usingSpecific) {
         super(robot);
         usesConfig = true;
         useSpecific = usingSpecific;
@@ -231,7 +239,7 @@ public class OmniWheelDrive extends SubSystem {
             botRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(params.vkp, params.vki, params.vkd, params.vkf));
         }
 
-        //2*PI*0.05 is theoretical circumference of a gobilda OmniWheel wheel.
+        //2*PI*0.05 is theoretical circumference of a gobilda mechanum wheel.
         this.encodersPerMeter = params.encodersPerMeter > 0 ? params.encodersPerMeter : topLeft.getMotorType().getTicksPerRev()/(2*PI*0.05);
 
         speedModeToggle = new Toggle(Toggle.ToggleTypes.flipToggle, false);
@@ -246,8 +254,10 @@ public class OmniWheelDrive extends SubSystem {
         useDisplayMenu = robot.usesGUI();
         if(useDisplayMenu) {
             displayMenu = new DisplayMenu(robot.gui);
-            robot.gui.addMenu("OmniWheel Display",displayMenu);
+            robot.gui.addMenu("Mechanum Display",displayMenu);
         }
+
+        imuShift = 0;
     }
 
     /**
@@ -318,7 +328,7 @@ public class OmniWheelDrive extends SubSystem {
             inputs = robot.pullControls(this);
             ConfigData data = robot.pullNonGamepad(this);
 
-            imuNumber = (int) Math.round(data.getData("ImuNumber",Double.class));
+            imuNumber = data.getData("ImuNumber",Integer.class);
 
             setDriveMode(data.getData("DriveType", DriveType.class));
             setUseGyro(data.getData("UseGyro",Boolean.class), imuNumber);
@@ -329,13 +339,15 @@ public class OmniWheelDrive extends SubSystem {
             botLeft.setMode(runMode);
             botRight.setMode(runMode);
 
+            invertedHubs = data.getData("InvertedHubs", Boolean.class);
+
             DcMotor.ZeroPowerBehavior zeroPower = data.getData("MotorZeroPower",DcMotor.ZeroPowerBehavior.class);
             topLeft.setZeroPowerBehavior(zeroPower);
             topRight.setZeroPowerBehavior(zeroPower);
             botLeft.setZeroPowerBehavior(zeroPower);
             botRight.setZeroPowerBehavior(zeroPower);
 
-            reverseType = data.getData("ReverseType",ReverseType.class);
+            reverseType = data.getData("ReverseType", ReverseType.class);
 
             switch(reverseType) {
                 case REVERSE_LEFT: reverseLeft(); break;
@@ -356,10 +368,12 @@ public class OmniWheelDrive extends SubSystem {
         else if (usesConfig && robot.isAutonomous()) {
             ConfigData data = robot.pullNonGamepad(this);
 
-            imuNumber = (int) Math.round(data.getData("ImuNumber",Double.class));
+            imuNumber = data.getData("ImuNumber",Integer.class);
 
             setDriveMode(data.getData("DriveType", DriveType.class));
-            setUseGyro(data.getData("UseGyro",Boolean.class), imuNumber);
+            setUseGyro(data.getData("UseGyro", Boolean.class), imuNumber);
+
+            invertedHubs = data.getData("InvertedHubs", Boolean.class);
 
             DcMotor.RunMode runMode = data.getData("MotorRunMode",DcMotor.RunMode.class);
             topLeft.setMode(runMode);
@@ -373,7 +387,7 @@ public class OmniWheelDrive extends SubSystem {
             botLeft.setZeroPowerBehavior(zeroPower);
             botRight.setZeroPowerBehavior(zeroPower);
 
-            reverseType = data.getData("ReverseType",ReverseType.class);
+            reverseType = data.getData("ReverseType", ReverseType.class);
 
             switch(reverseType) {
                 case REVERSE_LEFT: reverseLeft(); break;
@@ -478,82 +492,6 @@ public class OmniWheelDrive extends SubSystem {
 
                 break;
 
-            //Arcade drive.
-            case ARCADE:
-                correction = usesGyro ? stabilityPID.getCorrection(getCurrentAngle(useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS)) : 0;
-
-                if ((turnPower != 0 || turnLeft || turnRight) && usesGyro) {
-                    stabilityPID.setSetpoint(getCurrentAngle(useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS));
-                    correction = 0;
-                }
-
-                if (!turnLeft && !turnRight) {
-                    if (input.isZeroVector()) {
-                        turn(-turnPower*constantTurnSpeedMultiplier*currentTurnSpeedModeMultiplier);
-                    }
-                    else {
-                        turnAndMove(input,(turnPower*constantTurnSpeedMultiplier*currentTurnSpeedModeMultiplier) - correction);
-                    }
-                } else if (turnLeft) {
-                    if (input.isZeroVector()) {
-                        turn(turnLeftPower*currentTurnSpeedModeMultiplier);
-                    }
-                    else {
-                        turnAndMove(input,-turnLeftPower*currentTurnSpeedModeMultiplier);
-                    }
-                } else {
-                    if (input.isZeroVector()) {
-                        turn(-turnRightPower*currentTurnSpeedModeMultiplier);
-                    }
-                    else {
-                        turnAndMove(input,turnRightPower*currentTurnSpeedModeMultiplier);
-                    }
-                }
-
-                break;
-
-            //Arcade drive with turn to angle functionality.
-            case ARCADE_TTA:
-                double angleStabilityArcade = getCurrentAngle(useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS);
-                double angleTurnArcade = getCurrentAngle(useDegreesTurn ? AngleUnit.DEGREES : AngleUnit.RADIANS);
-
-                correction = stabilityPID.getCorrection(angleStabilityArcade);
-                turnCorrection = turnPID.getCorrection(angleTurnArcade);
-
-                if ((!tta.isZeroVector() || turnLeft || turnRight) && usesGyro) {
-                    turnPID.setSetpoint(useDegreesTurn ? Math.toDegrees(tta.theta) : tta.theta);
-                    stabilityPID.setSetpoint(angleStabilityArcade);
-                    correction = 0;
-                    turnCorrection = 0;
-                }
-
-                if(!turnLeft && !turnRight) {
-                    if(input.isZeroVector()) {
-                        turn(turnCorrection);
-                    }
-                    else {
-                        turnAndMove(input, -turnCorrection - correction);
-                    }
-                }
-                else if(turnLeft) {
-                    if(input.isZeroVector()) {
-                        turn(turnLeftPower*currentTurnSpeedModeMultiplier);
-                    }
-                    else {
-                        turnAndMove(input, -turnLeftPower*currentTurnSpeedModeMultiplier);
-                    }
-                }
-                else {
-                    if(input.isZeroVector()) {
-                        turn(-turnRightPower*currentTurnSpeedModeMultiplier);
-                    }
-                    else {
-                        turnAndMove(input, turnRightPower*currentTurnSpeedModeMultiplier);
-                    }
-                }
-
-                break;
-
             //Special driving mode requested by Matthew. Two joysticks, one controlling each side of the robot. Stability PID and turn to angle PID do not matter here.
             case MATTHEW:
                 left.scalarMultiply(Math.sqrt(2));
@@ -617,6 +555,7 @@ public class OmniWheelDrive extends SubSystem {
     /**
      * Resets all encoders affiliated with the drive train.
      */
+    @SuppressWarnings("WeakerAccess")
     public void resetAllEncoders() {
         topLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         topRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -717,7 +656,7 @@ public class OmniWheelDrive extends SubSystem {
      * @throws InvalidMoveCommandException Throws this exception if you tried to move the robot in an impossible way. (ex: 0 power, move 2000 encoder ticks).
      * @throws DumpsterFireException Throws this exception if you try and move negative encoder distances. Change the power to change direction.
      */
-    public void turnAndMoveEncoders(Vector leftVector, Vector rightVector, double encodersLeft, double encodersRight) {
+    public void turnAndMoveEncoders(@NotNull Vector leftVector, Vector rightVector, double encodersLeft, double encodersRight) {
         if ((leftVector.isZeroVector() && encodersLeft != 0) || (rightVector.isZeroVector() && encodersRight != 0)) {
             throw new InvalidMoveCommandException("You can't move anywhere if you aren't trying to move ;)");
         }
@@ -848,7 +787,7 @@ public class OmniWheelDrive extends SubSystem {
      * @param v The robot's velocity vector.
      * @param turnPower The power to turn at.
      */
-    public void turnAndMove(Vector v, double turnPower) {
+    public void turnAndMove(@NotNull Vector v, double turnPower) {
         Vector vcpy = v.clone();
         vcpy.scalarMultiply(Math.sqrt(2));
 
@@ -858,31 +797,12 @@ public class OmniWheelDrive extends SubSystem {
                 vcpy.rotate(-PI / 4);
                 setPower(vcpy.x + turnPower, vcpy.y - turnPower, vcpy.y + turnPower, vcpy.x - turnPower);
                 break;
-            case ARCADE:
-            case ARCADE_TTA:
-                if(vcpy.isZeroVector()) {
-                    stopAllMotors();
-                }
-                else if (vcpy.theta < PI / 4 || vcpy.theta > (7 * PI) / 4) { //right side of the square
-                    setPower(vcpy.x + turnPower, -vcpy.y - turnPower, -vcpy.y + turnPower, vcpy.x - turnPower);
-                }
-                else if (vcpy.theta > PI / 4 && vcpy.theta < (3 * PI) / 4) { //top side of the square
-                    setPower(vcpy.r + turnPower,vcpy.r - turnPower,vcpy.r + turnPower,vcpy.r - turnPower);
-                }
-                else if (vcpy.theta > (3 * PI) / 4 && vcpy.theta < (5 * PI) / 4) { //left side of the square
-                    setPower(-vcpy.r + turnPower,vcpy.r - turnPower,vcpy.r + turnPower,-vcpy.r - turnPower);
-                }
-                else if (vcpy.theta > (5 * PI) / 4 && vcpy.theta < (7 * PI) / 4) { //Bottom side of the square
-                    setPower(-vcpy.r + turnPower,-vcpy.r - turnPower,-vcpy.r + turnPower,-vcpy.r - turnPower);
-                }
-                break;
             case FIELD_CENTRIC:
             case FIELD_CENTRIC_TTA:
-                vcpy.rotate(-((PI / 4) + getCurrentAngle()));
+                vcpy.rotate(-((PI / 4) + getCurrentAngle() + imuShift));
                 setPower(vcpy.x + turnPower, vcpy.y - turnPower, vcpy.y + turnPower, vcpy.x - turnPower);
                 break;
         }
-
     }
 
     /**
@@ -891,7 +811,7 @@ public class OmniWheelDrive extends SubSystem {
      * @param leftVector  The left input vector.
      * @param rightVector The right input vector.
      */
-    public void drive(Vector leftVector, Vector rightVector) {
+    public void drive(@NotNull Vector leftVector, @NotNull Vector rightVector) {
 
         leftVector.scalarMultiply(constantSpeedMultiplier * Math.sqrt(2));
         rightVector.scalarMultiply(constantSpeedMultiplier * Math.sqrt(2));
@@ -980,7 +900,7 @@ public class OmniWheelDrive extends SubSystem {
      * @throws InvalidMoveCommandException Throws this exception if you tried to move the robot in an impossible way. (ex: 0 power, move 2000 encoder ticks).
      * @throws DumpsterFireException Throws this exception if you try and move negative encoder distances. Change the power to change direction.
      */
-    public void driveEncoders(Vector v, double encoders, boolean stabilityControl) {
+    public void driveEncoders(@NotNull Vector v, double encoders, boolean stabilityControl) {
         if (v.isZeroVector() && encoders != 0) {
             throw new InvalidMoveCommandException("You can't move anywhere if you aren't trying to move ;)");
         }
@@ -1026,7 +946,7 @@ public class OmniWheelDrive extends SubSystem {
                 break;
             case FIELD_CENTRIC_TTA:
             case FIELD_CENTRIC:
-                displacement.rotate(-((PI / 4) + getCurrentAngle()));
+                displacement.rotate(-((PI / 4) + getCurrentAngle() + imuShift));
 
                 thresh1 = Math.abs(displacement.x);
                 thresh2 = Math.abs(displacement.y);
@@ -1035,24 +955,6 @@ public class OmniWheelDrive extends SubSystem {
                               @Override
                               public Boolean get() {
                                   return Math.abs(getTopLeftEncoderPos() - initVals[0]) < thresh1 && Math.abs(getTopRightEncoderPos() - initVals[1]) < thresh2 && Math.abs(getBotLeftEncoderPos() - initVals[2]) < thresh2 && Math.abs(getBotRightEncoderPos() - initVals[3]) < thresh1;
-                              }
-                          },
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                drive(vcpy, stabilityCtrl);
-                            }
-                        });
-                break;
-            case ARCADE_TTA:
-            case ARCADE:
-
-                final double thresh = encoders * Math.sqrt(2) / 2;
-
-                waitWhile(new Supplier<Boolean>() {
-                              @Override
-                              public Boolean get() {
-                                  return Math.abs(getTopLeftEncoderPos() - initVals[0]) < thresh && Math.abs(getTopRightEncoderPos() - initVals[1]) < thresh && Math.abs(getBotLeftEncoderPos() - initVals[2]) < thresh && Math.abs(getBotRightEncoderPos() - initVals[3]) < thresh;
                               }
                           },
                         new Runnable() {
@@ -1082,7 +984,7 @@ public class OmniWheelDrive extends SubSystem {
      * @param v The direction and power that the robot should move at.
      * @param stabilityControl Whether or not to use the drive's stability control system.
      */
-    public void drive(Vector v, boolean stabilityControl){
+    public void drive(@NotNull Vector v, boolean stabilityControl){
 
         Vector vcpy = v.clone();
 
@@ -1099,23 +1001,8 @@ public class OmniWheelDrive extends SubSystem {
                 break;
             case FIELD_CENTRIC_TTA:
             case FIELD_CENTRIC:
-                vcpy.rotate(-((PI / 4) + getCurrentAngle()));
+                vcpy.rotate(-((PI / 4) + getCurrentAngle() + imuShift));
                 setPower(vcpy.x - correction, vcpy.y + correction, vcpy.y - correction, vcpy.x + correction);
-                break;
-            case ARCADE_TTA:
-            case ARCADE:
-                if (vcpy.isZeroVector()) {
-                    stopAllMotors();
-                }
-                else if (vcpy.theta < PI / 4 || vcpy.theta > (7 * PI) / 4) { //right side of the square
-                    setPower(vcpy.r - correction, -vcpy.r + correction, -vcpy.r - correction, vcpy.r + correction);
-                } else if (vcpy.theta > PI / 4 && vcpy.theta < (3 * PI) / 4) { //top side of the square
-                    setPower(vcpy.r - correction, vcpy.r + correction, vcpy.r - correction, vcpy.r + correction);
-                } else if (vcpy.theta > (3 * PI) / 4 && vcpy.theta < (5 * PI) / 4) { //left side of the square
-                    setPower(-vcpy.r - correction, vcpy.r + correction, vcpy.r - correction, -vcpy.r + correction);
-                } else if (vcpy.theta > (5 * PI) / 4 && vcpy.theta < (7 * PI) / 4) { //Bottom side of the square
-                    setPower(-vcpy.r - correction, -vcpy.r + correction, -vcpy.r - correction, -vcpy.r + correction);
-                }
                 break;
         }
     }
@@ -1269,12 +1156,12 @@ public class OmniWheelDrive extends SubSystem {
     }
 
     /**
-     * Updates the OmniWheel drive's mode.
+     * Updates the mechanum drive's mode.
      *
      * @param driveType The driving mode that the drivetrain will be set to.
      */
     public void setDriveMode(DriveType driveType) {
-        boolean useGyro = driveType == DriveType.STANDARD_TTA || driveType == DriveType.FIELD_CENTRIC || driveType == DriveType.FIELD_CENTRIC_TTA || driveType == DriveType.ARCADE_TTA;
+        boolean useGyro = driveType == DriveType.STANDARD_TTA || driveType == DriveType.FIELD_CENTRIC || driveType == DriveType.FIELD_CENTRIC_TTA;
         setUseGyro(useGyro, imuNumber);
         this.driveType = driveType;
     }
@@ -1302,6 +1189,15 @@ public class OmniWheelDrive extends SubSystem {
             stabilityPID.init(angle, angle);
         }
         usesGyro = useGyro;
+    }
+
+    /**
+     * Sets the shift on the imu for field centric mode
+     *
+     * @param imuShift The imuShift to be set.
+     */
+    public void setImuShift(double imuShift) {
+        this.imuShift = imuShift;
     }
 
     /**
@@ -1441,13 +1337,40 @@ public class OmniWheelDrive extends SubSystem {
     }
 
     /**
+     * Sets the mechanum drive's turn PID controller.
+     *
+     * @param turnPID The new turn PID controller.
+     */
+    public void setTurnPID(PIDController turnPID) {
+        this.turnPID = turnPID;
+    }
+
+    /**
+     * Sets the mechanum drive's turn PID controller.
+     *
+     * @param stabilityPID The new stability PID controller.
+     */
+    public void setStabilityPID(PIDController stabilityPID) {
+        this.stabilityPID = stabilityPID;
+    }
+
+    /**
+     * Gets the motors that OmniWheelDrive uses.
+     *
+     * @return Returns the list of motors. (topLeft, topRight, botLeft, botRight)
+     */
+    public DcMotor[] getMotors() {
+        return new DcMotor[] {topLeft, topRight, botLeft, botRight};
+    }
+
+    /**
      * Gets the robot's current yaw angle from the gyro.
      *
      * @param angleUnit The unit the angle will be returned in.
      * @return The current yaw angle if the gyroscope is use. If the gyro is not active, it returns 0.
      */
     public double getCurrentAngle(AngleUnit angleUnit) {
-        return usesGyro ? imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,angleUnit).firstAngle : 0;
+        return usesGyro ? getOrientation(angleUnit).firstAngle : 0;
     }
 
     /**
@@ -1466,7 +1389,7 @@ public class OmniWheelDrive extends SubSystem {
      * @return The current pitch angle if the gyroscope is use. If the gyro is not active, it returns 0.
      */
     public double getCurrentPitch(AngleUnit angleUnit) {
-        return usesGyro ? imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,angleUnit).secondAngle : 0;
+        return usesGyro ? getOrientation(angleUnit).secondAngle : 0;
     }
 
     /**
@@ -1485,7 +1408,7 @@ public class OmniWheelDrive extends SubSystem {
      * @return The current roll angle if the gyroscope is use. If the gyro is not active, it returns 0.
      */
     public double getCurrentRoll(AngleUnit angleUnit) {
-        return usesGyro ? imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,angleUnit).secondAngle : 0;
+        return usesGyro ? getOrientation(angleUnit).thirdAngle : 0;
     }
 
     /**
@@ -1506,7 +1429,13 @@ public class OmniWheelDrive extends SubSystem {
      * @return The robot's orientation.
      */
     public Orientation getOrientation(AngleUnit angleUnit, AxesOrder order, AxesReference reference) {
-        return usesGyro ? imu.getAngularOrientation(reference,order,angleUnit) : new Orientation();
+        Orientation o = usesGyro ? imu.getAngularOrientation(reference,order,angleUnit) : new Orientation();
+        if(invertedHubs) {
+            o.firstAngle = -o.firstAngle;
+            o.secondAngle = -o.secondAngle;
+            o.thirdAngle = -o.thirdAngle;
+        }
+        return o;
     }
 
     /**
@@ -1586,6 +1515,8 @@ public class OmniWheelDrive extends SubSystem {
      *
      * @return The teleop configuration.
      */
+    @NotNull
+    @Contract(" -> new")
     @TeleopConfig
     public static ConfigParam[] teleopConfig() {
         if(useSpecific) {
@@ -1607,7 +1538,8 @@ public class OmniWheelDrive extends SubSystem {
                             DcMotor.RunMode.RUN_USING_ENCODER,
                             DcMotor.RunMode.RUN_WITHOUT_ENCODER},
                             DcMotor.RunMode.RUN_USING_ENCODER),
-                    new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE)
+                    new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE),
+                    new ConfigParam("InvertedHubs", ConfigParam.booleanMap, false)
             };
         }
         else {
@@ -1635,7 +1567,8 @@ public class OmniWheelDrive extends SubSystem {
                             DcMotor.RunMode.RUN_USING_ENCODER,
                             DcMotor.RunMode.RUN_WITHOUT_ENCODER},
                             DcMotor.RunMode.RUN_USING_ENCODER),
-                    new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE)
+                    new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE),
+                    new ConfigParam("InvertedHubs", ConfigParam.booleanMap, false)
             };
         }
     }
@@ -1645,6 +1578,8 @@ public class OmniWheelDrive extends SubSystem {
      *
      * @return The teleop configuration.
      */
+    @NotNull
+    @Contract(" -> new")
     @AutonomousConfig
     public static ConfigParam[] autonomousConfig() {
         if(useSpecific) {
@@ -1657,7 +1592,8 @@ public class OmniWheelDrive extends SubSystem {
                             DcMotor.RunMode.RUN_WITHOUT_ENCODER},
                             DcMotor.RunMode.RUN_USING_ENCODER),
                     new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE),
-                    new ConfigParam("ReverseType", ReverseType.REVERSE_RIGHT)
+                    new ConfigParam("ReverseType", ReverseType.REVERSE_RIGHT),
+                    new ConfigParam("InvertedHubs", ConfigParam.booleanMap, false)
             };
         }
         else {
@@ -1671,16 +1607,17 @@ public class OmniWheelDrive extends SubSystem {
                             DcMotor.RunMode.RUN_WITHOUT_ENCODER},
                             DcMotor.RunMode.RUN_USING_ENCODER),
                     new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE),
-                    new ConfigParam("ReverseType", ReverseType.REVERSE_RIGHT)
+                    new ConfigParam("ReverseType", ReverseType.REVERSE_RIGHT),
+                    new ConfigParam("InvertedHubs", ConfigParam.booleanMap, false)
             };
         }
     }
 
     /**
-     * A parameter class for passing all desired options into OmniWheel drive.
+     * A parameter class for passing all desired options into mechanum drive.
      */
     public static final class Params implements BaseParam {
-        //The driveType of the OmniWheel drive.
+        //The driveType of the mechanum drive.
         private DriveType driveType;
         //The buttons used in the various drive modes.
         private Button driveStick, driveStickLeft, driveStickRight, turnStick, turnLeft, turnRight, ttaStick, speedMode, turnSpeedMode;
@@ -1696,6 +1633,8 @@ public class OmniWheelDrive extends SubSystem {
         private boolean useGyro;
         //A boolean specifying whether to change the motor velocity PID.
         private boolean changeVelocityPID;
+        //A boolean specifying if the revHubs are upside down;
+        private boolean revHubsInverted;
         //The new velocity PID coefficients.
         private double vkp, vki, vkd, vkf;
         //The number of encoder ticks per meter traveled.
@@ -1746,6 +1685,8 @@ public class OmniWheelDrive extends SubSystem {
             turnLeftPower = 0;
             turnRightPower = 0;
 
+            revHubsInverted = false;
+
             useGyro = false;
 
             changeVelocityPID = false;
@@ -1776,9 +1717,22 @@ public class OmniWheelDrive extends SubSystem {
          * @param driveType The driveType that will be used.
          * @return This instance of Params.
          */
+        @Contract("_ -> this")
         public Params setDriveType(DriveType driveType) {
             this.driveType = driveType;
-            useGyro = driveType == DriveType.STANDARD_TTA || driveType == DriveType.FIELD_CENTRIC || driveType == DriveType.FIELD_CENTRIC_TTA || driveType == DriveType.ARCADE_TTA;
+            useGyro = driveType == DriveType.STANDARD_TTA || driveType == DriveType.FIELD_CENTRIC || driveType == DriveType.FIELD_CENTRIC_TTA;
+            return this;
+        }
+
+        /**
+         * Sets whether the rev hubs are upside down or not. Used for PID/getting the angle.
+         *
+         * @param inverted True if the hubs are inverted.
+         * @return This instance of Params.
+         */
+        @Contract("_ -> this")
+        public Params setRevHubsInverted(boolean inverted){
+            revHubsInverted = inverted;
             return this;
         }
 
@@ -1790,7 +1744,8 @@ public class OmniWheelDrive extends SubSystem {
          *
          * @throws NotVectorInputException Throws this if the input button is not a vector input.
          */
-        public Params setDriveStick(Button driveStick) {
+        @Contract("_ -> this")
+        public Params setDriveStick(@NotNull Button driveStick) {
             if (!driveStick.isVector) {
                 throw new NotVectorInputException("DriveStick must be a vector input");
             }
@@ -1806,7 +1761,8 @@ public class OmniWheelDrive extends SubSystem {
          *
          * @throws NotVectorInputException Throws this if input button is not a vector input.
          */
-        public Params setDriveStickLeft(Button driveStickLeft) {
+        @Contract("_ -> this")
+        public Params setDriveStickLeft(@NotNull Button driveStickLeft) {
             if (!driveStickLeft.isVector) {
                 throw new NotVectorInputException("DriveStickLeft must be a vector input.");
             }
@@ -1822,7 +1778,8 @@ public class OmniWheelDrive extends SubSystem {
          *
          * @throws NotVectorInputException Throws this if input button is not a vector input.
          */
-        public Params setDriveStickRight(Button driveStickRight) {
+        @Contract("_ -> this")
+        public Params setDriveStickRight(@NotNull Button driveStickRight) {
             if (!driveStickRight.isVector) {
                 throw new NotVectorInputException("DriveStickRight must be a vector input.");
             }
@@ -1838,7 +1795,8 @@ public class OmniWheelDrive extends SubSystem {
          *
          * @throws NotDoubleInputException Throws this if the input button is not a double input.
          */
-        public Params setTurnStick(Button turnStick) {
+        @Contract("_ -> this")
+        public Params setTurnStick(@NotNull Button turnStick) {
             if (!turnStick.isDouble) {
                 throw new NotDoubleInputException("TurnStick must be a double input.");
             }
@@ -1854,6 +1812,7 @@ public class OmniWheelDrive extends SubSystem {
          *
          * @throws NotVectorInputException Throws this is the input button is not a vector input.
          */
+        @Contract("_ -> this")
         public Params setTTAStick(Button ttaStick) {
             if (!driveStickRight.isVector) {
                 throw new NotVectorInputException("TTA Stick must be a vector input.");
@@ -1871,7 +1830,8 @@ public class OmniWheelDrive extends SubSystem {
          *
          * @throws NotBooleanInputException Throws this if the input button is not a boolean input.
          */
-        public Params setTurnLeftButton(Button turnLeft, double turnSpeed) {
+        @Contract("_, _ -> this")
+        public Params setTurnLeftButton(@NotNull Button turnLeft, double turnSpeed) {
             if (!turnLeft.isBoolean) {
                 throw new NotBooleanInputException("TurnLeft button must be a boolean input.");
             }
@@ -1889,7 +1849,8 @@ public class OmniWheelDrive extends SubSystem {
          *
          * @throws NotBooleanInputException Throws this if the input button is not a boolean input.
          */
-        public Params setTurnRightButton(Button turnRight, double turnSpeed) {
+        @Contract("_, _ -> this")
+        public Params setTurnRightButton(@NotNull Button turnRight, double turnSpeed) {
             if (!turnRight.isBoolean) {
                 throw new NotBooleanInputException("TurnRight button must be a boolean input");
             }
@@ -1906,7 +1867,8 @@ public class OmniWheelDrive extends SubSystem {
          *
          * @throws NotBooleanInputException Throws this exception if the speedmode button is not a boolean input.
          */
-        public Params setSpeedModeButton(Button speedMode) {
+        @Contract("_ -> this")
+        public Params setSpeedModeButton(@NotNull Button speedMode) {
             if (!speedMode.isBoolean) {
                 throw new NotBooleanInputException("SpeedMode button must be a boolean input");
             }
@@ -1922,6 +1884,7 @@ public class OmniWheelDrive extends SubSystem {
          *
          * @throws NotBooleanInputException Throws this exception if the speedmode button is not a boolean input.
          */
+        @Contract("_ -> this")
         public Params setTurnSpeedModeButton(Button turnSpeedMode) {
             if (!speedMode.isBoolean) {
                 throw new NotBooleanInputException("TurnSpeedMode button must be a boolean input");
@@ -1938,6 +1901,7 @@ public class OmniWheelDrive extends SubSystem {
          *
          * @throws NotAnAlchemistException Throws this if the imu number is not 1 or 2. Can't make something out of nothing.
          */
+        @Contract("_ -> this")
         public Params setImuNumber(int imuNumber) {
             if (imuNumber != 1 && imuNumber != 2) {
                 throw new NotAnAlchemistException("IMU number must be either 1 or 2");
@@ -2001,6 +1965,8 @@ public class OmniWheelDrive extends SubSystem {
                 @Override
                 public Double apply(Double target, Double current) {
                     BiFunction<Double, Double, Double> mod = new BiFunction<Double, Double, Double>() {
+                        @NotNull
+                        @Contract(pure = true)
                         @Override
                         public Double apply(Double x, Double m) {
                             return (x % m + m) % m;
@@ -2026,6 +1992,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param turnPID The PID to use for turning to specific angles.
          * @return This instance of Params.
          */
+        @Contract("_ -> this")
         public Params setTurnPID(PIDController turnPID) {
             return setTurnPID(turnPID, false);
         }
@@ -2037,6 +2004,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param useDegrees Whether the PID controller uses degrees.
          * @return This instance of Params.
          */
+        @Contract("_, _ -> this")
         public Params setTurnPID(PIDController turnPID, boolean useDegrees) {
             useGyro = true;
             useDegreesTurn = useDegrees;
@@ -2063,7 +2031,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param ki Integral gain.
          * @param kd Derivative gain.
          * @param useDegrees A boolean specifying if the units are in degrees.
-         * @return This instance of Params
+         * @return This instance of Params.
          */
         public Params setStabilityPIDCoeffs(double kp, double ki, double kd, boolean useDegrees) {
             return setStabilityPIDCoeffs(kp,ki,kd,0,useDegrees);
@@ -2098,6 +2066,8 @@ public class OmniWheelDrive extends SubSystem {
                 @Override
                 public Double apply(Double target, Double current) {
                     BiFunction<Double, Double, Double> mod = new BiFunction<Double, Double, Double>() {
+                        @NotNull
+                        @Contract(pure = true)
                         @Override
                         public Double apply(Double x, Double m) {
                             return (x % m + m) % m;
@@ -2123,6 +2093,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param stabilityPID The PID to use for stability control.
          * @return This instance of Params.
          */
+        @Contract("_ -> this")
         public Params setStabilityPID(PIDController stabilityPID) {
             return setStabilityPID(stabilityPID, false);
         }
@@ -2134,6 +2105,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param useDegrees   Whether or not the PID controller uses degrees.
          * @return This instance of SpecificParams.
          */
+        @Contract("_, _ -> this")
         public Params setStabilityPID(PIDController stabilityPID, boolean useDegrees) {
             useGyro = true;
             useDegreesStability = useDegrees;
@@ -2150,6 +2122,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param kf Feedforward gain.
          * @return This instance of Params.
          */
+        @Contract("_, _, _, _ -> this")
         public Params setVelocityPID(double kp, double ki, double kd, double kf) {
             changeVelocityPID = true;
             vkp = kp;
@@ -2165,6 +2138,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param encodersPerMeter The number of encoder ticks per meter distance traveled.
          * @return This instance of Params.
          */
+        @Contract("_ -> this")
         public Params setEncodersPerMeter(double encodersPerMeter) {
             this.encodersPerMeter = encodersPerMeter;
             return this;
@@ -2176,6 +2150,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param constantSpeedModifier The value to multiply the speed by.
          * @return This instance of Params.
          */
+        @Contract("_ -> this")
         public Params setConstantSpeedModifier(double constantSpeedModifier) {
             this.constantSpeedMultiplier = constantSpeedModifier;
             return this;
@@ -2187,6 +2162,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param speedModeMultiplier The multiplier that will be applied when speed mode is entered.
          * @return This instance of Params.
          */
+        @Contract("_ -> this")
         public Params setSpeedModeMultiplier(double speedModeMultiplier) {
             this.slowModeMultiplier = speedModeMultiplier;
             return this;
@@ -2198,6 +2174,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param constantTurnSpeedMultiplier The constant turn speed multiplier.
          * @return This instance of params.
          */
+        @Contract("_ -> this")
         public Params setConstantTurnSpeedMultiplier(double constantTurnSpeedMultiplier) {
             this.constantTurnSpeedMultiplier = constantTurnSpeedMultiplier;
             return this;
@@ -2209,6 +2186,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param turnSpeedModeMultiplier The turn speed mode multiplier.
          * @return This instance of params.
          */
+        @Contract("_ -> this")
         public Params setTurnSpeedModeMultiplier(double turnSpeedModeMultiplier) {
             this.turnSpeedModeMultiplier = turnSpeedModeMultiplier;
             return this;
@@ -2220,6 +2198,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param runMode The desired runmode.
          * @return This instance of Params.
          */
+        @Contract("_ -> this")
         public Params setMotorRunMode(DcMotor.RunMode runMode) {
             this.runMode = runMode;
             return this;
@@ -2231,6 +2210,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param behavior The desired zero power behavior.
          * @return This instance of Params.
          */
+        @Contract("_ -> this")
         public Params setZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior) {
             zeroPowerBehavior = behavior;
             return this;
@@ -2242,6 +2222,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param reverseType Which motors should be reversed.
          * @return This instance of params.
          */
+        @Contract("_ -> this")
         public Params setReverseType(ReverseType reverseType) {
             this.reverseType = reverseType;
             return this;
@@ -2254,7 +2235,7 @@ public class OmniWheelDrive extends SubSystem {
     public static final class SpecificParams {
         //An array of length 4 containing the motor config. [0] = topLeft, [1] = topRight, [2] = bottomLeft, [3] = bottomRight.
         private String[] config;
-        //Constants used in various parts of OmniWheel drive.
+        //Constants used in various parts of mechanum drive.
         private double encodersPerMeter, turnLeftPower, turnRightPower, constantSpeedMultiplier, slowModeMultiplier, constantTurnSpeedMultiplier, slowTurnModeMultiplier;
         //Velocity PID coefficients.
         private double vkp, vki, vkd, vkf;
@@ -2310,6 +2291,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param encodersPerMeter The number of encoders ticks per meter distance
          * @return This instance of SpecificParams.
          */
+        @Contract("_ -> this")
         public SpecificParams setEncodersPerMeter(double encodersPerMeter) {
             this.encodersPerMeter = encodersPerMeter;
             return this;
@@ -2321,6 +2303,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param turnLeftPower The turn left power.
          * @return This instance of SpecificParams.
          */
+        @Contract("_ -> this")
         public SpecificParams setTurnLeftPower(double turnLeftPower) {
             this.turnLeftPower = turnLeftPower;
             return this;
@@ -2332,6 +2315,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param turnRightPower The turn right power.
          * @return This instance of SpecificParams.
          */
+        @Contract("_ -> this")
         public SpecificParams setTurnRightPower(double turnRightPower) {
             this.turnRightPower = turnRightPower;
             return this;
@@ -2343,6 +2327,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param constantSpeedMultiplier The constant speed multiplier. Always multiplied by velocity.
          * @return This instance of SpecificParams.
          */
+        @Contract("_ -> this")
         public SpecificParams setConstantSpeedMultiplier(double constantSpeedMultiplier) {
             this.constantSpeedMultiplier = constantSpeedMultiplier;
             return this;
@@ -2354,6 +2339,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param slowModeMultiplier The slow mode multiplier. Applied to velocity when in slow/speed mode.
          * @return This instance of SpecificParams.
          */
+        @Contract("_ -> this")
         public SpecificParams setSlowModeMultiplier(double slowModeMultiplier) {
             this.slowModeMultiplier = slowModeMultiplier;
             return this;
@@ -2365,6 +2351,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param constantTurnSpeedMultiplier The constant turn speed multiplier.
          * @return This instance of params.
          */
+        @Contract("_ -> this")
         public SpecificParams setConstantTurnSpeedMultiplier(double constantTurnSpeedMultiplier) {
             this.constantTurnSpeedMultiplier = constantTurnSpeedMultiplier;
             return this;
@@ -2376,6 +2363,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param slowTurnModeMultiplier The turn speed mode multiplier.
          * @return This instance of params.
          */
+        @Contract("_ -> this")
         public SpecificParams setSlowTurnModeMultiplier(double slowTurnModeMultiplier) {
             this.slowTurnModeMultiplier = slowTurnModeMultiplier;
             return this;
@@ -2390,6 +2378,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param kf Feedforward gain for velocity PID.
          * @return This instance of SpecificParams.
          */
+        @Contract("_, _, _, _ -> this")
         public SpecificParams setVelocityPID(double kp, double ki, double kd, double kf) {
             changeVelocityPID = true;
             vkp = kp;
@@ -2453,6 +2442,8 @@ public class OmniWheelDrive extends SubSystem {
                 @Override
                 public Double apply(Double target, Double current) {
                     BiFunction<Double, Double, Double> mod = new BiFunction<Double, Double, Double>() {
+                        @NotNull
+                        @Contract(pure = true)
                         @Override
                         public Double apply(Double x, Double m) {
                             return (x % m + m) % m;
@@ -2478,6 +2469,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param turnPID The PID controller that will be used for turning.
          * @return This instance of SpecificParams.
          */
+        @Contract("_ -> this")
         public SpecificParams setTurnPID(PIDController turnPID) {
             return setTurnPID(turnPID, false);
         }
@@ -2489,6 +2481,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param useDegrees Whether or not the PID controller uses degrees.
          * @return This instance of SpecificParams.
          */
+        @Contract("_, _ -> this")
         public SpecificParams setTurnPID(PIDController turnPID, boolean useDegrees) {
             useDegreesTurn = useDegrees;
             this.turnPID = turnPID;
@@ -2549,6 +2542,8 @@ public class OmniWheelDrive extends SubSystem {
                 @Override
                 public Double apply(Double target, Double current) {
                     BiFunction<Double, Double, Double> mod = new BiFunction<Double, Double, Double>() {
+                        @NotNull
+                        @Contract(pure = true)
                         @Override
                         public Double apply(Double x, Double m) {
                             return (x % m + m) % m;
@@ -2574,6 +2569,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param stabilityPID The PID controller that will be used for stability control.
          * @return This instance of SpecificParams.
          */
+        @Contract("_ -> this")
         public SpecificParams setStabilityPID(PIDController stabilityPID) {
             return setStabilityPID(stabilityPID, false);
         }
@@ -2585,6 +2581,7 @@ public class OmniWheelDrive extends SubSystem {
          * @param useDegrees Whether or not the PID controller uses degrees.
          * @return This instance of SpecificParams.
          */
+        @Contract("_, _ -> this")
         public SpecificParams setStabilityPID(PIDController stabilityPID, boolean useDegrees) {
             useDegreesStability = useDegrees;
             this.stabilityPID = stabilityPID;

@@ -204,7 +204,7 @@ public abstract class Menu {
      * @throws SkyscraperTooTallException Throws this exception when the number of lines to draw is greater than the number that can fit on the screen.
      */
     protected void displayLines(@NotNull List<GuiLine> lines, @NotNull List<Integer> lineNumbers){
-        ExceptionChecker.assertTrue(lines.size() <= MAXLINESPERSCREEN, new SkyscraperTooTallException("Lines passed to displayLines were more than "+MAXLINESPERSCREEN+" lines"));
+        ExceptionChecker.assertTrue(lineNumbers.size() <= MAXLINESPERSCREEN, new SkyscraperTooTallException("Lines passed to displayLines were more than "+MAXLINESPERSCREEN+" lines"));
         if(lines.size() != 0 && lineNumbers.size() != 0) {
             for (int i = 0; i < lineNumbers.size(); i++) {
                 displayLine(lines.get(lineNumbers.get(i)), lineNumbers.get(i));
