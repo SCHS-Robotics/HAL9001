@@ -19,5 +19,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface ProgramOptions {
-    String[] options();
+    Class<? extends Enum<?>>[] options();
 }

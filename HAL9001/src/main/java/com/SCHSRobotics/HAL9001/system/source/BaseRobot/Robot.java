@@ -82,6 +82,9 @@ public abstract class Robot {
     public static @NotNull Map<String, List<ConfigParam>> autonomousConfig = new LinkedHashMap<>();
     //A map relating the name of each subsystem in the robot to that subsystem's corresponding teleop config
     public static @NotNull Map<String, List<ConfigParam>> teleopConfig = new LinkedHashMap<>();
+
+    public static @NotNull Map<String,List<String>> usedProgramSettingsTeleop = new HashMap<>(), usedProgramSettingsAutonomous = new HashMap<>();
+
     //A hashmap mapping the name of a subsystem to the actual subsystem object.
     private final Map<String, SubSystem> subSystems;
     //The opmode the robot is running.
@@ -188,21 +191,65 @@ public abstract class Robot {
             ExceptionChecker.assertNonNull(link, new NullPointerException("If you are seeing this, Java broke. Good luck!"));
             OpMode linkedOpmode = RegisteredOpModes.getInstance().getOpMode(link.destination());
             ExceptionChecker.assertNonNull(linkedOpmode, new InvalidLinkException("Link to nonexistent opmode. '"+link.destination()+"' does not exist"));
-            addSettings(linkedOpmode, visitedOpmodes);
-        }
-        if(opMode.getClass().isAnnotationPresent(ProgramOptions.class)) {
-            ProgramOptions settings = opMode.getClass().getAnnotation(ProgramOptions.class);
-            ExceptionChecker.assertNonNull(settings, new NullPointerException("If you are seeing this, Java broke. Good luck!"));
-            String[] nonDuplicatedSettings = ArrayMath.removeDuplicates(settings.options());
 
-            if (nonDuplicatedSettings.length > 0) {
-                if (opMode instanceof BaseTeleop) {
-                    teleopConfig.put(name, Arrays.asList((ConfigParam[]) new ConfigParam[]{new ConfigParam("Options", nonDuplicatedSettings, nonDuplicatedSettings[0])}));
-                } else {
-                    autonomousConfig.put(name, Arrays.asList((ConfigParam[]) new ConfigParam[]{new ConfigParam("Options", nonDuplicatedSettings, nonDuplicatedSettings[0])}));
+            if(opMode.getClass().isAnnotationPresent(ProgramOptions.class)) {
+                ProgramOptions settings = opMode.getClass().getAnnotation(ProgramOptions.class);
+                ExceptionChecker.assertNonNull(settings, new NullPointerException("If you are seeing this, Java broke. Good luck!"));
+                Class<? extends Enum<?>>[] nonDuplicatedSettings = ArrayMath.removeDuplicates(settings.options());
+
+                if (nonDuplicatedSettings.length > 0) {
+                    for(Class<? extends Enum<?>> e : nonDuplicatedSettings) {
+                        Enum<?>[] enums = e.getEnumConstants();
+                        if(enums.length > 0) {
+                            if (opMode instanceof BaseTeleop) {
+                                List<ConfigParam> paramLst = teleopConfig.get(name);
+                                if(paramLst == null) {
+                                    teleopConfig.put(name, Arrays.asList((ConfigParam[]) new ConfigParam[]{new ConfigParam(e.getSimpleName(), enums[0])}));
+                                }
+                                else {
+                                    List<String> usedProgramSettingList = usedProgramSettingsTeleop.get(name);
+                                    if(usedProgramSettingList == null) {
+                                        usedProgramSettingList = new ArrayList<>();
+                                    }
+                                    if(!usedProgramSettingList.contains(e.getSimpleName())) {
+                                        List<ConfigParam> params = new ArrayList<>(paramLst);
+                                        params.add(new ConfigParam(e.getSimpleName(), enums[0]));
+                                        ArrayList<String> stuff = new ArrayList<>(usedProgramSettingList);
+                                        stuff.add(e.getSimpleName());
+                                        usedProgramSettingsTeleop.put(name, stuff);
+                                        teleopConfig.put(name, params);
+                                    }
+                                }
+                            } else {
+                                List<ConfigParam> paramLst = autonomousConfig.get(name);
+                                if(paramLst == null) {
+                                    autonomousConfig.put(name, Arrays.asList((ConfigParam[]) new ConfigParam[]{new ConfigParam(e.getSimpleName(), enums[0])}));
+                                    usedProgramSettingsAutonomous.put(name,Arrays.asList(e.getSimpleName()));
+                                }
+                                else {
+                                    List<String> usedProgramSettingList = usedProgramSettingsAutonomous.get(name);
+                                    if(usedProgramSettingList == null) {
+                                        usedProgramSettingList = new ArrayList<>();
+                                    }
+                                    if(!usedProgramSettingList.contains(e.getSimpleName())) {
+                                        Log.wtf("AGGHH", e.getSimpleName());
+                                        List<ConfigParam> params = new ArrayList<>(paramLst);
+                                        params.add(new ConfigParam(e.getSimpleName(), enums[0]));
+                                        ArrayList<String> stuff = new ArrayList<>(usedProgramSettingList);
+                                        stuff.add(e.getSimpleName());
+                                        usedProgramSettingsAutonomous.put(name, stuff);
+                                        autonomousConfig.put(name, params);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
+
+            addSettings(linkedOpmode, visitedOpmodes);
         }
+
     }
 
     /**
@@ -534,38 +581,23 @@ public abstract class Robot {
      */
     public final void init()
     {
-
-        try {
-            Field[] fields = this.getClass().getDeclaredFields();
-            for(Field f : fields) {
-                if(SubSystem.class.isAssignableFrom(f.getType())) {
-                    if(!f.isAnnotationPresent(DisableSubSystem.class)) {
-                        Object obj;
-                        try {
-                            obj = f.get(this);
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                            throw new DumpsterFireException("Tried to access your subsystem, but you made it protected or private. SHARE!!!");
-                        }
-                        if(obj != null) {
-                            addSubSystem((SubSystem) obj);
-                        }
+        Field[] fields = this.getClass().getDeclaredFields();
+        for(Field f : fields) {
+            if(SubSystem.class.isAssignableFrom(f.getType())) {
+                if(!f.isAnnotationPresent(DisableSubSystem.class)) {
+                    Object obj;
+                    try {
+                        obj = f.get(this);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                        throw new DumpsterFireException("Tried to access your subsystem, but you made it protected or private. SHARE!!!");
+                    }
+                    if(obj != null) {
+                        addSubSystem((SubSystem) obj);
                     }
                 }
             }
         }
-        catch (Throwable ex)
-        {
-            telemetry.clearAll();
-            telemetry.addData("ERROR!!!", ex.getMessage());
-            telemetry.update();
-            if(!errorThrown) {
-                Log.e(this.getClass().getSimpleName(), ex.getMessage(), ex);
-                thrownException = ex;
-                errorThrown = true;
-            }
-        }
-
 
         this.gamepad1 = opMode.gamepad1;
         this.gamepad2 = opMode.gamepad2;
@@ -906,6 +938,8 @@ public abstract class Robot {
             }
             teleopConfig.remove(opmodeName);
             autonomousConfig.remove(opmodeName);
+            usedProgramSettingsTeleop.remove(opmodeName);
+            usedProgramSettingsAutonomous.remove(opmodeName);
         }
         else {
             telemetry.clearAll();
@@ -986,7 +1020,7 @@ public abstract class Robot {
      * @return The non-gamepad configuration data for that subsystem.
      */
     @NotNull
-    public final ConfigData pullNonGamepad(SubSystem subsystem) {
+    public final ConfigData pullNonGamepad(@NotNull SubSystem subsystem) {
         return pullNonGamepad(subsystem.getClass().getSimpleName());
     }
 
@@ -1033,17 +1067,25 @@ public abstract class Robot {
         return new ConfigData(output);
     }
 
-    public String pullProgramSetting() {
+    public ConfigData pullProgramSettings() {
         ExceptionChecker.assertTrue(teleopConfig.containsKey(opmodeName) || autonomousConfig.containsKey(opmodeName), new NothingToSeeHereException("You are not using @ProgramOptions, but are trying pull program settings"));
         if(isTeleop()) {
             List<ConfigParam> data = teleopConfig.get(opmodeName);
             ExceptionChecker.assertNonNull(data, new NullPointerException(opmodeName+" settings are not part of the config"));
-            return data.get(0).currentOption;
+            Map<String, Object> dataMap = new HashMap<>();
+            for(ConfigParam param : data) {
+                dataMap.put(param.name, param.vals.get(param.options.indexOf(param.currentOption)));
+            }
+            return new ConfigData(dataMap);
         }
         else {
             List<ConfigParam> data = autonomousConfig.get(opmodeName);
             ExceptionChecker.assertNonNull(data, new NullPointerException(opmodeName+" settings are not part of the config"));
-            return data.get(0).currentOption;
+            Map<String, Object> dataMap = new HashMap<>();
+            for(ConfigParam param : data) {
+                dataMap.put(param.name, param.vals.get(param.options.indexOf(param.currentOption)));
+            }
+            return new ConfigData(dataMap);
         }
     }
 
