@@ -163,7 +163,7 @@ public class ConfigParam {
     }
 
     /**
-     * Constructor for ConfigParam that uses default settings for a Vector button.
+     * Constructor for ConfigParam that uses default settings for a Vector2D button.
      *
      * @param name The name of the parameter.
      * @param defaultOption The parameter's default option.
@@ -186,7 +186,7 @@ public class ConfigParam {
     }
 
     /**
-     * Constructor for ConfigParam that uses default settings for a Vector button.
+     * Constructor for ConfigParam that uses default settings for a Vector2D button.
      *
      * @param name The name of the parameter.
      * @param defaultOption The parameter's default option.

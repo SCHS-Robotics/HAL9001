@@ -13,10 +13,10 @@ import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotDoubleInputException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotVectorInputException;
 import com.SCHSRobotics.HAL9001.util.functional_interfaces.BiFunction;
-import com.SCHSRobotics.HAL9001.util.math.ArrayMath;
 import com.SCHSRobotics.HAL9001.util.math.EncoderToDistanceProcessor;
+import com.SCHSRobotics.HAL9001.util.math.FakeNumpy;
 import com.SCHSRobotics.HAL9001.util.math.Units;
-import com.SCHSRobotics.HAL9001.util.math.Vector;
+import com.SCHSRobotics.HAL9001.util.math.Vector2D;
 import com.SCHSRobotics.HAL9001.util.misc.BaseParam;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigData;
@@ -425,16 +425,16 @@ public class OmniWheelDrive extends SubSystem {
             currentTurnSpeedModeMultiplier = 1;
         }
 
-        Vector input = inputs.getVectorInput(DRIVESTICK);
+        Vector2D input = inputs.getVectorInput(DRIVESTICK);
 
-        Vector left = inputs.getVectorInput(LEFT_DRIVESTICK);
-        Vector right = inputs.getVectorInput(RIGHT_DRIVESTICK);
+        Vector2D left = inputs.getVectorInput(LEFT_DRIVESTICK);
+        Vector2D right = inputs.getVectorInput(RIGHT_DRIVESTICK);
 
         input.scalarMultiply(constantSpeedMultiplier * currentSpeedModeMultiplier);
         left.scalarMultiply(constantSpeedMultiplier * currentSpeedModeMultiplier);
         right.scalarMultiply(constantSpeedMultiplier * currentSpeedModeMultiplier);
 
-        Vector tta = inputs.getVectorInput(TTA_STICK);
+        Vector2D tta = inputs.getVectorInput(TTA_STICK);
 
         double turnPower = inputs.getDoubleInput(TURNSTICK) * constantTurnSpeedMultiplier * currentTurnSpeedModeMultiplier;
         boolean turnLeft = inputs.getBooleanInput(TURN_LEFT);
@@ -502,12 +502,12 @@ public class OmniWheelDrive extends SubSystem {
 
                 if (!turnLeft && !turnRight) {
                     double[] powersLeft = new double[] {left.x, left.y};
-                    double maxLeft = ArrayMath.max(ArrayMath.abs(powersLeft));
-                    ArrayMath.divide(powersLeft, maxLeft > 1 ? maxLeft : 1);
+                    double maxLeft = FakeNumpy.max(FakeNumpy.abs(powersLeft));
+                    FakeNumpy.divide(powersLeft, maxLeft > 1 ? maxLeft : 1);
 
                     double[] powersRight = new double[] {right.x, right.y};
-                    double maxRight = ArrayMath.max(ArrayMath.abs(powersRight));
-                    ArrayMath.divide(powersLeft, maxRight > 1 ? maxRight : 1);
+                    double maxRight = FakeNumpy.max(FakeNumpy.abs(powersRight));
+                    FakeNumpy.divide(powersLeft, maxRight > 1 ? maxRight : 1);
 
                     topLeft.setPower(powersLeft[0]);
                     botLeft.setPower(powersLeft[1]);
@@ -516,12 +516,12 @@ public class OmniWheelDrive extends SubSystem {
                     botRight.setPower(powersRight[0]);
                 } else if (turnLeft) {
                     double[] powersLeft = new double[] {left.x - turnLeftPower, left.y - (turnLeftPower*currentTurnSpeedModeMultiplier)};
-                    double maxLeft = ArrayMath.max(ArrayMath.abs(powersLeft));
-                    ArrayMath.divide(powersLeft, maxLeft > 1 ? maxLeft : 1);
+                    double maxLeft = FakeNumpy.max(FakeNumpy.abs(powersLeft));
+                    FakeNumpy.divide(powersLeft, maxLeft > 1 ? maxLeft : 1);
 
                     double[] powersRight = new double[] {right.x + turnLeftPower, right.y + (turnLeftPower*currentTurnSpeedModeMultiplier)};
-                    double maxRight = ArrayMath.max(ArrayMath.abs(powersRight));
-                    ArrayMath.divide(powersLeft, maxRight > 1 ? maxRight : 1);
+                    double maxRight = FakeNumpy.max(FakeNumpy.abs(powersRight));
+                    FakeNumpy.divide(powersLeft, maxRight > 1 ? maxRight : 1);
 
                     topLeft.setPower(powersLeft[0]);
                     botLeft.setPower(powersLeft[1]);
@@ -530,12 +530,12 @@ public class OmniWheelDrive extends SubSystem {
                     botRight.setPower(powersRight[0]);
                 } else {
                     double[] powersLeft = new double[] {left.x + turnRightPower, left.y + (turnRightPower*currentTurnSpeedModeMultiplier)};
-                    double maxLeft = ArrayMath.max(ArrayMath.abs(powersLeft));
-                    ArrayMath.divide(powersLeft, maxLeft > 1 ? maxLeft : 1);
+                    double maxLeft = FakeNumpy.max(FakeNumpy.abs(powersLeft));
+                    FakeNumpy.divide(powersLeft, maxLeft > 1 ? maxLeft : 1);
 
                     double[] powersRight = new double[] {right.x - turnRightPower, right.y - (turnRightPower*currentTurnSpeedModeMultiplier)};
-                    double maxRight = ArrayMath.max(ArrayMath.abs(powersRight));
-                    ArrayMath.divide(powersLeft, maxRight > 1 ? maxRight : 1);
+                    double maxRight = FakeNumpy.max(FakeNumpy.abs(powersRight));
+                    FakeNumpy.divide(powersLeft, maxRight > 1 ? maxRight : 1);
 
                     topLeft.setPower(powersLeft[0]);
                     botLeft.setPower(powersLeft[1]);
@@ -625,7 +625,7 @@ public class OmniWheelDrive extends SubSystem {
      * @param rightVector The vector for controlling the right side of the robot.
      * @param timeMs      The total time to run in ms.
      */
-    public void driveTime(Vector leftVector, Vector rightVector, long timeMs) {
+    public void driveTime(Vector2D leftVector, Vector2D rightVector, long timeMs) {
         drive(leftVector, rightVector);
         waitTime(timeMs);
         stopAllMotors();
@@ -640,7 +640,7 @@ public class OmniWheelDrive extends SubSystem {
      * @param distanceRight The distance for the right side of the robot to travel.
      * @param unit          The unit that the distance is being provided in.
      */
-    public void turnAndMoveDistance(Vector leftVector, Vector rightVector, double distanceLeft, double distanceRight, Units unit) {
+    public void turnAndMoveDistance(Vector2D leftVector, Vector2D rightVector, double distanceLeft, double distanceRight, Units unit) {
         EncoderToDistanceProcessor processor = new EncoderToDistanceProcessor(encodersPerMeter);
         turnAndMoveEncoders(leftVector, rightVector, processor.getEncoderAmount(distanceLeft,unit), processor.getEncoderAmount(distanceRight,unit));
     }
@@ -656,7 +656,7 @@ public class OmniWheelDrive extends SubSystem {
      * @throws InvalidMoveCommandException Throws this exception if you tried to move the robot in an impossible way. (ex: 0 power, move 2000 encoder ticks).
      * @throws DumpsterFireException Throws this exception if you try and move negative encoder distances. Change the power to change direction.
      */
-    public void turnAndMoveEncoders(@NotNull Vector leftVector, Vector rightVector, double encodersLeft, double encodersRight) {
+    public void turnAndMoveEncoders(@NotNull Vector2D leftVector, Vector2D rightVector, double encodersLeft, double encodersRight) {
         if ((leftVector.isZeroVector() && encodersLeft != 0) || (rightVector.isZeroVector() && encodersRight != 0)) {
             throw new InvalidMoveCommandException("You can't move anywhere if you aren't trying to move ;)");
         }
@@ -667,8 +667,8 @@ public class OmniWheelDrive extends SubSystem {
 
         resetAllEncoders();
 
-        Vector leftDisplacement = new Vector(encodersLeft, leftVector.theta, Vector.CoordinateType.POLAR);
-        Vector rightDisplacement = new Vector(encodersRight, rightVector.theta, Vector.CoordinateType.POLAR);
+        Vector2D leftDisplacement = new Vector2D(encodersLeft, leftVector.theta, Vector2D.CoordinateType.POLAR);
+        Vector2D rightDisplacement = new Vector2D(encodersRight, rightVector.theta, Vector2D.CoordinateType.POLAR);
 
         leftVector.scalarMultiply(constantSpeedMultiplier * Math.sqrt(2));
         rightVector.scalarMultiply(constantSpeedMultiplier * Math.sqrt(2));
@@ -677,12 +677,12 @@ public class OmniWheelDrive extends SubSystem {
         rightVector.rotate(-(PI / 4));
 
         double[] powersLeft = new double[] {leftVector.x, leftVector.y};
-        double maxLeft = ArrayMath.max(ArrayMath.abs(powersLeft));
-        ArrayMath.divide(powersLeft, maxLeft > 1 ? maxLeft : 1);
+        double maxLeft = FakeNumpy.max(FakeNumpy.abs(powersLeft));
+        FakeNumpy.divide(powersLeft, maxLeft > 1 ? maxLeft : 1);
 
         double[] powersRight = new double[] {rightVector.x, rightVector.y};
-        double maxRight = ArrayMath.max(ArrayMath.abs(powersRight));
-        ArrayMath.divide(powersLeft, maxRight > 1 ? maxRight : 1);
+        double maxRight = FakeNumpy.max(FakeNumpy.abs(powersRight));
+        FakeNumpy.divide(powersLeft, maxRight > 1 ? maxRight : 1);
 
         leftDisplacement.rotate(-(PI / 4));
         rightDisplacement.rotate(-(PI / 4));
@@ -720,7 +720,7 @@ public class OmniWheelDrive extends SubSystem {
      * @param rightVector The right motor vector.
      * @param timeMs The time to turn and move in milliseconds.
      */
-    public void turnAndMoveTime(Vector leftVector, Vector rightVector, long timeMs) {
+    public void turnAndMoveTime(Vector2D leftVector, Vector2D rightVector, long timeMs) {
         turnAndMove(leftVector,rightVector);
         waitTime(timeMs);
         stopAllMotors();
@@ -732,7 +732,7 @@ public class OmniWheelDrive extends SubSystem {
      * @param left The left motor vector.
      * @param right The right motor vector.
      */
-    public void turnAndMove(Vector left, Vector right) {
+    public void turnAndMove(Vector2D left, Vector2D right) {
         drive(left, right);
     }
 
@@ -744,7 +744,7 @@ public class OmniWheelDrive extends SubSystem {
      * @param distance The distance to travel.
      * @param unit The unit of distance.
      */
-    public void turnAndMoveDistance(Vector v, double turnPower, double distance, Units unit) {
+    public void turnAndMoveDistance(Vector2D v, double turnPower, double distance, Units unit) {
         EncoderToDistanceProcessor processor = new EncoderToDistanceProcessor(encodersPerMeter);
         turnAndMoveEncoders(v,turnPower,processor.getEncoderAmount(distance,unit));
     }
@@ -756,7 +756,7 @@ public class OmniWheelDrive extends SubSystem {
      * @param turnPower The power to turn at.
      * @param encoders The amount of encoder ticks to travel.
      */
-    public void turnAndMoveEncoders(Vector v, double turnPower, final double encoders) {
+    public void turnAndMoveEncoders(Vector2D v, double turnPower, final double encoders) {
         final int[] initVals = getEncoderPos();
         turnAndMove(v, turnPower);
         waitWhile(new Supplier<Boolean>() {
@@ -775,7 +775,7 @@ public class OmniWheelDrive extends SubSystem {
      * @param turnPower The power to turn at.
      * @param timeMs The amount of time to run in milliseconds.
      */
-    public void turnAndMoveTime(Vector v, double turnPower, long timeMs)  {
+    public void turnAndMoveTime(Vector2D v, double turnPower, long timeMs)  {
         turnAndMove(v, turnPower);
         waitTime(timeMs);
         stopAllMotors();
@@ -787,8 +787,8 @@ public class OmniWheelDrive extends SubSystem {
      * @param v The robot's velocity vector.
      * @param turnPower The power to turn at.
      */
-    public void turnAndMove(@NotNull Vector v, double turnPower) {
-        Vector vcpy = v.clone();
+    public void turnAndMove(@NotNull Vector2D v, double turnPower) {
+        Vector2D vcpy = v.clone();
         vcpy.scalarMultiply(Math.sqrt(2));
 
         switch(driveType) {
@@ -811,7 +811,7 @@ public class OmniWheelDrive extends SubSystem {
      * @param leftVector  The left input vector.
      * @param rightVector The right input vector.
      */
-    public void drive(@NotNull Vector leftVector, @NotNull Vector rightVector) {
+    public void drive(@NotNull Vector2D leftVector, @NotNull Vector2D rightVector) {
 
         leftVector.scalarMultiply(constantSpeedMultiplier * Math.sqrt(2));
         rightVector.scalarMultiply(constantSpeedMultiplier * Math.sqrt(2));
@@ -820,12 +820,12 @@ public class OmniWheelDrive extends SubSystem {
         rightVector.rotate(-(PI / 4));
 
         double[] powersLeft = new double[] {leftVector.x, leftVector.y};
-        double maxLeft = ArrayMath.max(ArrayMath.abs(powersLeft));
-        ArrayMath.divide(powersLeft, maxLeft > 1 ? maxLeft : 1);
+        double maxLeft = FakeNumpy.max(FakeNumpy.abs(powersLeft));
+        FakeNumpy.divide(powersLeft, maxLeft > 1 ? maxLeft : 1);
 
         double[] powersRight = new double[] {rightVector.x, rightVector.y};
-        double maxRight = ArrayMath.max(ArrayMath.abs(powersRight));
-        ArrayMath.divide(powersLeft, maxRight > 1 ? maxRight : 1);
+        double maxRight = FakeNumpy.max(FakeNumpy.abs(powersRight));
+        FakeNumpy.divide(powersLeft, maxRight > 1 ? maxRight : 1);
 
         topLeft.setPower(powersLeft[0]);
         botLeft.setPower(powersLeft[1]);
@@ -841,11 +841,11 @@ public class OmniWheelDrive extends SubSystem {
      * @param timeMs           The amount of time in ms the robot should move.
      * @param stabilityControl Whether the robot should use stability control.
      */
-    public void driveTime(Vector v, long timeMs, boolean stabilityControl) {
+    public void driveTime(Vector2D v, long timeMs, boolean stabilityControl) {
         if (stabilityControl) {
             stabilityPID.setSetpoint(getCurrentAngle(useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS));
         }
-        final Vector vcpy = v.clone();
+        final Vector2D vcpy = v.clone();
         final boolean stabilityCtrl = stabilityControl;
         waitTime(timeMs, new Runnable() {
             @Override
@@ -862,7 +862,7 @@ public class OmniWheelDrive extends SubSystem {
      * @param v      The direction and power that the robot should move at.
      * @param timeMs The time in ms that the robot should move for.
      */
-    public void driveTime(Vector v, long timeMs) {
+    public void driveTime(Vector2D v, long timeMs) {
         driveTime(v, timeMs, false);
     }
 
@@ -874,7 +874,7 @@ public class OmniWheelDrive extends SubSystem {
      * @param unit             The unit of distance the robot should travel.
      * @param stabilityControl Whether the robot should use stability control.
      */
-    public void driveDistance(Vector v, double distance, Units unit, boolean stabilityControl) {
+    public void driveDistance(Vector2D v, double distance, Units unit, boolean stabilityControl) {
         EncoderToDistanceProcessor processor = new EncoderToDistanceProcessor(encodersPerMeter);
         driveEncoders(v,processor.getEncoderAmount(distance,unit),stabilityControl);
     }
@@ -886,7 +886,7 @@ public class OmniWheelDrive extends SubSystem {
      * @param distance The distance the robot should travel.
      * @param unit     The units of distance.
      */
-    public void driveDistance(Vector v, double distance, Units unit) {
+    public void driveDistance(Vector2D v, double distance, Units unit) {
         driveDistance(v, distance, unit, false);
     }
 
@@ -900,7 +900,7 @@ public class OmniWheelDrive extends SubSystem {
      * @throws InvalidMoveCommandException Throws this exception if you tried to move the robot in an impossible way. (ex: 0 power, move 2000 encoder ticks).
      * @throws DumpsterFireException Throws this exception if you try and move negative encoder distances. Change the power to change direction.
      */
-    public void driveEncoders(@NotNull Vector v, double encoders, boolean stabilityControl) {
+    public void driveEncoders(@NotNull Vector2D v, double encoders, boolean stabilityControl) {
         if (v.isZeroVector() && encoders != 0) {
             throw new InvalidMoveCommandException("You can't move anywhere if you aren't trying to move ;)");
         }
@@ -908,9 +908,9 @@ public class OmniWheelDrive extends SubSystem {
             throw new DumpsterFireException("Where you're going, you don't need roads! (encoders must be positive)");
         }
 
-        Vector displacement = new Vector(encoders, v.theta, Vector.CoordinateType.POLAR);
+        Vector2D displacement = new Vector2D(encoders, v.theta, Vector2D.CoordinateType.POLAR);
 
-        final Vector vcpy = v.clone();
+        final Vector2D vcpy = v.clone();
         final boolean stabilityCtrl = stabilityControl;
 
         final double thresh1;
@@ -974,7 +974,7 @@ public class OmniWheelDrive extends SubSystem {
      * @param v The input velocity vector.
      * @param encoders The amount of encoder ticks to travel.
      */
-    public void driveEncoders(Vector v, double encoders) {
+    public void driveEncoders(Vector2D v, double encoders) {
         driveEncoders(v,encoders,false);
     }
 
@@ -984,9 +984,9 @@ public class OmniWheelDrive extends SubSystem {
      * @param v The direction and power that the robot should move at.
      * @param stabilityControl Whether or not to use the drive's stability control system.
      */
-    public void drive(@NotNull Vector v, boolean stabilityControl){
+    public void drive(@NotNull Vector2D v, boolean stabilityControl){
 
-        Vector vcpy = v.clone();
+        Vector2D vcpy = v.clone();
 
         vcpy.scalarMultiply(constantSpeedMultiplier * Math.sqrt(2));
 
@@ -1012,7 +1012,7 @@ public class OmniWheelDrive extends SubSystem {
      *
      * @param v The direction vector indicating how the robot should move.
      */
-    public void drive(Vector v) {
+    public void drive(Vector2D v) {
         drive(v,false);
     }
 
@@ -1219,8 +1219,8 @@ public class OmniWheelDrive extends SubSystem {
      */
     public void setPower(double topLeftPower, double topRightPower, double botLeftPower, double botRightPower) {
         double[] powers = new double[] {topLeftPower, topRightPower, botLeftPower, botRightPower};
-        double max = ArrayMath.max(ArrayMath.abs(powers));
-        ArrayMath.divide(powers, max > 1 ? max : 1);
+        double max = FakeNumpy.max(FakeNumpy.abs(powers));
+        FakeNumpy.divide(powers, max > 1 ? max : 1);
 
         topLeft.setPower(powers[0]);
         topRight.setPower(powers[1]);

@@ -9,7 +9,7 @@ import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.InvalidMoveCommandException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotDoubleInputException;
-import com.SCHSRobotics.HAL9001.util.math.Vector;
+import com.SCHSRobotics.HAL9001.util.math.Vector2D;
 import com.SCHSRobotics.HAL9001.util.misc.BaseParam;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigData;
@@ -139,7 +139,7 @@ public class QuadWheelDrive extends SubSystem {
         //drives forward and turns at the same time
         if (turnAndMove) {
             if (inputs.getDoubleInput(DRIVESTICK)!= 0 && inputs.getDoubleInput(TURNSTICK) != 0) {
-                turnAndMove(new Vector(inputs.getDoubleInput(DRIVESTICK), inputs.getDoubleInput(TURNSTICK)));
+                turnAndMove(new Vector2D(inputs.getDoubleInput(DRIVESTICK), inputs.getDoubleInput(TURNSTICK)));
             } else if (inputs.getDoubleInput(DRIVESTICK) != 0) {
                 drive(inputs.getDoubleInput(DRIVESTICK));
             } else if (inputs.getDoubleInput(TURNSTICK)!= 0){
@@ -228,7 +228,7 @@ public class QuadWheelDrive extends SubSystem {
      *
      * @param input A vector that determines linear/rotational speed and direction. First component is linear speed second is rotational speed (counterclockwise +)
      */
-    public void turnAndMove(Vector input){
+    public void turnAndMove(Vector2D input){
         botLeft.setPower(((input.x - input.y) * constantSpeedModifier) * currentSpeedModeModifier);
         botRight.setPower(((input.x + input.y) * constantSpeedModifier) * currentSpeedModeModifier);
         topLeft.setPower(((input.x - input.y) * constantSpeedModifier) * currentSpeedModeModifier);
@@ -306,11 +306,11 @@ public class QuadWheelDrive extends SubSystem {
      * Drives and turns for a set time.
      *
      * @param timeMs Time to turn and drive for in milliseconds.
-     * @param input Vector that determines direction and rotational speed. (x component is linear speed y is rotational speed)
+     * @param input Vector2D that determines direction and rotational speed. (x component is linear speed y is rotational speed)
      *
      * @throws DumpsterFireException Throws this exception if time is negative.
      */
-    public void turnAndMoveTime(long timeMs, Vector input) {
+    public void turnAndMoveTime(long timeMs, Vector2D input) {
         if(timeMs < 0) {
             throw new DumpsterFireException("HAL is cool, but can't travel back in time. Time must be positive.");
         }
@@ -391,11 +391,11 @@ public class QuadWheelDrive extends SubSystem {
      * Turn while driving using encoders.
      *
      * @param encoderDistance Encoder distance to travel.
-     * @param input Vector that determines direction and rotational speed. (x component is linear speed y is rotational speed)
+     * @param input Vector2D that determines direction and rotational speed. (x component is linear speed y is rotational speed)
      *
      * @throws DumpsterFireException Throws this exception if the encoder count is negative.
      */
-    public void turnAndMoveEncoders(final int encoderDistance, Vector input) {
+    public void turnAndMoveEncoders(final int encoderDistance, Vector2D input) {
 
         if(encoderDistance < 0) {
             throw new DumpsterFireException("Where you're going, you don't need roads! (distance must be positive)");

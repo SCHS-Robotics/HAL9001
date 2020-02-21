@@ -25,7 +25,7 @@ public class Button {
     private DoubleInputs doubleInput;
     //Boolean input to use if it is a boolean input button.
     private BooleanInputs booleanInput;
-    //Vector input to use if it is a vector input.
+    //Vector2D input to use if it is a vector input.
     private VectorInputs vectorInput;
     //Deadzone to use for the boolean version of the double inputs.
     private double deadzone = 0;
@@ -34,16 +34,26 @@ public class Button {
      * Represents the allowed input methods for controls that return double values.
      */
     public enum DoubleInputs {
-        left_stick_x, left_stick_y, left_trigger, right_stick_x, right_stick_y, right_trigger, noButton
+        left_stick_x, left_stick_y, left_trigger,
+        right_stick_x, right_stick_y, right_trigger, noButton
     }
 
     /**
      * Represents the allowed input methods for controls that return boolean values.
      */
     public enum BooleanInputs {
-        a, b, back, dpad_down, dpad_left, dpad_right, dpad_up, guide, left_bumper, left_stick_button, right_bumper, right_stick_button, start, x, y, bool_left_stick_x, bool_right_stick_x, bool_left_stick_y, bool_right_stick_y, bool_left_trigger, bool_right_trigger, bool_left_stick_x_right, bool_right_stick_x_right, bool_left_stick_y_up, bool_right_stick_y_up, bool_left_stick_x_left, bool_right_stick_x_left, bool_left_stick_y_down, bool_right_stick_y_down, noButton
+        a, b, back, dpad_down, dpad_left, dpad_right, dpad_up, guide,
+        left_bumper, left_stick_button, right_bumper, right_stick_button,
+        start, x, y, bool_left_stick_x, bool_right_stick_x, bool_left_stick_y,
+        bool_right_stick_y, bool_left_trigger, bool_right_trigger,
+        bool_left_stick_x_right, bool_right_stick_x_right, bool_left_stick_y_up,
+        bool_right_stick_y_up, bool_left_stick_x_left, bool_right_stick_x_left,
+        bool_left_stick_y_down, bool_right_stick_y_down, noButton
     }
 
+    /**
+     * Represents the allowed input methods for controls that return vector values.
+     */
     public enum VectorInputs {
         left_stick, right_stick, noButton
     }
@@ -66,13 +76,12 @@ public class Button {
      * @param deadzone Double between 0 and 1 that sets the deadzone.
      */
     public Button(int gamepadNumber, @NotNull DoubleInputs inputName, double deadzone){
-        this.gamepadNumber = gamepadNumber;
+        setGamepadNumber(gamepadNumber);
         this.doubleInput = inputName;
         this.isDouble = true;
         this.isBoolean = false;
         this.isVector = false;
         this.deadzone = deadzone;
-
     }
 
     /**
@@ -93,7 +102,7 @@ public class Button {
      * @param deadzone Double between 0 and 1 that sets the deadzone.
      */
     public Button(int gamepadNumber, @NotNull BooleanInputs inputName, double deadzone){
-        this.gamepadNumber = gamepadNumber;
+        setGamepadNumber(gamepadNumber);
         this.booleanInput = inputName;
         this.isDouble = false;
         this.isBoolean = true;
@@ -108,7 +117,7 @@ public class Button {
      *  @param inputName VectorInput that this button will output.
      */
     public Button(int gamepadNumber, @NotNull VectorInputs inputName){
-        this.gamepadNumber = gamepadNumber;
+        setGamepadNumber(gamepadNumber);
         this.vectorInput = inputName;
         this.isDouble = false;
         this.isBoolean = false;

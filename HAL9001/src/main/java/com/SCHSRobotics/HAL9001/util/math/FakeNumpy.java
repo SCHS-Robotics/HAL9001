@@ -23,13 +23,13 @@ import java.util.Set;
  * Creation Date: 10/19/20.
  */
 @SuppressWarnings("unused")
-public class ArrayMath {
+public class FakeNumpy {
 
     /**
      * Private default constructor to make class basically static.
      */
     @Contract(pure = true)
-    private ArrayMath() {}
+    private FakeNumpy() {}
 
     /**
      * Finds the maximum value of an array.
@@ -675,5 +675,62 @@ public class ArrayMath {
             arrOut[i] = lst.get(i);
         }
         return arrOut;
+    }
+
+    public static double mod(double x, double modulus) {
+        return (x % modulus + modulus) % modulus;
+    }
+
+    public static double[] add(double[] list1, double[] list2) {
+        if(list1.length != list2.length) {
+            throw new ArithmeticException("Arrays are different sizes, can't be subtracted");
+        }
+
+        double[] output = new double[list1.length];
+        for(int i = 0; i < list1.length; i++) {
+            output[i] = list1[i] + list2[i];
+        }
+        return output;
+    }
+
+    public static int[] add(int[] list1, int[] list2) {
+        if(list1.length != list2.length) {
+            throw new ArithmeticException("Arrays are different sizes, can't be subtracted");
+        }
+
+        int[] output = new int[list1.length];
+        for(int i = 0; i < list1.length; i++) {
+            output[i] = list1[i] + list2[i];
+        }
+        return output;
+    }
+
+    //list1 - list2
+    public static double[] subtract(double[] list1, double[] list2) {
+        double[] list2cpy = list2.clone();
+        multiply(list2cpy, -1);
+        return add(list2cpy, list1);
+    }
+
+    public static int[] subtract(int[] list1, int[] list2) {
+        int[] list2cpy = list2.clone();
+        multiply(list2cpy, -1);
+        return add(list2cpy, list1);
+    }
+
+    public static double[] absdiff(double[] list1, double[] list2) {
+        return abs(subtract(list1,list2));
+    }
+
+    public static int[] absdiff(int[] list1, int[] list2) {
+        return abs(subtract(list1,list2));
+    }
+
+    public static double average(double[] list) {
+        double sum = 0;
+        for(double d : list) {
+            sum += d;
+        }
+        return sum/list.length;
     }
 }

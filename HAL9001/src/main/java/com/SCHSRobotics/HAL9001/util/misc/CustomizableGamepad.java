@@ -2,7 +2,7 @@ package com.SCHSRobotics.HAL9001.util.misc;
 
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
-import com.SCHSRobotics.HAL9001.util.math.Vector;
+import com.SCHSRobotics.HAL9001.util.math.Vector2D;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -361,29 +361,52 @@ public class CustomizableGamepad {
      * @param buttonName Name of button to get input from.
      * @return The value of that button (A vector).
      */
-    public Vector getVectorInput(@NotNull String buttonName) {
+    public Vector2D getVectorInput(@NotNull String buttonName) {
         Button button = inputs.get(buttonName);
         ExceptionChecker.assertNonNull(button, new NullPointerException("Could not find a button with name "+buttonName+" in the customizable gamepad."));
 
         if(button.getGamepadNumber() == 1) {
             switch ((Button.VectorInputs) button.getInputEnum()) {
-                case left_stick: return new Vector(robot.gamepad1.left_stick_x, -robot.gamepad1.left_stick_y);
-                case right_stick: return new Vector(robot.gamepad1.right_stick_x, -robot.gamepad1.right_stick_y);
+                case left_stick: return new Vector2D(robot.gamepad1.left_stick_x, -robot.gamepad1.left_stick_y);
+                case right_stick: return new Vector2D(robot.gamepad1.right_stick_x, -robot.gamepad1.right_stick_y);
 
                 default:
-                    return new Vector(0,0);
+                    return new Vector2D(0,0);
             }
         }
         else {
             switch ((Button.VectorInputs) button.getInputEnum()) {
-                case left_stick: return new Vector(robot.gamepad2.left_stick_x, -robot.gamepad2.left_stick_y);
-                case right_stick: return new Vector(robot.gamepad2.right_stick_x, -robot.gamepad2.right_stick_y);
+                case left_stick: return new Vector2D(robot.gamepad2.left_stick_x, -robot.gamepad2.left_stick_y);
+                case right_stick: return new Vector2D(robot.gamepad2.right_stick_x, -robot.gamepad2.right_stick_y);
 
                 default:
-                    return new Vector(0,0);
+                    return new Vector2D(0,0);
             }
         }
     }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getInput(String buttonName) {
+        Button button = getButton(buttonName);
+
+        if(button.isBoolean()) {
+            boolean val = getBooleanInput(buttonName);
+            return (T) Boolean.valueOf(val);
+        }
+        else if(button.isDouble()) {
+            double val = getDoubleInput(buttonName);
+            return (T) Double.valueOf(val);
+        }
+        else if(button.isVector()){
+            Vector2D val = getVectorInput(buttonName);
+            return (T) val;
+        }
+        else {
+            return null;
+        }
+    }
+
+
 
     /**
      * Gets a button object from the gamepad.

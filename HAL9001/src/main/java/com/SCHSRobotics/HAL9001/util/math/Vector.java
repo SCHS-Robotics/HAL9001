@@ -1,18 +1,24 @@
 package com.SCHSRobotics.HAL9001.util.math;
 
+import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
+import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * A class for doing mathematical operations on 2 dimensional vectors.
- *
- * @author Cole Savage, Level Up
- * @since 0.0.0
- * @version 1.0.0
- *
- * Creation Date: 7/11/17
- */
-@SuppressWarnings({"WeakerAccess","unused"})
+import java.util.Arrays;
+
+import static java.lang.Math.PI;
+import static java.lang.Math.acos;
+import static java.lang.Math.atan2;
+
 public class Vector {
+
+    protected double[] components;
+    protected double[] eulerAngles;
+    protected double[] angles;
+    protected double magnitude;
+    protected AngleUnit angleUnit;
 
     /**
      * Specifies the input coordinate format for the constructor.
@@ -21,65 +27,46 @@ public class Vector {
         CARTESIAN, POLAR
     }
 
-    //Properties of the vector.
-    public double x,y,r,theta;
+    public Vector(@NotNull AngleUnit angleUnit, @NotNull CoordinateType coordinateType, double... components) {
+        this.angleUnit = angleUnit;
+        this.components = components;
 
-    /**
-     * Constructor for vector.
-     *
-     * @param inx The first input component.
-     * @param iny The second input component.
-     * @param inCoord The enum specifying the input format.
-     */
-    public Vector(double inx, double iny, @NotNull CoordinateType inCoord) {
-        if (inCoord == CoordinateType.CARTESIAN) {
-            this.x = inx;
-            this.y = iny;
-            this.r = Math.sqrt(Math.pow(inx,2)+Math.pow(iny,2));
+        if(coordinateType == CoordinateType.CARTESIAN) {
+            magnitude = 0;
+            for (double component : components) {
+                magnitude += component * component;
+            }
+            magnitude = Math.sqrt(magnitude);
 
-            this.theta = inx > 0 ? Math.atan(iny/inx) : inx < 0 ? Math.atan(iny/inx) + Math.PI : inx == 0 && iny > 0 ? Math.PI/2 : inx == 0 && iny < 0 ? -Math.PI/2 : 0;
-            this.theta = this.theta > 0 ? this.theta : this.theta + 2 * Math.PI; //To make everything positive, because I don't like negative angles as much
-            this.r = Math.sqrt(Math.pow(inx,2)+Math.pow(iny,2));
+            eulerAngles = new double[components.length];
+            angles = new double[components.length-1];
+            double modulus = angleUnit == AngleUnit.DEGREES ? 360 : 2*PI;
+
+            for(int i = 0; i < components.length; i++) {
+                eulerAngles[i] = FakeNumpy.mod(acos(components[i]/magnitude), modulus);
+            }
+            for(int i = 0; i < components.length - 1; i++){
+                angles[i] = FakeNumpy.mod(atan2(components[i],components[components.length-1]),modulus);
+            }
         }
-        else if(inCoord == CoordinateType.POLAR) {
-            this.r = inx;
-            this.theta = iny;
-            this.x = inx*Math.cos(iny);
-            this.y = inx*Math.sin(iny);
-            this.theta = this.theta > 0 ? this.theta : this.theta + 2 * Math.PI; //To make everything positive, because I don't like negative angles as much
+        else {
+            magnitude = components[0];
+            eulerAngles = new double[components.length];
+            angles = new double[components.length - 1];
+
+            angles = Arrays.copyOfRange(components,1,components.length);
+
+            //TODO calculate euler angles
+
         }
     }
 
-    /**
-     * Constructor for vector.
-     *
-     * @param inx The input x component.
-     * @param iny The input y component.
-     */
-    public Vector(double inx, double iny) {
-        this.x = inx;
-        this.y = iny;
-
-        this.theta = inx > 0 ? Math.atan(iny/inx) : inx < 0 ? Math.atan(iny/inx) + Math.PI : inx == 0 && iny > 0 ? Math.PI/2 : inx == 0 && iny < 0 ? -Math.PI/2 : 0;
-        this.theta = this.theta > 0 ? this.theta : this.theta + 2*Math.PI; //To make everything positive, because I don't like negative angles as much
-        this.r = Math.sqrt(Math.pow(inx,2)+Math.pow(iny,2));
+    public Vector(@NotNull AngleUnit angleUnit, double... components) {
+        this(angleUnit, CoordinateType.CARTESIAN, components);
     }
 
-    /**
-     * Rotates the vector components about the origin by an angle theta. The rotation angle must be in radians.
-     *
-     * @param theta The angle to rotate the vector in radians. Counterclockwise is positive, clockwise is negative.
-     */
-    public void rotate(double theta) {
-        if(!isZeroVector()) {
-            double rotx = this.x * Math.cos(theta) - this.y * Math.sin(theta);
-            double roty = this.x * Math.sin(theta) + this.y * Math.cos(theta);
-            this.x = rotx;
-            this.y = roty;
-
-            this.theta += theta;
-            this.theta = this.theta > 0 ? this.theta : this.theta + 2 * Math.PI; //To make everything positive, because I don't like negative angles as much
-        }
+    public Vector(double... components) {
+        this(AngleUnit.RADIANS, CoordinateType.CARTESIAN, components);
     }
 
     /**
@@ -88,50 +75,115 @@ public class Vector {
      * @return Whether the x and y components of the vector both equal to 0.
      */
     public boolean isZeroVector() {
-        return (this.x == 0.0) && (this.y == 0.0);
+        boolean isZero = true;
+        for(double component : components) {
+            isZero &= Math.abs(component) < 1e-7; //To account for floating point errors.
+        }
+        return isZero;
     }
 
     /**
      * Normalizes the vector to a specified length.
      *
      * @param length The length to normalize the vector to.
+     *
+     * @return A scaled version of this vector.
      */
-    public void normalize(double length) {
-        if(!isZeroVector()) {
-            x = length * (x / r);
-            y = length * (y / r);
-            this.r = length;
+    public Vector scaleTo(double length) {
+        if(isZeroVector()) {
+            return new Vector(angleUnit, CoordinateType.CARTESIAN,components);
         }
+
+        double[] scaledComponents = components.clone();
+
+        FakeNumpy.divide(scaledComponents,magnitude);
+        FakeNumpy.multiply(scaledComponents,length);
+        return new Vector(angleUnit,CoordinateType.CARTESIAN,scaledComponents);
     }
 
     /**
      * Normalizes the vector to a length of 1 unit (a unit vector).
+     *
+     * @return A unit vector in the direction of this vector
      */
-    public void normalize() {
-        normalize(1.0);
+    public Vector normalize() {
+        return scaleTo(1);
     }
 
     /**
      * Multiply the vector by a scalar.
      *
      * @param scalar A constant number.
-     */
-    public void scalarMultiply(double scalar) {
-        this.normalize(scalar*r);
-    }
-
-    /**
-     * Performs a dot product with another vector.
      *
-     * @param v The second vector.
-     * @return The dot product of this vector and v.
+     * @return A vector whose magnitude has been multiplied by a scalar
      */
-    public double dotProduct(Vector v) {
-        return v.x*x + v.y*y;
+    public Vector scalarMultiply(double scalar) {
+        return scaleTo(scalar*magnitude);
     }
 
-    @Override
-    public Vector clone() {
-        return new Vector(x,y);
+    public double dotProduct(@NotNull Vector vector) {
+        ExceptionChecker.assertEqual(components.length,vector.components.length, new DumpsterFireException("Vectors must be of the same dimension to be defined in the dot product."));
+        double product = 0;
+        for(int i = 0; i < components.length; i++) {
+            product += components[i]*vector.components[i];
+        }
+        return product;
+    }
+
+    public Vector crossProduct(@NotNull Vector vector) {
+        int stopIdx;
+
+        ExceptionChecker.assertTrue(components.length <= 3, new DumpsterFireException("This vector must have at most 3 dimensions in order perform the cross product (7-dimensional operations not currently supported)"));
+
+        double[] this3DComponents = new double[3];
+        stopIdx = 0;
+        for(int i = 0; i < components.length; i++) {
+            this3DComponents[i] = components[i];
+            stopIdx = i;
+        }
+        for(int i = stopIdx + 1; i < this3DComponents.length; i++) {
+            this3DComponents[i] = 0;
+        }
+
+        ExceptionChecker.assertTrue(vector.components.length <= 3, new DumpsterFireException("Multiplied vector must have at most 3 dimensions in order perform the cross product (7-dimensional operations not currently supported)"));
+
+        double[] vector3DComponents = new double[3];
+        stopIdx = 0;
+        for(int i = 0; i < vector.components.length; i++) {
+            vector3DComponents[i] = vector.components[i];
+            stopIdx = i;
+        }
+        for(int i = stopIdx + 1; i < vector3DComponents.length; i++) {
+            this3DComponents[i] = 0;
+        }
+
+        double[] crossProductComponents = new double[] {
+                this3DComponents[1]*vector3DComponents[2] - this3DComponents[2]*vector3DComponents[1],
+                -this3DComponents[0]*vector3DComponents[2] + this3DComponents[2]*vector3DComponents[0],
+                this3DComponents[0]*vector3DComponents[1] - this3DComponents[1]*vector3DComponents[0]
+        };
+
+        return new Vector(angleUnit,CoordinateType.CARTESIAN,crossProductComponents);
+    }
+
+    public Vector project(@NotNull Vector vector) {
+        return vector.normalize().scalarMultiply(this.dotProduct(vector)/vector.magnitude);
+    }
+
+    public Matrix toMatrix() {
+        return new Matrix(this);
+    }
+
+    public int dimensionality() {
+        return components.length;
+    }
+
+    public static double calcAngle(@NotNull Vector v1, @NotNull Vector v2, @NotNull AngleUnit angleUnit) {
+        double thetaRadians = v1.dotProduct(v2)/(v1.magnitude*v2.magnitude);
+        return angleUnit == AngleUnit.DEGREES ? Math.toDegrees(thetaRadians) : thetaRadians;
+    }
+
+    public double[] getComponents() {
+        return components;
     }
 }

@@ -22,7 +22,7 @@ import com.SCHSRobotics.HAL9001.util.exceptions.InvalidLinkException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotAnAlchemistException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NothingToSeeHereException;
-import com.SCHSRobotics.HAL9001.util.math.ArrayMath;
+import com.SCHSRobotics.HAL9001.util.math.FakeNumpy;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigData;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigParam;
@@ -195,7 +195,7 @@ public abstract class Robot {
             if(opMode.getClass().isAnnotationPresent(ProgramOptions.class)) {
                 ProgramOptions settings = opMode.getClass().getAnnotation(ProgramOptions.class);
                 ExceptionChecker.assertNonNull(settings, new NullPointerException("If you are seeing this, Java broke. Good luck!"));
-                Class<? extends Enum<?>>[] nonDuplicatedSettings = ArrayMath.removeDuplicates(settings.options());
+                Class<? extends Enum<?>>[] nonDuplicatedSettings = FakeNumpy.removeDuplicates(settings.options());
 
                 if (nonDuplicatedSettings.length > 0) {
                     for(Class<? extends Enum<?>> e : nonDuplicatedSettings) {

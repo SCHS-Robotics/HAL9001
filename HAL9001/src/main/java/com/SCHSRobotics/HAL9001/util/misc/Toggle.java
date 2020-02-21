@@ -17,7 +17,7 @@ public class Toggle {
      * The different types of toggle that can be created.
      * FlipToggle - Press once to make it true, press and release a second time to make it false.
      * True Once Toggle - Only true one time after you press the button, false until you press the button again.
-     * True Once Toggle Allow Turn Off - Same as FlipToggle, but if you check the value it changes the false.
+     * True Once Toggle Allow Turn Off - Same as FlipToggle, but if you check the value it changes to false.
      * True While Held Once - IDK to be honest, just ignore this one.
      */
     public enum ToggleTypes{
