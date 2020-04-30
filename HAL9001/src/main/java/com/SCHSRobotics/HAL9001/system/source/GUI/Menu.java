@@ -106,7 +106,7 @@ public abstract class Menu {
      *
      * @param button - The button currently being pressed;
      */
-    public abstract void onButton(String name, Button button);
+    public abstract void onButton(String name, Button<?> button);
 
     /**
      * Abstract method that is called every frame to render the menu.

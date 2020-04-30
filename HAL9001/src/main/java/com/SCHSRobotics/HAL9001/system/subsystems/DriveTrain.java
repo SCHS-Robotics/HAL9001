@@ -8,6 +8,8 @@ import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -22,6 +24,8 @@ public abstract class DriveTrain extends SubSystem {
     protected double encodersPerMeter;
     protected EncoderToDistanceProcessor distProcessor;
     protected CustomizableGamepad gamepad;
+    protected boolean useGyro, useAccelerationIntegration;
+    protected IMU imu;
 
     public DriveTrain(@NotNull Robot robot, @NotNull Params params) {
         super(robot);
@@ -39,6 +43,20 @@ public abstract class DriveTrain extends SubSystem {
         resetEncoders();
         
         gamepad = new CustomizableGamepad(robot);
+
+        useGyro = params.useGyro;
+        useAccelerationIntegration = params.useAccelerationIntegration;
+        imu = params.imu;
+    }
+
+    @Override
+    public void init() {
+        if(useGyro) {
+            imu.init();
+        }
+        if(useAccelerationIntegration) {
+            imu.startAccelerationIntegration(new Position(), new Velocity(),30);
+        }
     }
 
     public void reverseMotor(int motorIdx) {
@@ -144,6 +162,8 @@ public abstract class DriveTrain extends SubSystem {
         private DcMotor[] motors;
         private Kinematics kinematics;
         private Localizer localizer;
+        private IMU imu;
+        private boolean useGyro, useAccelerationIntegration;
         private double encodersPerMeter;
         public Params(@NotNull Kinematics kinematics, @NotNull Localizer localizer, @NotNull String... config) {
             this.config = config;
@@ -154,8 +174,9 @@ public abstract class DriveTrain extends SubSystem {
                 motors[i] = robot.hardwareMap.dcMotor.get(config[i]);
             }
             encodersPerMeter = 1;
+            useGyro = false;
+            useAccelerationIntegration = false;
         }
-
         public Params setLocalizer(@NotNull Localizer localizer) {
             this.localizer = localizer;
             return this;
@@ -163,6 +184,15 @@ public abstract class DriveTrain extends SubSystem {
         public Params setEncodersPerMeter(double encodersPerMeter) {
             this.encodersPerMeter = encodersPerMeter;
             return this;
+        }
+        public Params setImu(IMU imu, boolean enableAccelerationIntegration) {
+            this.imu = imu;
+            useGyro = true;
+            useAccelerationIntegration = enableAccelerationIntegration;
+            return this;
+        }
+        public Params setIMU(IMU imu) {
+            return setImu(imu, false);
         }
     }
 }

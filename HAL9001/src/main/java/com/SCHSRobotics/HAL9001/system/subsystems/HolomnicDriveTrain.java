@@ -15,7 +15,11 @@ import static java.lang.Math.hypot;
 
 public abstract class HolomnicDriveTrain extends DriveTrain {
 
-    protected static final String DRIVE_STICK = "DriveStick", TURN_STICK = "TurnStick";
+    protected static final String
+            DRIVE_STICK = "DriveStick",
+            TURN_STICK = "TurnStick",
+            MATTHEW_LEFT = "MatthewLeft",
+            MATTHEW_RIGHT = "MatthewRight";
 
     protected enum DriveType {
         STANDARD, FIELD_CENTRIC, STANDARD_TTA, FIELD_CENTRIC_TTA, MATTHEW
@@ -27,6 +31,8 @@ public abstract class HolomnicDriveTrain extends DriveTrain {
         driveType = params.driveType;
         gamepad.addButton(DRIVE_STICK,params.driveStick);
         gamepad.addButton(TURN_STICK,params.turnStick);
+        gamepad.addButton(MATTHEW_LEFT,params.matthewLeft);
+        gamepad.addButton(MATTHEW_RIGHT,params.matthewRight);
     }
 
     @Override
@@ -36,15 +42,17 @@ public abstract class HolomnicDriveTrain extends DriveTrain {
 
         switch (driveType) {
             case STANDARD:
-                turnAndMove(inputVector,turnStickValue);
-                break;
             case FIELD_CENTRIC:
+                turnAndMove(inputVector,turnStickValue);
                 break;
             case STANDARD_TTA:
                 break;
             case FIELD_CENTRIC_TTA:
                 break;
             case MATTHEW:
+                Vector2D left = gamepad.getInput(MATTHEW_LEFT);
+                Vector2D right = gamepad.getInput(MATTHEW_RIGHT);
+                moveMatthew(left, right);
                 break;
         }
     }
@@ -290,22 +298,37 @@ public abstract class HolomnicDriveTrain extends DriveTrain {
 
     public abstract class Params extends DriveTrain.Params {
 
-        private Button driveStick, turnStick;
+        private Button<Vector2D> driveStick, matthewLeft, matthewRight;
+        private Button<Double> turnStick;
         private DriveType driveType;
         public Params(@NotNull Kinematics kinematics, @NotNull Localizer localizer, @NotNull String... config) {
             super(kinematics,localizer, config);
-            this.driveType = DriveType.STANDARD;
+
+            driveType = DriveType.STANDARD;
+
+            driveStick = new Button<>(1, Button.VectorInputs.right_stick);
+            turnStick = new Button<>(1, Button.DoubleInputs.left_stick_x);
+            matthewLeft = new Button<>(1, Button.VectorInputs.noButton);
+            matthewRight = new Button<>(1, Button.VectorInputs.noButton);
         }
         public Params setDriveType(DriveType driveType) {
             this.driveType = driveType;
             return this;
         }
-        public Params setDriveStick(Button driveStick) {
+        public Params setDriveStick(Button<Vector2D> driveStick) {
             this.driveStick = driveStick;
             return this;
         }
-        public Params setTurnStick(Button turnStick) {
+        public Params setTurnStick(Button<Double> turnStick) {
             this.turnStick = turnStick;
+            return this;
+        }
+        public Params setMatthewLeft(Button<Vector2D> matthewLeft) {
+            this.matthewLeft = matthewLeft;
+            return this;
+        }
+        public Params setMatthewRight(Button<Vector2D> matthewRight) {
+            this.matthewRight = matthewRight;
             return this;
         }
     }

@@ -408,8 +408,8 @@ public class OmniWheelDrive extends SubSystem {
 
     @Override
     public void handle() {
-        speedModeToggle.updateToggle(inputs.getBooleanInput(SPEED_MODE));
-        turnSpeedModeToggle.updateToggle(inputs.getBooleanInput(TURN_SPEED_MODE));
+        speedModeToggle.updateToggle((boolean) inputs.getInput(SPEED_MODE));
+        turnSpeedModeToggle.updateToggle((boolean) inputs.getInput(TURN_SPEED_MODE));
 
         if (speedModeToggle.getCurrentState()) {
             currentSpeedModeMultiplier = slowModeMultiplier;
@@ -425,20 +425,20 @@ public class OmniWheelDrive extends SubSystem {
             currentTurnSpeedModeMultiplier = 1;
         }
 
-        Vector2D input = inputs.getVectorInput(DRIVESTICK);
+        Vector2D input = inputs.getInput(DRIVESTICK);
 
-        Vector2D left = inputs.getVectorInput(LEFT_DRIVESTICK);
-        Vector2D right = inputs.getVectorInput(RIGHT_DRIVESTICK);
+        Vector2D left = inputs.getInput(LEFT_DRIVESTICK);
+        Vector2D right = inputs.getInput(RIGHT_DRIVESTICK);
 
         input.scalarMultiply(constantSpeedMultiplier * currentSpeedModeMultiplier);
         left.scalarMultiply(constantSpeedMultiplier * currentSpeedModeMultiplier);
         right.scalarMultiply(constantSpeedMultiplier * currentSpeedModeMultiplier);
 
-        Vector2D tta = inputs.getVectorInput(TTA_STICK);
+        Vector2D tta = inputs.getInput(TTA_STICK);
 
-        double turnPower = inputs.getDoubleInput(TURNSTICK) * constantTurnSpeedMultiplier * currentTurnSpeedModeMultiplier;
-        boolean turnLeft = inputs.getBooleanInput(TURN_LEFT);
-        boolean turnRight = inputs.getBooleanInput(TURN_RIGHT);
+        double turnPower = (double) inputs.getInput(TURNSTICK) * constantTurnSpeedMultiplier * currentTurnSpeedModeMultiplier;
+        boolean turnLeft = inputs.getInput(TURN_LEFT);
+        boolean turnRight = inputs.getInput(TURN_RIGHT);
 
         double correction, turnCorrection;
 
@@ -1746,7 +1746,7 @@ public class OmniWheelDrive extends SubSystem {
          */
         @Contract("_ -> this")
         public Params setDriveStick(@NotNull Button driveStick) {
-            if (!driveStick.isVector) {
+            if (!driveStick.isVector()) {
                 throw new NotVectorInputException("DriveStick must be a vector input");
             }
             this.driveStick = driveStick;
@@ -1763,7 +1763,7 @@ public class OmniWheelDrive extends SubSystem {
          */
         @Contract("_ -> this")
         public Params setDriveStickLeft(@NotNull Button driveStickLeft) {
-            if (!driveStickLeft.isVector) {
+            if (!driveStickLeft.isVector()) {
                 throw new NotVectorInputException("DriveStickLeft must be a vector input.");
             }
             this.driveStickLeft = driveStickLeft;
@@ -1780,7 +1780,7 @@ public class OmniWheelDrive extends SubSystem {
          */
         @Contract("_ -> this")
         public Params setDriveStickRight(@NotNull Button driveStickRight) {
-            if (!driveStickRight.isVector) {
+            if (!driveStickRight.isVector()) {
                 throw new NotVectorInputException("DriveStickRight must be a vector input.");
             }
             this.driveStickRight = driveStickRight;
@@ -1797,7 +1797,7 @@ public class OmniWheelDrive extends SubSystem {
          */
         @Contract("_ -> this")
         public Params setTurnStick(@NotNull Button turnStick) {
-            if (!turnStick.isDouble) {
+            if (!turnStick.isDouble()) {
                 throw new NotDoubleInputException("TurnStick must be a double input.");
             }
             this.turnStick = turnStick;
@@ -1814,7 +1814,7 @@ public class OmniWheelDrive extends SubSystem {
          */
         @Contract("_ -> this")
         public Params setTTAStick(Button ttaStick) {
-            if (!driveStickRight.isVector) {
+            if (!driveStickRight.isVector()) {
                 throw new NotVectorInputException("TTA Stick must be a vector input.");
             }
             this.ttaStick = ttaStick;
@@ -1832,7 +1832,7 @@ public class OmniWheelDrive extends SubSystem {
          */
         @Contract("_, _ -> this")
         public Params setTurnLeftButton(@NotNull Button turnLeft, double turnSpeed) {
-            if (!turnLeft.isBoolean) {
+            if (!turnLeft.isBoolean()) {
                 throw new NotBooleanInputException("TurnLeft button must be a boolean input.");
             }
             this.turnLeft = turnLeft;
@@ -1851,7 +1851,7 @@ public class OmniWheelDrive extends SubSystem {
          */
         @Contract("_, _ -> this")
         public Params setTurnRightButton(@NotNull Button turnRight, double turnSpeed) {
-            if (!turnRight.isBoolean) {
+            if (!turnRight.isBoolean()) {
                 throw new NotBooleanInputException("TurnRight button must be a boolean input");
             }
             this.turnRight = turnRight;
@@ -1869,7 +1869,7 @@ public class OmniWheelDrive extends SubSystem {
          */
         @Contract("_ -> this")
         public Params setSpeedModeButton(@NotNull Button speedMode) {
-            if (!speedMode.isBoolean) {
+            if (!speedMode.isBoolean()) {
                 throw new NotBooleanInputException("SpeedMode button must be a boolean input");
             }
             this.speedMode = speedMode;
@@ -1886,7 +1886,7 @@ public class OmniWheelDrive extends SubSystem {
          */
         @Contract("_ -> this")
         public Params setTurnSpeedModeButton(Button turnSpeedMode) {
-            if (!speedMode.isBoolean) {
+            if (!speedMode.isBoolean()) {
                 throw new NotBooleanInputException("TurnSpeedMode button must be a boolean input");
             }
             this.turnSpeedMode = turnSpeedMode;

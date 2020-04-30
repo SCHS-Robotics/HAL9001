@@ -44,8 +44,5 @@ public class BasicSampleBot2 extends Robot {
         s2 = new SubSystem2(this);
         s3 = new SubSystem3(this);
         //putSubSystem("Tank", drive);
-        putSubSystem("Test",s1);
-        putSubSystem("Test2",s2);
-        putSubSystem("Test3",s3);
     }
 }

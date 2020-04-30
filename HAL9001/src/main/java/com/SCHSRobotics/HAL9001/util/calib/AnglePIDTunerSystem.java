@@ -151,7 +151,8 @@ public class AnglePIDTunerSystem extends VisionSubSystem {
 
     @Override
     public void handle() {
-        slowModeToggle.updateToggle(inputs.getBooleanInput(SLOWMODE));
+        boolean slowMode = inputs.getInput(SLOWMODE);
+        slowModeToggle.updateToggle(slowMode);
 
         if (slowModeToggle.getCurrentState()) {
             increment = 0.01;
@@ -161,19 +162,19 @@ public class AnglePIDTunerSystem extends VisionSubSystem {
 
         if(System.currentTimeMillis() - lastActivatedTimestamp >= delayMs) {
 
-            if (inputs.getBooleanInput(P_INCREMENT)) {
+            if (inputs.getInput(P_INCREMENT)) {
                 kp += increment;
-            } else if (inputs.getBooleanInput(P_DECREMENT)) {
+            } else if (inputs.getInput(P_DECREMENT)) {
                 kp -= increment;
             }
-            if (inputs.getBooleanInput(I_INCREMENT)) {
+            if (inputs.getInput(I_INCREMENT)) {
                 ki += increment;
-            } else if (inputs.getBooleanInput(I_DECREMENT)) {
+            } else if (inputs.getInput(I_DECREMENT)) {
                 ki -= increment;
             }
-            if (inputs.getBooleanInput(D_INCREMENT)) {
+            if (inputs.getInput(D_INCREMENT)) {
                 kd += increment;
-            } else if (inputs.getBooleanInput(D_DECREMENT)) {
+            } else if (inputs.getInput(D_DECREMENT)) {
                 kd -= increment;
             }
             lastActivatedTimestamp = System.currentTimeMillis();

@@ -5,7 +5,6 @@ import com.SCHSRobotics.HAL9001.system.source.GUI.GuiLine;
 import com.SCHSRobotics.HAL9001.system.source.GUI.Menu;
 import com.SCHSRobotics.HAL9001.system.subsystems.cursors.DefaultCursor;
 import com.SCHSRobotics.HAL9001.util.calib.EncoderDistanceCalib;
-import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
 import com.SCHSRobotics.HAL9001.util.math.Units;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
@@ -58,7 +57,7 @@ public class EncoderDistanceCalibMenu extends Menu {
      *
      * @throws NotBooleanInputException Throws this exception if the speed toggle button is not a boolean button.
      */
-    public EncoderDistanceCalibMenu(@NotNull GUI gui, @NotNull Units unit, @NotNull Button speedToggleButton, @NotNull EncoderDistanceCalib calib){
+    public EncoderDistanceCalibMenu(@NotNull GUI gui, @NotNull Units unit, @NotNull Button<Boolean> speedToggleButton, @NotNull EncoderDistanceCalib calib){
         super(gui, new DefaultCursor(gui.robot, new DefaultCursor.Params()), new GuiLine[]{new GuiLine("<#>", ""), new GuiLine("###", "Done  " + "Increment: " + "Fast")},3,2);
 
         speedMode = SpeedMode.FAST;
@@ -68,8 +67,6 @@ public class EncoderDistanceCalibMenu extends Menu {
         this.calib = calib;
 
         inputs = new CustomizableGamepad(gui.robot);
-
-        ExceptionChecker.assertTrue(speedToggleButton.isBoolean, new NotBooleanInputException("SpeedToggleButton must be a boolean button"));
         inputs.addButton(SPEED_MODE_TOGGLE, speedToggleButton);
         
         GuiLine[] newerLines = {
@@ -97,7 +94,7 @@ public class EncoderDistanceCalibMenu extends Menu {
     }
 
     @Override
-    public void onButton(@NotNull String name, @NotNull Button button) {
+    public void onButton(@NotNull String name, @NotNull Button<?> button) {
         if(name.equals(DefaultCursor.LEFT) || name.equals(DefaultCursor.RIGHT)){
             if(cursor.getY() == 0 && cursor.getX() == 0){
                 distance -= speedMode.increment;
@@ -119,7 +116,8 @@ public class EncoderDistanceCalibMenu extends Menu {
 
     @Override
     protected void render() {
-        if(inputs.getBooleanInput(SPEED_MODE_TOGGLE)){
+        boolean speedModeEnabled = inputs.getInput(SPEED_MODE_TOGGLE);
+        if(speedModeEnabled){
             switch (speedMode){
                 case FAST:
                     speedMode = SpeedMode.MEDIUM;

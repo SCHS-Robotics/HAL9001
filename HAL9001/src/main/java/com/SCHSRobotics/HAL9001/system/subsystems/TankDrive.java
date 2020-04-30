@@ -124,7 +124,7 @@ public class TankDrive extends SubSystem {
     @Override
     public void handle() {
         if(!inputs.checkNoButton(SPEEDMODEBUTTON)){
-            speedToggle.updateToggle(inputs.getBooleanInput(SPEEDMODEBUTTON));
+            speedToggle.updateToggle((boolean) inputs.getInput(SPEEDMODEBUTTON));
             if(speedToggle.getCurrentState()){
                 currentSpeedModeModifier = speedModeModifier;
             }
@@ -134,22 +134,22 @@ public class TankDrive extends SubSystem {
         }
         //drives forward and turns at the same time
         if (turnAndMove) {
-            if (inputs.getDoubleInput(DRIVESTICK)!= 0 && inputs.getDoubleInput(TURNSTICK) != 0) {
-                turnAndMove(new Vector2D(inputs.getDoubleInput(DRIVESTICK), inputs.getDoubleInput(TURNSTICK)));
-            } else if (inputs.getDoubleInput(DRIVESTICK) != 0) {
-                drive(inputs.getDoubleInput(DRIVESTICK));
-            } else if (inputs.getDoubleInput(TURNSTICK)!= 0){
-                turn(inputs.getDoubleInput(TURNSTICK));
+            if ((double) inputs.getInput(DRIVESTICK)!= 0 && (double) inputs.getInput(TURNSTICK) != 0) {
+                turnAndMove(new Vector2D((double) inputs.getInput(DRIVESTICK), (double) inputs.getInput(TURNSTICK)));
+            } else if ((double) inputs.getInput(DRIVESTICK) != 0) {
+                drive((double) inputs.getInput(DRIVESTICK));
+            } else if ((double) inputs.getInput(TURNSTICK)!= 0){
+                turn((double) inputs.getInput(TURNSTICK));
             } else {
                 stopMovement();
             }
         }
         //drives forward and turns but not at the same time
         else {
-            if (inputs.getDoubleInput(TURNSTICK) != 0) {
-                turn(inputs.getDoubleInput(TURNSTICK));
-            } else if (inputs.getDoubleInput(DRIVESTICK) != 0) {
-                drive(inputs.getDoubleInput(DRIVESTICK));
+            if ((double) inputs.getInput(TURNSTICK) != 0) {
+                turn((double) inputs.getInput(TURNSTICK));
+            } else if ((double) inputs.getInput(DRIVESTICK) != 0) {
+                drive((double) inputs.getInput(DRIVESTICK));
             } else {
                 stopMovement();
             }
@@ -443,7 +443,7 @@ public class TankDrive extends SubSystem {
      * @throws NotDoubleInputException - Throws an exception if button does not return double values.
      */
     public void setDriveStick(Button button){
-        if(button.isDouble) {
+        if(button.isDouble()) {
             inputs.addButton(DRIVESTICK, button);
         }
         else {
@@ -459,7 +459,7 @@ public class TankDrive extends SubSystem {
      * @throws NotDoubleInputException - Throws an exception if button does not return double values.
      */
     public void setTurnStick(Button button){
-        if(button.isDouble) {
+        if(button.isDouble()) {
             inputs.addButton(TURNSTICK, button);
         }
         else {
@@ -475,7 +475,7 @@ public class TankDrive extends SubSystem {
      * @throws NotBooleanInputException - Throws an exception if button does not return boolean values.
      */
     public void setSpeedMode(Button button){
-        if(button.isBoolean) {
+        if(button.isBoolean()) {
             inputs.addButton(SPEEDMODEBUTTON, button);
         }
         else {
@@ -648,7 +648,7 @@ public class TankDrive extends SubSystem {
          * @throws NotDoubleInputException Throws this exception when the drivestick button is not a double input.
          */
         public Params setDriveStick(Button driveStick) {
-            if(!driveStick.isDouble) {
+            if(!driveStick.isDouble()) {
                 throw new NotDoubleInputException("DriveStick must be a double input.");
             }
             buttonsToSet[0] = driveStick;
@@ -665,7 +665,7 @@ public class TankDrive extends SubSystem {
          * @throws NotDoubleInputException Throws this exception when the turnstick button is not a double input.
          */
         public Params setTurnStick(Button turnStick) {
-            if(!turnStick.isDouble) {
+            if(!turnStick.isDouble()) {
                 throw new NotDoubleInputException("TurnStick must be a double input.");
             }
             buttonsToSet[1] = turnStick;
@@ -681,7 +681,7 @@ public class TankDrive extends SubSystem {
          * @throws NotBooleanInputException Throws this exception when the speed mode button is not a boolean input.
          */
         public Params setSpeedModeButton(Button speedModeButton) {
-            if(!speedModeButton.isBoolean) {
+            if(!speedModeButton.isBoolean()) {
                 throw new NotBooleanInputException("SpeedModeButton must be a boolean input.");
             }
             buttonsToSet[2] = speedModeButton;
