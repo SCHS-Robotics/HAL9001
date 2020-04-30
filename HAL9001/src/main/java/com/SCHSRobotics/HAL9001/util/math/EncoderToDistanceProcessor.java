@@ -67,7 +67,7 @@ public class EncoderToDistanceProcessor {
      * @param encoderAmount Amount of encoder.
      * @param unit Units of returned distance.
      * */
-    public double getDistanceFromEncoders(int encoderAmount, @NotNull Units unit){
+    public double getDistanceFromEncoders(double encoderAmount, @NotNull Units unit){
         return (encoderAmount/encoderPerMeter)*unit.conversionFactor;
     }
 }

@@ -386,47 +386,50 @@ public class ColorspaceCalib extends VisionSubSystem {
         displayMenu.addData("z_upper",z_upper);
         displayMenu.addData("z_lower",z_lower);
 
-        slowModeToggle.updateToggle(inputs.getBooleanInput(SLOWMODE));
+        boolean slowMode = inputs.getInput(SLOWMODE);
+        slowModeToggle.updateToggle(slowMode);
 
-            if (slowModeToggle.getCurrentState()) {
-                increment = 1;
-            } else {
+        if (slowModeToggle.getCurrentState()) {
+            increment = 1;
+        }
+        else {
             increment = 5;
         }
-        
-        upperLimit.updateToggle(inputs.getBooleanInput(CHANGELIMIT));
+
+        boolean changeLimit = inputs.getInput(CHANGELIMIT);
+        upperLimit.updateToggle(changeLimit);
 
         if(System.currentTimeMillis() - lastActivatedTimestamp >= delayMs) {
             if (upperLimit.getCurrentState()) {
-                if (inputs.getBooleanInput(X_INCREMENT)) {
+                if (inputs.getInput(X_INCREMENT)) {
                     x_upper += increment;
-                } else if (inputs.getBooleanInput(X_DECREMENT)) {
+                } else if (inputs.getInput(X_DECREMENT)) {
                     x_upper -= increment;
                 }
-                if (inputs.getBooleanInput(Y_INCREMENT)) {
+                if (inputs.getInput(Y_INCREMENT)) {
                     y_upper += increment;
-                } else if (inputs.getBooleanInput(Y_DECREMENT)) {
+                } else if (inputs.getInput(Y_DECREMENT)) {
                     y_upper -= increment;
                 }
-                if (inputs.getBooleanInput(Z_INCREMENT)) {
+                if (inputs.getInput(Z_INCREMENT)) {
                     z_upper += increment;
-                } else if (inputs.getBooleanInput(Z_DECREMENT)) {
+                } else if (inputs.getInput(Z_DECREMENT)) {
                     z_upper -= increment;
                 }
             } else {
-                if (inputs.getBooleanInput(X_INCREMENT)) {
+                if (inputs.getInput(X_INCREMENT)) {
                     x_lower += increment;
-                } else if (inputs.getBooleanInput(X_DECREMENT)) {
+                } else if (inputs.getInput(X_DECREMENT)) {
                     x_lower -= increment;
                 }
-                if (inputs.getBooleanInput(Y_INCREMENT)) {
+                if (inputs.getInput(Y_INCREMENT)) {
                     y_lower += increment;
-                } else if (inputs.getBooleanInput(Y_DECREMENT)) {
+                } else if (inputs.getInput(Y_DECREMENT)) {
                     y_lower -= increment;
                 }
-                if (inputs.getBooleanInput(Z_INCREMENT)) {
+                if (inputs.getInput(Z_INCREMENT)) {
                     z_lower += increment;
-                } else if (inputs.getBooleanInput(Z_DECREMENT)) {
+                } else if (inputs.getInput(Z_DECREMENT)) {
                     z_lower -= increment;
                 }
             }
@@ -596,7 +599,7 @@ public class ColorspaceCalib extends VisionSubSystem {
      * @throws NotBooleanInputException Throws an exception if button does not return boolean values.
      */
     private void setInputs(@NotNull Button XUp, @NotNull Button XDown, @NotNull Button YUp, @NotNull Button YDown, @NotNull Button ZUp, @NotNull Button ZDown, @NotNull Button slowMode, @NotNull Button changeLimit){
-        if(XUp.isBoolean && XDown.isBoolean && YUp.isBoolean && YDown.isBoolean && ZUp.isBoolean && ZDown.isBoolean && slowMode.isBoolean && changeLimit.isBoolean) {
+        if(XUp.isBoolean() && XDown.isBoolean() && YUp.isBoolean() && YDown.isBoolean() && ZUp.isBoolean() && ZDown.isBoolean() && slowMode.isBoolean() && changeLimit.isBoolean()) {
             inputs.addButton(X_INCREMENT, XUp);
             inputs.addButton(X_DECREMENT, XDown);
             inputs.addButton(Y_INCREMENT, YUp);

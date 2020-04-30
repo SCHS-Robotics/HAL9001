@@ -3,13 +3,10 @@ package com.SCHSRobotics.HAL9001.util.debug;
 import android.os.Environment;
 import android.util.Log;
 
-import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
 import com.SCHSRobotics.HAL9001.system.source.GUI.GUI;
 import com.SCHSRobotics.HAL9001.system.source.GUI.GuiLine;
 import com.SCHSRobotics.HAL9001.system.source.GUI.ScrollingListMenu;
 import com.SCHSRobotics.HAL9001.system.subsystems.cursors.ConfigCursor;
-import com.SCHSRobotics.HAL9001.util.annotations.AutonomousConfig;
-import com.SCHSRobotics.HAL9001.util.annotations.TeleopConfig;
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.functional_interfaces.BiFunction;
@@ -26,7 +23,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -643,6 +639,7 @@ public class ConfigDebugMenu extends ScrollingListMenu {
                     boolean foundAutonomousConfig = false;
 
                     for(Method m : methods) {
+                        /*
                         //method must be annotated as TeleopConfig, have no parameters, be public and static, and return an array of config params
                         if(!foundTeleopConfig && m.isAnnotationPresent(TeleopConfig.class) && m.getReturnType() == ConfigParam[].class && m.getParameterTypes().length == 0 && Modifier.isStatic(m.getModifiers()) && Modifier.isPublic(m.getModifiers())) {
                             Robot.teleopConfig.put(subsystem.getSimpleName(), Arrays.asList((ConfigParam[]) m.invoke(null)));
@@ -658,6 +655,7 @@ public class ConfigDebugMenu extends ScrollingListMenu {
                         if(foundTeleopConfig && foundAutonomousConfig) {
                             break;
                         }
+                         */
                     }
                 }
 
@@ -681,7 +679,7 @@ public class ConfigDebugMenu extends ScrollingListMenu {
         config = new HashMap<>();
 
         if(configState == ConfigurationState.AUTONOMOUS) {
-            for (String subsystem : Robot.autonomousConfig.keySet()) {
+            /*for (String subsystem : Robot.autonomousConfig.keySet()) {
                 List<ConfigParam> params = new ArrayList<>();
                 List<ConfigParam> pulledParams = Robot.autonomousConfig.get(subsystem);
                 ExceptionChecker.assertNonNull(pulledParams, new NullPointerException("autonomous config does not contain subsystem "+subsystem));
@@ -691,10 +689,10 @@ public class ConfigDebugMenu extends ScrollingListMenu {
                     params.add(p);
                 }
                 config.put(subsystem, params);
-            }
+            }*/
         }
         else  {
-            for (String subsystem : Robot.teleopConfig.keySet()) {
+            /*for (String subsystem : Robot.teleopConfig.keySet()) {
                 List<ConfigParam> params = new ArrayList<>();
                 List<ConfigParam> pulledParams = Robot.teleopConfig.get(subsystem);
                 ExceptionChecker.assertNonNull(pulledParams, new NullPointerException("teleop config does not contain subsystem "+subsystem));
@@ -704,7 +702,7 @@ public class ConfigDebugMenu extends ScrollingListMenu {
                     params.add(p);
                 }
                 config.put(subsystem, params);
-            }
+            }*/
         }
     }
 

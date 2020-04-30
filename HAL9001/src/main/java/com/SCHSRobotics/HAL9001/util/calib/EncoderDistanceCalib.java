@@ -12,7 +12,7 @@ import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.exceptions.GuiNotPresentException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotAnAlchemistException;
 import com.SCHSRobotics.HAL9001.util.math.Units;
-import com.SCHSRobotics.HAL9001.util.math.Vector;
+import com.SCHSRobotics.HAL9001.util.math.Vector2D;
 import com.SCHSRobotics.HAL9001.util.misc.BaseParam;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 
@@ -207,7 +207,7 @@ public class EncoderDistanceCalib extends SubSystem {
      * Drive forward for 2 seconds using mechanum drive.
      */
     private void usingMechanumDrive() {
-        ((MechanumDrive) driveSubSystem).driveTime(new Vector(0,1), 2000);
+        ((MechanumDrive) driveSubSystem).driveTime(new Vector2D(0,1), 2000);
         waitTime(100);
         endingEncoderPos.put("BotLeft", ((MechanumDrive) driveSubSystem).getBotLeftEncoderPos());
         endingEncoderPos.put("BotRight", ((MechanumDrive) driveSubSystem).getBotRightEncoderPos());
@@ -222,7 +222,7 @@ public class EncoderDistanceCalib extends SubSystem {
      * Drive forward for 2 seconds using omniwheel drive.
      */
     private void usingOmniWheelDrive() {
-        ((OmniWheelDrive) driveSubSystem).driveTime(new Vector(0,1), 2000);
+        ((OmniWheelDrive) driveSubSystem).driveTime(new Vector2D(0,1), 2000);
         waitTime(100);
         endingEncoderPos.put("BotLeft", ((MechanumDrive) driveSubSystem).getBotLeftEncoderPos());
         endingEncoderPos.put("BotRight", ((MechanumDrive) driveSubSystem).getBotRightEncoderPos());

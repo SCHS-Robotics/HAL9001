@@ -118,7 +118,7 @@ public class CameraCalib extends VisionSubSystem {
     @Override
     public void handle() {
 
-        if(!inputs.getBooleanInput(CAPTURE) && !inputs.getBooleanInput(DELETE_CAPTURE) && inputs.getBooleanInput(CALIBRATE) && !calibrationBegun && capturePoints.size() > 10 && flag) {
+        if(!(boolean) inputs.getInput(CAPTURE) && !(boolean) inputs.getInput(DELETE_CAPTURE) && (boolean) inputs.getInput(CALIBRATE) && !calibrationBegun && capturePoints.size() > 10 && flag) {
             calibrationBegun = true;
 
             Thread calibrate = new Thread() {
@@ -133,7 +133,7 @@ public class CameraCalib extends VisionSubSystem {
 
             flag = false;
         }
-        else if(!inputs.getBooleanInput(CAPTURE) && !inputs.getBooleanInput(DELETE_CAPTURE) && !inputs.getBooleanInput(CALIBRATE) && !flag) {
+        else if(!(boolean) inputs.getInput(CAPTURE) && !(boolean) inputs.getInput(DELETE_CAPTURE) && !(boolean) inputs.getInput(CALIBRATE) && !flag) {
             flag = true;
         }
     }
@@ -167,15 +167,15 @@ public class CameraCalib extends VisionSubSystem {
 
                 Calib3d.drawChessboardCorners(gray, size, corners, true);
 
-                if (inputs.getBooleanInput(CAPTURE) && flag) {
+                if ((boolean) inputs.getInput(CAPTURE) && flag) {
                     refPoints.add(refCoords);
                     capturePoints.add(corners);
                     flag = false;
-                } else if (inputs.getBooleanInput(DELETE_CAPTURE) && refPoints.size() > 0 && flag) {
+                } else if ((boolean) inputs.getInput(DELETE_CAPTURE) && refPoints.size() > 0 && flag) {
                     refPoints.remove(refPoints.size() - 1);
                     capturePoints.remove(capturePoints.size() - 1);
                     flag = false;
-                } else if (!inputs.getBooleanInput(CAPTURE) && !inputs.getBooleanInput(DELETE_CAPTURE) && !flag) {
+                } else if (!(boolean) inputs.getInput(CAPTURE) && !(boolean) inputs.getInput(DELETE_CAPTURE) && !flag) {
                     flag = true;
                 }
 
