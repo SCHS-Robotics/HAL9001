@@ -202,4 +202,13 @@ public class Button<T> {
         ExceptionChecker.assertTrue(gamepadNumber == 1 || gamepadNumber == 2, new NotARealGamepadException("You must use either gamepad 1 or gamepad 2."));
         this.gamepadNumber = gamepadNumber;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Button<?>) {
+            Button<?> button = (Button<?>) obj;
+            return this.getInputEnum() == button.getInputEnum();
+        }
+        return false;
+    }
 }

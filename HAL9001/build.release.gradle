@@ -9,5 +9,5 @@ dependencies {
     implementation 'org.jetbrains:annotations:16.0.2'
     implementation 'org.openftc:rev-extensions-2:1.2'
     implementation 'com.acmerobotics.roadrunner:core:0.4.7'
-    implementation 'junit:junit:4.12'
+    implementation 'junit:junit:4.13'
 }
