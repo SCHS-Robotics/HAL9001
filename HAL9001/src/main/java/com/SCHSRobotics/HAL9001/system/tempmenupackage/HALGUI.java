@@ -154,4 +154,28 @@ public class HALGUI {
     protected ArrayList<Button<Boolean>> getCursorControls() {
         return cursorControls.peek();
     }
+
+    public void back(@NotNull Payload payload) {
+        if(currentStack.size() > 1) {
+            forwardStack.push(currentStack.pop());
+            currentMenu = currentStack.peek();
+            currentMenu.init(payload);
+        }
+    }
+
+    public void back() {
+        back(new Payload());
+    }
+
+    public void forward(@NotNull Payload payload) {
+        if(!forwardStack.isEmpty()) {
+            currentStack.push(forwardStack.pop());
+            currentMenu = currentStack.peek();
+            currentMenu.init(payload);
+        }
+    }
+
+    public void forward() {
+        forward(new Payload());
+    }
 }
