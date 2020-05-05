@@ -1,12 +1,7 @@
 package com.SCHSRobotics.HAL9001.util.math;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-
-public class Vector3D extends Vector {
-    private double x,y,z;
+public class Vector3D {
+    /*private double x,y,z;
     public Vector3D(double a, double b, double c, CoordinateType coordinateType, AngleUnit angleUnit) {
         super(angleUnit, coordinateType, a, b, c);
         if(coordinateType == CoordinateType.CARTESIAN) {
@@ -36,4 +31,5 @@ public class Vector3D extends Vector {
     public double getZ() {
         return z;
     }
+    */
 }

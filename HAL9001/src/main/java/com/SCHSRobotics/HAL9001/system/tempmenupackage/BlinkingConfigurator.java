@@ -8,6 +8,9 @@ package com.SCHSRobotics.HAL9001.system.tempmenupackage;
  * @version 1.1.0
  *
  * Creation Date: 4/29/20
+ *
+ * @see ViewElement
+ * @see ViewListener
  */
 public interface BlinkingConfigurator {
 
