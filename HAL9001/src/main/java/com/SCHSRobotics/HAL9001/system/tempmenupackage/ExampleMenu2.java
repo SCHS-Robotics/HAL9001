@@ -9,6 +9,15 @@ public class ExampleMenu2 extends HALMenu {
             new Button<>(1, Button.BooleanInputs.b));
     @Override
     protected void init(Payload payload) {
-        addItem(new TextElement("Sorry Mario, the princess is in another castle."));
+        setSelectionZone(2,2);
+        addItem(new ListViewButton("## | Sorry Mario, the princess is in another castle.")
+                    .onClick(new Button<>(1, Button.BooleanInputs.y), () -> {
+                        gui.back();
+                    })
+                    .onClick(new Button<>(1, Button.BooleanInputs.a), () -> {
+                        gui.inflate(new ExampleMenu3());
+                    }));
+
+        addItem(new TextElement("#"));
     }
 }

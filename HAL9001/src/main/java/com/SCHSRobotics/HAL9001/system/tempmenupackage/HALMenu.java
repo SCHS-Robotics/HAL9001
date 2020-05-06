@@ -33,8 +33,7 @@ public abstract class HALMenu {
     private int minLineLength;
     private long lastBlinkTimeMs;
     private List<ViewElement> elements, displayableElements;
-    //private CustomizableGamepad cursorControls;
-    //private Toggle cursorUpToggle, cursorDownToggle, cursorLeftToggle, cursorRightToggle;
+    private boolean cursorMoved;
 
     private enum BlinkState {
         ON, OFF;
@@ -66,6 +65,7 @@ public abstract class HALMenu {
         enforceMaxLines = true;
         elements = new ArrayList<>();
         displayableElements = new ArrayList<>();
+        cursorMoved = false;
     }
 
     public HALMenu() {
@@ -97,7 +97,7 @@ public abstract class HALMenu {
     }
 
     protected final boolean updateListeners() {
-        boolean anythingUpdatesCursor = false;
+        boolean anythingUpdatesCursor = cursorMoved;
         for(ViewElement element : elements) {
             if(element instanceof ViewListener) {
                 boolean forceCursorUpdate = false;
@@ -200,6 +200,10 @@ public abstract class HALMenu {
         if(cursorX < selectionZone.getWidth() && cursorX < displayableElements.get(cursorY).getText().length()) {
             cursorX++;
         }
+    }
+
+    protected void notifyCursorMoved(boolean cursorMoved) {
+        this.cursorMoved = cursorMoved;
     }
 
     public SelectionZone getSelectionZone() {

@@ -170,6 +170,7 @@ public class HALGUI {
         }
 
         if(!menuStacks.isEmpty() && System.currentTimeMillis() - lastRenderTime >= currentMenu.getCursorBlinkSpeedMs() || cursorMoved) {
+            currentMenu.notifyCursorMoved(cursorMoved);
             currentMenu.render();
             robot.telemetry.update();
             lastRenderTime = System.currentTimeMillis();

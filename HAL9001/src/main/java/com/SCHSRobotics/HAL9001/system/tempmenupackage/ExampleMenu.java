@@ -5,7 +5,7 @@ import com.SCHSRobotics.HAL9001.util.misc.Button;
 public class ExampleMenu extends HALMenu {
     @Override
     protected void init(Payload payload) {
-        setSelectionZone(1,2);
+        setSelectionZone(1,3);
 
         addItem(new ListViewButton("# | Fun Times")
                 .onClick(new Button<>(1, Button.BooleanInputs.x), () -> {
@@ -13,9 +13,20 @@ public class ExampleMenu extends HALMenu {
                 })
         );
         addItem(new TextElement("# | LOOK! its new text!"));
+        addItem(new ListViewButton("# | More fun stuff")
+                .onClick(new Button<>(1, Button.BooleanInputs.a), () -> {
+                    gui.inflate(new ExampleMenu2());
+                }));
         addItem(new EntireViewButton()
                 .onClick(new Button<>(1, Button.BooleanInputs.b), () -> {
                     gui.inflate(new ExampleMenu3());
                 }));
+        addItem(new TextElement("# | LOOK! its new text!"));
+        addItem(new TextElement("# | LOOK! its new text!"));
+        addItem(new TextElement("# | LOOK! its new text!"));
+        addItem(new EntireViewButton()
+                 .onClick(new Button<>(1, Button.BooleanInputs.y), () -> {
+                    gui.forward();
+                 }));
     }
 }
