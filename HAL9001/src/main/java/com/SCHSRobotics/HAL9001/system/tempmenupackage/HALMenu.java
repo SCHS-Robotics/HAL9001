@@ -116,7 +116,7 @@ public abstract class HALMenu {
         }
 
         if(enforceMaxLines) {
-            displayLines(menuLevel*MAX_LINES_PER_SCREEN, min(elements.size(),(menuLevel+1)*MAX_LINES_PER_SCREEN));
+            displayLines(menuLevel*MAX_LINES_PER_SCREEN, min(displayableElements.size(),(menuLevel+1)*MAX_LINES_PER_SCREEN));
         }
         else {
             displayLines(0, elements.size());
