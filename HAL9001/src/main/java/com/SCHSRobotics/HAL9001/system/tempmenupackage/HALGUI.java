@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
+import android.util.Log;
+
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
@@ -110,7 +112,6 @@ public class HALGUI {
             add(new Button<>(1, Button.BooleanInputs.dpad_left));
             add(new Button<>(1, Button.BooleanInputs.dpad_right));
         }});
-        currentMenu.setupCursor();
         currentMenu.init(new Payload());
     }
 
@@ -191,5 +192,6 @@ public class HALGUI {
         robot = null;
         cycleControls = null;
         cycleButton = null;
+        Log.wtf("HALGUI", "Stop was run");
     }
 }
