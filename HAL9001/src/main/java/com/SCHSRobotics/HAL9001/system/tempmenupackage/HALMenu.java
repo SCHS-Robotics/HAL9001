@@ -241,7 +241,7 @@ public abstract class HALMenu {
         if(cursorY % MAX_LINES_PER_SCREEN == 0 && enforceMaxLines && menuLevel < ceil(((double) cursorY)/MAX_LINES_PER_SCREEN)) {
             menuLevel++;
         }
-        if(cursorY < min(displayableElements.size(), selectionZone.getHeight() + 1)) {
+        if(cursorY < min(displayableElements.size(), selectionZone.getHeight())) {
             cursorY++;
         }
 

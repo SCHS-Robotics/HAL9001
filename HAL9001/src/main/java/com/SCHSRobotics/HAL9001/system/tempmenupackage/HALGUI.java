@@ -1,7 +1,5 @@
 package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
-import android.util.Log;
-
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
@@ -53,6 +51,9 @@ public class HALGUI {
     //The single static instance of the gui.
     private static HALGUI INSTANCE = new HALGUI();
 
+    public static final int DEFAULT_TRANSMISSION_INTERVAL_MS = 250;
+    public static final int DEFAULT_HAL_TRANSMISSION_INTERVAL_MS = 50;
+
     /**
      * The private GUI constructor. Initializes the queues, the render timestamp, and the cycle toggle.
      */
@@ -83,6 +84,7 @@ public class HALGUI {
         forwardStack = new Stack<>();
         lastRenderTime = 0;
         cycleToggle = new Toggle(Toggle.ToggleTypes.trueOnceToggle, false);
+        robot.telemetry.setMsTransmissionInterval(DEFAULT_HAL_TRANSMISSION_INTERVAL_MS);
     }
 
     /**
@@ -186,11 +188,11 @@ public class HALGUI {
     }
 
     public void stop() {
+        robot.telemetry.setMsTransmissionInterval(DEFAULT_TRANSMISSION_INTERVAL_MS);
         currentStack = null;
         currentMenu = null;
         robot = null;
         cycleControls = null;
         cycleButton = null;
-        Log.wtf("HALGUI", "Stop was run");
     }
 }
