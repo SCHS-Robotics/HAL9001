@@ -343,7 +343,7 @@ public class CustomizableGamepad {
         catch (ClassCastException e) {
             throw new NotAnAlchemistException("Illegal button type conversion detected");
         }
-        ExceptionChecker.assertNonNull(button, new NullPointerException("Could not find a button with name "+buttonName+" in the customizable gamepad."));
+        ExceptionChecker.assertNonNull(button, new NullPointerException("Could not find a button with name "+buttonName+" in the customizable gamepad or "+buttonName+" is null."));
         return button;
     }
 }

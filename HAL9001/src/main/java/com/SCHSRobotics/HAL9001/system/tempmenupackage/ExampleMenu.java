@@ -6,7 +6,7 @@ public class ExampleMenu extends HALMenu {
     @Override
     protected void init(Payload payload) {
         addItem(new ListViewButton("# | Fun Times")
-                .onClick(new Button<>(1, Button.BooleanInputs.a), () -> {
+                .onClick(new Button<>(1, Button.BooleanInputs.x), () -> {
                     gui.inflate(new ExampleMenu2());
                 })
         );
