@@ -124,6 +124,7 @@ public class HALGUI {
         currentStack.push(currentMenu);
         forwardStack.clear();
         currentMenu = menu;
+        currentMenu.setupCursor();
         currentMenu.init(currentMenu.payload);
     }
 
@@ -162,6 +163,7 @@ public class HALGUI {
         if(currentStack.size() > 1) {
             forwardStack.push(currentStack.pop());
             currentMenu = currentStack.peek();
+            currentMenu.setupCursor();
             currentMenu.init(payload);
         }
     }
@@ -174,6 +176,7 @@ public class HALGUI {
         if(!forwardStack.isEmpty()) {
             currentStack.push(forwardStack.pop());
             currentMenu = currentStack.peek();
+            currentMenu.setupCursor();
             currentMenu.init(payload);
         }
     }

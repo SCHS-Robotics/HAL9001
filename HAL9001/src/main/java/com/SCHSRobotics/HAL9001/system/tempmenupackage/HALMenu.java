@@ -37,7 +37,6 @@ public abstract class HALMenu {
     private int minLineLength;
     private long lastBlinkTimeMs;
     private List<ViewElement> elements, displayableElements;
-    private List<Button<Boolean>> cursorControlButtons;
     private CustomizableGamepad cursorControls;
     private Toggle cursorUpToggle, cursorDownToggle, cursorLeftToggle, cursorRightToggle;
 
@@ -79,14 +78,11 @@ public abstract class HALMenu {
     }
 
     protected void setupCursor() {
-        cursorControlButtons = gui.getCursorControls();
+        List<Button<Boolean>> cursorControlButtons = gui.getCursorControls();
         cursorControls.addButton(CURSOR_UP, cursorControlButtons.get(0));
         cursorControls.addButton(CURSOR_DOWN, cursorControlButtons.get(1));
         cursorControls.addButton(CURSOR_LEFT, cursorControlButtons.get(2));
         cursorControls.addButton(CURSOR_RIGHT, cursorControlButtons.get(3));
-        if(cursorControlButtons.get(0) == null) {
-            throw new NullPointerException("Button is null");
-        }
     }
 
     public HALMenu() {
