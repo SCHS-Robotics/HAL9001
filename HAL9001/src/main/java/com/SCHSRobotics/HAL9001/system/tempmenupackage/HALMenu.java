@@ -5,6 +5,7 @@ import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 import com.SCHSRobotics.HAL9001.util.misc.Toggle;
+import com.qualcomm.robotcore.util.Range;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Math.ceil;
+import static java.lang.Math.floor;
 import static java.lang.Math.min;
 
 //4/29/20
@@ -229,6 +231,11 @@ public abstract class HALMenu {
         if(cursorY > 0) {
             cursorY--;
         }
+
+        int maxCursorX = displayableElements.get(cursorY).getText().length() - 1;
+        if(cursorX > maxCursorX) {
+            cursorX = maxCursorX;
+        }
     }
 
     protected void cursorDown() {
@@ -237,6 +244,11 @@ public abstract class HALMenu {
         }
         if(cursorY < min(displayableElements.size(), selectionZone.getHeight() + 1)) {
             cursorY++;
+        }
+
+        int maxCursorX = displayableElements.get(cursorY).getText().length() - 1;
+        if(cursorX > maxCursorX) {
+            cursorX = maxCursorX;
         }
     }
 
@@ -247,13 +259,26 @@ public abstract class HALMenu {
     }
 
     protected void cursorRight() {
-        if(cursorX < min(minLineLength, selectionZone.getWidth() + 1)) {
+        if(cursorX < selectionZone.getWidth() && cursorX < displayableElements.get(cursorY).getText().length()) {
             cursorX++;
         }
     }
 
     public SelectionZone getSelectionZone() {
         return selectionZone;
+    }
+
+    public void setSelectionZone(int width, int height) {
+        selectionZone.setWidth(width);
+        selectionZone.setHeight(height);
+    }
+
+    public void setSelectionZoneWidth(int width) {
+        setSelectionZone(width, selectionZone.getHeight());
+    }
+
+    public void setSelectionZoneHeight(int height) {
+        setSelectionZone(selectionZone.getWidth(), height);
     }
 
     public int getCursorX() {
@@ -264,12 +289,20 @@ public abstract class HALMenu {
         return cursorY;
     }
 
-    protected void setCursorX(int cursorX) {
-        this.cursorX = cursorX;
+    protected void setCursorPos(int x, int y) {
+        cursorY = Range.clip(y, 0, displayableElements.size() - 1);
+        if(enforceMaxLines) {
+            menuLevel = (int) floor(((double) cursorY) / MAX_LINES_PER_SCREEN);
+        }
+        cursorX = Range.clip(x, 0, displayableElements.get(y).getText().length() - 1);
     }
 
-    protected void setCursorY(int cursorY) {
-        this.cursorY = cursorY;
+    protected void setCursorX(int x) {
+        setCursorPos(x, cursorY);
+    }
+
+    protected void setCursorY(int y) {
+        setCursorPos(cursorX, y);
     }
 
     public char getCursorChar() {

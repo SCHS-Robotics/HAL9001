@@ -10,12 +10,11 @@ public class SelectionZone {
     }
 
     public void setWidth(int width) {
-        this.width = width;
+        this.width = Range.clip(width, 0, Integer.MAX_VALUE);;
     }
 
-    //todo dylan mode
     public void setHeight(int height) {
-        this.height = Range.clip(height, 0, HALMenu.MAX_LINES_PER_SCREEN);
+        this.height = Range.clip(height, 0, Integer.MAX_VALUE);
     }
 
     public int getWidth() {

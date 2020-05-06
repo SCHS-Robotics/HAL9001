@@ -20,7 +20,6 @@ public abstract class ViewButton implements ViewListener {
         toggles = new LinkedList<>();
     }
 
-    @Override
     public ViewButton onClick(Button<Boolean> button, Program program) {
         buttons.add(button);
         programs.add(program);
