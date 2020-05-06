@@ -76,7 +76,9 @@ public abstract class HALMenu {
         cursorLeftToggle = new Toggle(Toggle.ToggleTypes.trueOnceToggle, false);
         cursorRightToggle = new Toggle(Toggle.ToggleTypes.trueOnceToggle, false);
         cursorControls = new CustomizableGamepad(gui.getRobot());
+    }
 
+    protected void setupCursor() {
         cursorControlButtons = gui.getCursorControls();
         cursorControls.addButton(CURSOR_UP, cursorControlButtons.get(0));
         cursorControls.addButton(CURSOR_DOWN, cursorControlButtons.get(1));
@@ -89,10 +91,6 @@ public abstract class HALMenu {
     }
 
     protected void render() {
-        if(cursorControls == null) {
-            throw new NullPointerException("Controls are null");
-        }
-
         cursorUpToggle.updateToggle(cursorControls.getInput(CURSOR_UP));
         cursorDownToggle.updateToggle(cursorControls.getInput(CURSOR_DOWN));
         cursorLeftToggle.updateToggle(cursorControls.getInput(CURSOR_LEFT));

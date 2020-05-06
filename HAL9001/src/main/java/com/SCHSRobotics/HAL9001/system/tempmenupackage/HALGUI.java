@@ -111,6 +111,7 @@ public class HALGUI {
             add(new Button<>(1, Button.BooleanInputs.dpad_left));
             add(new Button<>(1, Button.BooleanInputs.dpad_right));
         }});
+        currentMenu.setupCursor();
         currentMenu.init(new Payload());
     }
 
@@ -153,9 +154,7 @@ public class HALGUI {
      * @return The cursor controls for the currently active menu tree.
      */
     protected ArrayList<Button<Boolean>> getCursorControls() {
-        if(cursorControls.isEmpty()) {
-            throw new NullPointerException("Control queue is empty");
-        }
+        ExceptionChecker.assertFalse(cursorControls.isEmpty(), new NullPointerException("Control queue is empty."));
         return cursorControls.peek();
     }
 

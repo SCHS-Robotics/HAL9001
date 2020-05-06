@@ -15,9 +15,6 @@ public class NewMenuTestProgram extends BaseTeleop {
     @Override
     protected void onStart() {
         gui = HALGUI.getInstance();
-        if(robot == null) {
-            throw new NullPointerException("Robot is null");
-        }
         gui.setup(robot, new Button<>(1, Button.BooleanInputs.noButton));
         gui.addRootMenu(new ExampleMenu());
     }
