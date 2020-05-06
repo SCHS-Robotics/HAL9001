@@ -2,9 +2,6 @@ package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
-import com.SCHSRobotics.HAL9001.util.misc.Button;
-import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
-import com.SCHSRobotics.HAL9001.util.misc.Toggle;
 import com.qualcomm.robotcore.util.Range;
 
 import org.jetbrains.annotations.NotNull;
@@ -30,15 +27,14 @@ public abstract class HALMenu {
     protected boolean doBlink;
     protected boolean enforceMaxLines;
 
-    private static final String CURSOR_UP = "CursorUp", CURSOR_DOWN = "CursorDown", CURSOR_LEFT = "CursorLeft", CURSOR_RIGHT = "CursorRight";
     //The current "level" of screen in the menu. If the number of lines in the menu exceeds the maximum number, menuLevel will increase by one for every screen the menu takes up.
     private int menuLevel;
     private int cursorX, cursorY;
     private int minLineLength;
     private long lastBlinkTimeMs;
     private List<ViewElement> elements, displayableElements;
-    private CustomizableGamepad cursorControls;
-    private Toggle cursorUpToggle, cursorDownToggle, cursorLeftToggle, cursorRightToggle;
+    //private CustomizableGamepad cursorControls;
+    //private Toggle cursorUpToggle, cursorDownToggle, cursorLeftToggle, cursorRightToggle;
 
     private enum BlinkState {
         ON, OFF;
@@ -70,19 +66,6 @@ public abstract class HALMenu {
         enforceMaxLines = true;
         elements = new ArrayList<>();
         displayableElements = new ArrayList<>();
-        cursorUpToggle = new Toggle(Toggle.ToggleTypes.trueOnceToggle, false);
-        cursorDownToggle = new Toggle(Toggle.ToggleTypes.trueOnceToggle, false);
-        cursorLeftToggle = new Toggle(Toggle.ToggleTypes.trueOnceToggle, false);
-        cursorRightToggle = new Toggle(Toggle.ToggleTypes.trueOnceToggle, false);
-        cursorControls = new CustomizableGamepad(gui.getRobot());
-    }
-
-    protected void setupCursor() {
-        List<Button<Boolean>> cursorControlButtons = gui.getCursorControls();
-        cursorControls.addButton(CURSOR_UP, cursorControlButtons.get(0));
-        cursorControls.addButton(CURSOR_DOWN, cursorControlButtons.get(1));
-        cursorControls.addButton(CURSOR_LEFT, cursorControlButtons.get(2));
-        cursorControls.addButton(CURSOR_RIGHT, cursorControlButtons.get(3));
     }
 
     public HALMenu() {
@@ -90,24 +73,6 @@ public abstract class HALMenu {
     }
 
     protected void render() {
-        cursorUpToggle.updateToggle(cursorControls.getInput(CURSOR_UP));
-        cursorDownToggle.updateToggle(cursorControls.getInput(CURSOR_DOWN));
-        cursorLeftToggle.updateToggle(cursorControls.getInput(CURSOR_LEFT));
-        cursorRightToggle.updateToggle(cursorControls.getInput(CURSOR_RIGHT));
-
-        if(cursorUpToggle.getCurrentState()) {
-            cursorUp();
-        }
-        else if(cursorDownToggle.getCurrentState()) {
-            cursorDown();
-        }
-        else if(cursorLeftToggle.getCurrentState()) {
-            cursorLeft();
-        }
-        else if(cursorRightToggle.getCurrentState()) {
-            cursorRight();
-        }
-
         boolean cursorUpdated = updateListeners();
         if(cursorUpdated) {
             cursorBlinkState = BlinkState.ON;
@@ -115,7 +80,7 @@ public abstract class HALMenu {
         }
 
         if(enforceMaxLines) {
-            displayLines(menuLevel*MAX_LINES_PER_SCREEN, min(displayableElements.size(),(menuLevel+1)*MAX_LINES_PER_SCREEN));
+            displayLines(menuLevel*MAX_LINES_PER_SCREEN, min(displayableElements.size(), (menuLevel+1)*MAX_LINES_PER_SCREEN));
         }
         else {
             displayLines(0, elements.size());
@@ -195,32 +160,6 @@ public abstract class HALMenu {
         }
 
         return new String(chars);
-    }
-
-    protected final void setCursorControls(Button<Boolean> upButton, Button<Boolean> downButton, Button<Boolean> leftButton, Button<Boolean> rightButton) {
-        ExceptionChecker.assertFalse(upButton.equals(downButton) ||
-                                               upButton.equals(leftButton) ||
-                                               upButton.equals(rightButton) ||
-                                               downButton.equals(leftButton) ||
-                                               downButton.equals(rightButton) ||
-                                               leftButton.equals(rightButton), new DumpsterFireException("All cursor controls must be unique"));
-
-        ArrayList<Button<Boolean>> cursorControlButtons = gui.getCursorControls();
-
-        cursorControlButtons.set(0, upButton);
-        cursorControlButtons.set(1, downButton);
-        cursorControlButtons.set(2, leftButton);
-        cursorControlButtons.set(3, rightButton);
-
-        cursorControls.removeButton(CURSOR_UP);
-        cursorControls.removeButton(CURSOR_DOWN);
-        cursorControls.removeButton(CURSOR_LEFT);
-        cursorControls.removeButton(CURSOR_RIGHT);
-
-        cursorControls.addButton(CURSOR_UP, upButton);
-        cursorControls.addButton(CURSOR_DOWN, downButton);
-        cursorControls.addButton(CURSOR_LEFT, leftButton);
-        cursorControls.addButton(CURSOR_RIGHT, rightButton);
     }
 
     protected void cursorUp() {

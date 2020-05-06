@@ -5,7 +5,7 @@ import com.SCHSRobotics.HAL9001.util.misc.Button;
 public class ExampleMenu extends HALMenu {
     @Override
     protected void init(Payload payload) {
-        setSelectionZone(1,2);
+        //setSelectionZone(1,2);
 
         addItem(new ListViewButton("# | Fun Times")
                 .onClick(new Button<>(1, Button.BooleanInputs.x), () -> {
