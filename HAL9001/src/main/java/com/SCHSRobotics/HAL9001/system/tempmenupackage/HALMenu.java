@@ -64,7 +64,7 @@ public abstract class HALMenu {
         menuLevel = 0;
         minLineLength = Integer.MAX_VALUE;
         cursorChar = '█';
-        cursorBlinkSpeedMs = 250;
+        cursorBlinkSpeedMs = 500;
         lastBlinkTimeMs = System.currentTimeMillis();
         cursorBlinkState = BlinkState.ON;
         doBlink = true;
