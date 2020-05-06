@@ -23,4 +23,9 @@ public class NewMenuTestProgram extends BaseTeleop {
     protected void onUpdate() {
         gui.renderCurrentMenu();
     }
+
+    @Override
+    protected void onStop() {
+        gui.stop();
+    }
 }

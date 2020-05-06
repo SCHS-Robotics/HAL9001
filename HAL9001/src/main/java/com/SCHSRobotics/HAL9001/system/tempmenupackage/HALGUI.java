@@ -179,4 +179,17 @@ public class HALGUI {
     public void forward() {
         forward(new Payload());
     }
+
+    public void stop() {
+        menuStacks = new PriorityQueue<>();
+        cursorControls = new PriorityQueue<>();
+        forwardStack = new Stack<>();
+        lastRenderTime = 0;
+        cycleToggle = new Toggle(Toggle.ToggleTypes.trueOnceToggle, false);
+        currentStack = null;
+        currentMenu = null;
+        robot = null;
+        cycleControls = null;
+        cycleButton = null;
+    }
 }
