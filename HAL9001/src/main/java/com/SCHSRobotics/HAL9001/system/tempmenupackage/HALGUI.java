@@ -56,13 +56,7 @@ public class HALGUI {
     /**
      * The private GUI constructor. Initializes the queues, the render timestamp, and the cycle toggle.
      */
-    private HALGUI() {
-        menuStacks = new PriorityQueue<>();
-        cursorControls = new PriorityQueue<>();
-        forwardStack = new Stack<>();
-        lastRenderTime = 0;
-        cycleToggle = new Toggle(Toggle.ToggleTypes.trueOnceToggle, false);
-    }
+    private HALGUI() {}
 
     /**
      * Gets the static instance of the gui.
@@ -84,6 +78,11 @@ public class HALGUI {
         this.robot = robot;
         cycleControls = new CustomizableGamepad(robot);
         this.cycleButton = cycleButton;
+        menuStacks = new PriorityQueue<>();
+        cursorControls = new PriorityQueue<>();
+        forwardStack = new Stack<>();
+        lastRenderTime = 0;
+        cycleToggle = new Toggle(Toggle.ToggleTypes.trueOnceToggle, false);
     }
 
     /**
@@ -182,11 +181,6 @@ public class HALGUI {
     }
 
     public void stop() {
-        menuStacks = new PriorityQueue<>();
-        cursorControls = new PriorityQueue<>();
-        forwardStack = new Stack<>();
-        lastRenderTime = 0;
-        cycleToggle = new Toggle(Toggle.ToggleTypes.trueOnceToggle, false);
         currentStack = null;
         currentMenu = null;
         robot = null;
