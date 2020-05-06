@@ -58,12 +58,6 @@ public abstract class HALMenu {
         this.payload = payload;
 
         gui = HALGUI.getInstance();
-        cursorControls = new CustomizableGamepad(gui.getRobot());
-        cursorControlButtons = gui.getCursorControls();
-        cursorControls.addButton(CURSOR_UP, cursorControlButtons.get(0));
-        cursorControls.addButton(CURSOR_DOWN, cursorControlButtons.get(1));
-        cursorControls.addButton(CURSOR_LEFT, cursorControlButtons.get(2));
-        cursorControls.addButton(CURSOR_RIGHT, cursorControlButtons.get(3));
         selectionZone = new SelectionZone(0,0);
         cursorX = 0;
         cursorY = 0;
@@ -87,9 +81,15 @@ public abstract class HALMenu {
         this(new Payload());
     }
 
-    /**
-     * Abstract method that is called every frame to render the menu.
-     */
+    protected void setupCursor() {
+        cursorControls = new CustomizableGamepad(gui.getRobot());
+        cursorControlButtons = gui.getCursorControls();
+        cursorControls.addButton(CURSOR_UP, cursorControlButtons.get(0));
+        cursorControls.addButton(CURSOR_DOWN, cursorControlButtons.get(1));
+        cursorControls.addButton(CURSOR_LEFT, cursorControlButtons.get(2));
+        cursorControls.addButton(CURSOR_RIGHT, cursorControlButtons.get(3));
+    }
+
     protected void render() {
         cursorUpToggle.updateToggle(cursorControls.getInput(CURSOR_UP));
         cursorDownToggle.updateToggle(cursorControls.getInput(CURSOR_DOWN));

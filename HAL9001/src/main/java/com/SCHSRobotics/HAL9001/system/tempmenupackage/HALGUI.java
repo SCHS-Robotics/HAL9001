@@ -110,6 +110,7 @@ public class HALGUI {
             add(new Button<>(1, Button.BooleanInputs.dpad_left));
             add(new Button<>(1, Button.BooleanInputs.dpad_right));
         }});
+        currentMenu.setupCursor();
         currentMenu.init(new Payload());
     }
 
