@@ -110,4 +110,8 @@ repositories {
     jcenter()
 }
 
+dependencies {
+    implementation 'org.jetbrains:annotations:16.0.2'
+}
+
 apply from: 'build.release.gradle'

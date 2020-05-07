@@ -16,5 +16,4 @@ apply from: '../build.common.gradle'
 
 dependencies {
     implementation project(path: ':HAL9001')
-    implementation 'org.jetbrains:annotations:16.0.2'
 }
