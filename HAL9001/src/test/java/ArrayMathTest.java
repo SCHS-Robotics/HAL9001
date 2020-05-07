@@ -1,5 +1,3 @@
-package com.SCHSRobotics.HAL9001.tests;
-
 import com.SCHSRobotics.HAL9001.util.math.FakeNumpy;
 
 import org.junit.Assert;
