@@ -1,8 +1,6 @@
 package com.SCHSRobotics.HAL9001.system.subsystems;
 
 import com.SCHSRobotics.HAL9001.util.math.EncoderToDistanceProcessor;
-import com.SCHSRobotics.HAL9001.util.math.Units;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 public abstract class Localizer {
@@ -28,7 +26,7 @@ public abstract class Localizer {
         this.encoders = encoders;
         encodersSet = true;
     }
-
+/*
     public abstract Pose2d getPositionEncoders();
 
     public abstract Pose2d getVelocityEncoders();
@@ -47,7 +45,7 @@ public abstract class Localizer {
                 distanceProcessor.getDistanceFromEncoders(velocityEncoders.getY(),distanceUnit),
                 velocityEncoders.getHeading());
     }
-
+*/
     //TODO bulk reads
     public int[] getRawEncoders() {
         int[] encoderVals = new int[encoders.length];

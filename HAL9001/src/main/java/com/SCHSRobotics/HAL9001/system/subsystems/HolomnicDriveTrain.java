@@ -5,13 +5,11 @@ import com.SCHSRobotics.HAL9001.util.math.FakeNumpy;
 import com.SCHSRobotics.HAL9001.util.math.Units;
 import com.SCHSRobotics.HAL9001.util.math.Vector2D;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.robotcore.external.Supplier;
 import org.jetbrains.annotations.NotNull;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.hypot;
 
 public abstract class HolomnicDriveTrain extends DriveTrain {
 
@@ -94,7 +92,7 @@ public abstract class HolomnicDriveTrain extends DriveTrain {
         waitWhile(condition, runWhileProgram);
         stopAllMotors();
     }
-
+/*
     public void turnAndMoveEncoders(Vector2D velocity, double turnPower, final int encoders) {
         double distanceSum = 0;
         Pose2d lastPosition = localizer.getPositionEncoders();
@@ -129,7 +127,7 @@ public abstract class HolomnicDriveTrain extends DriveTrain {
     public void turnAndMoveDistance(Vector2D velocity, double turnPower, double distance, Units distanceUnit, Runnable runWhileProgram) {
         turnAndMoveEncoders(velocity,turnPower,distProcessor.getEncoderAmount(distance,distanceUnit),runWhileProgram);
     }
-
+*/
     public void turn(double turnPower) {
         turnAndMove(new Vector2D(0,0), turnPower);
     }
@@ -250,6 +248,7 @@ public abstract class HolomnicDriveTrain extends DriveTrain {
         stopAllMotors();
     }
 
+    /*
     public void moveEncoders(Vector2D velocity, final int encoders) {
         final Pose2d initPosition = localizer.getPositionEncoders();
         moveUntil(velocity, new Supplier<Boolean>() {
@@ -281,7 +280,7 @@ public abstract class HolomnicDriveTrain extends DriveTrain {
     public void moveDistance(Vector2D velocity, final int distance, Units distanceUnit, Runnable runWhileProgram) {
         moveEncoders(velocity,distProcessor.getEncoderAmount(distance,distanceUnit), runWhileProgram);
     }
-
+*/
     public void moveMatthew(Vector2D velocity1, Vector2D velocity2) {}
 
     public void moveMatthewTime(Vector2D velocity1, Vector2D velocity2, long timeMs) {
