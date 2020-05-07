@@ -13,7 +13,7 @@ public class ArrayMathTest {
     @Test
     public void validateMaxTypeNonEmpty() {
         Integer[] testArr = new Integer[] {-6,-5,-4,-3,-2,-1,0,0,1,1,2,3,4,5,6,6};
-        Integer expectedResult = 6;
+        Integer expectedResult = 5;
         Assert.assertEquals(expectedResult, ArrayMath.max(testArr));
     }
 
