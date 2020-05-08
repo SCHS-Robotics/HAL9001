@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
+import com.SCHSRobotics.HAL9001.util.misc.Button;
+
 /**
  * A button on a view that covers the entire screen.
  *
@@ -17,5 +19,10 @@ public class EntireViewButton extends ViewButton {
     @Override
     public String getText() {
         return null;
+    }
+
+    @Override
+    public EntireViewButton onClick(Button<Boolean> button, Program program) {
+        return (EntireViewButton) super.onClick(button, program);
     }
 }

@@ -4,20 +4,21 @@ import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 import com.SCHSRobotics.HAL9001.util.misc.Toggle;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class ViewButton implements ViewListener {
 
     private CustomizableGamepad input;
-    private LinkedList<Program> programs;
-    private LinkedList<Button<Boolean>> buttons;
-    private LinkedList<Toggle> toggles;
+    private List<Program> programs;
+    private List<Button<Boolean>> buttons;
+    private List<Toggle> toggles;
 
     public ViewButton() {
         input = new CustomizableGamepad(HALGUI.getInstance().getRobot());
-        programs = new LinkedList<>();
-        buttons = new LinkedList<>();
-        toggles = new LinkedList<>();
+        programs = new ArrayList<>();
+        buttons = new ArrayList<>();
+        toggles = new ArrayList<>();
     }
 
     public ViewButton onClick(Button<Boolean> button, Program program) {

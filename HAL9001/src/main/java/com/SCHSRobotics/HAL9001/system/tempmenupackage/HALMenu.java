@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.Math.ceil;
+import static java.lang.Math.abs;
 import static java.lang.Math.floor;
 import static java.lang.Math.min;
 
@@ -30,10 +30,9 @@ public abstract class HALMenu {
     //The current "level" of screen in the menu. If the number of lines in the menu exceeds the maximum number, menuLevel will increase by one for every screen the menu takes up.
     private int menuLevel;
     private int cursorX, cursorY;
-    private int minLineLength;
     private long lastBlinkTimeMs;
     private List<ViewElement> elements, displayableElements;
-    private boolean cursorMoved;
+    private boolean doForceUpdateCursor;
 
     private enum BlinkState {
         ON, OFF;
@@ -56,7 +55,6 @@ public abstract class HALMenu {
         cursorX = 0;
         cursorY = 0;
         menuLevel = 0;
-        minLineLength = Integer.MAX_VALUE;
         cursorChar = '█';
         cursorBlinkSpeedMs = 500;
         lastBlinkTimeMs = System.currentTimeMillis();
@@ -65,7 +63,7 @@ public abstract class HALMenu {
         enforceMaxLines = true;
         elements = new ArrayList<>();
         displayableElements = new ArrayList<>();
-        cursorMoved = false;
+        doForceUpdateCursor = false;
     }
 
     public HALMenu() {
@@ -73,8 +71,7 @@ public abstract class HALMenu {
     }
 
     protected void render() {
-        boolean cursorUpdated = updateListeners();
-        if(cursorUpdated) {
+        if(doForceUpdateCursor) {
             cursorBlinkState = BlinkState.ON;
             lastBlinkTimeMs = System.currentTimeMillis();
         }
@@ -92,12 +89,11 @@ public abstract class HALMenu {
         String text = element.getText();
         if(text != null) {
             displayableElements.add(element);
-            minLineLength = min(minLineLength, text.length());
         }
     }
 
     protected final boolean updateListeners() {
-        boolean anythingUpdatesCursor = cursorMoved;
+        boolean anythingUpdatesCursor = false;
         for(ViewElement element : elements) {
             if(element instanceof ViewListener) {
                 boolean forceCursorUpdate = false;
@@ -163,64 +159,97 @@ public abstract class HALMenu {
     }
 
     protected void cursorUp() {
-        if((cursorY-1) % MAX_LINES_PER_SCREEN == 0 && enforceMaxLines && menuLevel > 0) {
-            menuLevel--;
-        }
         if(cursorY > 0) {
-            cursorY--;
+            MinHeap<CursorLoc> distanceHeap = new MinHeap<>();
+            for (int virtualCursorY = cursorY - 1; virtualCursorY > 0; virtualCursorY--) {
+                boolean validSpaceFound = false;
+                for (int virtualCursorX = 0; virtualCursorX < min(selectionZone.getWidth(), displayableElements.get(virtualCursorY).getText().length()); virtualCursorX++) {
+                    validSpaceFound |= selectionZone.isValidLocation(virtualCursorX, virtualCursorY);
+                    if (selectionZone.isValidLocation(virtualCursorX, virtualCursorY)) {
+                        distanceHeap.add(new CursorLoc(virtualCursorX, virtualCursorY));
+                    }
+                }
+                if (validSpaceFound) {
+                    break;
+                }
+            }
+            CursorLoc newPoint = distanceHeap.poll();
+            if(newPoint != null) {
+                cursorX = newPoint.getX();
+                cursorY = newPoint.getY();
+            }
         }
-
-        int maxCursorX = displayableElements.get(cursorY).getText().length() - 1;
-        if(cursorX > maxCursorX) {
-            cursorX = maxCursorX;
+        if(enforceMaxLines) {
+            //Floor Division
+            menuLevel = cursorY / MAX_LINES_PER_SCREEN;
         }
     }
 
     protected void cursorDown() {
-        if(cursorY % MAX_LINES_PER_SCREEN == 0 && enforceMaxLines && menuLevel < ceil(((double) cursorY)/MAX_LINES_PER_SCREEN)) {
-            menuLevel++;
-        }
-        if(cursorY < min(displayableElements.size(), selectionZone.getHeight())) {
-            cursorY++;
+        if(cursorY < min(displayableElements.size(), selectionZone.getHeight()) - 1) {
+            MinHeap<CursorLoc> distanceHeap = new MinHeap<>();
+            for (int virtualCursorY = cursorY + 1; virtualCursorY < min(selectionZone.getHeight(), displayableElements.size()); virtualCursorY++) {
+                boolean validSpaceFound = false;
+                for (int virtualCursorX = 0; virtualCursorX < min(selectionZone.getWidth(), displayableElements.get(virtualCursorY).getText().length()); virtualCursorX++) {
+                    validSpaceFound |= selectionZone.isValidLocation(virtualCursorX, virtualCursorY);
+                    if (selectionZone.isValidLocation(virtualCursorX, virtualCursorY)) {
+                        distanceHeap.add(new CursorLoc(virtualCursorX, virtualCursorY));
+                    }
+                }
+                if (validSpaceFound) {
+                    break;
+                }
+            }
+            CursorLoc newLoc = distanceHeap.poll();
+            if(newLoc != null) {
+                cursorX = newLoc.getX();
+                cursorY = newLoc.getY();
+            }
         }
 
-        int maxCursorX = displayableElements.get(cursorY).getText().length() - 1;
-        if(cursorX > maxCursorX) {
-            cursorX = maxCursorX;
+        if(enforceMaxLines) {
+            //Floor Division
+            menuLevel = cursorY / MAX_LINES_PER_SCREEN;
         }
     }
 
     protected void cursorLeft() {
         if(cursorX > 0) {
-            cursorX--;
+            int virtualCursorX = cursorX - 1;
+            while (!selectionZone.isValidLocation(virtualCursorX, cursorY)) {
+                virtualCursorX--;
+                if(virtualCursorX == -1) {
+                    return;
+                }
+            }
+            cursorX = virtualCursorX;
         }
     }
 
     protected void cursorRight() {
-        if(cursorX < selectionZone.getWidth() && cursorX < displayableElements.get(cursorY).getText().length()) {
-            cursorX++;
+        int lineLength = displayableElements.get(cursorY).getText().length();
+        if(cursorX < min(selectionZone.getWidth(), lineLength) - 1) {
+            int virtualCursorX = cursorX + 1;
+            while (!selectionZone.isValidLocation(virtualCursorX, cursorY)) {
+                virtualCursorX++;
+                if(virtualCursorX == min(selectionZone.getWidth(), lineLength)) {
+                    return;
+                }
+            }
+            cursorX = virtualCursorX;
         }
     }
 
-    protected void notifyCursorMoved(boolean cursorMoved) {
-        this.cursorMoved = cursorMoved;
+    protected void setCursor(EntireViewButton cursor) {
+        elements.set(0, cursor);
+    }
+
+    protected void notifyForceCursorUpdate(boolean doForceUpdateCursor) {
+        this.doForceUpdateCursor = doForceUpdateCursor;
     }
 
     public SelectionZone getSelectionZone() {
         return selectionZone;
-    }
-
-    public void setSelectionZone(int width, int height) {
-        selectionZone.setWidth(width);
-        selectionZone.setHeight(height);
-    }
-
-    public void setSelectionZoneWidth(int width) {
-        setSelectionZone(width, selectionZone.getHeight());
-    }
-
-    public void setSelectionZoneHeight(int height) {
-        setSelectionZone(selectionZone.getWidth(), height);
     }
 
     public int getCursorX() {
@@ -253,5 +282,46 @@ public abstract class HALMenu {
 
     public long getCursorBlinkSpeedMs() {
         return cursorBlinkSpeedMs;
+    }
+
+    private class CursorLoc implements Comparable<CursorLoc> {
+
+        private int x, y;
+        private CursorLoc(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+        private int taxicabDistance(CursorLoc a, CursorLoc b) {
+            return abs(a.x-b.x) + abs(a.y - b.y);
+        }
+
+        @Override
+        public int compareTo(CursorLoc loc) {
+            return taxicabDistance(this, new CursorLoc(cursorX, cursorY)) - taxicabDistance(loc, new CursorLoc(cursorX, cursorY));
+        }
+
+        @Override
+        @NotNull
+        public String toString() {
+            return "("+x+", "+y+")";
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(!(obj instanceof CursorLoc)) {
+                return false;
+            }
+            CursorLoc loc = (CursorLoc) obj;
+            return loc.x == x && loc.y == y;
+        }
     }
 }

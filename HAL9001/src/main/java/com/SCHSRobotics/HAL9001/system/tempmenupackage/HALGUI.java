@@ -10,11 +10,9 @@ import com.SCHSRobotics.HAL9001.util.misc.Toggle;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Stack;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * A GUI class to control the menu system.
@@ -32,7 +30,7 @@ public class HALGUI {
     //A queue to store all currently active trees of menus.
     private Queue<Stack<HALMenu>> menuStacks;
     //A queue to store all controls for the cursor. Controls apply to each menu tree. Controls default to the dpad.
-    private Queue<ArrayList<Button<Boolean>>> cursorControlQueue;
+    private Queue<EntireViewButton> cursorControlQueue;
     //The current menu stack. Shows history of menus visited within a tree. Does not contain currently active menu.
     private Stack<HALMenu> currentStack;
     //Stores backups of "undo-ed" menus in a tree so that they can be "redo-ed".
@@ -51,11 +49,6 @@ public class HALGUI {
     private Toggle cycleToggle;
     //The single static instance of the gui.
     private static HALGUI INSTANCE = new HALGUI();
-
-    private Toggle cursorUpToggle, cursorDownToggle, cursorLeftToggle, cursorRightToggle;
-    private CustomizableGamepad cursorControls;
-
-    private static final String CURSOR_UP = "CursorUp", CURSOR_DOWN = "CursorDown", CURSOR_LEFT = "CursorLeft", CURSOR_RIGHT = "CursorRight";
 
     public static final int DEFAULT_TRANSMISSION_INTERVAL_MS = 250;
     public static final int DEFAULT_HAL_TRANSMISSION_INTERVAL_MS = 50;
@@ -85,16 +78,11 @@ public class HALGUI {
         this.robot = robot;
         cycleControls = new CustomizableGamepad(robot);
         this.cycleButton = cycleButton;
-        menuStacks = new PriorityQueue<>();
-        cursorControlQueue = new PriorityQueue<>();
+        menuStacks = new LinkedBlockingQueue<>();
+        cursorControlQueue = new LinkedBlockingQueue<>();
         forwardStack = new Stack<>();
         lastRenderTime = 0;
         cycleToggle = new Toggle(Toggle.ToggleTypes.trueOnceToggle, false);
-        cursorUpToggle = new Toggle(Toggle.ToggleTypes.trueOnceToggle, false);
-        cursorDownToggle = new Toggle(Toggle.ToggleTypes.trueOnceToggle, false);
-        cursorLeftToggle = new Toggle(Toggle.ToggleTypes.trueOnceToggle, false);
-        cursorRightToggle = new Toggle(Toggle.ToggleTypes.trueOnceToggle, false);
-        cursorControls = new CustomizableGamepad(robot);
         robot.telemetry.setMsTransmissionInterval(DEFAULT_HAL_TRANSMISSION_INTERVAL_MS);
     }
 
@@ -118,13 +106,12 @@ public class HALGUI {
         forwardStack.clear();
         currentStack.push(currentMenu);
         menuStacks.add(currentStack);
-        cursorControlQueue.add(new ArrayList<Button<Boolean>>() {{
-            add(new Button<>(1, Button.BooleanInputs.dpad_up));
-            add(new Button<>(1, Button.BooleanInputs.dpad_down));
-            add(new Button<>(1, Button.BooleanInputs.dpad_left));
-            add(new Button<>(1, Button.BooleanInputs.dpad_right));
-        }});
-        setupCursor();
+        cursorControlQueue.add(new EntireViewButton()
+                .onClick(new Button<>(1, Button.BooleanInputs.dpad_up), () -> currentMenu.cursorUp())
+                .onClick(new Button<>(1, Button.BooleanInputs.dpad_down), () -> currentMenu.cursorDown())
+                .onClick(new Button<>(1, Button.BooleanInputs.dpad_left), () -> currentMenu.cursorLeft())
+                .onClick(new Button<>(1, Button.BooleanInputs.dpad_right), () -> currentMenu.cursorRight()));
+        currentMenu.addItem(cursorControlQueue.peek());
         currentMenu.init(new Payload());
     }
 
@@ -137,6 +124,7 @@ public class HALGUI {
         currentStack.push(currentMenu);
         forwardStack.clear();
         currentMenu = menu;
+        currentMenu.addItem(cursorControlQueue.peek());
         currentMenu.init(currentMenu.payload);
     }
 
@@ -144,33 +132,13 @@ public class HALGUI {
      * Renders the currently active menu.
      */
     public void renderCurrentMenu() {
-        boolean cursorMoved = false;
+        boolean forceCursorUpdate = false;
         if(!menuStacks.isEmpty()) {
-            cursorUpToggle.updateToggle(cursorControls.getInput(CURSOR_UP));
-            cursorDownToggle.updateToggle(cursorControls.getInput(CURSOR_DOWN));
-            cursorLeftToggle.updateToggle(cursorControls.getInput(CURSOR_LEFT));
-            cursorRightToggle.updateToggle(cursorControls.getInput(CURSOR_RIGHT));
-
-            if(cursorUpToggle.getCurrentState()) {
-                currentMenu.cursorUp();
-                cursorMoved = true;
-            }
-            else if(cursorDownToggle.getCurrentState()) {
-                currentMenu.cursorDown();
-                cursorMoved = true;
-            }
-            else if(cursorLeftToggle.getCurrentState()) {
-                currentMenu.cursorLeft();
-                cursorMoved = true;
-            }
-            else if(cursorRightToggle.getCurrentState()) {
-                currentMenu.cursorRight();
-                cursorMoved = true;
-            }
+            forceCursorUpdate = currentMenu.updateListeners();
         }
 
-        if(!menuStacks.isEmpty() && System.currentTimeMillis() - lastRenderTime >= currentMenu.getCursorBlinkSpeedMs() || cursorMoved) {
-            currentMenu.notifyCursorMoved(cursorMoved);
+        if(!menuStacks.isEmpty() && System.currentTimeMillis() - lastRenderTime >= currentMenu.getCursorBlinkSpeedMs() || forceCursorUpdate) {
+            currentMenu.notifyForceCursorUpdate(forceCursorUpdate);
             currentMenu.render();
             robot.telemetry.update();
             lastRenderTime = System.currentTimeMillis();
@@ -195,24 +163,19 @@ public class HALGUI {
                 downButton.equals(rightButton) ||
                 leftButton.equals(rightButton), new DumpsterFireException("All cursor controls must be unique"));
 
-        ArrayList<Button<Boolean>> cursorControlButtons = cursorControlQueue.peek();
+        EntireViewButton newCursor = new EntireViewButton()
+                .onClick(upButton, () -> currentMenu.cursorUp())
+                .onClick(downButton, () -> currentMenu.cursorDown())
+                .onClick(leftButton, () -> currentMenu.cursorLeft())
+                .onClick(rightButton, () -> currentMenu.cursorRight());
 
-        ExceptionChecker.assertNonNull(cursorControlButtons, new NullPointerException("Controls are null."));
+        cursorControlQueue.poll();
+        cursorControlQueue.add(newCursor);
+        for (int i = 0; i < cursorControlQueue.size() - 1; i++) {
+            cursorControlQueue.add(cursorControlQueue.poll());
+        }
 
-        cursorControlButtons.set(0, upButton);
-        cursorControlButtons.set(1, downButton);
-        cursorControlButtons.set(2, leftButton);
-        cursorControlButtons.set(3, rightButton);
-
-        cursorControls.removeButton(CURSOR_UP);
-        cursorControls.removeButton(CURSOR_DOWN);
-        cursorControls.removeButton(CURSOR_LEFT);
-        cursorControls.removeButton(CURSOR_RIGHT);
-
-        cursorControls.addButton(CURSOR_UP, upButton);
-        cursorControls.addButton(CURSOR_DOWN, downButton);
-        cursorControls.addButton(CURSOR_LEFT, leftButton);
-        cursorControls.addButton(CURSOR_RIGHT, rightButton);
+        currentMenu.setCursor(newCursor);
     }
 
     public void back(@NotNull Payload payload) {
@@ -246,14 +209,5 @@ public class HALGUI {
         robot = null;
         cycleControls = null;
         cycleButton = null;
-    }
-
-    private void setupCursor() {
-        List<Button<Boolean>> cursorControlButtons = cursorControlQueue.peek();
-        ExceptionChecker.assertNonNull(cursorControlButtons, new NullPointerException("Control queue is null."));
-        cursorControls.addButton(CURSOR_UP, cursorControlButtons.get(0));
-        cursorControls.addButton(CURSOR_DOWN, cursorControlButtons.get(1));
-        cursorControls.addButton(CURSOR_LEFT, cursorControlButtons.get(2));
-        cursorControls.addButton(CURSOR_RIGHT, cursorControlButtons.get(3));
     }
 }
