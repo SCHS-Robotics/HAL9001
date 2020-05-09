@@ -11,7 +11,7 @@ public class SelectionZone {
     public SelectionZone(int width, int height) {
         isZero = width <= 0 && height <= 0;
         if(!isZero) {
-            zoneMatrix = new boolean[width][height];
+            zoneMatrix = new boolean[height][width];
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
                     zoneMatrix[i][j] = true;
