@@ -142,7 +142,7 @@ public class HALGUI {
         boolean forceCursorUpdate = false;
         if(!menuStacks.isEmpty()) {
             forceCursorUpdate = currentMenu.updateListeners();
-            if(justInflated) {
+            if(justInflated && System.currentTimeMillis() - inflationTimeMs < POST_INFLATION_WAIT_TIME) {
                 forceCursorUpdate = false;
                 justInflated = false;
             }
