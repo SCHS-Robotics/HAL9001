@@ -177,6 +177,11 @@ public abstract class HALMenu {
         return new String(chars);
     }
 
+    protected void clear() {
+        elements.clear();
+        displayableElements.clear();
+    }
+
     protected void cursorUp() {
         if(cursorY > 0) {
             MinHeap<CursorLoc> distanceHeap = new MinHeap<>();
