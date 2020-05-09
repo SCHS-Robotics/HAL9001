@@ -172,7 +172,7 @@ public abstract class HALMenu {
     protected void cursorUp() {
         if(cursorY > 0) {
             MinHeap<CursorLoc> distanceHeap = new MinHeap<>();
-            for (int virtualCursorY = cursorY - 1; virtualCursorY > 0; virtualCursorY--) {
+            for (int virtualCursorY = cursorY - 1; virtualCursorY >= 0; virtualCursorY--) {
                 boolean validSpaceFound = false;
                 for (int virtualCursorX = 0; virtualCursorX < min(selectionZone.getWidth(), displayableElements.get(virtualCursorY).getText().length()); virtualCursorX++) {
                     validSpaceFound |= selectionZone.isValidLocation(virtualCursorX, virtualCursorY);

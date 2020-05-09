@@ -52,6 +52,7 @@ public class HALGUI {
 
     public static final int DEFAULT_TRANSMISSION_INTERVAL_MS = 250;
     public static final int DEFAULT_HAL_TRANSMISSION_INTERVAL_MS = 50;
+    private static final long INFLATION_WAIT_TIME = 50;
 
     /**
      * The private GUI constructor. Initializes the queues, the render timestamp, and the cycle toggle.
