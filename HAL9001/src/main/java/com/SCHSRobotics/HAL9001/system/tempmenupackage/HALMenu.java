@@ -127,6 +127,14 @@ public abstract class HALMenu {
         return anythingUpdatesCursor && !selectionZone.isZero();
     }
 
+    protected final void disableListeners(long durationMs) {
+        for(ViewElement element : elements) {
+            if(element instanceof ViewListener) {
+                ((ViewListener) element).disable(durationMs);
+            }
+        }
+    }
+
     protected abstract void init(Payload payload);
 
     protected final void displayLines(int startAt, int endAt){

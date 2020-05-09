@@ -61,4 +61,9 @@ public class TextInput implements ViewListener, BlinkingConfigurator {
     public boolean requestNoBlinkOnTriggeredUpdate() {
         return entryMode == EntryMode.NORMAL;
     }
+
+    @Override
+    public void disable(long timeDisabledMs) {
+
+    }
 }
