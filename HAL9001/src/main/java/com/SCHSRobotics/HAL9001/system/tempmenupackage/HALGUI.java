@@ -52,8 +52,8 @@ public class HALGUI {
 
     private boolean justInflated;
     private long inflationTimeMs;
-    public static final int DEFAULT_TRANSMISSION_INTERVAL_MS = 250;
-    public static final int DEFAULT_HAL_TRANSMISSION_INTERVAL_MS = 50;
+    private static final int DEFAULT_TRANSMISSION_INTERVAL_MS = 250;
+    private static final int DEFAULT_HAL_TRANSMISSION_INTERVAL_MS = 50;
     private static final long POST_INFLATION_WAIT_TIME = 250;
 
     /**
@@ -131,8 +131,7 @@ public class HALGUI {
         currentMenu = menu;
         currentMenu.addItem(cursorControlQueue.peek());
         currentMenu.init(currentMenu.payload);
-        justInflated = true;
-        inflationTimeMs = System.currentTimeMillis();
+        currentMenu.updateListeners();
     }
 
     /**
@@ -142,10 +141,6 @@ public class HALGUI {
         boolean forceCursorUpdate = false;
         if(!menuStacks.isEmpty()) {
             forceCursorUpdate = currentMenu.updateListeners();
-            if(justInflated && System.currentTimeMillis() - inflationTimeMs < POST_INFLATION_WAIT_TIME) {
-                forceCursorUpdate = false;
-                justInflated = false;
-            }
         }
 
         if(!menuStacks.isEmpty() && System.currentTimeMillis() - lastRenderTime >= currentMenu.getCursorBlinkSpeedMs() || forceCursorUpdate) {
@@ -192,8 +187,11 @@ public class HALGUI {
     public void back(@NotNull Payload payload) {
         if(currentStack.size() > 1) {
             forwardStack.push(currentStack.pop());
+
             currentMenu = currentStack.peek();
+            currentMenu.addItem(cursorControlQueue.peek());
             currentMenu.init(payload);
+            currentMenu.updateListeners();
         }
     }
 
