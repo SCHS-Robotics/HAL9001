@@ -131,7 +131,7 @@ public class HALGUI {
         currentMenu = menu;
         currentMenu.addItem(cursorControlQueue.peek());
         currentMenu.init(currentMenu.payload);
-        currentMenu.updateListeners();
+        justInflated = true;
     }
 
     /**
@@ -139,8 +139,11 @@ public class HALGUI {
      */
     public void renderCurrentMenu() {
         boolean forceCursorUpdate = false;
-        if(!menuStacks.isEmpty()) {
+        if(!menuStacks.isEmpty() && !justInflated) {
             forceCursorUpdate = currentMenu.updateListeners();
+        }
+        else if(!menuStacks.isEmpty()) {
+            justInflated = false;
         }
 
         if(!menuStacks.isEmpty() && System.currentTimeMillis() - lastRenderTime >= currentMenu.getCursorBlinkSpeedMs() || forceCursorUpdate) {
@@ -187,11 +190,9 @@ public class HALGUI {
     public void back(@NotNull Payload payload) {
         if(currentStack.size() > 1) {
             forwardStack.push(currentStack.pop());
-
             currentMenu = currentStack.peek();
             currentMenu.addItem(cursorControlQueue.peek());
             currentMenu.init(payload);
-            currentMenu.updateListeners();
         }
     }
 
