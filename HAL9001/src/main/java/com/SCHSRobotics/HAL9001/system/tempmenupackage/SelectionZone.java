@@ -64,7 +64,7 @@ public class SelectionZone {
             isZero = false;
         }
         else {
-            boolean[][] newZoneMatrixNonBox = new boolean[zoneMatrix[0].length][zoneMatrix.length + 1];
+            boolean[][] newZoneMatrixNonBox = new boolean[zoneMatrix.length + 1][zoneMatrix[0].length];
             System.arraycopy(zoneMatrix, 0, newZoneMatrixNonBox, 0, zoneMatrix.length);
             newZoneMatrixNonBox[zoneMatrix.length] = row;
             zoneMatrix = boxify(newZoneMatrixNonBox);
