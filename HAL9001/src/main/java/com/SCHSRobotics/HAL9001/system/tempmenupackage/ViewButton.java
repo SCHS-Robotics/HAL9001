@@ -35,8 +35,9 @@ public abstract class ViewButton implements ViewListener {
     @Override
     public boolean update() {
         if(System.currentTimeMillis() - disableStartTimeMs < disableDurationMs) {
-            for(Toggle toggle : toggles) {
-                toggle.updateToggle(false);
+            for (int i = 0; i < buttons.size(); i++) {
+                Toggle currentToggle = toggles.get(i);
+                currentToggle.updateToggle(input.getInput(buttons.get(i)));
             }
             return false;
         }

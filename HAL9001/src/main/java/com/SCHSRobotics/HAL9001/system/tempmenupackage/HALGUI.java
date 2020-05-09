@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
+import android.util.Log;
+
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
@@ -182,6 +184,8 @@ public class HALGUI {
     }
 
     public void back(@NotNull Payload payload) {
+        Log.wtf("TEST","ran forward command");
+        Log.wtf("TEST", "Current Stack Size: "+currentStack.size());
         if(currentStack.size() > 1) {
             forwardStack.push(currentStack.pop());
             currentMenu = currentStack.peek();
@@ -190,6 +194,7 @@ public class HALGUI {
             currentMenu.init(payload);
             currentMenu.disableListeners(POST_LOAD_LISTENER_DISABLE_DURATION_MS);
         }
+        Log.wtf("TEST", "Forward Stack Size: "+forwardStack.size());
     }
 
     public void back() {
@@ -197,6 +202,8 @@ public class HALGUI {
     }
 
     public void forward(@NotNull Payload payload) {
+        Log.wtf("TEST","ran forward command");
+        Log.wtf("TEST", "Size: "+forwardStack.size());
         if(!forwardStack.isEmpty()) {
             currentStack.push(forwardStack.pop());
             currentMenu = currentStack.peek();
