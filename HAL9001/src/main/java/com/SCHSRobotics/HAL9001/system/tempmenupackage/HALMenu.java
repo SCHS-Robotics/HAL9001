@@ -33,6 +33,8 @@ public abstract class HALMenu {
     private long lastBlinkTimeMs;
     private List<ViewElement> elements, displayableElements;
     private boolean doForceUpdateCursor;
+    private boolean dynamicSelectionZone;
+    private DynamicSelectionZone dynamicSelectionZoneAnnotation;
 
     private enum BlinkState {
         ON, OFF;
@@ -64,6 +66,12 @@ public abstract class HALMenu {
         elements = new ArrayList<>();
         displayableElements = new ArrayList<>();
         doForceUpdateCursor = false;
+
+        Class<? extends HALMenu> thisClass = getClass();
+        dynamicSelectionZone = thisClass.isAnnotationPresent(DynamicSelectionZone.class);
+        if(dynamicSelectionZone) {
+            dynamicSelectionZoneAnnotation = thisClass.getAnnotation(DynamicSelectionZone.class);
+        }
     }
 
     public HALMenu() {
@@ -89,6 +97,9 @@ public abstract class HALMenu {
         String text = element.getText();
         if(text != null) {
             displayableElements.add(element);
+        }
+        if(dynamicSelectionZone && displayableElements.size() > selectionZone.getHeight()) {
+            selectionZone.addRow(dynamicSelectionZoneAnnotation.pattern());
         }
     }
 
