@@ -63,8 +63,9 @@ public class TextSelectionMenu extends ListViewMenu {
                         }
                         else {
                             charArrayInput[charPositon.get()] = enteredText.charAt(charPositon.get());
+                            charArrayInput[charPositon.incrementAndGet()] = '#';
+                            return new String(charArrayInput);
                         }
-                        return "";
                     })
                     .onClick(new Button<>(1, Button.BooleanInputs.dpad_left), (String textInput) -> {
                         charPositon.decrementAndGet();
