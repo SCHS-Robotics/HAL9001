@@ -50,9 +50,11 @@ public class HALGUI {
     //The single static instance of the gui.
     private static HALGUI INSTANCE = new HALGUI();
 
+    private boolean justInflated;
+    private long inflationTimeMs;
     public static final int DEFAULT_TRANSMISSION_INTERVAL_MS = 250;
     public static final int DEFAULT_HAL_TRANSMISSION_INTERVAL_MS = 50;
-    private static final long INFLATION_WAIT_TIME = 50;
+    private static final long POST_INFLATION_WAIT_TIME = 50;
 
     /**
      * The private GUI constructor. Initializes the queues, the render timestamp, and the cycle toggle.
@@ -84,6 +86,8 @@ public class HALGUI {
         forwardStack = new Stack<>();
         lastRenderTime = 0;
         cycleToggle = new Toggle(Toggle.ToggleTypes.trueOnceToggle, false);
+        justInflated = false;
+        inflationTimeMs = 0;
         robot.telemetry.setMsTransmissionInterval(DEFAULT_HAL_TRANSMISSION_INTERVAL_MS);
     }
 
@@ -127,6 +131,8 @@ public class HALGUI {
         currentMenu = menu;
         currentMenu.addItem(cursorControlQueue.peek());
         currentMenu.init(currentMenu.payload);
+        justInflated = true;
+        inflationTimeMs = System.currentTimeMillis();
     }
 
     /**
@@ -136,6 +142,10 @@ public class HALGUI {
         boolean forceCursorUpdate = false;
         if(!menuStacks.isEmpty()) {
             forceCursorUpdate = currentMenu.updateListeners();
+            if(justInflated) {
+                forceCursorUpdate = false;
+                justInflated = false;
+            }
         }
 
         if(!menuStacks.isEmpty() && System.currentTimeMillis() - lastRenderTime >= currentMenu.getCursorBlinkSpeedMs() || forceCursorUpdate) {
