@@ -110,7 +110,7 @@ public class SelectionZone {
         for (boolean[] row : nonBoxMatrix) {
             maxRowLength = max(maxRowLength, row.length);
         }
-        boolean[][] boxMatrix = new boolean[maxRowLength][nonBoxMatrix.length];
+        boolean[][] boxMatrix = new boolean[nonBoxMatrix.length][maxRowLength];
         for (int i = 0; i < nonBoxMatrix.length; i++) {
             System.arraycopy(nonBoxMatrix[i], 0, boxMatrix[i], 0, nonBoxMatrix[i].length);
         }
