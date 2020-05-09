@@ -38,6 +38,7 @@ public abstract class ViewButton implements ViewListener {
             for (int i = 0; i < buttons.size(); i++) {
                 Toggle currentToggle = toggles.get(i);
                 currentToggle.updateToggle(input.getInput(buttons.get(i)));
+                currentToggle.getCurrentState();
             }
             return false;
         }
