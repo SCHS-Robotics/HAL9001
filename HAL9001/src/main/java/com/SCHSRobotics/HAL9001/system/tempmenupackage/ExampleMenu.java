@@ -2,10 +2,10 @@ package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 
-public class ExampleMenu extends HALMenu {
+public class ExampleMenu extends ListViewMenu {
     @Override
     protected void init(Payload payload) {
-        selectionZone = new SelectionZone(1,2);
+        //selectionZone = new SelectionZone(1,2);
         addItem(new ListViewButton("# | Fun Times")
                 .onClick(new Button<>(1, Button.BooleanInputs.x), () -> {
                     gui.inflate(new ExampleMenu2());
