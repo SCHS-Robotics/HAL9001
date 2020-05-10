@@ -27,5 +27,11 @@ public class ExampleMenu extends ListViewMenu {
                  .onClick(new Button<>(1, Button.BooleanInputs.y), () -> {
                     gui.forward();
                  }));
+        addItem(new TextElement("# | LOOK! its new text!"));
+        addItem(new TextElement("# | LOOK! its new text!"));
+        addItem(new TextElement("# | LOOK! its new text!"));
+        addItem(new TextElement("# | LOOK! its new text!"));
+        addItem(new TextElement("# | You found the end of the page!"));
+
     }
 }
