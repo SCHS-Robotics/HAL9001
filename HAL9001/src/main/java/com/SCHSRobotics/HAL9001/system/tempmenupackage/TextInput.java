@@ -3,7 +3,7 @@ package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 
-public class TextInput implements ViewListener, BlinkingConfigurator {
+public class TextInput implements ButtonListener, CursorConfigurable {
     private static final char RESERVED_CHAR = '#';
     private static final String NEXT_CHAR = "nextChar", PREVIOUS_CHAR = "previousChar";
 
@@ -66,4 +66,6 @@ public class TextInput implements ViewListener, BlinkingConfigurator {
     public void disable(long timeDisabledMs) {
 
     }
+
+
 }

@@ -1,62 +1,58 @@
 package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
 import com.SCHSRobotics.HAL9001.util.misc.Button;
-import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
-import com.SCHSRobotics.HAL9001.util.misc.Toggle;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.firstinspires.ftc.robotcore.external.function.Function;
+import org.firstinspires.ftc.robotcore.external.function.Supplier;
+import org.jetbrains.annotations.Nullable;
 
-public abstract class ViewButton implements ViewListener {
-
-    private CustomizableGamepad input;
-    private List<Program> programs;
-    private List<Button<Boolean>> buttons;
-    private List<Toggle> toggles;
-    private long disableStartTimeMs;
-    private long disableDurationMs;
-
-    public ViewButton() {
-        input = new CustomizableGamepad(HALGUI.getInstance().getRobot());
-        programs = new ArrayList<>();
-        buttons = new ArrayList<>();
-        toggles = new ArrayList<>();
-        disableStartTimeMs = 0;
-        disableDurationMs = 0;
+public class ViewButton extends BaseViewButton {
+    public ViewButton(@Nullable String text) {
+        super(text);
     }
 
+    @Override
     public ViewButton onClick(Button<Boolean> button, Program program) {
-        buttons.add(button);
-        programs.add(program);
-        toggles.add(new Toggle(Toggle.ToggleTypes.trueOnceToggle, false));
-        return this;
+        return (ViewButton) super.onClick(button, program);
     }
 
     @Override
-    public boolean update() {
-        if(System.currentTimeMillis() - disableStartTimeMs < disableDurationMs) {
-            for (int i = 0; i < buttons.size(); i++) {
-                Toggle currentToggle = toggles.get(i);
-                currentToggle.updateToggle(input.getInput(buttons.get(i)));
-                currentToggle.getCurrentState();
-            }
-            return false;
-        }
-        boolean anythingUpdated = false;
-        for (int i = 0; i < buttons.size(); i++) {
-            Toggle currentToggle = toggles.get(i);
-            currentToggle.updateToggle(input.getInput(buttons.get(i)));
-            if (currentToggle.getCurrentState()) {
-                programs.get(i).run();
-                anythingUpdated = true;
-            }
-        }
-        return anythingUpdated;
+    public ViewButton onClick(Button<Boolean> button, Supplier<String> program) {
+        return (ViewButton) super.onClick(button, program);
     }
 
     @Override
-    public void disable(long timeDisabledMs) {
-        disableStartTimeMs = System.currentTimeMillis();
-        disableDurationMs = timeDisabledMs;
+    public ViewButton onClick(Button<Boolean> button, Function<String, String> program) {
+        return (ViewButton) super.onClick(button, program);
+    }
+
+    @Override
+    public ViewButton whileClicked(Button<Boolean> button, Program program) {
+        return (ViewButton) super.whileClicked(button, program);
+    }
+
+    @Override
+    public ViewButton whileClicked(Button<Boolean> button, Supplier<String> program) {
+        return (ViewButton) super.whileClicked(button, program);
+    }
+
+    @Override
+    public ViewButton whileClicked(Button<Boolean> button, Function<String, String> program) {
+        return (ViewButton) super.whileClicked(button, program);
+    }
+
+    @Override
+    public ViewButton addBackgroundTask(Program program) {
+        return (ViewButton) super.addBackgroundTask(program);
+    }
+
+    @Override
+    public ViewButton addBackgroundTask(Supplier<String> program) {
+        return (ViewButton) super.addBackgroundTask(program);
+    }
+
+    @Override
+    public ViewButton addBackgroundTask(Function<String, String> program) {
+        return (ViewButton) super.addBackgroundTask(program);
     }
 }

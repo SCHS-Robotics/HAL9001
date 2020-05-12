@@ -12,7 +12,7 @@ package com.SCHSRobotics.HAL9001.system.tempmenupackage;
  * @see ViewElement
  * @see ViewListener
  */
-public interface BlinkingConfigurator {
+public interface CursorConfigurable {
 
     /**
      * Returns whether the view element can request that the cursor not blink when an update is triggered.

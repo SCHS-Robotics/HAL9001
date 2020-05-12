@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.floor;
 import static java.lang.Math.min;
 
 //4/29/20
@@ -36,7 +35,7 @@ public abstract class HALMenu {
     private boolean dynamicSelectionZone;
     private DynamicSelectionZone dynamicSelectionZoneAnnotation;
 
-    private enum BlinkState {
+    public enum BlinkState {
         ON, OFF;
         public BlinkState nextState() {
             if(this == ON) {
@@ -112,14 +111,18 @@ public abstract class HALMenu {
                 Short circuit evaluation, DO NOT CHANGE THE ORDER OF THINGS IN THE IF STATEMENT
                 if element is not displayable (i.e. entire-screen-related), skip second check
                 if element is displayable, check if element is on the same line as the cursor
-                IF THE ORDER OF THESE CHECKS IS REVERSED THERE WILL BE ERRORS, AS FULL VIEW BUTTONS ARE NOT DISPLAYABLE
+                IF THE ORDER OF THESE CHECKS IS REVERSED THERE WILL BE ERRORS, AS FULL-VIEW BUTTONS ARE NOT DISPLAYABLE
                  */
                 if(!displayableElements.contains(element) || displayableElements.indexOf(element) == cursorY) {
+                    if(element instanceof Blinkable) {
+                        ((Blinkable) element).notifyCurrentBlinkState(cursorBlinkState);
+                    }
                     forceCursorUpdate = ((ViewListener) element).update();
                 }
-                if(element instanceof BlinkingConfigurator) {
-                    forceCursorUpdate &= !((BlinkingConfigurator) element).requestNoBlinkOnTriggeredUpdate();
+                if(element instanceof CursorConfigurable) {
+                    forceCursorUpdate &= !((CursorConfigurable) element).requestNoBlinkOnTriggeredUpdate();
                 }
+
                 anythingUpdatesCursor |= forceCursorUpdate;
             }
         }
@@ -127,10 +130,10 @@ public abstract class HALMenu {
         return anythingUpdatesCursor && !selectionZone.isZero();
     }
 
-    protected final void disableListeners(long durationMs) {
+    protected final void disableListeners() {
         for(ViewElement element : elements) {
-            if(element instanceof ViewListener) {
-                ((ViewListener) element).disable(durationMs);
+            if(element instanceof ButtonListener) {
+                ((ButtonListener) element).disable(HALGUI.POST_LOAD_LISTENER_DISABLE_DURATION_MS);
             }
         }
     }
@@ -287,7 +290,7 @@ public abstract class HALMenu {
     protected void setCursorPos(int x, int y) {
         cursorY = Range.clip(y, 0, displayableElements.size() - 1);
         if(enforceMaxLines) {
-            menuLevel = (int) floor(((double) cursorY) / MAX_LINES_PER_SCREEN);
+            menuLevel = cursorY / MAX_LINES_PER_SCREEN;
         }
         cursorX = Range.clip(x, 0, displayableElements.get(y).getText().length() - 1);
     }

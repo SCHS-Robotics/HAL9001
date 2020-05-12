@@ -6,13 +6,13 @@ public class ExampleMenu extends ListViewMenu {
     @Override
     protected void init(Payload payload) {
         //selectionZone = new SelectionZone(1,2);
-        addItem(new ListViewButton("# | Fun Times")
+        addItem(new ViewButton("# | Fun Times")
                 .onClick(new Button<>(1, Button.BooleanInputs.x), () -> {
                     gui.inflate(new ExampleMenu2());
                 })
         );
         addItem(new TextElement("# | LOOK! its new text!"));
-        addItem(new ListViewButton("# | More fun stuff")
+        addItem(new ViewButton("# | More fun stuff")
                 .onClick(new Button<>(1, Button.BooleanInputs.a), () -> {
                     gui.inflate(new ExampleMenu2());
                 }));

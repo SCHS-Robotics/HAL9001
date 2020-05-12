@@ -52,7 +52,7 @@ public class HALGUI {
 
     private static final int DEFAULT_TRANSMISSION_INTERVAL_MS = 250;
     private static final int DEFAULT_HAL_TRANSMISSION_INTERVAL_MS = 50;
-    private static final long POST_LOAD_LISTENER_DISABLE_DURATION_MS = 50;
+    protected static final long POST_LOAD_LISTENER_DISABLE_DURATION_MS = 50;
 
     /**
      * The private GUI constructor. Initializes the queues, the render timestamp, and the cycle toggle.
@@ -121,13 +121,17 @@ public class HALGUI {
      * @param menu The menu to add to the new tree and display.
      */
     public void inflate(@NotNull HALMenu menu) {
+        inflate(menu, menu.payload);
+    }
+
+    public void inflate(HALMenu menu, Payload payload) {
         forwardStack.clear();
         currentStack.push(currentMenu);
         currentMenu = menu;
         currentMenu.clear();
         currentMenu.addItem(cursorControlQueue.peek());
-        currentMenu.init(currentMenu.payload);
-        currentMenu.disableListeners(POST_LOAD_LISTENER_DISABLE_DURATION_MS);
+        currentMenu.init(payload);
+        currentMenu.disableListeners();
     }
 
     /**
@@ -187,7 +191,7 @@ public class HALGUI {
             currentMenu.clear();
             currentMenu.addItem(cursorControlQueue.peek());
             currentMenu.init(payload);
-            currentMenu.disableListeners(POST_LOAD_LISTENER_DISABLE_DURATION_MS);
+            currentMenu.disableListeners();
         }
     }
 
@@ -202,7 +206,7 @@ public class HALGUI {
             currentMenu.clear();
             currentMenu.addItem(cursorControlQueue.peek());
             currentMenu.init(payload);
-            currentMenu.disableListeners(POST_LOAD_LISTENER_DISABLE_DURATION_MS);
+            currentMenu.disableListeners();
         }
     }
 

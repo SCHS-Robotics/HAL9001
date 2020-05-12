@@ -8,23 +8,33 @@ import static java.lang.Math.min;
 
 public class TextSelectionMenu extends ListViewMenu {
     private static final int MINI_CYCLE_MAX_SIZE = 4;
-    private TextInput input;
-    private StringBuilder enteredText;
+    private TextInput.CharSet charSet;
+    private StringBuilder entryBuilder;
     private AtomicInteger charPositon;
-    public TextSelectionMenu(Payload payload, TextInput input) {
+    private HALMenu nextMenu;
+    private BlinkableTextElement entryDisplayText;
+    public static final String ENTERED_TEXT_ID = "text";
+    public TextSelectionMenu(Payload payload, TextInput.CharSet charSet, HALMenu nextMenu) {
         super(payload);
-        this.input = input;
+        this.charSet = charSet;
+        this.nextMenu = nextMenu;
+        selectionZone = new SelectionZone(new boolean[][]{{false}});
+        setCursorPos(0,1);
+
+        entryBuilder = new StringBuilder().append(' ');
+        charPositon = new AtomicInteger();
+        entryDisplayText = new BlinkableTextElement(entryBuilder.toString()).blinkCharAt(0, cursorChar);
     }
 
-    public TextSelectionMenu(TextInput input) {
-        this(new Payload(), input);
+    public TextSelectionMenu(TextInput.CharSet charSet, HALMenu nextMenu) {
+        this(new Payload(), charSet, nextMenu);
     }
 
     @Override
     protected void init(Payload payload) {
         /*
             pg 1
-            #___________________ (_ = spaces) 0
+            ____________________ (_ = spaces) 0
             #|abcd                            1
             #|efgh                            2
             #|ijkl                            3
@@ -42,48 +52,56 @@ public class TextSelectionMenu extends ListViewMenu {
             #|%^&*                            5
             #|Done                            6
          */
-        selectionZone = new SelectionZone(new boolean[][]{
-                {false}
-        });
-        setCursorPos(0,1);
 
-        enteredText = new StringBuilder();
-        charPositon = new AtomicInteger();
+        addItem(new EntireViewButton()
+                .onClick(new Button<>(1, Button.BooleanInputs.dpad_right), () -> {
+                    if(charPositon.get() == entryDisplayText.getUnmodifiedText().length() - 1) {
+                        entryBuilder.append(' ');
+                        entryDisplayText.append(' ');
+                        entryDisplayText.removeAllBlinkingChars();
+                        entryDisplayText.blinkCharAt(charPositon.incrementAndGet(), cursorChar);
+                    }
+                    else {
+                        entryDisplayText.removeAllBlinkingChars();
+                        entryDisplayText.blinkCharAt(charPositon.incrementAndGet(), cursorChar);
+                    }
+                })
+                .onClick(new Button<>(1, Button.BooleanInputs.dpad_left), () -> {
+                    if(charPositon.get() != 0) {
+                        entryDisplayText.removeAllBlinkingChars();
+                        entryDisplayText.blinkCharAt(charPositon.decrementAndGet(), cursorChar);
+                    }
+                })
+                .addBackgroundTask(() -> {
+                    entryDisplayText.setBlinkEnabled(true);
+                }));
 
-        String[] cycles = splitEqually(input.getCharSet().getString());
+        String[] cycles = splitEqually(charSet.getString());
         for (int i = 0; i < cycles.length; i++) {
             if(i % MAX_LINES_PER_SCREEN == 0) {
-                addItem(new ListViewButton("#")
-                    .onClick(new Button<>(1, Button.BooleanInputs.dpad_right), () -> {
-                        char[] charArrayInput = enteredText.toString().toCharArray();
-                        if(charPositon.get() == charArrayInput.length - 1) {
-                            String returnText = enteredText.toString() + '#';
-                            enteredText.append(' ');
-                            return returnText;
-                        }
-                        else {
-                            charArrayInput[charPositon.get()] = enteredText.charAt(charPositon.get());
-                            charArrayInput[charPositon.incrementAndGet()] = '#';
-                            return new String(charArrayInput);
-                        }
-                    })
-                    .onClick(new Button<>(1, Button.BooleanInputs.dpad_left), (String textInput) -> {
-                        charPositon.decrementAndGet();
-                        return "";
-                    }));
+                addItem(entryDisplayText);
             }
             else if((i+1) % MAX_LINES_PER_SCREEN == 0) {
-                addItem(new ListViewButton("#|Done")
+                addItem(new ViewButton("#|Done")
                     .onClick(new Button<>(1, Button.BooleanInputs.a), () -> {
-                        //todo add payload
-                        //gui.back();
+                        //todo parse text to remove bad spaces, spaces = evil
+                        payload.addItem(ENTERED_TEXT_ID, entryDisplayText.getUnmodifiedText());
+                        gui.inflate(nextMenu, payload);
                     }));
             }
             else {
-                addItem(new ListViewButton("#|"+cycles[i])
-                    .onClick(new Button<>(1, Button.BooleanInputs.a), (String textInput) -> {
-
-                        return "";
+                addItem(new ViewButton("#|"+cycles[i])
+                    .whileClicked(new Button<>(1, Button.BooleanInputs.a), (String text) -> {
+                        String currentCycle = ' ' + text.substring(text.indexOf('|') + 1);
+                        char currentChar = entryBuilder.charAt(charPositon.get());
+                        int currentCharIdx = currentCycle.indexOf(currentChar);
+                        if(currentCharIdx != -1) {
+                            int nextCharIdx = (currentCharIdx + 1) % currentCycle.length();
+                            char nextChar = currentCycle.charAt(nextCharIdx);
+                            entryDisplayText.setBlinkEnabled(false);
+                            entryDisplayText.setChar(charPositon.get(), nextChar);
+                        }
+                        return text;
                     }));
             }
         }
