@@ -114,6 +114,8 @@ public abstract class BaseViewButton implements ButtonListener {
 
     @Override
     public final boolean update() {
+        Log.wtf("Anything updated?", "update run for "+this.getClass().getSimpleName());
+
         if(!disabledTimer.requiredTimeElapsed()) {
             Iterator<Integer> toggleIndicesIterator = toggleLookup.keySet().iterator();
             List<Toggle> toggles = new ArrayList<>(toggleLookup.values());
@@ -155,8 +157,6 @@ public abstract class BaseViewButton implements ButtonListener {
 
             anythingUpdated |= runProgram;
         }
-
-        Log.wtf("Anything updated?", ""+anythingUpdated);
 
         if(!anythingUpdated) {
             for (int i = 0; i < globalBackgroundOrder; i++) {
