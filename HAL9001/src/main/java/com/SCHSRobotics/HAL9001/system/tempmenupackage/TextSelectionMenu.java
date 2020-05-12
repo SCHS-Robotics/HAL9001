@@ -102,7 +102,7 @@ public class TextSelectionMenu extends HALMenu {
 
         String[] cycles = splitEqually(charSet.getString(), MINI_CYCLE_MAX_SIZE);
         int cycleIdx = 0;
-        for (int i = 0; i < (cycles.length/(MAX_LINES_PER_SCREEN-2))*MAX_LINES_PER_SCREEN + (cycles.length % (MAX_LINES_PER_SCREEN - 2) == 0 ? 0 : cycles.length % (MAX_LINES_PER_SCREEN - 2) + 2); i++) {
+        for (int i = 0; i < (cycles.length/(MAX_LINES_PER_SCREEN-2))*MAX_LINES_PER_SCREEN + (cycles.length % (MAX_LINES_PER_SCREEN - 2) == 0 ? 0 : cycles.length % (MAX_LINES_PER_SCREEN - 2) + 1); i++) {
             if(i % MAX_LINES_PER_SCREEN == 0) {
                 addItem(entryDisplayText);
             }
@@ -130,6 +130,15 @@ public class TextSelectionMenu extends HALMenu {
                     }));
                 cycleIdx++;
             }
+        }
+
+        if(cycles.length % (MAX_LINES_PER_SCREEN - 2) != 0) {
+            addItem(new ViewButton("#|Done")
+                    .onClick(new Button<>(1, Button.BooleanInputs.a), () -> {
+                        //todo parse text to remove bad spaces, spaces = evil
+                        payload.addItem(ENTERED_TEXT_ID, entryDisplayText.getUnmodifiedText());
+                        gui.inflate(nextMenu, payload);
+                    }));
         }
 
         setCursorPos(0,1);
