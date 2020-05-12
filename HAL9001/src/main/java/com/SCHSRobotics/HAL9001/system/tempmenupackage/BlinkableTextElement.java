@@ -48,6 +48,15 @@ public class BlinkableTextElement extends TextElement implements ViewListener, B
 
     @Override
     public String getText() {
+        if(!blinkingEnabled) {
+            text = unmodifiedText;
+        }
+        if(currentBlinkState == HALMenu.BlinkState.ON) {
+            text = new String(blinkingCharArray);
+        }
+        else {
+            text = unmodifiedText;
+        }
         return text;
     }
 

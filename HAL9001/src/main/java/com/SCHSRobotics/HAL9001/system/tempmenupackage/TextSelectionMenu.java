@@ -9,7 +9,6 @@ import static com.SCHSRobotics.HAL9001.system.tempmenupackage.StringUtils.splitE
 public class TextSelectionMenu extends HALMenu {
     private static final int MINI_CYCLE_MAX_SIZE = 4;
     private TextInput.CharSet charSet;
-    private StringBuilder entryBuilder;
     private AtomicInteger charPositon;
     private HALMenu nextMenu;
     private BlinkableTextElement entryDisplayText;
@@ -45,9 +44,8 @@ public class TextSelectionMenu extends HALMenu {
                 {true},
         });
 
-        entryBuilder = new StringBuilder().append(' ');
         charPositon = new AtomicInteger();
-        entryDisplayText = new BlinkableTextElement(entryBuilder.toString()).blinkCharAt(0, cursorChar);
+        entryDisplayText = new BlinkableTextElement(" ").blinkCharAt(0, cursorChar);
     }
 
     public TextSelectionMenu(TextInput.CharSet charSet, HALMenu nextMenu) {
@@ -80,15 +78,10 @@ public class TextSelectionMenu extends HALMenu {
         addItem(new EntireViewButton()
                 .onClick(new Button<>(1, Button.BooleanInputs.dpad_right), () -> {
                     if(charPositon.get() == entryDisplayText.getUnmodifiedText().length() - 1) {
-                        entryBuilder.append(' ');
                         entryDisplayText.append(' ');
-                        entryDisplayText.removeAllBlinkingChars();
-                        entryDisplayText.blinkCharAt(charPositon.incrementAndGet(), cursorChar);
                     }
-                    else {
-                        entryDisplayText.removeAllBlinkingChars();
-                        entryDisplayText.blinkCharAt(charPositon.incrementAndGet(), cursorChar);
-                    }
+                    entryDisplayText.removeAllBlinkingChars();
+                    entryDisplayText.blinkCharAt(charPositon.incrementAndGet(), cursorChar);
                 })
                 .onClick(new Button<>(1, Button.BooleanInputs.dpad_left), () -> {
                     if(charPositon.get() != 0) {
@@ -118,11 +111,16 @@ public class TextSelectionMenu extends HALMenu {
                 addItem(new ViewButton("#|"+cycles[cycleIdx])
                     .whileClicked(new Button<>(1, Button.BooleanInputs.a), (String text) -> {
                         String currentCycle = ' ' + text.substring(text.indexOf('|') + 1);
-                        char currentChar = entryBuilder.charAt(charPositon.get());
+                        char currentChar = entryDisplayText.getUnmodifiedText().charAt(charPositon.get());
                         int currentCharIdx = currentCycle.indexOf(currentChar);
                         if(currentCharIdx != -1) {
                             int nextCharIdx = (currentCharIdx + 1) % currentCycle.length();
                             char nextChar = currentCycle.charAt(nextCharIdx);
+                            entryDisplayText.setBlinkEnabled(false);
+                            entryDisplayText.setChar(charPositon.get(), nextChar);
+                        }
+                        else {
+                            char nextChar = currentCycle.charAt(0);
                             entryDisplayText.setBlinkEnabled(false);
                             entryDisplayText.setChar(charPositon.get(), nextChar);
                         }
