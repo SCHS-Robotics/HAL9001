@@ -4,7 +4,7 @@ import com.SCHSRobotics.HAL9001.util.misc.Button;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static java.lang.Math.min;
+import static com.SCHSRobotics.HAL9001.system.tempmenupackage.StringUtils.splitEqually;
 
 public class TextSelectionMenu extends ListViewMenu {
     private static final int MINI_CYCLE_MAX_SIZE = 4;
@@ -76,7 +76,7 @@ public class TextSelectionMenu extends ListViewMenu {
                     entryDisplayText.setBlinkEnabled(true);
                 }));
 
-        String[] cycles = splitEqually(charSet.getString());
+        String[] cycles = splitEqually(charSet.getString(), MINI_CYCLE_MAX_SIZE);
         for (int i = 0; i < cycles.length; i++) {
             if(i % MAX_LINES_PER_SCREEN == 0) {
                 addItem(entryDisplayText);
@@ -105,15 +105,5 @@ public class TextSelectionMenu extends ListViewMenu {
                     }));
             }
         }
-    }
-
-    private static String[] splitEqually(String text) {
-        String[] ret = new String[(text.length() + MINI_CYCLE_MAX_SIZE - 1) / MINI_CYCLE_MAX_SIZE];
-        int i = 0;
-        for (int start = 0; start < text.length(); start += MINI_CYCLE_MAX_SIZE) {
-            ret[i] = text.substring(start, min(text.length(), start + MINI_CYCLE_MAX_SIZE));
-            i++;
-        }
-        return ret;
     }
 }
