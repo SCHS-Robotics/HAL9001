@@ -32,6 +32,5 @@ public class ExampleMenu extends ListViewMenu {
         addItem(new TextElement("# | LOOK! its new text!"));
         addItem(new TextElement("# | LOOK! its new text!"));
         addItem(new TextElement("# | You found the end of the page!"));
-
     }
 }
