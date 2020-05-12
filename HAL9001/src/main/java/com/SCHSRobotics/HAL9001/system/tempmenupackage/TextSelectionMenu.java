@@ -44,7 +44,6 @@ public class TextSelectionMenu extends HALMenu {
                 {true},
                 {true},
         });
-        setCursorPos(0,1);
 
         entryBuilder = new StringBuilder().append(' ');
         charPositon = new AtomicInteger();
@@ -130,5 +129,7 @@ public class TextSelectionMenu extends HALMenu {
                     }));
             }
         }
+
+        setCursorPos(0,1);
     }
 }
