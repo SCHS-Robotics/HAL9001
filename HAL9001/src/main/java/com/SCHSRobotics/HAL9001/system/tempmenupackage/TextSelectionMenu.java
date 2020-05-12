@@ -101,7 +101,8 @@ public class TextSelectionMenu extends HALMenu {
                 }));
 
         String[] cycles = splitEqually(charSet.getString(), MINI_CYCLE_MAX_SIZE);
-        for (int i = 0; i < cycles.length; i++) {
+        int cycleIdx = 0;
+        for (int i = 0; i < (cycles.length/(MAX_LINES_PER_SCREEN-2))*MAX_LINES_PER_SCREEN + (cycles.length % (MAX_LINES_PER_SCREEN - 2) == 0 ? 0 : cycles.length % (MAX_LINES_PER_SCREEN - 2) + 2); i++) {
             if(i % MAX_LINES_PER_SCREEN == 0) {
                 addItem(entryDisplayText);
             }
@@ -114,7 +115,7 @@ public class TextSelectionMenu extends HALMenu {
                     }));
             }
             else {
-                addItem(new ViewButton("#|"+cycles[i])
+                addItem(new ViewButton("#|"+cycles[cycleIdx])
                     .whileClicked(new Button<>(1, Button.BooleanInputs.a), (String text) -> {
                         String currentCycle = ' ' + text.substring(text.indexOf('|') + 1);
                         char currentChar = entryBuilder.charAt(charPositon.get());
@@ -127,6 +128,7 @@ public class TextSelectionMenu extends HALMenu {
                         }
                         return text;
                     }));
+                cycleIdx++;
             }
         }
 
