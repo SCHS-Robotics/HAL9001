@@ -24,7 +24,7 @@ public class Payload {
         return clazz.cast(obj);
     }
 
-    public boolean idIsPresent(String id) {
+    public boolean idPresent(String id) {
         return objectMap.containsKey(id);
     }
 }

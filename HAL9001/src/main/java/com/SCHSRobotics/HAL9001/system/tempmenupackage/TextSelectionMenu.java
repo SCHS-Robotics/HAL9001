@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.SCHSRobotics.HAL9001.system.tempmenupackage.StringUtils.splitEqually;
 
-public class TextSelectionMenu extends ListViewMenu {
+public class TextSelectionMenu extends HALMenu {
     private static final int MINI_CYCLE_MAX_SIZE = 4;
     private TextInput.CharSet charSet;
     private StringBuilder entryBuilder;
@@ -18,7 +18,32 @@ public class TextSelectionMenu extends ListViewMenu {
         super(payload);
         this.charSet = charSet;
         this.nextMenu = nextMenu;
-        selectionZone = new SelectionZone(new boolean[][]{{false}});
+        selectionZone = new SelectionZone(new boolean[][]{
+                {false},
+                {true},
+                {true},
+                {true},
+                {true},
+                {true},
+                {true},
+                {true},
+                {false},
+                {true},
+                {true},
+                {true},
+                {true},
+                {true},
+                {true},
+                {true},
+                {false},
+                {true},
+                {true},
+                {true},
+                {true},
+                {true},
+                {true},
+                {true},
+        });
         setCursorPos(0,1);
 
         entryBuilder = new StringBuilder().append(' ');
