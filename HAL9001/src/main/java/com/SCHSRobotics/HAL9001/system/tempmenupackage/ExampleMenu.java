@@ -5,7 +5,7 @@ import com.SCHSRobotics.HAL9001.util.misc.Button;
 public class ExampleMenu extends ListViewMenu {
     @Override
     protected void init(Payload payload) {
-        //selectionZone = new SelectionZone(1,2);
+        selectionZone = new SelectionZone(1,2);
         addItem(new ViewButton("# | Fun Times")
                 .onClick(new Button<>(1, Button.BooleanInputs.x), () -> {
                     gui.inflate(new ExampleMenu2());
