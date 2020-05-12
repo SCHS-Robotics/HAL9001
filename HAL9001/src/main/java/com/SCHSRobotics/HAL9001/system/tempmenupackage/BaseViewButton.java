@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
+import android.util.Log;
+
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
@@ -153,6 +155,8 @@ public abstract class BaseViewButton implements ButtonListener {
 
             anythingUpdated |= runProgram;
         }
+
+        Log.wtf("Anything updated?", ""+anythingUpdated);
 
         if(!anythingUpdated) {
             for (int i = 0; i < globalBackgroundOrder; i++) {
