@@ -5,11 +5,11 @@ public class Timer {
     private double duration;
     public Timer() {
         startTime = 0;
-        duration = -1;
+        duration = 0;
     }
 
     public void start() {
-        duration = -1;
+        duration = 0;
         startTime = System.nanoTime();
     }
 
@@ -24,6 +24,6 @@ public class Timer {
     }
 
     public boolean requiredTimeElapsed() {
-        return duration != -1 && getTimePassed(TimeUnit.NANOSECONDS) > duration;
+        return getTimePassed(TimeUnit.NANOSECONDS) > duration;
     }
 }
