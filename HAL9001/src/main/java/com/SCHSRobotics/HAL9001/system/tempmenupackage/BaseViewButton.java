@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class BaseViewButton implements ButtonListener {
+    private static final int MAX_WHILE_PRESS_WAIT_MS = 100;
 
     private CustomizableGamepad input;
     private List<Button<Boolean>> buttons;
@@ -28,6 +29,8 @@ public abstract class BaseViewButton implements ButtonListener {
     private Map<Integer, Program> backgroundPrograms;
     private Map<Integer, Supplier<String>> backgroundTextSupplierPrograms;
     private Map<Integer, Function<String, String>> backgroundTextModifyingPrograms;
+
+    private Map<Integer, Timer> whilePressedTimers;
 
     private int globalBackgroundOrder;
 
@@ -48,6 +51,8 @@ public abstract class BaseViewButton implements ButtonListener {
         backgroundPrograms = new HashMap<>();
         backgroundTextSupplierPrograms = new HashMap<>();
         backgroundTextModifyingPrograms = new HashMap<>();
+
+        whilePressedTimers = new HashMap<>();
 
         globalBackgroundOrder = 0;
         disabledTimer = new Timer();
@@ -76,18 +81,21 @@ public abstract class BaseViewButton implements ButtonListener {
 
     public BaseViewButton whileClicked(Button<Boolean> button, Program program) {
         programs.put(buttons.size(), program);
+        whilePressedTimers.put(buttons.size(), new Timer());
         buttons.add(button);
         return this;
     }
 
     public BaseViewButton whileClicked(Button<Boolean> button, Supplier<String> program) {
         textSupplierPrograms.put(buttons.size(), program);
+        whilePressedTimers.put(buttons.size(), new Timer());
         buttons.add(button);
         return this;
     }
 
     public BaseViewButton whileClicked(Button<Boolean> button, Function<String, String> program) {
         textModifyingPrograms.put(buttons.size(), program);
+        whilePressedTimers.put(buttons.size(), new Timer());
         buttons.add(button);
         return this;
     }
@@ -125,15 +133,20 @@ public abstract class BaseViewButton implements ButtonListener {
         }
         boolean anythingUpdated = false;
         for (int i = 0; i < buttons.size(); i++) {
-            boolean runProgram;
+            boolean runProgram = false;
             if(toggleLookup.containsKey(i)) {
                 Toggle currentToggle = toggleLookup.get(i);
                 ExceptionChecker.assertNonNull(currentToggle, new NullPointerException("Toggle was null. This should be impossible."));
                 currentToggle.updateToggle(input.getInput(buttons.get(i)));
                 runProgram = currentToggle.getCurrentState();
             }
-            else {
-                runProgram = input.getInput(buttons.get(i));
+            else if(whilePressedTimers.containsKey(i)) {
+                Timer whilePressedTimer = whilePressedTimers.get(i);
+                ExceptionChecker.assertNonNull(whilePressedTimer, new NullPointerException("Timer was null, this should be impossible."));
+                if(whilePressedTimer.requiredTimeElapsed()) {
+                    runProgram = input.getInput(buttons.get(i));
+                    whilePressedTimer.start(MAX_WHILE_PRESS_WAIT_MS, TimeUnit.MILLISECONDS);
+                }
             }
             if(runProgram && programs.containsKey(i)) {
                 Program program = programs.get(i);

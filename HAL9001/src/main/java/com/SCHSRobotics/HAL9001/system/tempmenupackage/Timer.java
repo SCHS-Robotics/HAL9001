@@ -23,6 +23,14 @@ public class Timer {
         startTime = System.nanoTime();
     }
 
+    public void start(long duration, TimeUnit timeUnit) {
+        start((double) duration, timeUnit);
+    }
+
+    public void reset() {
+        startTime = System.nanoTime();
+    }
+
     public boolean requiredTimeElapsed() {
         return getTimePassed(TimeUnit.NANOSECONDS) > duration;
     }

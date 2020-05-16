@@ -10,6 +10,4 @@ dependencies {
     implementation 'org.jetbrains:annotations:16.0.2'
 
     implementation 'junit:junit:4.13'
-
-    //implementation 'de.icongmbh.oss.maven.plugins:javassist-maven-plugin:2.0.0'
 }

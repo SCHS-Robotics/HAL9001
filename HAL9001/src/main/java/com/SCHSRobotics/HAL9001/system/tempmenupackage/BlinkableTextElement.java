@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //Todo, may not keep
-public class BlinkableTextElement extends TextElement implements ViewListener, Blinkable, MutableTextViewElement {
+public class BlinkableTextElement extends TextElement implements Blinkable, MutableTextViewElement {
     private char[] blinkingCharArray;
     private String unmodifiedText, text;
     private HALMenu.BlinkState currentBlinkState;
@@ -25,29 +25,21 @@ public class BlinkableTextElement extends TextElement implements ViewListener, B
         blinkingEnabled = true;
     }
 
-
     @Override
-    public boolean update() {
-        if(!blinkingEnabled) {
-            text = unmodifiedText;
-            return false;
-        }
-        if(currentBlinkState == HALMenu.BlinkState.ON) {
+    public void onBlinkEvent(HALMenu.BlinkState blinkState) {
+        if(blinkState == HALMenu.BlinkState.ON) {
             text = new String(blinkingCharArray);
         }
         else {
             text = unmodifiedText;
         }
-        return false;
-    }
-
-    @Override
-    public void notifyCurrentBlinkState(HALMenu.BlinkState blinkState) {
-        currentBlinkState = blinkState;
     }
 
     @Override
     public String getText() {
+        if(!blinkingEnabled) {
+            return unmodifiedText;
+        }
         return text;
     }
 

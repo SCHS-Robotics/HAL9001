@@ -207,7 +207,7 @@ public class Button<T> {
     public boolean equals(Object obj) {
         if(obj instanceof Button<?>) {
             Button<?> button = (Button<?>) obj;
-            return this.getInputEnum() == button.getInputEnum();
+            return this.getInputEnum().equals(button.getInputEnum()) && this.getGamepadNumber() == button.getGamepadNumber();
         }
         return false;
     }
