@@ -12,7 +12,7 @@ public abstract class Event implements Comparable<Event> {
         this.priority = priority;
     }
 
-    public static void throwEvent(Event event) {
+    public static void injectEvent(Event event) {
         eventHeap.add(event);
     }
 

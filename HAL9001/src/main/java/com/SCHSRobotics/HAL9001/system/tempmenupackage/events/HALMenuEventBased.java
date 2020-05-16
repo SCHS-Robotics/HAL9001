@@ -169,7 +169,7 @@ public abstract class HALMenuEventBased {
 
         //Generate blink event.
         if(blinkTimer.requiredTimeElapsed() || doForceUpdateCursor) {
-            Event.throwEvent(new BlinkEvent(1, cursorBlinkState.nextState()));
+            Event.injectEvent(new BlinkEvent(1, cursorBlinkState.nextState()));
         }
 
         //Pass events to event listeners.

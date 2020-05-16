@@ -43,13 +43,13 @@ public class GamepadEventGenerator {
                 ExceptionChecker.assertNonNull(boxedPriority, new NullPointerException("Priority for button was null, this should be impossible."));
                 int priority = boxedPriority;
                 if (!lastValue && currentValue) {
-                    Event.throwEvent(new OnClickEvent(priority, booleanButton));
+                    Event.injectEvent(new OnClickEvent(priority, booleanButton));
                 }
                 if (lastValue && !currentValue) {
-                    Event.throwEvent(new OnClickReleaseEvent(priority, booleanButton));
+                    Event.injectEvent(new OnClickReleaseEvent(priority, booleanButton));
                 }
                 if (currentValue) {
-                    Event.throwEvent(new WhileClickEvent(priority, booleanButton));
+                    Event.injectEvent(new WhileClickEvent(priority, booleanButton));
                 }
 
                 lastState.put(booleanButton, currentValue);
