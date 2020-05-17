@@ -86,7 +86,6 @@ public class TextSelectionMenu extends HALMenu {
 
         ViewButton doneButton = new ViewButton("#|Done")
                 .onClick(new Button<>(1, Button.BooleanInputs.a), (DataPacket packet) -> {
-                    Log.wtf("done","ran");
                     //todo parse text to remove bad spaces, spaces = evil
                     payload.add(ENTERED_TEXT_ID, entryDisplayText.getUnmodifiedText());
                     if(nextMenu == null) {
@@ -131,15 +130,17 @@ public class TextSelectionMenu extends HALMenu {
                         char currentChar = entryDisplayText.getUnmodifiedText().charAt(charPositon.get());
                         int currentCharIdx = currentCycle.indexOf(currentChar);
 
+                        Log.wtf("current char Idx", ""+currentChar);
                         if(currentCharIdx != -1) {
                             int nextCharIdx = (currentCharIdx + 1) % currentCycle.length();
                             char nextChar = currentCycle.charAt(nextCharIdx);
-
+                            Log.wtf("next char", ""+nextChar);
                             entryDisplayText.setBlinkEnabled(false);
                             entryDisplayText.setChar(charPositon.get(), nextChar);
                         }
                         else {
                             char nextChar = currentCycle.charAt(0);
+                            Log.wtf("next char", ""+nextChar);
 
                             entryDisplayText.setBlinkEnabled(false);
                             entryDisplayText.setChar(charPositon.get(), nextChar);

@@ -1,7 +1,5 @@
 package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
-import android.util.Log;
-
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 
 import java.util.ArrayList;
@@ -63,9 +61,6 @@ public class BlinkableTextElement implements EventListener, AdvancedViewElement 
         System.arraycopy(blinkingCharArray, 0, newBlinkingCharArray, 0, blinkingCharArray.length);
         newBlinkingCharArray[unmodifiedText.length() - 1] = c;
         blinkingCharArray = newBlinkingCharArray;
-        Log.wtf("test1", unmodifiedText);
-        Log.wtf("test2", new String(blinkingCharArray));
-
     }
 
     @Override
