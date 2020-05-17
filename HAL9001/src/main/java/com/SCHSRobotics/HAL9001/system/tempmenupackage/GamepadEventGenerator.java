@@ -1,7 +1,5 @@
 package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
-import android.util.Log;
-
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
@@ -34,7 +32,6 @@ public class GamepadEventGenerator {
         for(Button<?> button : validButtons) {
             if(button.isBoolean()) {
                 Button<Boolean> booleanButton = (Button<Boolean>) button;
-                Log.wtf("custom gamepad null", ""+(gamepad == null));
                 boolean currentValue = gamepad.getInput(booleanButton);
                 Boolean lastValueBoxed = lastState.get(booleanButton);
                 ExceptionChecker.assertNonNull(lastValueBoxed, new NullPointerException("returned value from gamepad was null, this shouldn't be possible."));
