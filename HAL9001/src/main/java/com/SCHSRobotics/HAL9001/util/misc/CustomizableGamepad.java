@@ -257,10 +257,6 @@ public class CustomizableGamepad {
 
     @SuppressWarnings("unchecked")
     public <T> T getInput(@NotNull Button<T> button) {
-        Log.wtf("robot is null",""+(robot == null));
-        Log.wtf("robot gamepad1 is null",""+(robot.gamepad1 == null));
-        Log.wtf("robot gamepad2 is null",""+(robot.gamepad2 == null));
-
         if(button.isBoolean()) {
             boolean val = getBooleanInput((Button<Boolean>) button);
             return (T) Boolean.valueOf(val);

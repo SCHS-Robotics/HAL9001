@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.BaseTeleop;
 import com.SCHSRobotics.HAL9001.system.tempmenupackage.ExampleMenu;
 import com.SCHSRobotics.HAL9001.system.tempmenupackage.HALGUI;
@@ -18,6 +20,7 @@ public class NewMenuTestProgram extends BaseTeleop {
     @Override
     protected void onStart() {
         gui = HALGUI.getInstance();
+        Log.wtf("robot null", ""+(robot == null));
         gui.setup(robot, new Button<>(1, Button.BooleanInputs.noButton));
         Payload payload = new Payload()
                 .add(TextSelectionMenu.CHAR_SET_ID, TextInput.CharSet.ALPHANUMERIC_SPECIAL)

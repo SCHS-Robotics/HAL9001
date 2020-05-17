@@ -1,7 +1,5 @@
 package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
-import android.util.Log;
-
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
@@ -77,7 +75,6 @@ public class HALGUI {
      * @param cycleButton The button used to cycle between menu trees.
      */
     public void setup(Robot robot, Button<Boolean> cycleButton) {
-        Log.wtf("Setup", "ran setup");
         this.robot = robot;
         cycleControls = new CustomizableGamepad(robot);
         this.cycleButton = cycleButton;
