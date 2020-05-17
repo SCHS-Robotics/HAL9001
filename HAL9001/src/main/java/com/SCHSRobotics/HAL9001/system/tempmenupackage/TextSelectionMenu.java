@@ -99,7 +99,6 @@ public class TextSelectionMenu extends HALMenu {
 
         addItem(new EntireViewButton()
                 .onClick(new Button<>(1, Button.BooleanInputs.dpad_right), (DataPacket packet) -> {
-                    Log.wtf("test","ran");
                     if(charPositon.get() == entryDisplayText.getUnmodifiedText().length() - 1) {
                         entryDisplayText.append(' ');
                     }
