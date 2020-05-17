@@ -207,8 +207,24 @@ public class Button<T> {
     public boolean equals(Object obj) {
         if(obj instanceof Button<?>) {
             Button<?> button = (Button<?>) obj;
-            return this.getInputEnum().equals(button.getInputEnum()) && this.getGamepadNumber() == button.getGamepadNumber();
+            return this.hashCode() == button.hashCode();
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int enumCode = getInputEnum().hashCode();
+        enumCode = enumCode << 3;
+        if(isDouble) {
+            enumCode |= 1;
+        }
+        else if(isVector) {
+            enumCode |= 2;
+        }
+        if(gamepadNumber == 1) {
+            enumCode |= 4;
+        }
+        return enumCode;
     }
 }
