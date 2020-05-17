@@ -130,13 +130,14 @@ public class TextSelectionMenu extends HALMenu {
                         char currentChar = entryDisplayText.getUnmodifiedText().charAt(charPositon.get());
                         int currentCharIdx = currentCycle.indexOf(currentChar);
 
-                        Log.wtf("current char Idx", ""+currentChar);
+                        Log.wtf("current char Idx", ""+Integer.toString(currentChar));
                         if(currentCharIdx != -1) {
                             int nextCharIdx = (currentCharIdx + 1) % currentCycle.length();
                             char nextChar = currentCycle.charAt(nextCharIdx);
                             Log.wtf("next char", ""+nextChar);
                             entryDisplayText.setBlinkEnabled(false);
                             entryDisplayText.setChar(charPositon.get(), nextChar);
+                            Log.wtf("unmodified text", entryDisplayText.getUnmodifiedText());
                         }
                         else {
                             char nextChar = currentCycle.charAt(0);
@@ -144,6 +145,7 @@ public class TextSelectionMenu extends HALMenu {
 
                             entryDisplayText.setBlinkEnabled(false);
                             entryDisplayText.setChar(charPositon.get(), nextChar);
+                            Log.wtf("unmodified text", entryDisplayText.getUnmodifiedText());
                         }
                     }));
                 cycleIdx++;
