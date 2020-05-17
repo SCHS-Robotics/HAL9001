@@ -16,8 +16,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class SubSystem {
 
-    private static int globalId = 0;
-    private int id;
     //The robot the subsystem belongs to.
     protected Robot robot;
     //A boolean specifying whether or not the subsystem should use the configuration menu.
@@ -31,8 +29,6 @@ public abstract class SubSystem {
     public SubSystem(@NotNull Robot robot) {
         this.robot = robot;
         usesConfig = false;
-        id = globalId;
-        globalId++;
         initVars();
     }
 

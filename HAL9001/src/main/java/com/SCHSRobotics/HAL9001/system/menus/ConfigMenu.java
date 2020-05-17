@@ -2,6 +2,7 @@ package com.SCHSRobotics.HAL9001.system.menus;
 
 import android.util.Log;
 
+import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
 import com.SCHSRobotics.HAL9001.system.source.GUI.GUI;
 import com.SCHSRobotics.HAL9001.system.source.GUI.GuiLine;
 import com.SCHSRobotics.HAL9001.system.source.GUI.ScrollingListMenu;
@@ -11,7 +12,6 @@ import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.functional_interfaces.BiFunction;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigParam;
-import com.SCHSRobotics.HAL9001.util.misc.HALConfig;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A menu class used for configuring robots.
@@ -56,7 +58,10 @@ public class ConfigMenu extends ScrollingListMenu {
     private MenuState menuState;
 
     //Internally tracks whether autonomous or teleop is being configured.
-    private HALConfig.Mode configState;
+    private enum ConfigurationState {
+        AUTONOMOUS, TELEOP
+    }
+    private ConfigurationState configState;
 
     //A string containing all characters supported by the configuration naming program.
     private static final String SUPPORTED_CHARS = "#abcdefghijklmnopqrstuvwxyz0123456789";
@@ -67,10 +72,7 @@ public class ConfigMenu extends ScrollingListMenu {
     //An internal variable that stores the name of the currently selected subsystem while the user is configuring that subsystem.
     private String selectedSubsystemName;
     //The current configuration. It maps the name of the subsystem to a list of ConfigParams representing the current config settings of that subsystem.
-    private HALConfig workingConfig;
-
-    private HALConfig globalConfig;
-
+    private Map<String,List<ConfigParam>> config;
     //A boolean value tracking whether a new config file was recently created. Used for back button functionality while creating new configs.
     private boolean createdNewConfig = false;
     //The GuiLine containing the name of the config file being created by the menu. Used for back button functionality while creating new configs.
@@ -107,14 +109,15 @@ public class ConfigMenu extends ScrollingListMenu {
         super(gui, new ConfigCursor(gui.robot,500), genInitialLines(standAloneMode ? filePath : gui.robot.isAutonomous() ? filePath + "/autonomous" : filePath + "/teleop"),1,genInitialLines(standAloneMode ? filePath : gui.robot.isAutonomous() ? filePath + "/autonomous" : filePath + "/teleop").size());
 
         menuState = MenuState.ROOT_DIR;
-        configState = gui.robot.isAutonomous() ? HALConfig.Mode.AUTONOMOUS : HALConfig.Mode.TELEOP;
+        configState = gui.robot.isAutonomous() ? ConfigurationState.AUTONOMOUS : ConfigurationState.TELEOP;
+        config = new HashMap<>();
 
         //Is in standalone mode.
         if(standAloneMode) {
             currentFilepath = filePath;
         }
         //Is not in standalone mode and is being run from autonomous.
-        else if(configState == HALConfig.Mode.AUTONOMOUS) {
+        else if(configState == ConfigurationState.AUTONOMOUS) {
             robotFolder = filePath;
             currentFilepath = robotFolder + "/autonomous";
         }
@@ -147,8 +150,6 @@ public class ConfigMenu extends ScrollingListMenu {
         }
 
         this.standAloneMode = standAloneMode;
-        workingConfig = new HALConfig();
-        globalConfig = HALConfig.getGlobalInstance();
     }
 
     @Override
@@ -209,11 +210,11 @@ public class ConfigMenu extends ScrollingListMenu {
                         isDone = true;
                     }
                     //If not in standalone mode, running autonomous config, and a config is selected, export that config, then transition back to root_dir and switch to teleop configuration.
-                    else if(configState == HALConfig.Mode.AUTONOMOUS && genConfigLines(currentFilepath).size() > 0){
+                    else if(configState == ConfigurationState.AUTONOMOUS && genConfigLines(currentFilepath).size() > 0){
 
                         exportConfigFile(currentFilepath + '/' + lines.get(cursor.getY()).getPostSelectionText() + ".txt");
 
-                        configState = HALConfig.Mode.TELEOP;
+                        configState = ConfigurationState.TELEOP;
                         genDefaultConfigMap();
 
                         currentFilepath = robotFolder + "/teleop";
@@ -222,7 +223,7 @@ public class ConfigMenu extends ScrollingListMenu {
                         setRootDirLines();
                     }
                     //If not in standalone mode, running teleop config, and a config is selected, export that config, then write the location of that config file to robot_info.txt in the teleop folder and transition to done.
-                    else if(configState == HALConfig.Mode.TELEOP && genConfigLines(currentFilepath).size() > 0) {
+                    else if(configState == ConfigurationState.TELEOP && genConfigLines(currentFilepath).size() > 0) {
                         menuState = MenuState.DONE;
 
                         exportConfigFile(currentFilepath + '/' + lines.get(cursor.getY()).getPostSelectionText() + ".txt");
@@ -378,7 +379,7 @@ public class ConfigMenu extends ScrollingListMenu {
                     if (!lines.get(cursor.getY()).getPostSelectionText().equals("Done")) {
                         String[] data = parseOptionLine(lines.get(cursor.getY()));
 
-                        List<ConfigParam> subsystemParams = workingConfig.getConfig(configState, selectedSubsystemName);
+                        List<ConfigParam> subsystemParams = config.get(selectedSubsystemName);
 
                         if(subsystemParams == null) {
                             Log.w("Config Menu Warning", "Selected Subsystem wasn't found! Setting config for that subsystem to an empty list.");
@@ -411,7 +412,7 @@ public class ConfigMenu extends ScrollingListMenu {
                 else if(name.equals(ConfigCursor.REVERSE_SELECT) && !lines.get(cursor.getY()).getPostSelectionText().equals("Done")) {
                     String[] data = parseOptionLine(lines.get(cursor.getY()));
 
-                    List<ConfigParam> subsystemParams = workingConfig.getConfig(configState, selectedSubsystemName);
+                    List<ConfigParam> subsystemParams = config.get(selectedSubsystemName);
 
                     if(subsystemParams == null) {
                         Log.w("Config Menu Warning", "Selected Subsystem wasn't found! Setting config for that subsystem to an empty list.");
@@ -443,7 +444,7 @@ public class ConfigMenu extends ScrollingListMenu {
                     if (tempIdx != -1) {
                         currentOptionValue = unparsedLine.substring(unparsedLine.indexOf('|') + 1, unparsedLine.indexOf('|') + tempIdx).trim();
                         currentGamepadOptionValue = unparsedLine.substring(unparsedLine.indexOf('|') + tempIdx + 3).trim();
-                        List<ConfigParam> subsystemParams = workingConfig.getConfig(configState, selectedSubsystemName);
+                        List<ConfigParam> subsystemParams = config.get(selectedSubsystemName);
 
                         if(subsystemParams == null) {
                             Log.w("Config Menu Warning", "Selected Subsystem wasn't found! Setting config for that subsystem to an empty list.");
@@ -614,7 +615,7 @@ public class ConfigMenu extends ScrollingListMenu {
     private void setConfigureSubsystemLines() {
         List<GuiLine> newLines = new ArrayList<>();
 
-        List<ConfigParam> subsystemParams = workingConfig.getConfig(configState, selectedSubsystemName);
+        List<ConfigParam> subsystemParams = config.get(selectedSubsystemName);
 
         if(subsystemParams == null) {
             Log.w("Config Menu Warning", "Selected Subsystem wasn't found! Setting config for that subsystem to an empty list.");
@@ -664,7 +665,7 @@ public class ConfigMenu extends ScrollingListMenu {
      */
     private void setSelectSubsystemLines() {
         List<GuiLine> newLines = new ArrayList<>();
-        for(String subsystem : workingConfig.getSubsystemNames()) {
+        for(String subsystem : config.keySet()) {
             newLines.add(new GuiLine("#",subsystem));
         }
         newLines.add(new GuiLine("#", "Done"));
@@ -697,7 +698,44 @@ public class ConfigMenu extends ScrollingListMenu {
      * Pulls default config from MainRobot's global teleop and autonomous config maps.
      */
     private void genDefaultConfigMap() {
-        workingConfig = HALConfig.getDefaultConfig();
+        config = new HashMap<>();
+
+        if(configState == ConfigurationState.AUTONOMOUS) {
+            for (String subsystem : Robot.autonomousConfig.keySet()) {
+                List<ConfigParam> params = new ArrayList<>();
+                List<ConfigParam> autoConfig = Robot.autonomousConfig.get(subsystem);
+
+                if(autoConfig == null) {
+                    Log.w("Config Menu Warning", "Autonomous global config doesn't exist! Setting it to an empty list.");
+                    autoConfig = new ArrayList<>();
+                }
+
+                for (ConfigParam param : autoConfig) {
+                    ConfigParam p = param.clone();
+                    p.currentOption = p.getDefaultOption();
+                    params.add(p);
+                }
+                config.put(subsystem, params);
+            }
+        }
+        else  {
+            for (String subsystem : Robot.teleopConfig.keySet()) {
+                List<ConfigParam> params = new ArrayList<>();
+                List<ConfigParam> teleopConfig = Robot.teleopConfig.get(subsystem);
+
+                if(teleopConfig == null) {
+                    Log.w("Config Menu Warning", "Teleop global config doesn't exist! Setting it to an empty list.");
+                    teleopConfig = new ArrayList<>();
+                }
+
+                for (ConfigParam param : teleopConfig) {
+                    ConfigParam p = param.clone();
+                    p.currentOption = p.getDefaultOption();
+                    params.add(p);
+                }
+                config.put(subsystem, params);
+            }
+        }
     }
 
     /**
@@ -711,7 +749,7 @@ public class ConfigMenu extends ScrollingListMenu {
         for(int i = 0; i < newConfig.size(); i++) {
             String[] data = parseOptionLine(newConfig.get(i));
 
-            List<ConfigParam> params = workingConfig.getConfig(configState, subsystemName);
+            List<ConfigParam> params = config.get(subsystemName);
 
             if(params != null) {
                 params.get(i).name = data[0];
@@ -731,11 +769,46 @@ public class ConfigMenu extends ScrollingListMenu {
      */
     private void exportConfigFile(String filepath) {
 
-        if(workingConfig.isEmpty()) {
+        if(config.isEmpty()) {
             genDefaultConfigMap();
         }
+
         readConfigFile(filepath);
-        HALConfig.updateGlobalConfig(workingConfig);
+
+        if(configState == ConfigurationState.AUTONOMOUS) {
+            Robot.autonomousConfig = new HashMap<>();
+            for (String subsystem : config.keySet()) {
+                List<ConfigParam> params = new ArrayList<>();
+                List<ConfigParam> subsystemParams = config.get(subsystem);
+
+                if(subsystemParams == null) {
+                    Log.w("Config Menu Warning", "Autonomous config for subsystem " + subsystem + " does not exist! Setting the config to an empty list.");
+                    subsystemParams = new ArrayList<>();
+                }
+
+                for (ConfigParam param : subsystemParams) {
+                    params.add(param.clone());
+                }
+                Robot.autonomousConfig.put(subsystem, params);
+            }
+        }
+        else {
+            Robot.teleopConfig = new HashMap<>();
+            for (String subsystem : config.keySet()) {
+                List<ConfigParam> params = new ArrayList<>();
+                List<ConfigParam> subsystemParams = config.get(subsystem);
+
+                if(subsystemParams == null) {
+                    Log.w("Config Menu Warning", "Teleop config for subsystem " + subsystem + " does not exist! Setting the config to an empty list.");
+                    subsystemParams = new ArrayList<>();
+                }
+
+                for (ConfigParam param : subsystemParams) {
+                    params.add(param.clone());
+                }
+                Robot.teleopConfig.put(subsystem, params);
+            }
+        }
     }
 
     /**
@@ -766,7 +839,7 @@ public class ConfigMenu extends ScrollingListMenu {
                     if(!data[0].equals(lastSubsystem)) {
                         i = 0;
                     }
-                    List<ConfigParam> params = workingConfig.getConfig(configState, data[0]);
+                    List<ConfigParam> params = config.get(data[0]);
                     if(params != null) {
                         if(params.get(i).name.equals(data[1].trim())) {
                             params.get(i).name = data[1].trim();
@@ -843,8 +916,8 @@ public class ConfigMenu extends ScrollingListMenu {
      */
     private void writeConfigFile(@NotNull String configPath) {
         StringBuilder sb = new StringBuilder();
-        for(String subsystem : workingConfig.getSubsystemNames()) {
-            List<ConfigParam> params = workingConfig.getConfig(configState, subsystem);
+        for(String subsystem : config.keySet()) {
+            List<ConfigParam> params = config.get(subsystem);
             ExceptionChecker.assertNonNull(params, new NullPointerException("If you are seeing this, Java broke. Good luck!"));
             for(ConfigParam param : params) {
                 sb.append(subsystem);

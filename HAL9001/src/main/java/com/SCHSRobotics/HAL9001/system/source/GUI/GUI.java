@@ -2,10 +2,10 @@ package com.SCHSRobotics.HAL9001.system.source.GUI;
 
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
+import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -50,33 +50,34 @@ public class GUI {
     //The name of the cycle menus button.
     private static final String CYCLE_MENUS = "CycleMenus";
 
-    private static GUI INSTANCE = new GUI();
+    /**
+     * Constructor for GUI.
+     *
+     * @param robot The robot using the instance of GUI.
+     * @param flipMenu The button used to cycle between multiple stored menus.
+     *
+     * @throws NotBooleanInputException Throws an exception if button does not return boolean values.
+     */
+    public GUI(@NotNull Robot robot, @NotNull Button flipMenu) {
+        this.robot = robot;
+        this.menus = new HashMap<>();
 
-    private GUI() {
-        menus = new HashMap<>();
+        this.inputs = new CustomizableGamepad(robot);
+
         menuKeys = new ArrayList<>();
 
+        ExceptionChecker.assertTrue(flipMenu.isBoolean, new NotBooleanInputException("A non-boolean input was passed to the controller as a boolean input"));
+        this.inputs.addButton(CYCLE_MENUS, flipMenu);
+
         cursorBlinkState = 0;
+        lastBlinkTimeMs = System.currentTimeMillis();
         lastRenderTime = 0;
         flag = false;
         cycle = false;
         activeMenuIdx = 0;
-    }
 
-    public static void setup(Robot robot, Button<Boolean> cycleButton) {
-        INSTANCE.robot = robot;
-
-        INSTANCE.inputs = new CustomizableGamepad(robot);
-        INSTANCE.inputs.addButton(CYCLE_MENUS, cycleButton);
-
-        INSTANCE.lastBlinkTimeMs = System.currentTimeMillis();
         robot.telemetry.setAutoClear(false);
         robot.telemetry.setMsTransmissionInterval(50);
-    }
-
-    @Contract(pure = true)
-    public static GUI getInstance() {
-        return INSTANCE;
     }
 
     /**
@@ -110,15 +111,14 @@ public class GUI {
     public void drawCurrentMenu(){
         if(menus.size() != 0) {
             cursor.update();
-            boolean cycleMenus = inputs.getInput(CYCLE_MENUS);
-            if (cycleMenus && flag) {
+            if (inputs.getBooleanInput(CYCLE_MENUS) && flag) {
                 activeMenuIdx++;
                 activeMenuIdx = activeMenuIdx % menuKeys.size();
                 setActiveMenu(menuKeys.get(activeMenuIdx));
                 cursor.cursorUpdated = true;
                 flag = false;
                 cycle = true;
-            } else if (!cycleMenus && !flag) {
+            } else if (!inputs.getBooleanInput(CYCLE_MENUS) && !flag) {
                 flag = true;
                 cycle = false;
             }
@@ -146,15 +146,14 @@ public class GUI {
     public void drawCurrentMenuInit(){
         if(menus.size() != 0) {
             cursor.update();
-            boolean cycleMenus = inputs.getInput(CYCLE_MENUS);
-            if (cycleMenus && flag) {
+            if (inputs.getBooleanInput(CYCLE_MENUS) && flag) {
                 activeMenuIdx++;
                 activeMenuIdx = activeMenuIdx % menuKeys.size();
                 setActiveMenu(menuKeys.get(activeMenuIdx));
                 cursor.cursorUpdated = true;
                 flag = false;
                 cycle = true;
-            } else if (!cycleMenus && !flag) {
+            } else if (!inputs.getBooleanInput(CYCLE_MENUS) && !flag) {
                 flag = true;
                 cycle = false;
             }
@@ -307,7 +306,7 @@ public class GUI {
      *
      * @param cycleButton - The button that will be used to cycle through menus.
      */
-    public void overrideCycleButton(@NotNull Button<Boolean> cycleButton) {
+    public void overrideCycleButton(@NotNull Button cycleButton) {
         inputs.removeButton(CYCLE_MENUS);
         inputs.addButton(CYCLE_MENUS,cycleButton);
     }

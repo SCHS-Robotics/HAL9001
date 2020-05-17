@@ -2,6 +2,7 @@ package com.SCHSRobotics.HAL9001.util.misc;
 
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Rect;
 
@@ -30,6 +31,7 @@ public class NonMaxSuppressor {
      *
      * @param thresh The area overlap threshold.
      */
+    @Contract(pure = true)
     public NonMaxSuppressor(double thresh) {
         this.thresh = thresh;
     }

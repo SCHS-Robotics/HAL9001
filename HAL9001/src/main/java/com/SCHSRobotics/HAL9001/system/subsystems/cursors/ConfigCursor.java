@@ -3,6 +3,7 @@ package com.SCHSRobotics.HAL9001.system.subsystems.cursors;
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
 import com.SCHSRobotics.HAL9001.system.source.GUI.Cursor;
 import com.SCHSRobotics.HAL9001.system.source.GUI.Menu;
+import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
@@ -46,15 +47,15 @@ public class ConfigCursor extends Cursor {
         super(x, y, blinkSpeedMs, cursorIcon);
         inputs = new CustomizableGamepad(robot);
 
-        inputs.addButton(UP,new Button<Boolean>(1, Button.BooleanInputs.dpad_up));
-        inputs.addButton(DOWN,new Button<Boolean>(1, Button.BooleanInputs.dpad_down));
-        inputs.addButton(LEFT,new Button<Boolean>(1, Button.BooleanInputs.dpad_left));
-        inputs.addButton(RIGHT,new Button<Boolean>(1, Button.BooleanInputs.dpad_right));
-        inputs.addButton(SELECT, new Button<Boolean>(1, Button.BooleanInputs.a));
-        inputs.addButton(REVERSE_SELECT, new Button<Boolean>(1, Button.BooleanInputs.b));
-        inputs.addButton(SWITCH_GAMEPAD, new Button<Boolean>(1, Button.BooleanInputs.y));
-        inputs.addButton(BACK_BUTTON, new Button<Boolean>(1, Button.BooleanInputs.x));
-        inputs.addButton(DISABLE_AUTORUN, new Button<Boolean>(1, Button.BooleanInputs.left_bumper));
+        inputs.addButton(UP,new Button(1, Button.BooleanInputs.dpad_up));
+        inputs.addButton(DOWN,new Button(1, Button.BooleanInputs.dpad_down));
+        inputs.addButton(LEFT,new Button(1, Button.BooleanInputs.dpad_left));
+        inputs.addButton(RIGHT,new Button(1, Button.BooleanInputs.dpad_right));
+        inputs.addButton(SELECT, new Button(1, Button.BooleanInputs.a));
+        inputs.addButton(REVERSE_SELECT, new Button(1, Button.BooleanInputs.b));
+        inputs.addButton(SWITCH_GAMEPAD, new Button(1, Button.BooleanInputs.y));
+        inputs.addButton(BACK_BUTTON, new Button(1, Button.BooleanInputs.x));
+        inputs.addButton(DISABLE_AUTORUN, new Button(1, Button.BooleanInputs.left_bumper));
 
         doBlink = true;
         writeMode = false;
@@ -71,15 +72,15 @@ public class ConfigCursor extends Cursor {
         super(blinkSpeedMs, cursorIcon);
         inputs = new CustomizableGamepad(robot);
 
-        inputs.addButton(UP,new Button<Boolean>(1, Button.BooleanInputs.dpad_up));
-        inputs.addButton(DOWN,new Button<Boolean>(1, Button.BooleanInputs.dpad_down));
-        inputs.addButton(LEFT,new Button<Boolean>(1, Button.BooleanInputs.dpad_left));
-        inputs.addButton(RIGHT,new Button<Boolean>(1, Button.BooleanInputs.dpad_right));
-        inputs.addButton(SELECT, new Button<Boolean>(1, Button.BooleanInputs.a));
-        inputs.addButton(REVERSE_SELECT, new Button<Boolean>(1, Button.BooleanInputs.b));
-        inputs.addButton(SWITCH_GAMEPAD, new Button<Boolean>(1, Button.BooleanInputs.y));
-        inputs.addButton(BACK_BUTTON, new Button<Boolean>(1, Button.BooleanInputs.x));
-        inputs.addButton(DISABLE_AUTORUN, new Button<Boolean>(1, Button.BooleanInputs.left_bumper));
+        inputs.addButton(UP,new Button(1, Button.BooleanInputs.dpad_up));
+        inputs.addButton(DOWN,new Button(1, Button.BooleanInputs.dpad_down));
+        inputs.addButton(LEFT,new Button(1, Button.BooleanInputs.dpad_left));
+        inputs.addButton(RIGHT,new Button(1, Button.BooleanInputs.dpad_right));
+        inputs.addButton(SELECT, new Button(1, Button.BooleanInputs.a));
+        inputs.addButton(REVERSE_SELECT, new Button(1, Button.BooleanInputs.b));
+        inputs.addButton(SWITCH_GAMEPAD, new Button(1, Button.BooleanInputs.y));
+        inputs.addButton(BACK_BUTTON, new Button(1, Button.BooleanInputs.x));
+        inputs.addButton(DISABLE_AUTORUN, new Button(1, Button.BooleanInputs.left_bumper));
 
         doBlink = true;
         writeMode = false;
@@ -95,15 +96,15 @@ public class ConfigCursor extends Cursor {
         super(blinkSpeedMs);
         inputs = new CustomizableGamepad(robot);
 
-        inputs.addButton(UP,new Button<Boolean>(1, Button.BooleanInputs.dpad_up));
-        inputs.addButton(DOWN,new Button<Boolean>(1, Button.BooleanInputs.dpad_down));
-        inputs.addButton(LEFT,new Button<Boolean>(1, Button.BooleanInputs.dpad_left));
-        inputs.addButton(RIGHT,new Button<Boolean>(1, Button.BooleanInputs.dpad_right));
-        inputs.addButton(SELECT, new Button<Boolean>(1, Button.BooleanInputs.a));
-        inputs.addButton(REVERSE_SELECT, new Button<Boolean>(1, Button.BooleanInputs.b));
-        inputs.addButton(SWITCH_GAMEPAD, new Button<Boolean>(1, Button.BooleanInputs.y));
-        inputs.addButton(BACK_BUTTON, new Button<Boolean>(1, Button.BooleanInputs.x));
-        inputs.addButton(DISABLE_AUTORUN, new Button<Boolean>(1, Button.BooleanInputs.left_bumper));
+        inputs.addButton(UP,new Button(1, Button.BooleanInputs.dpad_up));
+        inputs.addButton(DOWN,new Button(1, Button.BooleanInputs.dpad_down));
+        inputs.addButton(LEFT,new Button(1, Button.BooleanInputs.dpad_left));
+        inputs.addButton(RIGHT,new Button(1, Button.BooleanInputs.dpad_right));
+        inputs.addButton(SELECT, new Button(1, Button.BooleanInputs.a));
+        inputs.addButton(REVERSE_SELECT, new Button(1, Button.BooleanInputs.b));
+        inputs.addButton(SWITCH_GAMEPAD, new Button(1, Button.BooleanInputs.y));
+        inputs.addButton(BACK_BUTTON, new Button(1, Button.BooleanInputs.x));
+        inputs.addButton(DISABLE_AUTORUN, new Button(1, Button.BooleanInputs.left_bumper));
 
         doBlink = true;
         writeMode = false;
@@ -121,15 +122,15 @@ public class ConfigCursor extends Cursor {
         super(x, y, blinkSpeedMs);
         inputs = new CustomizableGamepad(robot);
 
-        inputs.addButton(UP,new Button<Boolean>(1, Button.BooleanInputs.dpad_up));
-        inputs.addButton(DOWN,new Button<Boolean>(1, Button.BooleanInputs.dpad_down));
-        inputs.addButton(LEFT,new Button<Boolean>(1, Button.BooleanInputs.dpad_left));
-        inputs.addButton(RIGHT,new Button<Boolean>(1, Button.BooleanInputs.dpad_right));
-        inputs.addButton(SELECT, new Button<Boolean>(1, Button.BooleanInputs.a));
-        inputs.addButton(REVERSE_SELECT, new Button<Boolean>(1, Button.BooleanInputs.b));
-        inputs.addButton(SWITCH_GAMEPAD, new Button<Boolean>(1, Button.BooleanInputs.y));
-        inputs.addButton(BACK_BUTTON, new Button<Boolean>(1, Button.BooleanInputs.x));
-        inputs.addButton(DISABLE_AUTORUN, new Button<Boolean>(1, Button.BooleanInputs.left_bumper));
+        inputs.addButton(UP,new Button(1, Button.BooleanInputs.dpad_up));
+        inputs.addButton(DOWN,new Button(1, Button.BooleanInputs.dpad_down));
+        inputs.addButton(LEFT,new Button(1, Button.BooleanInputs.dpad_left));
+        inputs.addButton(RIGHT,new Button(1, Button.BooleanInputs.dpad_right));
+        inputs.addButton(SELECT, new Button(1, Button.BooleanInputs.a));
+        inputs.addButton(REVERSE_SELECT, new Button(1, Button.BooleanInputs.b));
+        inputs.addButton(SWITCH_GAMEPAD, new Button(1, Button.BooleanInputs.y));
+        inputs.addButton(BACK_BUTTON, new Button(1, Button.BooleanInputs.x));
+        inputs.addButton(DISABLE_AUTORUN, new Button(1, Button.BooleanInputs.left_bumper));
 
         doBlink = true;
         writeMode = false;
@@ -147,7 +148,8 @@ public class ConfigCursor extends Cursor {
      * @throws NotBooleanInputException Throws an exception if button does not return boolean values.
      */
     @SuppressWarnings("unused")
-    public void setInputs(@NotNull Button<Boolean> up, @NotNull Button<Button> down, @NotNull Button<Boolean> left, @NotNull Button<Boolean> right, @NotNull Button<Boolean> select, @NotNull Button<Boolean> reverseSelect, @NotNull Button<Boolean> switchGamepad, @NotNull Button<Boolean> backButton){
+    public void setInputs(@NotNull Button up, @NotNull Button down, @NotNull Button left, @NotNull Button right, @NotNull Button select, @NotNull Button reverseSelect, @NotNull Button switchGamepad, @NotNull Button backButton){
+        ExceptionChecker.assertTrue(up.isBoolean && down.isBoolean && left.isBoolean && right.isBoolean && select.isBoolean && reverseSelect.isBoolean && switchGamepad.isBoolean && backButton.isBoolean, new NotBooleanInputException("ConfigCursor requires all boolean inputs"));
         inputs.addButton(UP, up);
         inputs.addButton(DOWN, down);
         inputs.addButton(LEFT, left);
@@ -156,7 +158,7 @@ public class ConfigCursor extends Cursor {
         inputs.addButton(REVERSE_SELECT, reverseSelect);
         inputs.addButton(SWITCH_GAMEPAD, switchGamepad);
         inputs.addButton(BACK_BUTTON, backButton);
-        inputs.addButton(DISABLE_AUTORUN, new Button<Boolean>(1, Button.BooleanInputs.left_bumper));
+        inputs.addButton(DISABLE_AUTORUN, new Button(1, Button.BooleanInputs.left_bumper));
     }
 
     /**
@@ -171,22 +173,22 @@ public class ConfigCursor extends Cursor {
     @Override
     public void update() {
 
-        if((boolean) inputs.getInput(SELECT) && (flag || (writeMode && System.currentTimeMillis()-timeFromLastPressSelectMill > 250))){
+        if(inputs.getBooleanInput(SELECT) && (flag || (writeMode && System.currentTimeMillis()-timeFromLastPressSelectMill > 250))){
             menu.onSelect();
             menu.onButton(SELECT,inputs.getButton(SELECT));
             timeFromLastPressSelectMill = System.currentTimeMillis();
             flag = false;
         }
-        else if((boolean) inputs.getInput(REVERSE_SELECT) && (flag || (writeMode && System.currentTimeMillis()-timeFromLastPressRSelectMill > 250))) {
+        else if(inputs.getBooleanInput(REVERSE_SELECT) && (flag || (writeMode && System.currentTimeMillis()-timeFromLastPressRSelectMill > 250))) {
             menu.onButton(REVERSE_SELECT,inputs.getButton(REVERSE_SELECT));
             timeFromLastPressRSelectMill = System.currentTimeMillis();
             flag = false;
         }
-        else if((boolean) inputs.getInput(SWITCH_GAMEPAD) && flag) {
+        else if(inputs.getBooleanInput(SWITCH_GAMEPAD) && flag) {
             menu.onButton(SWITCH_GAMEPAD,inputs.getButton(SWITCH_GAMEPAD));
             flag = false;
         }
-        else if ((boolean) inputs.getInput(UP) && y - 1 >= 0 && flag) {
+        else if (inputs.getBooleanInput(UP) && y - 1 >= 0 && flag) {
             y--;
             if ((y + 1) % Menu.MAXLINESPERSCREEN == 0) {
                 super.menu.menuUp();
@@ -195,7 +197,7 @@ public class ConfigCursor extends Cursor {
 
             menu.onButton(UP, inputs.getButton(UP));
         }
-        else if ((boolean) inputs.getInput(DOWN) && y + 1 <= super.menu.getSelectionZoneHeight() - 1 && flag) {
+        else if (inputs.getBooleanInput(DOWN) && y + 1 <= super.menu.getSelectionZoneHeight() - 1 && flag) {
             y++;
             if (y % Menu.MAXLINESPERSCREEN == 0) {
                 menu.menuDown();
@@ -204,34 +206,34 @@ public class ConfigCursor extends Cursor {
 
             menu.onButton(DOWN, inputs.getButton(DOWN));
         }
-        else if ((boolean) inputs.getInput(LEFT) && x - 1 >= 0 && flag) {
+        else if (inputs.getBooleanInput(LEFT) && x - 1 >= 0 && flag) {
             x--;
             flag = false;
 
             menu.onButton(LEFT, inputs.getButton(LEFT));
         }
-        else if ((boolean) inputs.getInput(RIGHT) && x + 1 <= menu.getSelectionZoneWidth() - 1 && flag) {
+        else if (inputs.getBooleanInput(RIGHT) && x + 1 <= menu.getSelectionZoneWidth() - 1 && flag) {
             x++;
             flag = false;
 
             menu.onButton(RIGHT, inputs.getButton(RIGHT));
         }
-        else if((boolean) inputs.getInput(BACK_BUTTON) && flag) {
+        else if(inputs.getBooleanInput(BACK_BUTTON) && flag) {
             menu.onButton(BACK_BUTTON, inputs.getButton(BACK_BUTTON));
             flag = false;
         }
-        else if((boolean) inputs.getInput(DISABLE_AUTORUN) && flag) {
+        else if(inputs.getBooleanInput(DISABLE_AUTORUN) && flag) {
             menu.onButton(DISABLE_AUTORUN,inputs.getButton(DISABLE_AUTORUN));
             flag = false;
         }
-        else if (!(boolean) inputs.getInput(SELECT) && !(boolean) inputs.getInput(UP) && !(boolean) inputs.getInput(DOWN) && !(boolean) inputs.getInput(LEFT) && !(boolean) inputs.getInput(RIGHT) && !(boolean) inputs.getInput(REVERSE_SELECT) && !(boolean) inputs.getInput(SWITCH_GAMEPAD) && !(boolean) inputs.getInput(BACK_BUTTON) && !(boolean) inputs.getInput(DISABLE_AUTORUN) && !flag) {
+        else if (!inputs.getBooleanInput(SELECT) && !inputs.getBooleanInput(UP) && !inputs.getBooleanInput(DOWN) && !inputs.getBooleanInput(LEFT) && !inputs.getBooleanInput(RIGHT) && !inputs.getBooleanInput(REVERSE_SELECT) && !inputs.getBooleanInput(SWITCH_GAMEPAD) && !inputs.getBooleanInput(BACK_BUTTON) && !inputs.getBooleanInput(DISABLE_AUTORUN) && !flag) {
             flag = true;
         }
 
         cursorUpdated = !flag;
 
         if(writeMode) {
-            forceCursorChar = !((boolean) inputs.getInput(SELECT) || (boolean) inputs.getInput(REVERSE_SELECT));
+            forceCursorChar = !(inputs.getBooleanInput(SELECT) || inputs.getBooleanInput(REVERSE_SELECT));
         }
         else {
             forceCursorChar = true;
