@@ -7,7 +7,7 @@ public class ExampleMenu3 extends HALMenu {
     protected void init(Payload payload) {
         addItem(new TextElement("Hey, you're not supposed to be here!"));
         addItem(new EntireViewButton()
-            .onClick(new Button<>(1, Button.BooleanInputs.b), () -> {
+            .onClick(new Button<>(1, Button.BooleanInputs.b), (DataPacket packet) -> {
                 gui.back();
              }));
     }

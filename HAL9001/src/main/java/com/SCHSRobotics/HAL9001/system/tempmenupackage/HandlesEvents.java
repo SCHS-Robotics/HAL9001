@@ -1,4 +1,4 @@
-package com.SCHSRobotics.HAL9001.system.tempmenupackage.events;
+package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -107,10 +107,10 @@ public class HALGUI {
         forwardStack.clear();
         menuStacks.add(currentStack);
         cursorControlQueue.add(new EntireViewButton()
-                .onClick(new Button<>(1, Button.BooleanInputs.dpad_up), () -> currentMenu.cursorUp())
-                .onClick(new Button<>(1, Button.BooleanInputs.dpad_down), () -> currentMenu.cursorDown())
-                .onClick(new Button<>(1, Button.BooleanInputs.dpad_left), () -> currentMenu.cursorLeft())
-                .onClick(new Button<>(1, Button.BooleanInputs.dpad_right), () -> currentMenu.cursorRight()));
+                .onClick(new Button<>(1, Button.BooleanInputs.dpad_up), (DataPacket packet) -> currentMenu.cursorUp())
+                .onClick(new Button<>(1, Button.BooleanInputs.dpad_down), (DataPacket packet) -> currentMenu.cursorDown())
+                .onClick(new Button<>(1, Button.BooleanInputs.dpad_left), (DataPacket packet) -> currentMenu.cursorLeft())
+                .onClick(new Button<>(1, Button.BooleanInputs.dpad_right), (DataPacket packet) -> currentMenu.cursorRight()));
         currentMenu.addItem(cursorControlQueue.peek());
         currentMenu.init(new Payload());
     }
@@ -131,7 +131,6 @@ public class HALGUI {
         currentMenu.clear();
         currentMenu.addItem(cursorControlQueue.peek());
         currentMenu.init(payload);
-        currentMenu.disableListeners();
     }
 
     /**
@@ -170,10 +169,10 @@ public class HALGUI {
                 leftButton.equals(rightButton), new DumpsterFireException("All cursor controls must be unique"));
 
         EntireViewButton newCursor = new EntireViewButton()
-                .onClick(upButton, () -> currentMenu.cursorUp())
-                .onClick(downButton, () -> currentMenu.cursorDown())
-                .onClick(leftButton, () -> currentMenu.cursorLeft())
-                .onClick(rightButton, () -> currentMenu.cursorRight());
+                .onClick(upButton, (DataPacket packet) -> currentMenu.cursorUp())
+                .onClick(downButton, (DataPacket packet) -> currentMenu.cursorDown())
+                .onClick(leftButton, (DataPacket packet) -> currentMenu.cursorLeft())
+                .onClick(rightButton, (DataPacket packet) -> currentMenu.cursorRight());
 
         cursorControlQueue.poll();
         cursorControlQueue.add(newCursor);
@@ -191,7 +190,6 @@ public class HALGUI {
             currentMenu.clear();
             currentMenu.addItem(cursorControlQueue.peek());
             currentMenu.init(payload);
-            currentMenu.disableListeners();
         }
     }
 
@@ -206,7 +204,6 @@ public class HALGUI {
             currentMenu.clear();
             currentMenu.addItem(cursorControlQueue.peek());
             currentMenu.init(payload);
-            currentMenu.disableListeners();
         }
     }
 
@@ -221,5 +218,20 @@ public class HALGUI {
         robot = null;
         cycleControls = null;
         cycleButton = null;
+        GamepadEventGenerator.getInstance().reset();
+    }
+
+    public int getCursorX() {
+        if(currentMenu != null) {
+            return currentMenu.getCursorX();
+        }
+        return 0;
+    }
+
+    public int getCursorY() {
+        if(currentMenu != null) {
+            return currentMenu.getCursorY();
+        }
+        return 0;
     }
 }

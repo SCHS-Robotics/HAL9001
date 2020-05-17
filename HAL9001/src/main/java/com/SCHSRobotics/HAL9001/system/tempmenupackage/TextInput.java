@@ -1,14 +1,14 @@
 package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
 import com.SCHSRobotics.HAL9001.util.misc.Button;
-import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 
 import static com.SCHSRobotics.HAL9001.system.tempmenupackage.HALMathUtil.mod;
 import static com.SCHSRobotics.HAL9001.system.tempmenupackage.StringUtils.bilateralStrip;
 import static com.SCHSRobotics.HAL9001.system.tempmenupackage.StringUtils.repeatCharacter;
 import static com.SCHSRobotics.HAL9001.system.tempmenupackage.StringUtils.setChar;
 
-public class TextInput implements ButtonListener, CursorConfigurable {
+@HandlesEvents(events = WhileClickEvent.class)
+public class TextInput implements AdvancedListener, CursorConfigurable {
     private static final char RESERVED_CHAR = '#';
     private static final String NEXT_CHAR = "nextChar", PREVIOUS_CHAR = "previousChar";
 
@@ -29,44 +29,19 @@ public class TextInput implements ButtonListener, CursorConfigurable {
         }
     }
 
-    private String supportedCharacters;
-    //todo make cursor position gui-accessable
-    private HALMenu menu;
     private String text;
-    private CustomizableGamepad selectionControls;
-    private Timer disabledTimer;
-    public TextInput(HALMenu menu, CharSet charSet, int entryLength, Button<Boolean> nextCharButton, Button<Boolean> previousCharButton) {
-        this.menu = menu;
+    private String supportedCharacters;
+    private HALGUI gui;
+    private Button<Boolean> nextCharButton, previousCharButton;
 
+    public TextInput(CharSet charSet, int entryLength, Button<Boolean> nextCharButton, Button<Boolean> previousCharButton) {
         text = repeatCharacter(RESERVED_CHAR, entryLength);
         supportedCharacters = charSet.getString() + RESERVED_CHAR;
-        disabledTimer = new Timer();
 
-        selectionControls = new CustomizableGamepad(HALGUI.getInstance().getRobot());
-        selectionControls.addButton(NEXT_CHAR, nextCharButton);
-        selectionControls.addButton(PREVIOUS_CHAR, previousCharButton);
-    }
+        gui = HALGUI.getInstance();
 
-    @Override
-    public boolean update() {
-        if(!disabledTimer.requiredTimeElapsed()) {
-            return false;
-        }
-
-        boolean triggerUpdate = false;
-        if(selectionControls.getInput(NEXT_CHAR)) {
-            char currentChar = supportedCharacters.charAt(menu.getCursorX());
-            int nextCharIdx = mod(supportedCharacters.indexOf(currentChar) + 1, supportedCharacters.length());
-            text = setChar(text, menu.getCursorX(), supportedCharacters.charAt(nextCharIdx));
-            triggerUpdate = true;
-        }
-        else if(selectionControls.getInput(PREVIOUS_CHAR)) {
-            char currentChar = supportedCharacters.charAt(menu.getCursorX());
-            int nextCharIdx = mod(supportedCharacters.indexOf(currentChar) - 1, supportedCharacters.length());
-            text = setChar(text, menu.getCursorX(), supportedCharacters.charAt(nextCharIdx));
-            triggerUpdate = true;
-        }
-        return triggerUpdate;
+        this.nextCharButton = nextCharButton;
+        this.previousCharButton = previousCharButton;
     }
 
     public String getEnteredText() {
@@ -74,8 +49,13 @@ public class TextInput implements ButtonListener, CursorConfigurable {
     }
 
     @Override
-    public String getText() {
-        return text;
+    public CriteriaPacket getCriteria() {
+        GamepadEventCriteria<OnClickEvent, Button<Boolean>> buttonCriteria = new GamepadEventCriteria<>(nextCharButton, previousCharButton);
+
+        CriteriaPacket criteriaPacket = new CriteriaPacket();
+        criteriaPacket.add(buttonCriteria);
+
+        return criteriaPacket;
     }
 
     @Override
@@ -84,7 +64,33 @@ public class TextInput implements ButtonListener, CursorConfigurable {
     }
 
     @Override
-    public void disable(long timeDisabledMs) {
-        disabledTimer.start((double) timeDisabledMs, TimeUnit.MILLISECONDS);
+    public boolean onEvent(Event eventIn) {
+        if(eventIn instanceof WhileClickEvent) {
+            WhileClickEvent event = (WhileClickEvent) eventIn;
+            Button<Boolean> eventButton = event.getButton();
+
+            char currentChar = supportedCharacters.charAt(gui.getCursorX());
+            int nextCharIdx;
+
+            if(nextCharButton.equals(eventButton)) {
+                nextCharIdx = mod(supportedCharacters.indexOf(currentChar) + 1, supportedCharacters.length());
+            }
+            else {
+                nextCharIdx = mod(supportedCharacters.indexOf(currentChar) - 1, supportedCharacters.length());
+            }
+
+            text = setChar(text, gui.getCursorX(), supportedCharacters.charAt(nextCharIdx));
+
+            return true;
+        }
+        return false;
     }
+
+    @Override
+    public String getText() {
+        return text;
+    }
+
+    @Override
+    public void setText(String text) {}
 }

@@ -1,4 +1,4 @@
-package com.SCHSRobotics.HAL9001.system.tempmenupackage.events;
+package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
 import org.firstinspires.ftc.robotcore.external.function.Function;
 import org.jetbrains.annotations.Contract;

@@ -1,6 +1,4 @@
-package com.SCHSRobotics.HAL9001.system.tempmenupackage.events;
-
-import com.SCHSRobotics.HAL9001.system.tempmenupackage.MaxHeap;
+package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
 import org.jetbrains.annotations.Nullable;
 

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.BaseTeleop;
 import com.SCHSRobotics.HAL9001.system.tempmenupackage.ExampleMenu;
 import com.SCHSRobotics.HAL9001.system.tempmenupackage.HALGUI;
+import com.SCHSRobotics.HAL9001.system.tempmenupackage.Payload;
 import com.SCHSRobotics.HAL9001.system.tempmenupackage.TextInput;
 import com.SCHSRobotics.HAL9001.system.tempmenupackage.TextSelectionMenu;
 import com.SCHSRobotics.HAL9001.util.annotations.MainRobot;
@@ -18,7 +19,10 @@ public class NewMenuTestProgram extends BaseTeleop {
     protected void onStart() {
         gui = HALGUI.getInstance();
         gui.setup(robot, new Button<>(1, Button.BooleanInputs.noButton));
-        gui.addRootMenu(new TextSelectionMenu(TextInput.CharSet.ALPHANUMERIC_SPECIAL, new ExampleMenu()));
+        Payload payload = new Payload()
+                .add(TextSelectionMenu.CHAR_SET_ID, TextInput.CharSet.ALPHANUMERIC_SPECIAL)
+                .add(TextSelectionMenu.NEXT_MENU_ID, new ExampleMenu());
+        gui.addRootMenu(new TextSelectionMenu(payload));
     }
 
     @Override

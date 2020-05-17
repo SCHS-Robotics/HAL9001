@@ -8,10 +8,10 @@ public class ExampleMenu2 extends HALMenu {
     protected void init(Payload payload) {
         selectionZone = new SelectionZone(2,2);
         addItem(new ViewButton("## | Sorry Mario, the princess is in another castle.")
-                    .onClick(new Button<>(1, Button.BooleanInputs.y), () -> {
+                    .onClick(new Button<>(1, Button.BooleanInputs.y), (DataPacket packet) -> {
                         gui.back();
                     })
-                    .onClick(new Button<>(1, Button.BooleanInputs.a), () -> {
+                    .onClick(new Button<>(1, Button.BooleanInputs.a), (DataPacket packet) -> {
                         gui.inflate(new ExampleMenu3());
                     }));
 

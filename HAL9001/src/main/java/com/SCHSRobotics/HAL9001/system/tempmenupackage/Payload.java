@@ -12,13 +12,13 @@ public class Payload {
         classMap = new HashMap<>();
     }
 
-    public Payload addItem(String id, Object obj) {
+    public Payload add(String id, Object obj) {
         objectMap.put(id, obj);
         classMap.put(id, obj.getClass());
         return this;
     }
 
-    public <T> T getItem(String id) {
+    public <T> T get(String id) {
         Object obj = objectMap.get(id);
         Class<T> clazz = (Class<T>) classMap.get(id);
         return clazz.cast(obj);

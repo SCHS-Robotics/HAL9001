@@ -2,70 +2,80 @@ package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 
-import org.firstinspires.ftc.robotcore.external.function.Function;
-import org.firstinspires.ftc.robotcore.external.function.Supplier;
-
-/**
- * A button on a view that covers the entire screen.
- *
- * @author Cole Savage, Level Up
- * @since 1.1.0
- * @version 1.1.0
- *
- * Creation Date: 4/30/20
- *
- * @see ViewElement
- * @see ViewListener
- * @see BaseViewButton
- */
-public class EntireViewButton extends BaseViewButton {
+@HandlesEvents(events = {OnClickEvent.class, WhileClickEvent.class, OnClickReleaseEvent.class})
+public class EntireViewButton implements AdvancedListener {
+    private TaskPacket<Button<Boolean>> onClickTasks, whileClickedTasks, onClickReleasedTasks, backgroundTasks;
 
     public EntireViewButton() {
-        super(null);
+        onClickTasks = new TaskPacket<>();
+        whileClickedTasks = new TaskPacket<>();
+        onClickReleasedTasks = new TaskPacket<>();
+        backgroundTasks = new TaskPacket<>();
+    }
+
+    public EntireViewButton onClick(Button<Boolean> button, Task task) {
+        onClickTasks.add(button, task);
+        return this;
+    }
+
+    public EntireViewButton whileClicked(Button<Boolean> button, Task task) {
+        whileClickedTasks.add(button, task);
+        return this;
+    }
+
+    public EntireViewButton onClickReleased(Button<Boolean> button, Task task) {
+        onClickReleasedTasks.add(button, task);
+        return this;
+    }
+
+    public EntireViewButton addBackgroundTask(Task task) {
+        backgroundTasks.add(task);
+        return this;
     }
 
     @Override
-    public EntireViewButton onClick(Button<Boolean> button, Program program) {
-        return (EntireViewButton) super.onClick(button, program);
+    public CriteriaPacket getCriteria() {
+        //Create event criteria.
+        GamepadEventCriteria<OnClickEvent, Button<Boolean>> buttonCriteria = new GamepadEventCriteria<>(onClickTasks.getValidKeys());
+        GamepadEventCriteria<WhileClickEvent, Button<Boolean>> whileClickButtonCriteria = new GamepadEventCriteria<>(whileClickedTasks.getValidKeys());
+        GamepadEventCriteria<OnClickReleaseEvent, Button<Boolean>> onClickReleaseEventGamepadEventCriteria = new GamepadEventCriteria<>(onClickReleasedTasks.getValidKeys());
+
+        //Create criteria packet.
+        CriteriaPacket criteriaPacket = new CriteriaPacket();
+        criteriaPacket.add(buttonCriteria);
+        criteriaPacket.add(whileClickButtonCriteria);
+        criteriaPacket.add(onClickReleaseEventGamepadEventCriteria);
+
+        return criteriaPacket;
     }
 
     @Override
-    public EntireViewButton onClick(Button<Boolean> button, Supplier<String> program) {
-        return (EntireViewButton) super.onClick(button, (Program) program::get);
+    public boolean onEvent(Event eventIn) {
+        backgroundTasks.runTasks(new DataPacket(eventIn, this));
+
+        if(eventIn instanceof OnClickEvent) {
+            OnClickEvent event = (OnClickEvent) eventIn;
+            onClickTasks.runTasks(event.getButton(), new DataPacket(event, this));
+            return true;
+        }
+        else if(eventIn instanceof WhileClickEvent) {
+            WhileClickEvent event = (WhileClickEvent) eventIn;
+            whileClickedTasks.runTasks(event.getButton(), new DataPacket(event, this));
+            return true;
+        }
+        else if(eventIn instanceof OnClickReleaseEvent) {
+            OnClickReleaseEvent event = (OnClickReleaseEvent) eventIn;
+            onClickReleasedTasks.runTasks(event.getButton(), new DataPacket(event, this));
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public EntireViewButton onClick(Button<Boolean> button, Function<String, String> program) {
-        return (EntireViewButton) super.onClick(button, (Program) () -> program.apply(getText()));
+    public String getText() {
+        return null;
     }
 
     @Override
-    public EntireViewButton whileClicked(Button<Boolean> button, Program program) {
-        return (EntireViewButton) super.whileClicked(button, program);
-    }
-
-    @Override
-    public EntireViewButton whileClicked(Button<Boolean> button, Supplier<String> program) {
-        return (EntireViewButton) super.whileClicked(button, (Program) program::get);
-    }
-
-    @Override
-    public EntireViewButton whileClicked(Button<Boolean> button, Function<String, String> program) {
-        return (EntireViewButton) super.whileClicked(button, () -> program.apply(getText()));
-    }
-
-    @Override
-    public EntireViewButton addBackgroundTask(Program program) {
-        return (EntireViewButton) super.addBackgroundTask(program);
-    }
-
-    @Override
-    public EntireViewButton addBackgroundTask(Supplier<String> program) {
-        return (EntireViewButton) super.addBackgroundTask((Program) program::get);
-    }
-
-    @Override
-    public EntireViewButton addBackgroundTask(Function<String, String> program) {
-        return (EntireViewButton) super.addBackgroundTask(() -> program.apply(getText()));
-    }
+    public void setText(String text) {}
 }

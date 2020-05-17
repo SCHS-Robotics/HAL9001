@@ -2,12 +2,19 @@ package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
+import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.qualcomm.robotcore.util.Range;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
@@ -29,11 +36,14 @@ public abstract class HALMenu {
     //The current "level" of screen in the menu. If the number of lines in the menu exceeds the maximum number, menuLevel will increase by one for every screen the menu takes up.
     private int menuLevel;
     private int cursorX, cursorY;
-    private long lastBlinkTimeMs;
     private List<ViewElement> elements, displayableElements;
+    private Timer blinkTimer;
+    private Map<Class<? extends Event>, List<EventListener>> listenerElementLookup;
     private boolean doForceUpdateCursor;
     private boolean dynamicSelectionZone;
     private DynamicSelectionZone dynamicSelectionZoneAnnotation;
+
+    private Set<Button<?>> validButtons;
 
     public enum BlinkState {
         ON, OFF;
@@ -58,13 +68,18 @@ public abstract class HALMenu {
         menuLevel = 0;
         cursorChar = '█';
         cursorBlinkSpeedMs = 500;
-        lastBlinkTimeMs = System.currentTimeMillis();
         cursorBlinkState = BlinkState.ON;
         doBlink = true;
         enforceMaxLines = true;
         elements = new ArrayList<>();
         displayableElements = new ArrayList<>();
+        listenerElementLookup = new HashMap<>();
         doForceUpdateCursor = false;
+
+        validButtons = new HashSet<>();
+
+        blinkTimer = new Timer();
+        blinkTimer.start(cursorBlinkSpeedMs, TimeUnit.MILLISECONDS);
 
         Class<? extends HALMenu> thisClass = getClass();
         dynamicSelectionZone = thisClass.isAnnotationPresent(DynamicSelectionZone.class);
@@ -80,7 +95,7 @@ public abstract class HALMenu {
     protected void render() {
         if(doForceUpdateCursor) {
             cursorBlinkState = BlinkState.ON;
-            lastBlinkTimeMs = System.currentTimeMillis();
+            blinkTimer.reset();
         }
 
         if(enforceMaxLines) {
@@ -97,46 +112,104 @@ public abstract class HALMenu {
         if(text != null) {
             displayableElements.add(element);
         }
+        if(element instanceof EventListener && element.getClass().isAnnotationPresent(HandlesEvents.class)) {
+            HandlesEvents eventAnnotation = element.getClass().getAnnotation(HandlesEvents.class);
+            ExceptionChecker.assertNonNull(eventAnnotation, new NullPointerException("Event annotation returned null. This should not be possible."));
+            Class<? extends Event>[] eventClasses = eventAnnotation.events();
+            for(Class<? extends Event> eventClass : eventClasses) {
+                if(listenerElementLookup.containsKey(eventClass)) {
+                    List<EventListener> listeners = listenerElementLookup.get(eventClass);
+                    ExceptionChecker.assertNonNull(listeners, new NullPointerException("Event key mapped to null value. This should not be possible."));
+                    listeners.add((EventListener) element);
+                }
+                else {
+                    List<EventListener> listeners = new ArrayList<>();
+                    listeners.add((EventListener) element);
+                    listenerElementLookup.put(eventClass, listeners);
+                }
+            }
+            if(element instanceof AdvancedListener) {
+                AdvancedListener advancedListener = (AdvancedListener) element;
+                CriteriaPacket eventCriteria = advancedListener.getCriteria();
+                for(EventCriteria<?> criteria : eventCriteria) {
+                    if(criteria instanceof GamepadEventCriteria) {
+                        GamepadEventCriteria gamepadCriteria = (GamepadEventCriteria) criteria;
+                        Button<?>[] buttons = gamepadCriteria.getValidButtons();
+                        validButtons.addAll(Arrays.asList(buttons));
+                    }
+                }
+            }
+        }
         if(dynamicSelectionZone && displayableElements.size() > selectionZone.getHeight()) {
             selectionZone.addRow(dynamicSelectionZoneAnnotation.pattern());
         }
     }
 
     protected final boolean updateListeners() {
+        GamepadEventGenerator eventGenerator = GamepadEventGenerator.getInstance();
+
+        //Generate gamepad events.
+        Iterator<Button<?>> validButtonIterator = this.validButtons.iterator();
+        Button[] validButtons = new Button[this.validButtons.size()];
+        for (int i = 0; i < this.validButtons.size(); i++) {
+            validButtons[i] = validButtonIterator.next();
+        }
+        eventGenerator.generateEvents(validButtons);
+
+        //Generate blink event.
+        if(blinkTimer.requiredTimeElapsed() || doForceUpdateCursor) {
+            Event.injectEvent(new BlinkEvent(1, cursorBlinkState.nextState()));
+        }
+
+        //Pass events to event listeners.
         boolean anythingUpdatesCursor = false;
         boolean anythingRequestsNoBlink = false;
-        for(ViewElement element : elements) {
-            if(element instanceof ViewListener) {
-                boolean forceCursorUpdate = false;
+
+        Event currentEvent = Event.getNextEvent();
+        while (currentEvent != null) {
+
+            List<EventListener> registeredListeners = listenerElementLookup.get(currentEvent.getClass());
+            registeredListeners = registeredListeners == null ? new ArrayList<>() : registeredListeners;
+
+            for (EventListener listener : registeredListeners) {
+                boolean doCursorUpdate = false;
+
+
+                boolean satisfiesCriteria = false;
+                if(listener instanceof AdvancedListener) {
+                    AdvancedListener advancedListener = (AdvancedListener) listener;
+                    CriteriaPacket eventCriteria = advancedListener.getCriteria();
+                    for(EventCriteria<?> criteria : eventCriteria) {
+                        satisfiesCriteria |= criteria.satisfiesCriteria(currentEvent);
+                    }
+                }
+                else {
+                    satisfiesCriteria = true;
+                }
+
                 /*
                 Short circuit evaluation, DO NOT CHANGE THE ORDER OF THINGS IN THE IF STATEMENT
                 if element is not displayable (i.e. entire-screen-related), skip second check
                 if element is displayable, check if element is on the same line as the cursor
                 IF THE ORDER OF THESE CHECKS IS REVERSED THERE WILL BE ERRORS, AS FULL-VIEW BUTTONS ARE NOT DISPLAYABLE
                  */
-                if(!displayableElements.contains(element) || displayableElements.indexOf(element) == cursorY) {
-                    forceCursorUpdate = ((ViewListener) element).update();
-                }
-                if(element instanceof CursorConfigurable) {
-                    boolean requestsNoBlink = ((CursorConfigurable) element).requestNoBlinkOnTriggeredUpdate() && forceCursorUpdate;
-                    anythingRequestsNoBlink |= requestsNoBlink;
+                if(satisfiesCriteria && (!displayableElements.contains(listener) || displayableElements.indexOf(listener) == cursorY)) {
+                    doCursorUpdate = listener.onEvent(currentEvent);
                 }
 
-                anythingUpdatesCursor |= forceCursorUpdate;
+                //Handles no blink requested checking.
+                if (listener instanceof CursorConfigurable) {
+                    anythingRequestsNoBlink |= ((CursorConfigurable) listener).requestNoBlinkOnTriggeredUpdate() && doCursorUpdate;
+                }
+
+                anythingUpdatesCursor |= doCursorUpdate;
             }
+
+            currentEvent = Event.getNextEvent();
         }
 
-        doBlink = !anythingRequestsNoBlink;
-
+        doBlink = !anythingRequestsNoBlink && !selectionZone.isZero();
         return anythingUpdatesCursor && !selectionZone.isZero();
-    }
-
-    protected final void disableListeners() {
-        for(ViewElement element : elements) {
-            if(element instanceof ButtonListener) {
-                ((ButtonListener) element).disable(HALGUI.POST_LOAD_LISTENER_DISABLE_DURATION_MS);
-            }
-        }
     }
 
     protected abstract void init(Payload payload);
@@ -164,9 +237,9 @@ public abstract class HALMenu {
     private String blinkCursor(@NotNull String line) {
         char[] chars = line.toCharArray();
 
-        if(System.currentTimeMillis() - lastBlinkTimeMs >= cursorBlinkSpeedMs) {
+        if(blinkTimer.requiredTimeElapsed()) {
             cursorBlinkState = cursorBlinkState.nextState();
-            lastBlinkTimeMs = System.currentTimeMillis();
+            blinkTimer.reset();
         }
 
         //if the cursor isn't supposed to blink, turn it off.

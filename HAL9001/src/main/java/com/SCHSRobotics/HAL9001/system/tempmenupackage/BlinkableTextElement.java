@@ -5,42 +5,23 @@ import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import java.util.ArrayList;
 import java.util.List;
 
-//Todo, may not keep
-public class BlinkableTextElement extends TextElement implements Blinkable, MutableTextViewElement {
-    private char[] blinkingCharArray;
+@HandlesEvents(events = BlinkEvent.class)
+public class BlinkableTextElement implements EventListener, AdvancedViewElement {
     private String unmodifiedText, text;
-    private HALMenu.BlinkState currentBlinkState;
+    private char[] blinkingCharArray;
     private List<Integer> blinkingIndices;
     private List<Character> blinkingCharacters;
     private boolean blinkingEnabled;
 
     public BlinkableTextElement(String text) {
-        super(text);
-        blinkingCharArray = text.toCharArray();
+        this.text = text;
         unmodifiedText = text;
-        this.text = unmodifiedText;
-        currentBlinkState = HALMenu.BlinkState.OFF;
+        blinkingCharArray = text.toCharArray();
+
         blinkingIndices = new ArrayList<>();
         blinkingCharacters = new ArrayList<>();
+
         blinkingEnabled = true;
-    }
-
-    @Override
-    public void onBlinkEvent(HALMenu.BlinkState blinkState) {
-        if(blinkState == HALMenu.BlinkState.ON) {
-            text = new String(blinkingCharArray);
-        }
-        else {
-            text = unmodifiedText;
-        }
-    }
-
-    @Override
-    public String getText() {
-        if(!blinkingEnabled) {
-            return unmodifiedText;
-        }
-        return text;
     }
 
     public BlinkableTextElement blinkCharAt(int charIdx, char charToBlink) {
@@ -69,24 +50,8 @@ public class BlinkableTextElement extends TextElement implements Blinkable, Muta
         return unmodifiedText;
     }
 
-    @Override
-    public void setText(String text) {
-        unmodifiedText = text;
-        blinkingCharArray = unmodifiedText.toCharArray();
-        List<Integer> newBlinkingIndices = new ArrayList<>();
-        List<Character> newBlinkingCharacters = new ArrayList<>();
-        for (int i = 0; i < blinkingIndices.size(); i++) {
-            int idx = blinkingIndices.get(i);
-            if(idx < unmodifiedText.length()) {
-                newBlinkingIndices.add(idx);
-                newBlinkingCharacters.add(blinkingCharacters.get(i));
-                blinkingCharArray[idx] = blinkingCharacters.get(i);
-            }
-        }
-        blinkingIndices.clear();
-        blinkingCharacters.clear();
-        blinkingIndices.addAll(newBlinkingIndices);
-        blinkingCharacters.addAll(newBlinkingCharacters);
+    public void setBlinkEnabled(boolean blinkEnabled) {
+        blinkingEnabled = blinkEnabled;
     }
 
     @Override
@@ -128,11 +93,6 @@ public class BlinkableTextElement extends TextElement implements Blinkable, Muta
     }
 
     @Override
-    public void setBlinkEnabled(boolean blinkEnabled) {
-        blinkingEnabled = blinkEnabled;
-    }
-
-    @Override
     public void setChar(int charIdx, char c) {
         ExceptionChecker.assertTrue(charIdx < unmodifiedText.length(), new IndexOutOfBoundsException("Char Index out of bounds."));
         if(!blinkingIndices.contains(charIdx)) {
@@ -141,5 +101,45 @@ public class BlinkableTextElement extends TextElement implements Blinkable, Muta
         char[] unmodifiedCharArray = unmodifiedText.toCharArray();
         unmodifiedCharArray[charIdx] = c;
         unmodifiedText = new String(unmodifiedCharArray);
+    }
+
+    @Override
+    public boolean onEvent(Event event) {
+        if(event instanceof BlinkEvent) {
+            BlinkEvent blinkEvent = (BlinkEvent) event;
+
+            if(blinkEvent.getBlinkState() == HALMenu.BlinkState.ON && blinkingEnabled) {
+                text = new String(blinkingCharArray);
+            }
+            else {
+                text = unmodifiedText;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public String getText() {
+        return text;
+    }
+
+    @Override
+    public void setText(String text) {
+        unmodifiedText = text;
+        blinkingCharArray = unmodifiedText.toCharArray();
+        List<Integer> newBlinkingIndices = new ArrayList<>();
+        List<Character> newBlinkingCharacters = new ArrayList<>();
+        for (int i = 0; i < blinkingIndices.size(); i++) {
+            int idx = blinkingIndices.get(i);
+            if(idx < unmodifiedText.length()) {
+                newBlinkingIndices.add(idx);
+                newBlinkingCharacters.add(blinkingCharacters.get(i));
+                blinkingCharArray[idx] = blinkingCharacters.get(i);
+            }
+        }
+        blinkingIndices.clear();
+        blinkingCharacters.clear();
+        blinkingIndices.addAll(newBlinkingIndices);
+        blinkingCharacters.addAll(newBlinkingCharacters);
     }
 }
