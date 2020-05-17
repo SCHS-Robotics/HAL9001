@@ -7,10 +7,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class GamepadEventCriteria<T extends ClickEvent, S extends Button<?>> extends EventCriteria<T> {
-    private S[] validButtons;
+    private Set<S> validButtons;
     public GamepadEventCriteria(Set<S> validButtons) {
         super((T event) -> validButtons.contains(event.getButton()));
-        this.validButtons = (S[]) validButtons.toArray();
+        this.validButtons = validButtons;
     }
 
     @SafeVarargs
@@ -18,7 +18,7 @@ public class GamepadEventCriteria<T extends ClickEvent, S extends Button<?>> ext
         this(new HashSet<>(Arrays.asList(validButtons)));
     }
 
-    public Button<?>[] getValidButtons() {
+    public Set<S> getValidButtons() {
         return validButtons;
     }
 }

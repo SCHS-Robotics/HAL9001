@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.util.Range;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -133,9 +132,9 @@ public abstract class HALMenu {
                 CriteriaPacket eventCriteria = advancedListener.getCriteria();
                 for(EventCriteria<?> criteria : eventCriteria) {
                     if(criteria instanceof GamepadEventCriteria) {
-                        GamepadEventCriteria gamepadCriteria = (GamepadEventCriteria) criteria;
-                        Button<?>[] buttons = gamepadCriteria.getValidButtons();
-                        validButtons.addAll(Arrays.asList(buttons));
+                        GamepadEventCriteria<ClickEvent<Button<?>>, Button<?>> gamepadCriteria = (GamepadEventCriteria<ClickEvent<Button<?>>, Button<?>>) criteria;
+                        Set<Button<?>> buttons = gamepadCriteria.getValidButtons();
+                        validButtons.addAll(buttons);
                     }
                 }
             }
