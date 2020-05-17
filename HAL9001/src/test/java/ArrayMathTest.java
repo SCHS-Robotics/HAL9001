@@ -609,5 +609,4 @@ public class ArrayMathTest {
         Assert.assertArrayEquals(expectedResult1, FakeNumpy.removeDuplicates(testArr1));
         Assert.assertArrayEquals(expectedResult2, FakeNumpy.removeDuplicates(testArr2));
     }
-
 }

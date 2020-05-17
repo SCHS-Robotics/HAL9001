@@ -3,9 +3,7 @@ package com.SCHSRobotics.HAL9001.system.subsystems;
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem;
 import com.SCHSRobotics.HAL9001.util.math.EncoderToDistanceProcessor;
-import com.SCHSRobotics.HAL9001.util.math.Units;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
@@ -136,7 +134,7 @@ public abstract class DriveTrain extends SubSystem {
     public void resetEncoders() {
         localizer.resetEncoders();
     }
-
+/*
     public Pose2d getPositionEncoders() {
         return localizer.getPositionEncoders();
     }
@@ -152,7 +150,7 @@ public abstract class DriveTrain extends SubSystem {
     public Pose2d getVelocity(Units distanceUnit) {
         return localizer.getVelocity(distanceUnit);
     }
-
+*/
     public void setLocalizer(Localizer localizer) {
         this.localizer = localizer;
     }

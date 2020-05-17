@@ -2,7 +2,6 @@ package com.SCHSRobotics.HAL9001.util.math;
 
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +27,6 @@ public class FakeNumpy {
     /**
      * Private default constructor to make class basically static.
      */
-    @Contract(pure = true)
     private FakeNumpy() {}
 
     /**

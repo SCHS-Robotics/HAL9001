@@ -351,7 +351,6 @@ public class ConfigParam {
      * @param usesGamepad Whether or not the option uses the gamepad.
      * @param isBoolButton Whether or not the option is a boolean button on the gamepad.
      */
-    @Contract(pure = true)
     private ConfigParam(@NotNull String name, @NotNull List<String> options, @NotNull List<Object> vals, @NotNull String defaultOption, @NotNull String currentOption, @Nullable String defaultGamepadOption, @Nullable String currentGamepadOption, boolean usesGamepad, boolean isBoolButton, boolean isDoubleButton) {
         this.name = name;
         this.options = options;

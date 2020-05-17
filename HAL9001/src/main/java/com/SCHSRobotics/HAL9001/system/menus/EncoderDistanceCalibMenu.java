@@ -10,7 +10,6 @@ import com.SCHSRobotics.HAL9001.util.math.Units;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -30,7 +29,6 @@ public class EncoderDistanceCalibMenu extends Menu {
 
         public double increment;
 
-        @Contract(pure = true)
         SpeedMode(double increment) {
             this.increment = increment;
         }

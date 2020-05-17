@@ -256,10 +256,26 @@ public class CustomizableGamepad {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getInput(String buttonName, T defaultReturn) {
+    public <T> T getInput(@NotNull Button<T> button) {
+        if(button.isBoolean()) {
+            boolean val = getBooleanInput((Button<Boolean>) button);
+            return (T) Boolean.valueOf(val);
+        }
+        else if(button.isDouble()) {
+            double val = getDoubleInput((Button<Double>) button);
+            return (T) Double.valueOf(val);
+        }
+        else if(button.isVector()){
+            Vector2D val = getVectorInput((Button<Vector2D>) button);
+            return (T) val;
+        }
+        else {
+            return null;
+        }
+    }
 
-        Button<T> button = getButton(buttonName);
-
+    @SuppressWarnings("unchecked")
+    public <T> T getInput(@NotNull Button<T> button, T defaultReturn) {
         if(button.isBoolean()) {
             boolean defaultVal = (Boolean) defaultReturn;
             boolean val = getBooleanInput((Button<Boolean>) button, defaultVal);
@@ -280,25 +296,12 @@ public class CustomizableGamepad {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T getInput(String buttonName) {
-        Button<T> button = getButton(buttonName);
+    public <T> T getInput(String buttonName, T defaultReturn) {
+        return getInput(getButton(buttonName), defaultReturn);
+    }
 
-        if(button.isBoolean()) {
-            boolean val = getBooleanInput((Button<Boolean>) button);
-            return (T) Boolean.valueOf(val);
-        }
-        else if(button.isDouble()) {
-            double val = getDoubleInput((Button<Double>) button);
-            return (T) Double.valueOf(val);
-        }
-        else if(button.isVector()){
-            Vector2D val = getVectorInput((Button<Vector2D>) button);
-            return (T) val;
-        }
-        else {
-            return null;
-        }
+    public <T> T getInput(String buttonName) {
+        return getInput(getButton(buttonName));
     }
 
     /**
@@ -340,7 +343,7 @@ public class CustomizableGamepad {
         catch (ClassCastException e) {
             throw new NotAnAlchemistException("Illegal button type conversion detected");
         }
-        ExceptionChecker.assertNonNull(button, new NullPointerException("Could not find a button with name "+buttonName+" in the customizable gamepad."));
+        ExceptionChecker.assertNonNull(button, new NullPointerException("Could not find a button with name "+buttonName+" in the customizable gamepad or "+buttonName+" is null."));
         return button;
     }
 }

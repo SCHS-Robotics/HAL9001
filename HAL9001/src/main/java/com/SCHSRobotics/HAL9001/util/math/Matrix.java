@@ -1,12 +1,9 @@
 package com.SCHSRobotics.HAL9001.util.math;
 
 
-import org.jetbrains.annotations.NotNull;
-import org.opencv.core.Mat;
-
 public class Matrix {
 
-    private Mat vals;
+    /*private Mat vals;
     public Matrix(double[][] vals) {
         this.vals = new Mat();
         put(vals);
@@ -105,4 +102,6 @@ public class Matrix {
     public static void onesMatrix() {
 
     }
+
+     */
 }

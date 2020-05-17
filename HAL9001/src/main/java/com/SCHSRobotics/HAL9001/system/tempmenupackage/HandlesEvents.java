@@ -1,15 +1,12 @@
-package com.SCHSRobotics.HAL9001.util.annotations;
+package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
-import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-//3/18/20
-@Documented
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface Name {
-    String name();
+public @interface HandlesEvents {
+    Class<? extends Event>[] events();
 }
