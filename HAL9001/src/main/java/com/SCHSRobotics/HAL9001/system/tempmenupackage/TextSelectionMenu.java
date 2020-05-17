@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
+import android.util.Log;
+
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -84,6 +86,7 @@ public class TextSelectionMenu extends HALMenu {
 
         ViewButton doneButton = new ViewButton("#|Done")
                 .onClick(new Button<>(1, Button.BooleanInputs.a), (DataPacket packet) -> {
+                    Log.wtf("done","ran");
                     //todo parse text to remove bad spaces, spaces = evil
                     payload.add(ENTERED_TEXT_ID, entryDisplayText.getUnmodifiedText());
                     if(nextMenu == null) {
@@ -96,6 +99,7 @@ public class TextSelectionMenu extends HALMenu {
 
         addItem(new EntireViewButton()
                 .onClick(new Button<>(1, Button.BooleanInputs.dpad_right), (DataPacket packet) -> {
+                    Log.wtf("test","ran");
                     if(charPositon.get() == entryDisplayText.getUnmodifiedText().length() - 1) {
                         entryDisplayText.append(' ');
                     }
