@@ -9,7 +9,7 @@ import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.InvalidMoveCommandException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotDoubleInputException;
-import com.SCHSRobotics.HAL9001.util.math.Vector;
+import com.SCHSRobotics.HAL9001.util.math.Vector2D;
 import com.SCHSRobotics.HAL9001.util.misc.BaseParam;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigData;
@@ -128,7 +128,7 @@ public class QuadWheelDrive extends SubSystem {
     @Override
     public void handle() {
         if(!inputs.checkNoButton(SPEEDMODEBUTTON)){
-            speedToggle.updateToggle(inputs.getBooleanInput(SPEEDMODEBUTTON));
+            speedToggle.updateToggle((boolean) inputs.getInput(SPEEDMODEBUTTON));
             if(speedToggle.getCurrentState()){
                 currentSpeedModeModifier = speedModeModifier;
             }
@@ -138,22 +138,22 @@ public class QuadWheelDrive extends SubSystem {
         }
         //drives forward and turns at the same time
         if (turnAndMove) {
-            if (inputs.getDoubleInput(DRIVESTICK)!= 0 && inputs.getDoubleInput(TURNSTICK) != 0) {
-                turnAndMove(new Vector(inputs.getDoubleInput(DRIVESTICK), inputs.getDoubleInput(TURNSTICK)));
-            } else if (inputs.getDoubleInput(DRIVESTICK) != 0) {
-                drive(inputs.getDoubleInput(DRIVESTICK));
-            } else if (inputs.getDoubleInput(TURNSTICK)!= 0){
-                turn(inputs.getDoubleInput(TURNSTICK));
+            if ((double) inputs.getInput(DRIVESTICK)!= 0 && (double) inputs.getInput(TURNSTICK) != 0) {
+                turnAndMove(new Vector2D((double) inputs.getInput(DRIVESTICK), (double) inputs.getInput(TURNSTICK)));
+            } else if ((double) inputs.getInput(DRIVESTICK) != 0) {
+                drive((double) inputs.getInput(DRIVESTICK));
+            } else if ((double) inputs.getInput(TURNSTICK)!= 0){
+                turn((double) inputs.getInput(TURNSTICK));
             } else {
                 stopMovement();
             }
         }
         //drives forward and turns but not at the same time
         else {
-            if (inputs.getDoubleInput(TURNSTICK) != 0) {
-                turn(inputs.getDoubleInput(TURNSTICK));
-            } else if (inputs.getDoubleInput(DRIVESTICK) != 0) {
-                drive(inputs.getDoubleInput(DRIVESTICK));
+            if ((double) inputs.getInput(TURNSTICK) != 0) {
+                turn((double) inputs.getInput(TURNSTICK));
+            } else if ((double) inputs.getInput(DRIVESTICK) != 0) {
+                drive((double) inputs.getInput(DRIVESTICK));
             } else {
                 stopMovement();
             }
@@ -228,7 +228,7 @@ public class QuadWheelDrive extends SubSystem {
      *
      * @param input A vector that determines linear/rotational speed and direction. First component is linear speed second is rotational speed (counterclockwise +)
      */
-    public void turnAndMove(Vector input){
+    public void turnAndMove(Vector2D input){
         botLeft.setPower(((input.x - input.y) * constantSpeedModifier) * currentSpeedModeModifier);
         botRight.setPower(((input.x + input.y) * constantSpeedModifier) * currentSpeedModeModifier);
         topLeft.setPower(((input.x - input.y) * constantSpeedModifier) * currentSpeedModeModifier);
@@ -306,11 +306,11 @@ public class QuadWheelDrive extends SubSystem {
      * Drives and turns for a set time.
      *
      * @param timeMs Time to turn and drive for in milliseconds.
-     * @param input Vector that determines direction and rotational speed. (x component is linear speed y is rotational speed)
+     * @param input Vector2D that determines direction and rotational speed. (x component is linear speed y is rotational speed)
      *
      * @throws DumpsterFireException Throws this exception if time is negative.
      */
-    public void turnAndMoveTime(long timeMs, Vector input) {
+    public void turnAndMoveTime(long timeMs, Vector2D input) {
         if(timeMs < 0) {
             throw new DumpsterFireException("HAL is cool, but can't travel back in time. Time must be positive.");
         }
@@ -391,11 +391,11 @@ public class QuadWheelDrive extends SubSystem {
      * Turn while driving using encoders.
      *
      * @param encoderDistance Encoder distance to travel.
-     * @param input Vector that determines direction and rotational speed. (x component is linear speed y is rotational speed)
+     * @param input Vector2D that determines direction and rotational speed. (x component is linear speed y is rotational speed)
      *
      * @throws DumpsterFireException Throws this exception if the encoder count is negative.
      */
-    public void turnAndMoveEncoders(final int encoderDistance, Vector input) {
+    public void turnAndMoveEncoders(final int encoderDistance, Vector2D input) {
 
         if(encoderDistance < 0) {
             throw new DumpsterFireException("Where you're going, you don't need roads! (distance must be positive)");
@@ -473,7 +473,7 @@ public class QuadWheelDrive extends SubSystem {
      * @throws NotDoubleInputException Throws an exception if button does not return double values.
      */
     public void setDriveStick(Button button){
-        if(button.isDouble) {
+        if(button.isDouble()) {
             inputs.addButton(DRIVESTICK, button);
         }
         else {
@@ -489,7 +489,7 @@ public class QuadWheelDrive extends SubSystem {
      * @throws NotDoubleInputException Throws an exception if button does not return double values.
      */
     public void setTurnStick(Button button){
-        if(button.isDouble) {
+        if(button.isDouble()) {
             inputs.addButton(TURNSTICK, button);
         }
         else {
@@ -505,7 +505,7 @@ public class QuadWheelDrive extends SubSystem {
      * @throws NotBooleanInputException Throws an exception if button does not return boolean values.
      */
     public void setSpeedMode(Button button){
-        if(button.isBoolean) {
+        if(button.isBoolean()) {
             inputs.addButton(SPEEDMODEBUTTON, button);
         }
         else {
@@ -702,7 +702,7 @@ public class QuadWheelDrive extends SubSystem {
          * @throws NotDoubleInputException Throws this exception when the provided button does not return double values.
          */
         public Params setDriveStick(Button driveStick) {
-            if(!driveStick.isDouble) {
+            if(!driveStick.isDouble()) {
                 throw new NotDoubleInputException("DriveStick must be a double input.");
             }
             buttonsToSet[0] = driveStick;
@@ -719,7 +719,7 @@ public class QuadWheelDrive extends SubSystem {
          * @throws NotDoubleInputException Throws this exception when the provided button does not return double values.
          */
         public Params setTurnStick(Button turnStick) {
-            if(!turnStick.isDouble) {
+            if(!turnStick.isDouble()) {
                 throw new NotDoubleInputException("TurnStick must be a double input.");
             }
             buttonsToSet[1] = turnStick;
@@ -735,7 +735,7 @@ public class QuadWheelDrive extends SubSystem {
          * @throws NotBooleanInputException Throws this exception when the provided button does not return boolean values.
          */
         public Params setSpeedModeButton(Button speedModeButton) {
-            if(!speedModeButton.isBoolean) {
+            if(!speedModeButton.isBoolean()) {
                 throw new NotBooleanInputException("SpeedModeButton must be a boolean input.");
             }
             buttonsToSet[2] = speedModeButton;

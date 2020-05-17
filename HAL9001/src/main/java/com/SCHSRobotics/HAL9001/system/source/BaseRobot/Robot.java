@@ -5,37 +5,24 @@ import android.util.Log;
 
 import com.SCHSRobotics.HAL9001.system.menus.ConfigMenu;
 import com.SCHSRobotics.HAL9001.system.source.GUI.GUI;
-import com.SCHSRobotics.HAL9001.util.annotations.AutonomousConfig;
-import com.SCHSRobotics.HAL9001.util.annotations.ConfigProgramType;
-import com.SCHSRobotics.HAL9001.util.annotations.ConfigurableBoolean;
-import com.SCHSRobotics.HAL9001.util.annotations.ConfigurableButton;
-import com.SCHSRobotics.HAL9001.util.annotations.ConfigurableDouble;
-import com.SCHSRobotics.HAL9001.util.annotations.ConfigurableInteger;
+import com.SCHSRobotics.HAL9001.util.annotations.ConfigLabel;
 import com.SCHSRobotics.HAL9001.util.annotations.DisableSubSystem;
-import com.SCHSRobotics.HAL9001.util.annotations.LinkTo;
-import com.SCHSRobotics.HAL9001.util.annotations.ProgramOptions;
 import com.SCHSRobotics.HAL9001.util.annotations.StandAlone;
-import com.SCHSRobotics.HAL9001.util.annotations.TeleopConfig;
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
-import com.SCHSRobotics.HAL9001.util.exceptions.InvalidLinkException;
-import com.SCHSRobotics.HAL9001.util.exceptions.NotAnAlchemistException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NothingToSeeHereException;
-import com.SCHSRobotics.HAL9001.util.math.ArrayMath;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigData;
 import com.SCHSRobotics.HAL9001.util.misc.ConfigParam;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.SCHSRobotics.HAL9001.util.misc.HALConfig;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.internal.opmode.RegisteredOpModes;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.CvType;
@@ -51,14 +38,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /**
  * An abstract class representing the physical robot.
@@ -78,15 +63,11 @@ public abstract class Robot {
     private static final String VISION_CYCLE = "VisionCycler";
     //The resolution of each camera frame.
     private static Size cameraSize;
-    //A map relating the name of each subsystem in the robot to that subsystem's corresponding autonomous config
-    public static @NotNull Map<String, List<ConfigParam>> autonomousConfig = new LinkedHashMap<>();
-    //A map relating the name of each subsystem in the robot to that subsystem's corresponding teleop config
-    public static @NotNull Map<String, List<ConfigParam>> teleopConfig = new LinkedHashMap<>();
 
-    public static @NotNull Map<String,List<String>> usedProgramSettingsTeleop = new HashMap<>(), usedProgramSettingsAutonomous = new HashMap<>();
+    private HALConfig globalConfig;
 
     //A hashmap mapping the name of a subsystem to the actual subsystem object.
-    private final Map<String, SubSystem> subSystems;
+    private final Queue<SubSystem> subSystems;
     //The opmode the robot is running.
     private OpMode opMode;
     //A boolean value specifying whether or not to use a GUI, whether or not to use a config, and whether or not to close the current config GUI.
@@ -111,14 +92,6 @@ public abstract class Robot {
     private int cameraMonitorViewId;
     //A list of Vision-Based subsystems.
     private List<VisionSubSystem> visionSubSystems;
-    //Whether or not a program has thrown an error.
-    private boolean errorThrown;
-    //The exception that was thrown (if an exception was thrown).
-    private Throwable thrownException;
-    //The name of the opmode as put in the class annotation.
-    private String opmodeName;
-
-    private Map<SubSystem, List<Field>> fields;
 
     /**
      * Constructor for robot.
@@ -131,9 +104,8 @@ public abstract class Robot {
         telemetry = opMode.telemetry;
         hardwareMap = opMode.hardwareMap;
 
-        subSystems = new HashMap<>();
+        subSystems = new PriorityQueue<>();
         visionSubSystems = new ArrayList<>();
-        fields = new HashMap<>();
 
         useGui = false;
         useConfig = false;
@@ -146,110 +118,7 @@ public abstract class Robot {
         cameraSize = new Size(320, 240);
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId","id", hardwareMap.appContext.getPackageName());
 
-        thrownException = new Throwable();
-        errorThrown = false;
-
-        if (opMode.getClass().isAnnotationPresent(TeleOp.class)) {
-            TeleOp op = opMode.getClass().getAnnotation(TeleOp.class);
-            ExceptionChecker.assertNonNull(op, new NullPointerException("If you are seeing this, Java broke. Good luck!"));
-            opmodeName = op.name();
-        } else if (opMode.getClass().isAnnotationPresent(Autonomous.class)) {
-            Autonomous op = opMode.getClass().getAnnotation(Autonomous.class);
-            ExceptionChecker.assertNonNull(op, new NullPointerException("If you are seeing this, Java broke. Good luck!"));
-            opmodeName = op.name();
-        }
-        else {
-            throw new DumpsterFireException("You are running this program without @Teleop or @Autonomous ... how did this even happen???");
-        }
-
-        addSettings(opMode);
-    }
-
-    private void addSettings(OpMode opMode) {
-        addSettings(opMode,new ArrayList<String>());
-    }
-
-    private void addSettings(@NotNull OpMode opMode, List<String> visitedOpmodes) {
-
-        ExceptionChecker.assertTrue(opMode.getClass().isAnnotationPresent(TeleOp.class) || opMode.getClass().isAnnotationPresent(Autonomous.class), new NothingToSeeHereException("You forgot to add @" + (isTeleop() ? "Teleop" : isAutonomous() ? "Autonomous" : "... oh wait this isn't a HAL opmode... how did this even happen???")));
-        ExceptionChecker.assertTrue(opMode instanceof BaseAutonomous || opMode instanceof BaseTeleop, new NotAnAlchemistException("Hey, one of your programs or linked programs is not a HAL program"));
-
-        String name;
-        if (opMode.getClass().isAnnotationPresent(TeleOp.class)) {
-            TeleOp op = opMode.getClass().getAnnotation(TeleOp.class);
-            ExceptionChecker.assertNonNull(op, new NullPointerException("If you are seeing this, Java broke. Good luck!"));
-            name = op.name();
-        } else {
-            Autonomous op = opMode.getClass().getAnnotation(Autonomous.class);
-            ExceptionChecker.assertNonNull(op, new NullPointerException("If you are seeing this, Java broke. Good luck!"));
-            name = op.name();
-        }
-
-        if(opMode.getClass().isAnnotationPresent(LinkTo.class) && !visitedOpmodes.contains(name)) {
-            LinkTo link = opMode.getClass().getAnnotation(LinkTo.class);
-            visitedOpmodes.add(name);
-            ExceptionChecker.assertNonNull(link, new NullPointerException("If you are seeing this, Java broke. Good luck!"));
-            OpMode linkedOpmode = RegisteredOpModes.getInstance().getOpMode(link.destination());
-            ExceptionChecker.assertNonNull(linkedOpmode, new InvalidLinkException("Link to nonexistent opmode. '"+link.destination()+"' does not exist"));
-
-            if(opMode.getClass().isAnnotationPresent(ProgramOptions.class)) {
-                ProgramOptions settings = opMode.getClass().getAnnotation(ProgramOptions.class);
-                ExceptionChecker.assertNonNull(settings, new NullPointerException("If you are seeing this, Java broke. Good luck!"));
-                Class<? extends Enum<?>>[] nonDuplicatedSettings = ArrayMath.removeDuplicates(settings.options());
-
-                if (nonDuplicatedSettings.length > 0) {
-                    for(Class<? extends Enum<?>> e : nonDuplicatedSettings) {
-                        Enum<?>[] enums = e.getEnumConstants();
-                        if(enums.length > 0) {
-                            if (opMode instanceof BaseTeleop) {
-                                List<ConfigParam> paramLst = teleopConfig.get(name);
-                                if(paramLst == null) {
-                                    teleopConfig.put(name, Arrays.asList((ConfigParam[]) new ConfigParam[]{new ConfigParam(e.getSimpleName(), enums[0])}));
-                                }
-                                else {
-                                    List<String> usedProgramSettingList = usedProgramSettingsTeleop.get(name);
-                                    if(usedProgramSettingList == null) {
-                                        usedProgramSettingList = new ArrayList<>();
-                                    }
-                                    if(!usedProgramSettingList.contains(e.getSimpleName())) {
-                                        List<ConfigParam> params = new ArrayList<>(paramLst);
-                                        params.add(new ConfigParam(e.getSimpleName(), enums[0]));
-                                        ArrayList<String> stuff = new ArrayList<>(usedProgramSettingList);
-                                        stuff.add(e.getSimpleName());
-                                        usedProgramSettingsTeleop.put(name, stuff);
-                                        teleopConfig.put(name, params);
-                                    }
-                                }
-                            } else {
-                                List<ConfigParam> paramLst = autonomousConfig.get(name);
-                                if(paramLst == null) {
-                                    autonomousConfig.put(name, Arrays.asList((ConfigParam[]) new ConfigParam[]{new ConfigParam(e.getSimpleName(), enums[0])}));
-                                    usedProgramSettingsAutonomous.put(name,Arrays.asList(e.getSimpleName()));
-                                }
-                                else {
-                                    List<String> usedProgramSettingList = usedProgramSettingsAutonomous.get(name);
-                                    if(usedProgramSettingList == null) {
-                                        usedProgramSettingList = new ArrayList<>();
-                                    }
-                                    if(!usedProgramSettingList.contains(e.getSimpleName())) {
-                                        Log.wtf("AGGHH", e.getSimpleName());
-                                        List<ConfigParam> params = new ArrayList<>(paramLst);
-                                        params.add(new ConfigParam(e.getSimpleName(), enums[0]));
-                                        ArrayList<String> stuff = new ArrayList<>(usedProgramSettingList);
-                                        stuff.add(e.getSimpleName());
-                                        usedProgramSettingsAutonomous.put(name, stuff);
-                                        autonomousConfig.put(name, params);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            addSettings(linkedOpmode, visitedOpmodes);
-        }
-
+        globalConfig = HALConfig.getGlobalInstance();
     }
 
     /**
@@ -257,8 +126,8 @@ public abstract class Robot {
      *
      * @param subSystem The subsystem object.
      */
-    protected final void addSubSystem(SubSystem subSystem) {
-        subSystems.put(subSystem.getClass().getSimpleName(), subSystem);
+    private void addSubSystem(String name, SubSystem subSystem) {
+        subSystems.add(subSystem);
 
         if(subSystem instanceof VisionSubSystem) {
             visionSubSystems.add((VisionSubSystem) subSystem);
@@ -266,244 +135,13 @@ public abstract class Robot {
 
         if(subSystem.usesConfig) {
 
-            boolean foundTeleopConfig = false;
-            boolean foundAutonomousConfig = false;
+            boolean success = globalConfig.addSubSystem(name, subSystem);
+            useConfig |= success;
 
-            try {
-                Method[] methods = subSystem.getClass().getDeclaredMethods();
-                for(Method m : methods) {
-
-                    //method must be annotated as TeleopConfig, have no parameters, be public and static, and return an array of config params
-                    if(!foundTeleopConfig && m.isAnnotationPresent(TeleopConfig.class) && m.getReturnType() == ConfigParam[].class && m.getParameterTypes().length == 0 && Modifier.isStatic(m.getModifiers()) && Modifier.isPublic(m.getModifiers())) {
-                        teleopConfig.put(subSystem.getClass().getSimpleName(),Arrays.asList((ConfigParam[]) m.invoke(null)));
-                        if(!useGui) {
-                            gui = new GUI(this, new Button(1, Button.BooleanInputs.noButton));
-                            useGui = true;
-                        }
-                        useConfig = true;
-                        foundTeleopConfig = true;
-                    }
-
-                    //method must be annotated as AutonomousConfig, have no parameters, be public and static, and return an array of config params
-                    if(!foundAutonomousConfig && m.isAnnotationPresent(AutonomousConfig.class) && m.getReturnType() == ConfigParam[].class && m.getParameterTypes().length == 0 && Modifier.isStatic(m.getModifiers()) && Modifier.isPublic(m.getModifiers())) {
-                        autonomousConfig.put(subSystem.getClass().getSimpleName(),Arrays.asList((ConfigParam[]) m.invoke(null)));
-                        if(!useGui) {
-                            gui = new GUI(this, new Button(1, Button.BooleanInputs.noButton));
-                            useGui = true;
-                        }
-                        useConfig = true;
-                        foundAutonomousConfig = true;
-                    }
-
-                    if(foundTeleopConfig && foundAutonomousConfig) {
-                        break;
-                    }
-                }
-                Field[] fields = subSystem.getClass().getDeclaredFields();
-                List<Field> goodFields = new ArrayList<>();
-                for(Field field : fields) {
-                    if(field.isAnnotationPresent(ConfigurableButton.class)) {
-                        ConfigurableButton val = field.getAnnotation(ConfigurableButton.class);
-
-                        Button button;
-                        try {
-                            button = (Button) field.get(subSystem);
-                        }
-                        catch (IllegalAccessException e) {
-                            throw new DumpsterFireException("Variable "+field.getName()+" is using the auto-config system but isn't public. SHARE!!!!");
-                        }
-
-                        ExceptionChecker.assertNonNull(button, new NullPointerException("Variable "+field.getName()+" has no default value :("));
-
-                        if(val.program_type() == ConfigProgramType.TELEOP) {
-                            if(button.isBoolean()) {
-                                List<ConfigParam> existingConfig = teleopConfig.get(subSystem.getClass().getSimpleName());
-                                if(existingConfig == null) {
-                                    teleopConfig.put(subSystem.getClass().getSimpleName(), Arrays.asList((ConfigParam[]) new ConfigParam[]{new ConfigParam(val.name(), (Button.BooleanInputs) button.getInputEnum(), button.getGamepadNumber())}));
-                                }
-                                else {
-                                    List<ConfigParam> stuffToAdd = new ArrayList<>(existingConfig);
-                                    stuffToAdd.add(new ConfigParam(val.name(), (Button.BooleanInputs) button.getInputEnum(), button.getGamepadNumber()));
-                                    teleopConfig.put(subSystem.getClass().getSimpleName(), stuffToAdd);
-                                }
-                            }
-                            else if(button.isDouble()) {
-                                List<ConfigParam> existingConfig = teleopConfig.get(subSystem.getClass().getSimpleName());
-                                if (existingConfig == null) {
-                                    teleopConfig.put(subSystem.getClass().getSimpleName(), Arrays.asList((ConfigParam[]) new ConfigParam[]{new ConfigParam(val.name(), (Button.DoubleInputs) button.getInputEnum(), button.getGamepadNumber())}));
-                                }
-                                else {
-                                    List<ConfigParam> stuffToAdd = new ArrayList<>(existingConfig);
-                                    stuffToAdd.add(new ConfigParam(val.name(), (Button.DoubleInputs) button.getInputEnum(), button.getGamepadNumber()));
-                                    teleopConfig.put(subSystem.getClass().getSimpleName(), stuffToAdd);
-                                }
-                            }
-                            else {
-                                List<ConfigParam> existingConfig = teleopConfig.get(subSystem.getClass().getSimpleName());
-                                if(existingConfig == null) {
-                                    teleopConfig.put(subSystem.getClass().getSimpleName(), Arrays.asList((ConfigParam[]) new ConfigParam[]{new ConfigParam(val.name(), (Button.VectorInputs) button.getInputEnum(), button.getGamepadNumber())}));
-                                }
-                                else {
-                                    List<ConfigParam> stuffToAdd = new ArrayList<>(existingConfig);
-                                    stuffToAdd.add(new ConfigParam(val.name(), (Button.VectorInputs) button.getInputEnum(), button.getGamepadNumber()));
-                                    teleopConfig.put(subSystem.getClass().getSimpleName(), stuffToAdd);
-                                }
-                            }
-                        }
-                        else {
-                            if(button.isBoolean()) {
-                                List<ConfigParam> existingConfig = autonomousConfig.get(subSystem.getClass().getSimpleName());
-                                if(existingConfig == null) {
-                                    autonomousConfig.put(subSystem.getClass().getSimpleName(), Arrays.asList((ConfigParam[]) new ConfigParam[]{new ConfigParam(val.name(), (Button.BooleanInputs) button.getInputEnum(), button.getGamepadNumber())}));
-                                }
-                                else {
-                                    List<ConfigParam> stuffToAdd = new ArrayList<>(existingConfig);
-                                    stuffToAdd.add(new ConfigParam(val.name(), (Button.BooleanInputs) button.getInputEnum(), button.getGamepadNumber()));
-                                    autonomousConfig.put(subSystem.getClass().getSimpleName(), stuffToAdd);
-                                }
-                            }
-                            else if(button.isDouble()) {
-                                List<ConfigParam> existingConfig = autonomousConfig.get(subSystem.getClass().getSimpleName());
-                                if (existingConfig == null) {
-                                    autonomousConfig.put(subSystem.getClass().getSimpleName(), Arrays.asList((ConfigParam[]) new ConfigParam[]{new ConfigParam(val.name(), (Button.DoubleInputs) button.getInputEnum(), button.getGamepadNumber())}));
-                                }
-                                else {
-                                    List<ConfigParam> stuffToAdd = new ArrayList<>(existingConfig);
-                                    stuffToAdd.add(new ConfigParam(val.name(), (Button.DoubleInputs) button.getInputEnum(), button.getGamepadNumber()));
-                                    autonomousConfig.put(subSystem.getClass().getSimpleName(), stuffToAdd);
-                                }
-                            }
-                            else {
-                                List<ConfigParam> existingConfig = autonomousConfig.get(subSystem.getClass().getSimpleName());
-                                if(existingConfig == null) {
-                                    autonomousConfig.put(subSystem.getClass().getSimpleName(), Arrays.asList((ConfigParam[]) new ConfigParam[]{new ConfigParam(val.name(), (Button.VectorInputs) button.getInputEnum(), button.getGamepadNumber())}));
-                                }
-                                else {
-                                    List<ConfigParam> stuffToAdd = new ArrayList<>(existingConfig);
-                                    stuffToAdd.add(new ConfigParam(val.name(), (Button.VectorInputs) button.getInputEnum(), button.getGamepadNumber()));
-                                    autonomousConfig.put(subSystem.getClass().getSimpleName(), stuffToAdd);
-                                }
-                            }
-                        }
-                    }
-
-                    if(field.isAnnotationPresent(ConfigurableBoolean.class)) {
-                        goodFields.add(field);
-                        ConfigurableBoolean bool = field.getAnnotation(ConfigurableBoolean.class);
-
-                        boolean value;
-                        try {
-                            value = field.getBoolean(subSystem);
-                        }
-                        catch (IllegalAccessException e) {
-                            throw new DumpsterFireException("Variable "+field.getName()+" is using the auto-config system but isn't public. SHARE!!!!");
-                        }
-                        ExceptionChecker.assertNonNull(value, new NullPointerException("Variable "+field.getName()+" has no default value :("));
-
-                        if(bool.program_type() == ConfigProgramType.TELEOP) {
-                            List<ConfigParam> existingConfig = teleopConfig.get(subSystem.getClass().getSimpleName());
-
-                            if(existingConfig == null) {
-                                teleopConfig.put(subSystem.getClass().getSimpleName(), Arrays.asList((ConfigParam[]) new ConfigParam[]{new ConfigParam(bool.name(), ConfigParam.booleanMap, value)}));
-                            }
-                            else {
-                                List<ConfigParam> stuffToAdd = new ArrayList<>(existingConfig);
-                                stuffToAdd.add(new ConfigParam(bool.name(), ConfigParam.booleanMap, value));
-                                teleopConfig.put(subSystem.getClass().getSimpleName(), stuffToAdd);
-                            }
-                        }
-                        else {
-                            List<ConfigParam> existingConfig = autonomousConfig.get(subSystem.getClass().getSimpleName());
-
-                            if(existingConfig == null) {
-                                autonomousConfig.put(subSystem.getClass().getSimpleName(), Arrays.asList((ConfigParam[]) new ConfigParam[]{new ConfigParam(bool.name(), ConfigParam.booleanMap, value)}));
-                            }
-                            else {
-                                List<ConfigParam> stuffToAdd = new ArrayList<>(existingConfig);
-                                stuffToAdd.add(new ConfigParam(bool.name(), ConfigParam.booleanMap, value));
-                                autonomousConfig.put(subSystem.getClass().getSimpleName(), stuffToAdd);
-                            }
-                        }
-                    }
-
-                    if(field.isAnnotationPresent(ConfigurableDouble.class)) {
-                        goodFields.add(field);
-                        ConfigurableDouble val = field.getAnnotation(ConfigurableDouble.class);
-
-                        double value;
-                        try {
-                            value = field.getDouble(subSystem);
-                        }
-                        catch (IllegalAccessException e) {
-                            throw new DumpsterFireException("Variable "+field.getName()+" is using the auto-config system but isn't public. SHARE!!!!");
-                        }
-                        ExceptionChecker.assertNonNull(value, new NullPointerException("Variable "+field.getName()+" has no default value :("));
-
-                        if(val.program_type() == ConfigProgramType.TELEOP) {
-                            List<ConfigParam> existingConfig = teleopConfig.get(subSystem.getClass().getSimpleName());
-                            if(existingConfig == null) {
-                                teleopConfig.put(subSystem.getClass().getSimpleName(), Arrays.asList((ConfigParam[]) new ConfigParam[]{new ConfigParam(val.name(), ConfigParam.numberMap(val.lowerBound(), val.upperBound(), val.increment()), value)}));
-                            }
-                            else {
-                                List<ConfigParam> stuffToAdd = new ArrayList<>(existingConfig);
-                                stuffToAdd.add(new ConfigParam(val.name(), ConfigParam.numberMap(val.lowerBound(), val.upperBound(), val.increment()), value));
-                                teleopConfig.put(subSystem.getClass().getSimpleName(), stuffToAdd);
-                            }
-                        }
-                        else {
-                            List<ConfigParam> existingConfig = autonomousConfig.get(subSystem.getClass().getSimpleName());
-                            if(existingConfig == null) {
-                                autonomousConfig.put(subSystem.getClass().getSimpleName(), Arrays.asList((ConfigParam[]) new ConfigParam[]{new ConfigParam(val.name(), ConfigParam.numberMap(val.lowerBound(), val.upperBound(), val.increment()), value)}));
-                            }
-                            else {
-                                List<ConfigParam> stuffToAdd = new ArrayList<>(existingConfig);
-                                stuffToAdd.add(new ConfigParam(val.name(), ConfigParam.numberMap(val.lowerBound(), val.upperBound(), val.increment()), value));
-                                autonomousConfig.put(subSystem.getClass().getSimpleName(), stuffToAdd);
-                            }
-                        }
-                    }
-
-                    if(field.isAnnotationPresent(ConfigurableInteger.class)) {
-                        goodFields.add(field);
-                        ConfigurableInteger val = field.getAnnotation(ConfigurableInteger.class);
-
-                        int value;
-                        try {
-                            value = field.getInt(subSystem);
-                        }
-                        catch (IllegalAccessException e) {
-                            throw new DumpsterFireException("Variable "+field.getName()+" is using the auto-config system but isn't public. SHARE!!!!");
-                        }
-                        ExceptionChecker.assertNonNull(value, new NullPointerException("Variable "+field.getName()+" has no default value :("));
-
-                        if(val.program_type() == ConfigProgramType.TELEOP) {
-                            List<ConfigParam> existingConfig = teleopConfig.get(subSystem.getClass().getSimpleName());
-                            if(existingConfig == null) {
-                                teleopConfig.put(subSystem.getClass().getSimpleName(), Arrays.asList((ConfigParam[]) new ConfigParam[]{new ConfigParam(val.name(), ConfigParam.numberMap(val.lowerBound(), val.upperBound(), val.increment()), value)}));
-                            }
-                            else {
-                                List<ConfigParam> stuffToAdd = new ArrayList<>(existingConfig);
-                                stuffToAdd.add(new ConfigParam(val.name(), ConfigParam.numberMap(val.lowerBound(), val.upperBound(), val.increment()), value));
-                                teleopConfig.put(subSystem.getClass().getSimpleName(), stuffToAdd);
-                            }
-                        }
-                        else {
-                            List<ConfigParam> existingConfig = autonomousConfig.get(subSystem.getClass().getSimpleName());
-                            if(existingConfig == null) {
-                                autonomousConfig.put(subSystem.getClass().getSimpleName(), Arrays.asList((ConfigParam[]) new ConfigParam[]{new ConfigParam(val.name(), ConfigParam.numberMap(val.lowerBound(), val.upperBound(), val.increment()), value)}));
-                            }
-                            else {
-                                List<ConfigParam> stuffToAdd = new ArrayList<>(existingConfig);
-                                stuffToAdd.add(new ConfigParam(val.name(), ConfigParam.numberMap(val.lowerBound(), val.upperBound(), val.increment()), value));
-                                autonomousConfig.put(subSystem.getClass().getSimpleName(), stuffToAdd);
-                            }
-                        }
-                    }
-                }
-                this.fields.put(subSystem,goodFields);
-            }
-            catch (Throwable e) {
-                Log.e("Error","Problem loading config for subsystem "+subSystem.getClass().getSimpleName(),e);
+            if (success && !useGui) {
+                GUI.setup(this, new Button<Boolean>(1, Button.BooleanInputs.noButton));
+                gui = GUI.getInstance();
+                useGui = true;
             }
         }
     }
@@ -513,11 +151,11 @@ public abstract class Robot {
      *
      * @param name The name of the subsystem.
      * @param subSystem The subsystem object.
-     * @deprecated Renamed to add SubSystem
+     * @deprecated Renamed to addSubSystem
      */
     @Deprecated
     protected final void putSubSystem(String name, SubSystem subSystem) {
-        addSubSystem(subSystem);
+        addSubSystem(name, subSystem);
     }
 
     /**
@@ -525,9 +163,10 @@ public abstract class Robot {
      *
      * @param cycleButton The button used to cycle through multiple menus in GUI.
      */
-    protected final void startGui(Button cycleButton) {
+    protected final void startGui(Button<Boolean> cycleButton) {
         if(!useGui) {
-            gui = new GUI(this, cycleButton);
+            GUI.setup(this, cycleButton);
+            gui = GUI.getInstance();
             useGui = true;
         }
         else {
@@ -542,9 +181,7 @@ public abstract class Robot {
      *
      * @throws NotBooleanInputException Throws this exception if the button is not a boolean input.
      */
-    protected final void enableViewport(@NotNull Button cycleButton) {
-        ExceptionChecker.assertTrue(cycleButton.isBoolean,new NotBooleanInputException("Vision cycle button must be a boolean input"));
-
+    protected final void enableViewport(@NotNull Button<Boolean> cycleButton) {
         if(!useViewport) {
             visionCycler.addButton(VISION_CYCLE, cycleButton);
             useViewport = true;
@@ -583,21 +220,27 @@ public abstract class Robot {
     {
         Field[] fields = this.getClass().getDeclaredFields();
         for(Field f : fields) {
-            if(SubSystem.class.isAssignableFrom(f.getType())) {
-                if(!f.isAnnotationPresent(DisableSubSystem.class)) {
-                    Object obj;
-                    try {
-                        obj = f.get(this);
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                        throw new DumpsterFireException("Tried to access your subsystem, but you made it protected or private. SHARE!!!");
+            if(SubSystem.class.isAssignableFrom(f.getType()) && !f.isAnnotationPresent(DisableSubSystem.class)) {
+                Object obj;
+                try {
+                    obj = f.get(this);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                    throw new DumpsterFireException("Tried to access your subsystem, but you made it protected or private. SHARE!!!");
+                }
+                if(obj != null) {
+                    SubSystem subSystem = (SubSystem) obj;
+                    String name = subSystem.getClass().getSimpleName();
+                    if(f.isAnnotationPresent(ConfigLabel.class)) {
+                        ConfigLabel configLabelAnnotation = f.getAnnotation(ConfigLabel.class);
+                        name = configLabelAnnotation.label();
                     }
-                    if(obj != null) {
-                        addSubSystem((SubSystem) obj);
-                    }
+                    addSubSystem(name, subSystem);
                 }
             }
         }
+
+        HALConfig.setGlobalConfigAsDefault();
 
         this.gamepad1 = opMode.gamepad1;
         this.gamepad2 = opMode.gamepad2;
@@ -633,7 +276,7 @@ public abstract class Robot {
             //Get all names of subsystem objects being used in this robot and write it to the outer robot_info.txt file
             //These names will be used in the config debugger
             StringBuilder sb = new StringBuilder();
-            for(SubSystem subSystem : subSystems.values()) {
+            for(SubSystem subSystem : subSystems) {
                 if(subSystem.usesConfig) {
                     sb.append(subSystem.getClass().getName());
                     sb.append("\r\n");
@@ -666,22 +309,10 @@ public abstract class Robot {
             gui.start();
         }
 
-        for (SubSystem subSystem : subSystems.values()){
-            try
-            {
-                subSystem.init();
-            }
-            catch (Throwable ex)
-            {
-                telemetry.clearAll();
-                telemetry.addData("ERROR!!!", ex.getMessage());
-                telemetry.update();
-                if(!errorThrown) {
-                    Log.e(this.getClass().getSimpleName(), ex.getMessage(), ex);
-                    thrownException = ex;
-                    errorThrown = true;
-                }
-            }
+        for (int i = 0; i < subSystems.size(); i++) {
+            SubSystem subSystem = subSystems.poll();
+            subSystem.init();
+            subSystems.add(subSystem);
         }
 
         if(useViewport) {
@@ -704,58 +335,41 @@ public abstract class Robot {
      * Runs methods in a loop during init. Runs all subsystem init_loop() methods and draws the configuration menu.
      */
     public final void init_loop() {
+        this.gamepad1 = opMode.gamepad1;
+        this.gamepad2 = opMode.gamepad2;
 
-        if(!errorThrown) {
-            this.gamepad1 = opMode.gamepad1;
-            this.gamepad2 = opMode.gamepad2;
+        if (useGui) {
+            gui.drawCurrentMenuInit();
 
-            if (useGui) {
-                gui.drawCurrentMenuInit();
-
-                if (useConfig) {
-                    if (((ConfigMenu) gui.getMenu("config")).isDone) {
-                        gui.removeMenu("config");
-                        useConfig = false;
-                    }
+            if (useConfig) {
+                if (((ConfigMenu) gui.getMenu("config")).isDone) {
+                    gui.removeMenu("config");
+                    useConfig = false;
                 }
-            }
-
-            for (SubSystem subSystem : subSystems.values()) {
-
-                try {
-                    subSystem.init_loop();
-                } catch (Throwable ex) {
-                    telemetry.clearAll();
-                    telemetry.addData("ERROR!!!", ex.getMessage());
-                    telemetry.update();
-                    if (!errorThrown) {
-                        Log.e(this.getClass().getSimpleName(), ex.getMessage(), ex);
-                        thrownException = ex;
-                        errorThrown = true;
-                    }
-                }
-            }
-            boolean enableVision = enableVisionRequested();
-            if (enableVision && !pipelineSet) {
-                camera.openCameraDevice();
-                camera.setPipeline(new Pipeline());
-                camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
-                pipelineSet = true;
-                cameraStarted = true;
-            } else if (enableVision && !cameraStarted) {
-                camera.openCameraDevice();
-                camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
-                cameraStarted = true;
-            } else if (!enableVision && pipelineSet) {
-                camera.stopStreaming();
-                camera.closeCameraDevice();
-                cameraStarted = false;
             }
         }
-        else {
-            telemetry.clearAll();
-            telemetry.addData("ERROR!!!", thrownException.getMessage());
-            telemetry.update();
+
+        for (int i = 0; i < subSystems.size(); i++) {
+            SubSystem subSystem = subSystems.poll();
+            subSystem.init_loop();
+            subSystems.add(subSystem);
+        }
+
+        boolean enableVision = enableVisionRequested();
+        if (enableVision && !pipelineSet) {
+            camera.openCameraDevice();
+            camera.setPipeline(new Pipeline());
+            camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
+            pipelineSet = true;
+            cameraStarted = true;
+        } else if (enableVision && !cameraStarted) {
+            camera.openCameraDevice();
+            camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
+            cameraStarted = true;
+        } else if (!enableVision && pipelineSet) {
+            camera.stopStreaming();
+            camera.closeCameraDevice();
+            cameraStarted = false;
         }
     }
 
@@ -763,142 +377,72 @@ public abstract class Robot {
      * Runs this method when the user presses the start button.
      */
     public final void onStart() {
+        this.gamepad1 = opMode.gamepad1;
+        this.gamepad2 = opMode.gamepad2;
 
-        if(!errorThrown) {
-            this.gamepad1 = opMode.gamepad1;
-            this.gamepad2 = opMode.gamepad2;
-
-            if (useGui) {
-                if (gui.isMenuPresent("config")) {
-                    gui.removeMenu("config");
-                }
-                gui.onStart();
+        if (useGui) {
+            if (gui.isMenuPresent("config")) {
+                gui.removeMenu("config");
             }
-
-            for (SubSystem subSystem : subSystems.values()) {
-                if (subSystem.usesConfig) {
-                    ConfigData data = pullNonGamepad(subSystem);
-                    List<Field> fields = this.fields.get(subSystem);
-                    if (fields != null) {
-                        for (Field field : fields) {
-                            if(field.isAnnotationPresent(ConfigurableBoolean.class)) {
-                                ConfigurableBoolean val = field.getAnnotation(ConfigurableBoolean.class);
-                                try {
-                                    field.set(subSystem, data.getData(val.name(), Boolean.class));
-                                }
-                                catch (IllegalAccessException ex) {
-                                    Log.w("HAL","Warning, could not auto-pull config setting "+val.name()+" due to it having restricted access");
-                                }
-                            }
-                            else if(field.isAnnotationPresent(ConfigurableDouble.class)) {
-                                ConfigurableDouble val = field.getAnnotation(ConfigurableDouble.class);
-                                try {
-                                    field.set(subSystem, data.getData(val.name(), Double.class));
-                                }
-                                catch (IllegalAccessException ex) {
-                                    Log.w("HAL","Warning, could not auto-pull config setting "+val.name()+" due to it having restricted access");
-                                }
-                            }
-                            else {
-                                ConfigurableInteger val = field.getAnnotation(ConfigurableInteger.class);
-                                try {
-                                    field.set(subSystem, data.getData(val.name(), Integer.class));
-                                }
-                                catch (IllegalAccessException ex) {
-                                    Log.w("HAL","Warning, could not auto-pull config setting "+val.name()+" due to it having restricted access");
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            for (SubSystem subSystem : subSystems.values()) {
-                try {
-                    subSystem.start();
-                } catch (Throwable ex) {
-                    telemetry.clearAll();
-                    telemetry.addData("ERROR!!!", ex.getMessage());
-                    telemetry.update();
-                    if(!errorThrown) {
-                        Log.e(this.getClass().getSimpleName(), ex.getMessage(), ex);
-                        thrownException = ex;
-                        errorThrown = true;
-                    }
-                }
-            }
-            boolean enableVision = enableVisionRequested();
-            if (enableVision && !pipelineSet) {
-                camera.openCameraDevice();
-                camera.setPipeline(new Pipeline());
-                camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
-                pipelineSet = true;
-                cameraStarted = true;
-            } else if (enableVision && !cameraStarted) {
-                camera.openCameraDevice();
-                camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
-                cameraStarted = true;
-            } else if (!enableVision && pipelineSet) {
-                camera.stopStreaming();
-                camera.closeCameraDevice();
-                cameraStarted = false;
-            }
+            gui.onStart();
         }
-        else {
-            telemetry.clearAll();
-            telemetry.addData("ERROR!!!", thrownException.getMessage());
-            telemetry.update();
+
+        for (int i = 0; i < subSystems.size(); i++) {
+            SubSystem subSystem = subSystems.poll();
+            subSystem.start();
+            subSystems.add(subSystem);
+        }
+
+        boolean enableVision = enableVisionRequested();
+        if (enableVision && !pipelineSet) {
+            camera.openCameraDevice();
+            camera.setPipeline(new Pipeline());
+            camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
+            pipelineSet = true;
+            cameraStarted = true;
+        } else if (enableVision && !cameraStarted) {
+            camera.openCameraDevice();
+            camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
+            cameraStarted = true;
+        } else if (!enableVision && pipelineSet) {
+            camera.stopStreaming();
+            camera.closeCameraDevice();
+            cameraStarted = false;
         }
     }
 
     /**
      * Runs subsystem handle() methods and GUI drawCurrentMenu() every frame in driver controlled programs.
      */
-    public final void driverControlledUpdate()
-    {
-        if(!errorThrown) {
-            this.gamepad1 = opMode.gamepad1;
-            this.gamepad2 = opMode.gamepad2;
+    public final void driverControlledUpdate() {
+        this.gamepad1 = opMode.gamepad1;
+        this.gamepad2 = opMode.gamepad2;
 
-            if (useGui) {
-                gui.drawCurrentMenu();
-            }
-
-            for (SubSystem subSystem : subSystems.values()) {
-                try {
-                    subSystem.handle();
-                } catch (Throwable ex) {
-                    telemetry.clearAll();
-                    telemetry.addData("ERROR!!!", ex.getMessage());
-                    telemetry.update();
-                    if(!errorThrown) {
-                        Log.e(this.getClass().getSimpleName(), ex.getMessage(), ex);
-                        thrownException = ex;
-                        errorThrown = true;
-                    }
-                }
-            }
-            boolean enableVision = enableVisionRequested();
-            if (enableVision && !pipelineSet) {
-                camera.openCameraDevice();
-                camera.setPipeline(new Pipeline());
-                camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
-                pipelineSet = true;
-                cameraStarted = true;
-            } else if (enableVision && !cameraStarted) {
-                camera.openCameraDevice();
-                camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
-                cameraStarted = true;
-            } else if (!enableVision && pipelineSet) {
-                camera.stopStreaming();
-                camera.closeCameraDevice();
-                cameraStarted = false;
-            }
+        if (useGui) {
+            gui.drawCurrentMenu();
         }
-        else {
-            telemetry.clearAll();
-            telemetry.addData("ERROR!!!", thrownException.getMessage());
-            telemetry.update();
+
+        for (int i = 0; i < subSystems.size(); i++) {
+            SubSystem subSystem = subSystems.poll();
+            subSystem.handle();
+            subSystems.add(subSystem);
+        }
+
+        boolean enableVision = enableVisionRequested();
+        if (enableVision && !pipelineSet) {
+            camera.openCameraDevice();
+            camera.setPipeline(new Pipeline());
+            camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
+            pipelineSet = true;
+            cameraStarted = true;
+        } else if (enableVision && !cameraStarted) {
+            camera.openCameraDevice();
+            camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
+            cameraStarted = true;
+        } else if (!enableVision && pipelineSet) {
+            camera.stopStreaming();
+            camera.closeCameraDevice();
+            cameraStarted = false;
         }
     }
 
@@ -906,46 +450,22 @@ public abstract class Robot {
      * Runs the stop functions for all subsystems and the GUI.
      */
     public final void stopAllComponents(){
-
-        if(!errorThrown) {
-            if (useGui) {
-                gui.stop();
-            }
-
-            for (SubSystem subSystem : subSystems.values()) {
-                try {
-                    subSystem.stop();
-                } catch (Throwable ex) {
-                    telemetry.clearAll();
-                    telemetry.addData("ERROR!!!", ex.getMessage());
-                    telemetry.update();
-                    if (!errorThrown) {
-                        Log.e(this.getClass().getSimpleName(), ex.getMessage(), ex);
-                        thrownException = ex;
-                        errorThrown = true;
-                    }
-                }
-            }
-
-            if (cameraStarted) {
-                camera.stopStreaming();
-                camera.closeCameraDevice();
-            }
-
-            for(SubSystem subSystem : subSystems.values()) {
-                teleopConfig.remove(subSystem.getClass().getSimpleName());
-                autonomousConfig.remove(subSystem.getClass().getSimpleName());
-            }
-            teleopConfig.remove(opmodeName);
-            autonomousConfig.remove(opmodeName);
-            usedProgramSettingsTeleop.remove(opmodeName);
-            usedProgramSettingsAutonomous.remove(opmodeName);
+        if (useGui) {
+            gui.stop();
         }
-        else {
-            telemetry.clearAll();
-            telemetry.addData("ERROR!!!", thrownException.getMessage());
-            telemetry.update();
+
+        for (int i = 0; i < subSystems.size(); i++) {
+            SubSystem subSystem = subSystems.poll();
+            subSystem.stop();
+            subSystems.add(subSystem);
         }
+
+        if (cameraStarted) {
+            camera.stopStreaming();
+            camera.closeCameraDevice();
+        }
+
+        globalConfig.clearConfig();
     }
 
     /**
@@ -954,21 +474,21 @@ public abstract class Robot {
      * @param name The name of the subsystem.
      * @return The subsystem with the given identifier in the hashmap.
      */
-    public final SubSystem getSubSystem(String name)
+    /*public final SubSystem getSubSystem(String name)
     {
-        return subSystems.get(name);
-    }
+        return subSystems.g(name);
+    }*/
 
     /**
      * Replaces a subsystem already in the hashmap with another subsystem.
      *
-     * @param name The name of the subsystem to be replaced.
-     * @param subSystem The new subsystem.
+   //  * @param name The name of the subsystem to be replaced.
+    // * @param subSystem The new subsystem.
      */
-    public final void overrideSubSystem(String name, SubSystem subSystem)
+    /*public final void overrideSubSystem(String name, SubSystem subSystem)
     {
         subSystems.put(name, subSystem);
-    }
+    }*/
 
     @Contract(pure = true)
     public final boolean getUsingConfig() {
@@ -988,21 +508,11 @@ public abstract class Robot {
     /**
      * Pulls a customizable gamepad object from the teleop config map. Allows for easily getting gamepad data from the configuration.
      *
-     * @param subsystem The subsystem to pull the gamepad controls for.
-     * @return A customizable gamepad containing the configured controls for that subsystem.
-     */
-    public final CustomizableGamepad pullControls(@NotNull SubSystem subsystem) {
-        return pullControls(subsystem.getClass().getSimpleName());
-    }
-
-    /**
-     * Pulls a customizable gamepad object from the teleop config map. Allows for easily getting gamepad data from the configuration.
-     *
      * @param subsystem The name of the subsystem to pull the gamepad controls for.
      * @return A customizable gamepad containing the configured controls for that subsystem.
      */
-    public final CustomizableGamepad pullControls(String subsystem) {
-        List<ConfigParam> configParams = teleopConfig.get(subsystem);
+    public final CustomizableGamepad pullControls(SubSystem subsystem) {
+        List<ConfigParam> configParams = globalConfig.getConfig(HALConfig.Mode.TELEOP, subsystem);
         ExceptionChecker.assertNonNull(configParams, new NullPointerException(subsystem+" is not present in teleopConfig"));
         CustomizableGamepad gamepad = new CustomizableGamepad(this);
         for (ConfigParam param : configParams) {
@@ -1016,32 +526,14 @@ public abstract class Robot {
     /**
      * Pulls the data of non-gamepad-related config settings from the global config. The map format is (option name) -> (option value)
      *
-     * @param subsystem The subsystem to get config from.
-     * @return The non-gamepad configuration data for that subsystem.
-     */
-    @NotNull
-    public final ConfigData pullNonGamepad(@NotNull SubSystem subsystem) {
-        return pullNonGamepad(subsystem.getClass().getSimpleName());
-    }
-
-    /**
-     * Pulls the data of non-gamepad-related config settings from the global config. The map format is (option name) -> (option value)
-     *
      * @param subsystem The name of the subsystem to get config from.
      * @return The non-gamepad configuration data for that subsystem.
      */
     @NotNull
     @Contract("_ -> new")
-    public final ConfigData pullNonGamepad(String subsystem) {
-        List<ConfigParam> configParamsTeleop = new ArrayList<>();
-        List<ConfigParam> configParamsAuto = new ArrayList<>();
-
-        if(teleopConfig.keySet().contains(subsystem)) {
-            configParamsTeleop = teleopConfig.get(subsystem);
-        }
-        if(autonomousConfig.keySet().contains(subsystem)) {
-            configParamsAuto = autonomousConfig.get(subsystem);
-        }
+    public final ConfigData pullNonGamepad(SubSystem subsystem) {
+        List<ConfigParam> configParamsTeleop = globalConfig.getConfig(HALConfig.Mode.TELEOP, subsystem);
+        List<ConfigParam> configParamsAuto = globalConfig.getConfig(HALConfig.Mode.AUTONOMOUS, subsystem);
 
         if(configParamsAuto == null) {
             configParamsAuto = new ArrayList<>();
@@ -1068,25 +560,14 @@ public abstract class Robot {
     }
 
     public ConfigData pullProgramSettings() {
-        ExceptionChecker.assertTrue(teleopConfig.containsKey(opmodeName) || autonomousConfig.containsKey(opmodeName), new NothingToSeeHereException("You are not using @ProgramOptions, but are trying pull program settings"));
-        if(isTeleop()) {
-            List<ConfigParam> data = teleopConfig.get(opmodeName);
-            ExceptionChecker.assertNonNull(data, new NullPointerException(opmodeName+" settings are not part of the config"));
-            Map<String, Object> dataMap = new HashMap<>();
-            for(ConfigParam param : data) {
-                dataMap.put(param.name, param.vals.get(param.options.indexOf(param.currentOption)));
-            }
-            return new ConfigData(dataMap);
+        List<ConfigParam> data = globalConfig.getConfig(opMode);
+        ExceptionChecker.assertNonNull(data, new NothingToSeeHereException(HALConfig.getOpModeName(opMode.getClass())+" settings are not part of the config."));
+
+        Map<String, Object> dataMap = new HashMap<>();
+        for(ConfigParam param : data) {
+            dataMap.put(param.name, param.vals.get(param.options.indexOf(param.currentOption)));
         }
-        else {
-            List<ConfigParam> data = autonomousConfig.get(opmodeName);
-            ExceptionChecker.assertNonNull(data, new NullPointerException(opmodeName+" settings are not part of the config"));
-            Map<String, Object> dataMap = new HashMap<>();
-            for(ConfigParam param : data) {
-                dataMap.put(param.name, param.vals.get(param.options.indexOf(param.currentOption)));
-            }
-            return new ConfigData(dataMap);
-        }
+        return new ConfigData(dataMap);
     }
 
     /**

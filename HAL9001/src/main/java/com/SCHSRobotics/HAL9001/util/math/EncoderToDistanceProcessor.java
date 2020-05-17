@@ -1,6 +1,5 @@
 package com.SCHSRobotics.HAL9001.util.math;
 
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,7 +23,6 @@ public class EncoderToDistanceProcessor {
      * @param diameter Diameter of wheel.
      * @param unit Units of the diameter.
      */
-    @Contract(pure = true)
     public EncoderToDistanceProcessor(double diameter, @NotNull Units unit){
         encoderPerMeter = 1440 / (Math.PI * (diameter*unit.conversionFactor));
     }
@@ -36,7 +34,6 @@ public class EncoderToDistanceProcessor {
      * @param encoderPerRotation number of encoders per one rotation of the wheel.
      * @param unit Units of the diameter.
      * */
-    @Contract(pure = true)
     public EncoderToDistanceProcessor(double diameter, int encoderPerRotation, @NotNull Units unit){
         encoderPerMeter = encoderPerRotation / (Math.PI * (diameter*unit.conversionFactor));
     }
@@ -46,7 +43,6 @@ public class EncoderToDistanceProcessor {
      *
      * @param encoderPerMeter Experimentally gotten value.
      * */
-    @Contract(pure = true)
     public EncoderToDistanceProcessor(double encoderPerMeter){
         this.encoderPerMeter = encoderPerMeter;
     }
@@ -67,7 +63,7 @@ public class EncoderToDistanceProcessor {
      * @param encoderAmount Amount of encoder.
      * @param unit Units of returned distance.
      * */
-    public double getDistanceFromEncoders(int encoderAmount, @NotNull Units unit){
+    public double getDistanceFromEncoders(double encoderAmount, @NotNull Units unit){
         return (encoderAmount/encoderPerMeter)*unit.conversionFactor;
     }
 }
