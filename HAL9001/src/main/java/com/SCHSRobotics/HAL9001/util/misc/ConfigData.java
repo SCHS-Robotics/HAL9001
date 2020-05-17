@@ -3,6 +3,7 @@ package com.SCHSRobotics.HAL9001.util.misc;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotAnAlchemistException;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -26,6 +27,7 @@ public class ConfigData {
      *
      * @param map A hashmap containing raw data pulled from the config.
      */
+    @Contract(pure = true)
     public ConfigData(@NotNull Map<String,Object> map) {
         this.map = map;
     }

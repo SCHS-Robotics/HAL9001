@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 @SuppressWarnings("unused")
 public class ExceptionChecker {
 
+    @Contract(pure = true)
     private ExceptionChecker() {}
 
     /**
