@@ -85,6 +85,8 @@ public abstract class HALMenu {
         if(dynamicSelectionZone) {
             dynamicSelectionZoneAnnotation = thisClass.getAnnotation(DynamicSelectionZone.class);
         }
+
+        GamepadEventGenerator.getInstance().reset();
     }
 
     public HALMenu() {
