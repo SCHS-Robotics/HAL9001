@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
+import android.util.Log;
+
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 
 import java.util.ArrayList;
@@ -120,6 +122,8 @@ public class BlinkableTextElement implements EventListener, AdvancedViewElement 
 
     @Override
     public String getText() {
+        Log.wtf("unmodified", unmodifiedText);
+        Log.wtf("modified", text);
         return text;
     }
 
