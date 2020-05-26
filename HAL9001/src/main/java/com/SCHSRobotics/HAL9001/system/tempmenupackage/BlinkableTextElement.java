@@ -127,7 +127,6 @@ public class BlinkableTextElement implements EventListener, AdvancedViewElement 
 
     @Override
     public String getText() {
-        Log.wtf("ran","ran");
         return text;
     }
 
