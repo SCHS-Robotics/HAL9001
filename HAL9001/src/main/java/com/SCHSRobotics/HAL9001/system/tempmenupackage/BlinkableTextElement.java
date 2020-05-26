@@ -107,6 +107,8 @@ public class BlinkableTextElement implements EventListener, AdvancedViewElement 
 
     @Override
     public boolean onEvent(Event event) {
+        Log.wtf("ran","ran on event");
+        Log.wtf("event name", event.getClass().getSimpleName());
         if(event instanceof BlinkEvent) {
             BlinkEvent blinkEvent = (BlinkEvent) event;
 
