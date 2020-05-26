@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
+import android.util.Log;
+
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 
 import java.util.ArrayList;
@@ -114,6 +116,11 @@ public class BlinkableTextElement implements EventListener, AdvancedViewElement 
             else {
                 text = unmodifiedText;
             }
+
+            Log.wtf("blinking enabled", ""+blinkingEnabled);
+            Log.wtf("blink state",blinkEvent.getBlinkState().name());
+            Log.wtf("unmodified text", unmodifiedText);
+            Log.wtf("blinked text", text);
         }
         return false;
     }
