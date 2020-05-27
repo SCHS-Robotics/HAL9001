@@ -8,11 +8,9 @@ import com.qualcomm.robotcore.util.Range;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static java.lang.Math.abs;
@@ -37,7 +35,7 @@ public abstract class HALMenu {
     private int cursorX, cursorY;
     private List<ViewElement> elements, displayableElements;
     private Timer blinkTimer;
-    private Map<Class<? extends Event>, List<EventListener>> listenerElementLookup;
+    private MultiElementMap<Class<? extends Event>, EventListener> listenerElementLookup;
     private boolean doForceUpdateCursor;
     private boolean dynamicSelectionZone;
     private DynamicSelectionZone dynamicSelectionZoneAnnotation;
@@ -72,7 +70,7 @@ public abstract class HALMenu {
         enforceMaxLines = true;
         elements = new ArrayList<>();
         displayableElements = new ArrayList<>();
-        listenerElementLookup = new HashMap<>();
+        listenerElementLookup = new MultiElementMap<>();
         doForceUpdateCursor = false;
 
         validButtons = new HashSet<>();
@@ -116,27 +114,9 @@ public abstract class HALMenu {
             ExceptionChecker.assertNonNull(eventAnnotation, new NullPointerException("Event annotation returned null. This should not be possible."));
             Class<? extends Event>[] eventClasses = eventAnnotation.events();
             for(Class<? extends Event> eventClass : eventClasses) {
-                if(listenerElementLookup.containsKey(eventClass)) {
-                    List<EventListener> listeners = listenerElementLookup.get(eventClass);
-                    ExceptionChecker.assertNonNull(listeners, new NullPointerException("Event key mapped to null value. This should not be possible."));
-                    listeners.add((EventListener) element);
-                }
-                else {
-                    List<EventListener> listeners = new ArrayList<>();
-                    listeners.add((EventListener) element);
-                    listenerElementLookup.put(eventClass, listeners);
-                }
+                listenerElementLookup.put(eventClass, (EventListener) element);
             }
-            if(listenerElementLookup.containsKey(UniversalEvent.class)) {
-                List<EventListener> listeners = listenerElementLookup.get(UniversalEvent.class);
-                ExceptionChecker.assertNonNull(listeners, new NullPointerException("Event key mapped to null value. This should not be possible."));
-                listeners.add((EventListener) element);
-            }
-            else {
-                List<EventListener> listeners = new ArrayList<>();
-                listeners.add((EventListener) element);
-                listenerElementLookup.put(UniversalEvent.class, listeners);
-            }
+            listenerElementLookup.put(UniversalEvent.class, (EventListener) element);
 
             if(element instanceof AdvancedListener) {
                 AdvancedListener advancedListener = (AdvancedListener) element;
@@ -203,7 +183,7 @@ public abstract class HALMenu {
                 Short circuit evaluation, DO NOT CHANGE THE ORDER OF THINGS IN THE IF STATEMENT
                 if element is not displayable (i.e. entire-screen-related), skip second check
                 if element is displayable, check if element is on the same line as the cursor
-                IF THE ORDER OF THESE CHECKS IS REVERSED THERE WILL BE ERRORS, AS FULL-VIEW BUTTONS ARE NOT DISPLAYABLE
+                IF THE ORDER OF THESE CHECKS IS REVERSED THERE WILL BE ERRORS
                  */
                 boolean updatesUniversally = listener instanceof UniversalUpdater && ((UniversalUpdater) listener).updatesUniversally();
                 if(satisfiesCriteria && (!displayableElements.contains(listener) || displayableElements.indexOf(listener) == cursorY || updatesUniversally)) {
