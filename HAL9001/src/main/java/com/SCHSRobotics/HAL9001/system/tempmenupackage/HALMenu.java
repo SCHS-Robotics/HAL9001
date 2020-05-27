@@ -129,8 +129,6 @@ public abstract class HALMenu {
                     listenerElementLookup.put(eventClass, listeners);
                 }
             }
-            Log.wtf("Element",element.getClass().getSimpleName());
-            Log.wtf("is adv", ""+(element instanceof AdvancedListener));
             if(element instanceof AdvancedListener) {
                 AdvancedListener advancedListener = (AdvancedListener) element;
                 CriteriaPacket eventCriteria = advancedListener.getCriteria();
@@ -196,6 +194,9 @@ public abstract class HALMenu {
                 if element is displayable, check if element is on the same line as the cursor
                 IF THE ORDER OF THESE CHECKS IS REVERSED THERE WILL BE ERRORS, AS FULL-VIEW BUTTONS ARE NOT DISPLAYABLE
                  */
+                Log.wtf("Current event", currentEvent.getClass().getSimpleName());
+                Log.wtf("Listener", listener.getClass().getSimpleName());
+                Log.wtf("meets criteria", ""+satisfiesCriteria);
                 if(satisfiesCriteria && (!displayableElements.contains(listener) || displayableElements.indexOf(listener) == cursorY)) {
                     doCursorUpdate = listener.onEvent(currentEvent);
                 }
