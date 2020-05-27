@@ -30,6 +30,8 @@ public class BlinkableTextElement implements EventListener, AdvancedViewElement,
         ExceptionChecker.assertTrue(charIdx < unmodifiedText.length(), new IndexOutOfBoundsException("Blink Index out of bounds."));
         ExceptionChecker.assertFalse(charIdx < 0, new IndexOutOfBoundsException("Blink index must be greater than or equal to 0."));
         blinkingCharArray[charIdx] = charToBlink;
+        Log.wtf("test","ran blink char at");
+        Log.wtf("text", new String(blinkingCharArray));
         blinkingIndices.add(charIdx);
         blinkingCharacters.add(charToBlink);
         return this;
@@ -116,12 +118,6 @@ public class BlinkableTextElement implements EventListener, AdvancedViewElement,
             else {
                 text = unmodifiedText;
             }
-
-            Log.wtf("blinking enabled", ""+blinkingEnabled);
-            Log.wtf("blink state",blinkEvent.getBlinkState().name());
-            Log.wtf("unmodified text", unmodifiedText);
-            Log.wtf("blinked text", text);
-            Log.wtf("","");
         }
         return false;
     }
