@@ -127,6 +127,17 @@ public abstract class HALMenu {
                     listenerElementLookup.put(eventClass, listeners);
                 }
             }
+            if(listenerElementLookup.containsKey(UniversalEvent.class)) {
+                List<EventListener> listeners = listenerElementLookup.get(UniversalEvent.class);
+                ExceptionChecker.assertNonNull(listeners, new NullPointerException("Event key mapped to null value. This should not be possible."));
+                listeners.add((EventListener) element);
+            }
+            else {
+                List<EventListener> listeners = new ArrayList<>();
+                listeners.add((EventListener) element);
+                listenerElementLookup.put(UniversalEvent.class, listeners);
+            }
+
             if(element instanceof AdvancedListener) {
                 AdvancedListener advancedListener = (AdvancedListener) element;
                 CriteriaPacket eventCriteria = advancedListener.getCriteria();
@@ -145,6 +156,8 @@ public abstract class HALMenu {
     }
 
     protected final boolean updateListeners() {
+        Event.injectEvent(new UniversalEvent());
+
         GamepadEventGenerator eventGenerator = GamepadEventGenerator.getInstance();
 
         //Generate gamepad events.
