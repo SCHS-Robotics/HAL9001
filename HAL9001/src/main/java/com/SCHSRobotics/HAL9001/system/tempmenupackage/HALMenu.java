@@ -44,7 +44,7 @@ public abstract class HALMenu {
 
     public enum BlinkState {
         ON, OFF;
-        public BlinkState nextState() {
+        public final BlinkState nextState() {
             if(this == ON) {
                 return OFF;
             }
@@ -59,7 +59,6 @@ public abstract class HALMenu {
         this.payload = payload;
 
         gui = HALGUI.getInstance();
-        selectionZone = new SelectionZone(0,0);
         cursorX = 0;
         cursorY = 0;
         menuLevel = 0;
@@ -78,6 +77,7 @@ public abstract class HALMenu {
         blinkTimer = new Timer();
         blinkTimer.start(cursorBlinkSpeedMs, TimeUnit.MILLISECONDS);
 
+        selectionZone = initialSelectionZone();
         Class<? extends HALMenu> thisClass = getClass();
         dynamicSelectionZone = thisClass.isAnnotationPresent(DynamicSelectionZone.class);
         if(dynamicSelectionZone) {
@@ -89,7 +89,7 @@ public abstract class HALMenu {
         this(new Payload());
     }
 
-    protected void render() {
+    protected final void render() {
         if(doForceUpdateCursor) {
             cursorBlinkState = BlinkState.ON;
             blinkTimer.reset();
@@ -103,7 +103,7 @@ public abstract class HALMenu {
         }
     }
 
-    protected void addItem(ViewElement element) {
+    protected final void addItem(ViewElement element) {
         elements.add(element);
         String text = element.getText();
         if(text != null) {
@@ -206,6 +206,9 @@ public abstract class HALMenu {
     }
 
     protected abstract void init(Payload payload);
+    protected SelectionZone initialSelectionZone() {
+        return new SelectionZone(0,0);
+    }
 
     protected final void displayLines(int startAt, int endAt){
         ExceptionChecker.assertTrue(startAt >= 0, new DumpsterFireException("startAt must be greater than 0"));
@@ -248,12 +251,12 @@ public abstract class HALMenu {
         return new String(chars);
     }
 
-    protected void clear() {
+    protected final void clear() {
         elements.clear();
         displayableElements.clear();
     }
 
-    protected void cursorUp() {
+    protected final void cursorUp() {
         if(cursorY > 0) {
             MinHeap<CursorLoc> distanceHeap = new MinHeap<>();
             for (int virtualCursorY = cursorY - 1; virtualCursorY >= 0; virtualCursorY--) {
@@ -280,7 +283,7 @@ public abstract class HALMenu {
         }
     }
 
-    protected void cursorDown() {
+    protected final void cursorDown() {
         if(cursorY < min(displayableElements.size(), selectionZone.getHeight()) - 1) {
             MinHeap<CursorLoc> distanceHeap = new MinHeap<>();
             for (int virtualCursorY = cursorY + 1; virtualCursorY < min(selectionZone.getHeight(), displayableElements.size()); virtualCursorY++) {
@@ -308,7 +311,7 @@ public abstract class HALMenu {
         }
     }
 
-    protected void cursorLeft() {
+    protected final void cursorLeft() {
         if(cursorX > 0) {
             int virtualCursorX = cursorX - 1;
             while (!selectionZone.isValidLocation(virtualCursorX, cursorY)) {
@@ -321,7 +324,7 @@ public abstract class HALMenu {
         }
     }
 
-    protected void cursorRight() {
+    protected final void cursorRight() {
         int lineLength = displayableElements.get(cursorY).getText().length();
         if(cursorX < min(selectionZone.getWidth(), lineLength) - 1) {
             int virtualCursorX = cursorX + 1;
@@ -335,27 +338,27 @@ public abstract class HALMenu {
         }
     }
 
-    protected void setCursor(EntireViewButton cursor) {
+    protected final void setCursor(EntireViewButton cursor) {
         elements.set(0, cursor);
     }
 
-    protected void notifyForceCursorUpdate(boolean doForceUpdateCursor) {
+    protected final void notifyForceCursorUpdate(boolean doForceUpdateCursor) {
         this.doForceUpdateCursor = doForceUpdateCursor;
     }
 
-    public SelectionZone getSelectionZone() {
+    public final SelectionZone getSelectionZone() {
         return selectionZone;
     }
 
-    public int getCursorX() {
+    public final int getCursorX() {
         return cursorX;
     }
 
-    public int getCursorY() {
+    public final int getCursorY() {
         return cursorY;
     }
 
-    protected void setCursorPos(int x, int y) {
+    protected final void setCursorPos(int x, int y) {
         cursorY = Range.clip(y, 0, displayableElements.size() - 1);
         if(enforceMaxLines) {
             menuLevel = cursorY / MAX_LINES_PER_SCREEN;
@@ -363,35 +366,35 @@ public abstract class HALMenu {
         cursorX = Range.clip(x, 0, displayableElements.get(y).getText().length() - 1);
     }
 
-    protected void setCursorX(int x) {
+    protected final void setCursorX(int x) {
         setCursorPos(x, cursorY);
     }
 
-    protected void setCursorY(int y) {
+    protected final void setCursorY(int y) {
         setCursorPos(cursorX, y);
     }
 
-    public char getCursorChar() {
+    public final char getCursorChar() {
         return cursorChar;
     }
 
-    public long getCursorBlinkSpeedMs() {
+    public final long getCursorBlinkSpeedMs() {
         return cursorBlinkSpeedMs;
     }
 
-    private class CursorLoc implements Comparable<CursorLoc> {
+    private final class CursorLoc implements Comparable<CursorLoc> {
 
-        private int x, y;
+        private final int x, y;
         private CursorLoc(int x, int y) {
             this.x = x;
             this.y = y;
         }
 
-        public int getX() {
+        public final int getX() {
             return x;
         }
 
-        public int getY() {
+        public final int getY() {
             return y;
         }
 
@@ -400,18 +403,18 @@ public abstract class HALMenu {
         }
 
         @Override
-        public int compareTo(CursorLoc loc) {
+        public final int compareTo(CursorLoc loc) {
             return taxicabDistance(this, new CursorLoc(cursorX, cursorY)) - taxicabDistance(loc, new CursorLoc(cursorX, cursorY));
         }
 
         @Override
         @NotNull
-        public String toString() {
+        public final String toString() {
             return "("+x+", "+y+")";
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public final boolean equals(Object obj) {
             if(!(obj instanceof CursorLoc)) {
                 return false;
             }
