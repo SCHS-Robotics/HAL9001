@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @HandlesEvents(events = BlinkEvent.class)
-public class BlinkableTextElement implements EventListener, AdvancedViewElement {
+public class BlinkableTextElement implements EventListener, AdvancedViewElement, UniversalUpdater {
     private String unmodifiedText, text;
     private char[] blinkingCharArray;
     private List<Integer> blinkingIndices;
@@ -150,5 +150,10 @@ public class BlinkableTextElement implements EventListener, AdvancedViewElement 
         blinkingCharacters.clear();
         blinkingIndices.addAll(newBlinkingIndices);
         blinkingCharacters.addAll(newBlinkingCharacters);
+    }
+
+    @Override
+    public boolean updatesUniversally() {
+        return true;
     }
 }

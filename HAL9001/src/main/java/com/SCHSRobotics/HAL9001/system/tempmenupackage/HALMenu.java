@@ -1,7 +1,5 @@
 package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
-import android.util.Log;
-
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
@@ -194,10 +192,8 @@ public abstract class HALMenu {
                 if element is displayable, check if element is on the same line as the cursor
                 IF THE ORDER OF THESE CHECKS IS REVERSED THERE WILL BE ERRORS, AS FULL-VIEW BUTTONS ARE NOT DISPLAYABLE
                  */
-                Log.wtf("Current event", currentEvent.getClass().getSimpleName());
-                Log.wtf("Listener", listener.getClass().getSimpleName());
-                Log.wtf("meets criteria", ""+satisfiesCriteria);
-                if(satisfiesCriteria && (!displayableElements.contains(listener) || displayableElements.indexOf(listener) == cursorY)) {
+                boolean updatesUniversally = listener instanceof UniversalUpdater && ((UniversalUpdater) listener).updatesUniversally();
+                if(satisfiesCriteria && (!displayableElements.contains(listener) || displayableElements.indexOf(listener) == cursorY || updatesUniversally)) {
                     doCursorUpdate = listener.onEvent(currentEvent);
                 }
 
