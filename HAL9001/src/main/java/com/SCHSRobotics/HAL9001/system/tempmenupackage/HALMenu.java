@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
+import android.util.Log;
+
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
@@ -127,6 +129,8 @@ public abstract class HALMenu {
                     listenerElementLookup.put(eventClass, listeners);
                 }
             }
+            Log.wtf("Element",element.getClass().getSimpleName());
+            Log.wtf("is adv", ""+(element instanceof AdvancedListener));
             if(element instanceof AdvancedListener) {
                 AdvancedListener advancedListener = (AdvancedListener) element;
                 CriteriaPacket eventCriteria = advancedListener.getCriteria();
