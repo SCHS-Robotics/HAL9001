@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
+import android.util.Log;
+
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
@@ -42,6 +44,8 @@ public abstract class HALMenu {
 
     private Set<Button<?>> validButtons;
 
+    PhantomGamepad g;
+
     public enum BlinkState {
         ON, OFF;
         public final BlinkState nextState() {
@@ -83,6 +87,11 @@ public abstract class HALMenu {
         if(dynamicSelectionZone) {
             dynamicSelectionZoneAnnotation = thisClass.getAnnotation(DynamicSelectionZone.class);
         }
+
+        g = new PhantomGamepad();
+        g.holdClick(10000, new Button<Boolean>(1, Button.BooleanInputs.a));
+        g.startTimer();
+
     }
 
     public HALMenu() {
@@ -116,7 +125,7 @@ public abstract class HALMenu {
             for(Class<? extends Event> eventClass : eventClasses) {
                 listenerElementLookup.put(eventClass, (EventListener) element);
             }
-            listenerElementLookup.put(UniversalEvent.class, (EventListener) element);
+            listenerElementLookup.put(LoopEvent.class, (EventListener) element);
 
             if(element instanceof AdvancedListener) {
                 AdvancedListener advancedListener = (AdvancedListener) element;
@@ -136,7 +145,7 @@ public abstract class HALMenu {
     }
 
     protected final boolean updateListeners() {
-        Event.injectEvent(new UniversalEvent());
+        Event.injectEvent(new LoopEvent());
 
         GamepadEventGenerator eventGenerator = GamepadEventGenerator.getInstance();
 
@@ -149,9 +158,9 @@ public abstract class HALMenu {
         eventGenerator.generateEvents(validButtons);
 
         //Generate blink event.
-        if(blinkTimer.requiredTimeElapsed() || doForceUpdateCursor) {
-            Event.injectEvent(new BlinkEvent(1, cursorBlinkState.nextState()));
-        }
+        Event.injectEvent(new BlinkEvent(1, cursorBlinkState.nextState()));
+
+        g.generateEvents();
 
         //Pass events to event listeners.
         boolean anythingUpdatesCursor = false;
@@ -164,8 +173,8 @@ public abstract class HALMenu {
             registeredListeners = registeredListeners == null ? new ArrayList<>() : registeredListeners;
 
             for (EventListener listener : registeredListeners) {
+                Log.wtf("run", "running: "+currentEvent.getClass().getSimpleName()+" for listener: "+listener.getClass().getSimpleName());
                 boolean doCursorUpdate = false;
-
 
                 boolean satisfiesCriteria = false;
                 if(listener instanceof AdvancedListener) {

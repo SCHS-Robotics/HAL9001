@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
+import android.util.Log;
+
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 
 @HandlesEvents(events = {OnClickEvent.class, WhileClickEvent.class, OnClickReleaseEvent.class})
@@ -51,9 +53,11 @@ public class EntireViewButton implements AdvancedListener {
 
     @Override
     public boolean onEvent(Event eventIn) {
-        backgroundTasks.runTasks(new DataPacket(eventIn, this));
-
-        if(eventIn instanceof OnClickEvent) {
+        if(eventIn instanceof LoopEvent) {
+            Log.wtf("test", "LoopEvent");
+            backgroundTasks.runTasks(new DataPacket(eventIn, this));
+        }
+        else if(eventIn instanceof OnClickEvent) {
             OnClickEvent event = (OnClickEvent) eventIn;
             onClickTasks.runTasks(event.getButton(), new DataPacket(event, this));
             return true;

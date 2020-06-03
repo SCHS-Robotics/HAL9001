@@ -1,7 +1,5 @@
 package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
-import android.util.Log;
-
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 
 import java.util.ArrayList;
@@ -54,7 +52,6 @@ public class BlinkableTextElement implements EventListener, AdvancedViewElement,
 
     public void setBlinkEnabled(boolean blinkEnabled) {
         blinkingEnabled = blinkEnabled;
-        Log.wtf("set blink enabled to",""+blinkEnabled);
     }
 
     @Override
@@ -109,7 +106,6 @@ public class BlinkableTextElement implements EventListener, AdvancedViewElement,
     @Override
     public boolean onEvent(Event event) {
         if(event instanceof BlinkEvent) {
-            Log.wtf("blink enabled",""+blinkingEnabled);
             BlinkEvent blinkEvent = (BlinkEvent) event;
 
             if(blinkEvent.getBlinkState() == HALMenu.BlinkState.ON && blinkingEnabled) {

@@ -55,9 +55,10 @@ public class ViewButton implements AdvancedListener {
 
     @Override
     public boolean onEvent(Event eventIn) {
-        backgroundTasks.runTasks(new DataPacket(eventIn, this));
-
-        if(eventIn instanceof OnClickEvent) {
+        if(eventIn instanceof LoopEvent) {
+            backgroundTasks.runTasks(new DataPacket(eventIn, this));
+        }
+        else if(eventIn instanceof OnClickEvent) {
             OnClickEvent event = (OnClickEvent) eventIn;
             onClickTasks.runTasks(event.getButton(), new DataPacket(event, this));
             return true;

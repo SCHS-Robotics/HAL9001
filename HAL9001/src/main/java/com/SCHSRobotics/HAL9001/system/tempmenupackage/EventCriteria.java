@@ -25,7 +25,7 @@ public class EventCriteria <T extends Event> {
     @Contract(pure = true)
     public final boolean acceptsEvent(Event event) {
         try {
-            T eventInput = (T) event;
+            criteria.apply((T) event);
             return true;
         }
         catch (ClassCastException e) {
