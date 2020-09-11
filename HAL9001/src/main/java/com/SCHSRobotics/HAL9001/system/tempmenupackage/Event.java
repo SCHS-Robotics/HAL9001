@@ -23,4 +23,8 @@ public abstract class Event implements Comparable<Event> {
     public int compareTo(Event event) {
         return this.priority - event.priority;
     }
+
+    public static int getEventHeapSize() {
+        return eventHeap.count;
+    }
 }

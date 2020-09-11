@@ -27,4 +27,9 @@ public class Payload {
     public boolean idPresent(String id) {
         return objectMap.containsKey(id);
     }
+
+    @Override
+    public String toString() {
+        return objectMap.keySet().toString();
+    }
 }

@@ -44,8 +44,6 @@ public abstract class HALMenu {
 
     private Set<Button<?>> validButtons;
 
-    PhantomGamepad g;
-
     public enum BlinkState {
         ON, OFF;
         public final BlinkState nextState() {
@@ -87,10 +85,6 @@ public abstract class HALMenu {
         if(dynamicSelectionZone) {
             dynamicSelectionZoneAnnotation = thisClass.getAnnotation(DynamicSelectionZone.class);
         }
-
-        g = new PhantomGamepad();
-        g.holdClick(10000, new Button<Boolean>(1, Button.BooleanInputs.a));
-        g.startTimer();
 
     }
 
@@ -160,20 +154,16 @@ public abstract class HALMenu {
         //Generate blink event.
         Event.injectEvent(new BlinkEvent(1, cursorBlinkState.nextState()));
 
-        g.generateEvents();
-
         //Pass events to event listeners.
         boolean anythingUpdatesCursor = false;
         boolean anythingRequestsNoBlink = false;
 
         Event currentEvent = Event.getNextEvent();
         while (currentEvent != null) {
-
             List<EventListener> registeredListeners = listenerElementLookup.get(currentEvent.getClass());
             registeredListeners = registeredListeners == null ? new ArrayList<>() : registeredListeners;
 
             for (EventListener listener : registeredListeners) {
-                Log.wtf("run", "running: "+currentEvent.getClass().getSimpleName()+" for listener: "+listener.getClass().getSimpleName());
                 boolean doCursorUpdate = false;
 
                 boolean satisfiesCriteria = false;

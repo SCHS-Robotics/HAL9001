@@ -7,6 +7,7 @@ import com.SCHSRobotics.HAL9001.util.misc.Button;
 import com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad;
 import com.SCHSRobotics.HAL9001.util.misc.Toggle;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -84,6 +85,7 @@ public class HALGUI {
         lastRenderTime = 0;
         cycleToggle = new Toggle(Toggle.ToggleTypes.trueOnceToggle, false);
         robot.telemetry.setMsTransmissionInterval(DEFAULT_HAL_TRANSMISSION_INTERVAL_MS);
+        robot.telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
         GamepadEventGenerator.getInstance().reset();
     }
 
@@ -112,7 +114,7 @@ public class HALGUI {
                 .onClick(new Button<>(1, Button.BooleanInputs.dpad_left), (DataPacket packet) -> currentMenu.cursorLeft())
                 .onClick(new Button<>(1, Button.BooleanInputs.dpad_right), (DataPacket packet) -> currentMenu.cursorRight()));
         currentMenu.addItem(cursorControlQueue.peek());
-        currentMenu.init(new Payload());
+        currentMenu.init(currentMenu.payload);
     }
 
     /**
