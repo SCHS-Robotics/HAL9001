@@ -6,7 +6,7 @@ import org.junit.Test;
 /**
  * @// TODO: 12/22/2019
  */
-public class ArrayMathTest {
+public class FakeNumpyTest {
 
     @Test
     public void validateMaxTypeNonEmpty() {
