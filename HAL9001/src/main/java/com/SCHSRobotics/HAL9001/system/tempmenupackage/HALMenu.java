@@ -1,7 +1,5 @@
 package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
-import android.util.Log;
-
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
@@ -37,7 +35,7 @@ public abstract class HALMenu {
     private int cursorX, cursorY;
     private List<ViewElement> elements, displayableElements;
     private Timer blinkTimer;
-    private MultiElementMap<Class<? extends Event>, EventListener> listenerElementLookup;
+    public MultiElementMap<Class<? extends Event>, EventListener> listenerElementLookup;
     private boolean doForceUpdateCursor;
     private boolean dynamicSelectionZone;
     private DynamicSelectionZone dynamicSelectionZoneAnnotation;
@@ -250,9 +248,10 @@ public abstract class HALMenu {
         return new String(chars);
     }
 
-    protected final void clear() {
+    protected final void clearElements() {
         elements.clear();
         displayableElements.clear();
+        listenerElementLookup.clear();
     }
 
     protected final void cursorUp() {

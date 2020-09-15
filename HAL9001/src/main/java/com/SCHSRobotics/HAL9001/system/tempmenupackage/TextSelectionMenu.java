@@ -1,31 +1,44 @@
 package com.SCHSRobotics.HAL9001.system.tempmenupackage;
 
-import android.util.Log;
-
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.misc.Button;
 
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-
 import static java.lang.Math.min;
 
 public class TextSelectionMenu extends HALMenu {
+
     //Constants
-    public static final String ENTERED_TEXT_ID = "text", CHAR_SET_ID = "charSet", NEXT_MENU_ID = "nextMenu";
-    private static final int[] ROW_SELECTION_ZONE = new int[] {1,0,0,0,0,0,1,0,0,0,0,0,1};
+    public static final UniqueID ENTERED_TEXT_ID = new UniqueID("output text"),
+                                 CHAR_SET_ID = new UniqueID("charset"),
+                                 NEXT_MENU_ID = new UniqueID("next menu"),
+                                 BACK_BUTTON_ID = new UniqueID("back button"),
+                                 FORWARD_BUTTON_ID = new UniqueID("forward button"),
+                                 LEFT_BUTTON_ID = new UniqueID("left button"),
+                                 RIGHT_BUTTON_ID = new UniqueID("right button");
     private static final String SELECTION_PREFIX = "#|";
     private static final char UNDERLINE_CHAR = '\u0332', SPACE_CHAR = '_';
-    private static final int MAX_CHAR_CHUNK_SIZE = 3, MAX_CHUNKS_PER_LINE = 3, MAX_ROW_CHAR_LENGTH = (MAX_CHAR_CHUNK_SIZE*MAX_CHUNKS_PER_LINE)+(MAX_CHUNKS_PER_LINE - 1)+(MAX_CHUNKS_PER_LINE*SELECTION_PREFIX.length());
+    private static final int MAX_CHAR_CHUNK_SIZE = 3, MAX_CHUNKS_PER_LINE = 3, MAX_ROW_LENGTH_CHARS = (MAX_CHAR_CHUNK_SIZE*MAX_CHUNKS_PER_LINE)+(MAX_CHUNKS_PER_LINE - 1)+(MAX_CHUNKS_PER_LINE*SELECTION_PREFIX.length());
 
+    private static final boolean[] ROW_SELECTION_ZONE = new boolean[MAX_ROW_LENGTH_CHARS], ARROW_SELECTION_ZONE = new boolean[MAX_ROW_LENGTH_CHARS];
+    static {
+        ARROW_SELECTION_ZONE[0] = true;
+        ARROW_SELECTION_ZONE[MAX_ROW_LENGTH_CHARS-1] = true;
+
+        for (int i = 0; i < MAX_ROW_LENGTH_CHARS; i+= MAX_CHAR_CHUNK_SIZE + SELECTION_PREFIX.length() + 1) {
+            ROW_SELECTION_ZONE[i] = true;
+        }
+    }
 
     private TextElement inputTextElement;
+    private Class<HALMenu> nextMenu;
+    private String validChars;
 
     public TextSelectionMenu(Payload payload) {
         super(payload);
+
         inputTextElement = new TextElement(""+SPACE_CHAR);
-        selectionZone = new SelectionZone(new boolean[][]{{false}});
+        selectionZone = new SelectionZone(new boolean[][] {{false}});
     }
 
     public TextSelectionMenu() {
@@ -48,14 +61,80 @@ public class TextSelectionMenu extends HALMenu {
 
     @Override
     protected void init(Payload payload) {
-        TextInput.CharSet charSet = payload.idPresent(CHAR_SET_ID) ? payload.get(CHAR_SET_ID) : TextInput.CharSet.ALPHANUMERIC;
-        HALMenu nextMenu = payload.idPresent(NEXT_MENU_ID) ? payload.get(NEXT_MENU_ID) : null;
+        if(payload.idPresent(CHAR_SET_ID)) {
+            Object obj = payload.get(CHAR_SET_ID);
+            if(obj instanceof Charset) {
+                validChars = ((Charset) obj).getChars();
+            }
+            else if(obj instanceof String) {
+                validChars = (String) obj;
+            }
+        }
+        else {
+            validChars = Charset.ALPHANUMERIC.getChars();
+        }
+        nextMenu = payload.idPresent(NEXT_MENU_ID) ? payload.get(NEXT_MENU_ID) : null;
+
+        if(payload.idPresent(LEFT_BUTTON_ID)) {
+            addItem(new EntireViewButton()
+                .onClick(payload.get(LEFT_BUTTON_ID), (DataPacket packet) -> {
+                    String originalText = inputTextElement.getText();
+
+                    int currentlySelectedCharIdx = getCurrentSelectedCharIdx(originalText);
+                    char selectedChar = originalText.charAt(currentlySelectedCharIdx);
+
+                    if(selectedChar == SPACE_CHAR) {
+                        originalText = StringUtils.setChar(originalText, currentlySelectedCharIdx, ' ');
+                    }
+
+                    String nonUnderlined = originalText.replaceAll(""+UNDERLINE_CHAR, "");
+
+                    if(currentlySelectedCharIdx > 0) {
+                        if (currentlySelectedCharIdx == nonUnderlined.length() - 1 && selectedChar == SPACE_CHAR) {
+                            nonUnderlined = StringUtils.removeLastChar(nonUnderlined);
+                        }
+                        inputTextElement.setText(selectChar(nonUnderlined, currentlySelectedCharIdx - 1));
+                    }
+                }));
+        }
+        if(payload.idPresent(RIGHT_BUTTON_ID)) {
+            addItem(new EntireViewButton()
+                    .onClick(payload.get(RIGHT_BUTTON_ID), (DataPacket packet) -> {
+                        String originalText = inputTextElement.getText();
+
+                        int currentlySelectedCharIdx = getCurrentSelectedCharIdx(originalText);
+                        char selectedChar = originalText.charAt(currentlySelectedCharIdx);
+
+                        if(selectedChar == SPACE_CHAR) {
+                            originalText = StringUtils.setChar(originalText, currentlySelectedCharIdx, ' ');
+                        }
+
+                        String nonUnderlined = originalText.replaceAll(""+UNDERLINE_CHAR, "");
+
+                        if(currentlySelectedCharIdx + 1 == nonUnderlined.length()) {
+                            nonUnderlined += ' ';
+                        }
+                        inputTextElement.setText(selectChar(nonUnderlined, currentlySelectedCharIdx + 1));
+                    }));
+        }
+        if(payload.idPresent(BACK_BUTTON_ID)) {
+            addItem(new EntireViewButton()
+                .onClick(payload.get(BACK_BUTTON_ID), (DataPacket packet) -> gui.back(payload)));
+        }
+        if(payload.idPresent(FORWARD_BUTTON_ID)) {
+            addItem(new EntireViewButton()
+                .onClick(payload.get(FORWARD_BUTTON_ID), (DataPacket packet) -> {
+                    String parsedText = inputTextElement.getText().replaceAll("["+UNDERLINE_CHAR+SPACE_CHAR+"]", "");
+                    payload.add(ENTERED_TEXT_ID, StringUtils.bilateralStrip(parsedText, ' '));
+                    gui.forward(payload);
+                }));
+        }
 
         addItem(inputTextElement);
 
         int chunkIdxInRow = 0;
         StringBuilder rowText = new StringBuilder();
-        String[] characterChunks = StringUtils.splitEqually(charSet.getString(), MAX_CHAR_CHUNK_SIZE);
+        String[] characterChunks = StringUtils.splitEqually(validChars, MAX_CHAR_CHUNK_SIZE);
         for(String chunk : characterChunks) {
             chunkIdxInRow++;
 
@@ -83,24 +162,7 @@ public class TextSelectionMenu extends HALMenu {
                                 int nextOptionIdx = (currentOptionIdx + 1) % characterOptions.length();
                                 char nextOption = characterOptions.charAt(nextOptionIdx);
 
-                                if(nextOption == SPACE_CHAR && currentlySelectedCharIdx + 1 < originalText.length()) {
-                                    String nonUnderlineText = originalText.replaceAll(""+UNDERLINE_CHAR, "");
-                                    inputTextElement.setText(StringUtils.setChar(nonUnderlineText, currentlySelectedCharIdx, SPACE_CHAR));
-                                }
-                                else if(nextOption != SPACE_CHAR && currentlySelectedCharIdx + 1 < originalText.length()) {
-                                    char adjacentChar = originalText.charAt(currentlySelectedCharIdx + 1);
-                                    if(adjacentChar != UNDERLINE_CHAR) {
-                                        String firstHalf = originalText.substring(0, currentlySelectedCharIdx + 1);
-                                        String secondHalf = originalText.substring(currentlySelectedCharIdx + 1);
-                                        inputTextElement.setText(firstHalf + UNDERLINE_CHAR + secondHalf);
-                                    }
-                                    else {
-                                        inputTextElement.setText(StringUtils.setChar(originalText, currentlySelectedCharIdx, nextOption));
-                                    }
-                                }
-                                else if(nextOption != SPACE_CHAR) {
-                                    inputTextElement.setText(originalText.substring(0, originalText.length() - 1) + nextOption + UNDERLINE_CHAR);
-                                }
+                                inputTextElement.setText(selectChar(StringUtils.setChar(originalText, currentlySelectedCharIdx, nextOption), currentlySelectedCharIdx));
                             })
                 );
                 selectionZone.addRow(ROW_SELECTION_ZONE);
@@ -113,8 +175,8 @@ public class TextSelectionMenu extends HALMenu {
             selectionZone.addRow(ROW_SELECTION_ZONE);
         }
 
-        selectionZone.addRow(new int[] {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1});
-        selectionZone.addRow(new int[] {1});
+        selectionZone.addRow(ARROW_SELECTION_ZONE);
+        selectionZone.addRow(new boolean[] {true});
 
         addItem(new ViewButton(SELECTION_PREFIX+"<--       -->"+StringUtils.reverseString(SELECTION_PREFIX))
             .onClick(new Button<>(1, Button.BooleanInputs.a), (DataPacket packet) -> {
@@ -122,7 +184,6 @@ public class TextSelectionMenu extends HALMenu {
 
                 int currentlySelectedCharIdx = getCurrentSelectedCharIdx(originalText);
                 char selectedChar = originalText.charAt(currentlySelectedCharIdx);
-                String newSelectedInputText = "";
 
                 if(selectedChar == SPACE_CHAR) {
                     originalText = StringUtils.setChar(originalText, currentlySelectedCharIdx, ' ');
@@ -137,96 +198,26 @@ public class TextSelectionMenu extends HALMenu {
                     }
                     inputTextElement.setText(selectChar(nonUnderlined, currentlySelectedCharIdx - 1));
                 }
-                else if (getCursorX() == MAX_ROW_CHAR_LENGTH - 1){
+                else if (getCursorX() == MAX_ROW_LENGTH_CHARS - 1){
                     if(currentlySelectedCharIdx + 1 == nonUnderlined.length()) {
                         nonUnderlined += ' ';
                     }
                     inputTextElement.setText(selectChar(nonUnderlined, currentlySelectedCharIdx + 1));
                 }
             }));
-        addItem(new TextElement(SELECTION_PREFIX+"Done"));
+        addItem(new ViewButton(SELECTION_PREFIX+"Done")
+            .onClick(new Button<>(1, Button.BooleanInputs.a), (DataPacket packet) -> {
+                String parsedText = inputTextElement.getText().replaceAll("["+UNDERLINE_CHAR+SPACE_CHAR+"]", "");
+                payload.add(ENTERED_TEXT_ID, StringUtils.bilateralStrip(parsedText, ' '));
+                if(nextMenu == null) {
+                    gui.back(payload);
+                }
+                else {
+                    gui.inflate(nextMenu, payload);
+                }
+            }));
 
         setCursorPos(0,1);
-
-        /*
-        charPositon = new AtomicInteger();
-        if(payload.idPresent(ENTERED_TEXT_ID)) {
-            String startText = payload.get(ENTERED_TEXT_ID);
-            entryDisplayText = new BlinkableTextElement(startText+" ").blinkCharAt(startText.length(), cursorChar);
-        }
-        else {
-            entryDisplayText = new BlinkableTextElement(" ").blinkCharAt(0, cursorChar);
-        }
-
-        ViewButton doneButton = new ViewButton("#|Done")
-                .onClick(new Button<>(1, Button.BooleanInputs.a), (DataPacket packet) -> {
-                    //todo parse text to remove bad spaces, spaces = evil
-                    payload.add(ENTERED_TEXT_ID, entryDisplayText.getUnmodifiedText());
-                    if(nextMenu == null) {
-                        gui.back(payload);
-                    }
-                    else {
-                        gui.inflate(nextMenu, payload);
-                    }
-                });
-
-        addItem(new EntireViewButton()
-                .onClick(new Button<>(1, Button.BooleanInputs.dpad_right), (DataPacket packet) -> {
-                    if(charPositon.get() == entryDisplayText.getUnmodifiedText().length() - 1) {
-                        entryDisplayText.append(' ');
-                    }
-                    entryDisplayText.removeAllBlinkingChars();
-                    entryDisplayText.blinkCharAt(charPositon.incrementAndGet(), cursorChar);
-                })
-                .onClick(new Button<>(1, Button.BooleanInputs.dpad_left), (DataPacket packet) -> {
-                    if(charPositon.get() != 0) {
-                        entryDisplayText.removeAllBlinkingChars();
-                        entryDisplayText.blinkCharAt(charPositon.decrementAndGet(), cursorChar);
-                    }
-                })
-                .addBackgroundTask((DataPacket packet) -> entryDisplayText.setBlinkEnabled(true)));
-
-        String[] cycles = splitEqually(charSet.getString(), MINI_CYCLE_MAX_SIZE);
-        int cycleIdx = 0;
-        for (int i = 0; i < (cycles.length/(MAX_LINES_PER_SCREEN-2))*MAX_LINES_PER_SCREEN + (cycles.length % (MAX_LINES_PER_SCREEN - 2) == 0 ? 0 : cycles.length % (MAX_LINES_PER_SCREEN - 2) + 1); i++) {
-            if(i % MAX_LINES_PER_SCREEN == 0) {
-                addItem(entryDisplayText);
-            }
-            else if((i+1) % MAX_LINES_PER_SCREEN == 0) {
-                addItem(doneButton);
-            }
-            else {
-                addItem(new ViewButton("#|"+cycles[cycleIdx])
-                    .whileClicked(new Button<>(1, Button.BooleanInputs.a), (DataPacket packet) -> {
-                        String currentText = packet.getListener().getText();
-                        String currentCycle = ' ' + currentText.substring(currentText.indexOf('|') + 1);
-
-                        char currentChar = entryDisplayText.getUnmodifiedText().charAt(charPositon.get());
-                        int currentCharIdx = currentCycle.indexOf(currentChar);
-
-                        if(currentCharIdx != -1) {
-                            int nextCharIdx = (currentCharIdx + 1) % currentCycle.length();
-                            char nextChar = currentCycle.charAt(nextCharIdx);
-                            entryDisplayText.setBlinkEnabled(false);
-                            entryDisplayText.setChar(charPositon.get(), nextChar);
-                        }
-                        else {
-                            char nextChar = currentCycle.charAt(0);
-                            entryDisplayText.setBlinkEnabled(false);
-                            entryDisplayText.setChar(charPositon.get(), nextChar);
-                        }
-                    }));
-                cycleIdx++;
-            }
-        }
-
-        if(cycles.length % (MAX_LINES_PER_SCREEN - 2) != 0) {
-            addItem(doneButton);
-        }
-
-        setCursorPos(0,1);
-    }
-    */
     }
 
     private static String selectChar(String input, int charIdx) {
@@ -241,8 +232,8 @@ public class TextSelectionMenu extends HALMenu {
         else {
             String nonUnderlineText = input.replaceAll(""+UNDERLINE_CHAR, "");
 
-            String firstHalf = nonUnderlineText.substring(0, charIdx);
-            String secondHalf = nonUnderlineText.substring(charIdx);
+            String firstHalf = nonUnderlineText.substring(0, charIdx+1);
+            String secondHalf = nonUnderlineText.substring(charIdx+1);
             return firstHalf + UNDERLINE_CHAR + secondHalf;
         }
     }

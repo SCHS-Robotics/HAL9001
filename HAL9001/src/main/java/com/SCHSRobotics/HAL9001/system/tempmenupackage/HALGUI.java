@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Queue;
 import java.util.Stack;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -106,6 +107,7 @@ public class HALGUI {
     public void addRootMenu(@NotNull HALMenu menu) {
         currentMenu = menu;
         currentStack = new Stack<>();
+        currentStack.push(currentMenu);
         forwardStack.clear();
         menuStacks.add(currentStack);
         cursorControlQueue.add(new EntireViewButton()
@@ -130,9 +132,27 @@ public class HALGUI {
         forwardStack.clear();
         currentStack.push(currentMenu);
         currentMenu = menu;
-        currentMenu.clear();
+        currentMenu.clearElements();
         currentMenu.addItem(cursorControlQueue.peek());
         currentMenu.init(payload);
+    }
+
+    public void inflate(Class<HALMenu> menuClass, Payload payload) {
+        try {
+            inflate(menuClass.getConstructor(Payload.class).newInstance(payload));
+        }
+        catch (NoSuchMethodException e) {
+            throw new DumpsterFireException("No constructor taking a payload as input was found.");
+        }
+        catch (IllegalAccessException e) {
+            throw new DumpsterFireException("Constructor taking payload as input was not public.");
+        }
+        catch (InstantiationException e) {
+            throw new DumpsterFireException("Could not instantiate menu with given payload.");
+        }
+        catch (InvocationTargetException e) {
+            throw new DumpsterFireException(e.getMessage());
+        }
     }
 
     /**
@@ -187,9 +207,9 @@ public class HALGUI {
 
     public void back(@NotNull Payload payload) {
         if(!currentStack.isEmpty()) {
-            forwardStack.push(currentMenu);
-            currentMenu = currentStack.pop();
-            currentMenu.clear();
+            forwardStack.push(currentStack.pop());
+            currentMenu = currentStack.peek();
+            currentMenu.clearElements();
             currentMenu.addItem(cursorControlQueue.peek());
             currentMenu.init(payload);
         }
@@ -203,7 +223,7 @@ public class HALGUI {
         if(!forwardStack.isEmpty()) {
             currentStack.push(currentMenu);
             currentMenu = forwardStack.pop();
-            currentMenu.clear();
+            currentMenu.clearElements();
             currentMenu.addItem(cursorControlQueue.peek());
             currentMenu.init(payload);
         }

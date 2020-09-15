@@ -136,12 +136,12 @@ public abstract class Robot {
         if(subSystem.usesConfig) {
 
             boolean success = globalConfig.addSubSystem(name, subSystem);
-            useConfig |= success;
+            //useConfig |= success;
 
             if (success && !useGui) {
-                GUI.setup(this, new Button<Boolean>(1, Button.BooleanInputs.noButton));
-                gui = GUI.getInstance();
-                useGui = true;
+                //GUI.setup(this, new Button<Boolean>(1, Button.BooleanInputs.noButton));
+                //gui = GUI.getInstance();
+                //useGui = true;
             }
         }
     }

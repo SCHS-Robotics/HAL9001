@@ -3,6 +3,7 @@ package com.SCHSRobotics.HAL9001.util.misc;
 import android.util.Log;
 
 import com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem;
+import com.SCHSRobotics.HAL9001.system.tempmenupackage.HALFileUtil;
 import com.SCHSRobotics.HAL9001.util.annotations.AutonomousConfig;
 import com.SCHSRobotics.HAL9001.util.annotations.LinkTo;
 import com.SCHSRobotics.HAL9001.util.annotations.ProgramOptions;
@@ -19,6 +20,11 @@ import org.firstinspires.ftc.robotcore.internal.opmode.RegisteredOpModes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -30,7 +36,7 @@ import java.util.Map;
 import java.util.Set;
 
 //3/17/20
-public class HALConfig {
+public class HALConfig implements Serializable {
 
     private static HALConfig GLOBAL_INSTANCE = new HALConfig();
     private static HALConfig DEFAULT_CONFIG = new HALConfig();
@@ -57,8 +63,21 @@ public class HALConfig {
 
     private HALConfig(HALConfig sourceForClone) {
         this();
-        autonomousConfig.putAll(sourceForClone.autonomousConfig);
-        teleopConfig.putAll(sourceForClone.teleopConfig);
+        for(Map.Entry<String, List<ConfigParam>> configEntry : sourceForClone.autonomousConfig.entrySet()) {
+            List<ConfigParam> clonedParams = new ArrayList<>();
+            for(ConfigParam param : configEntry.getValue()) {
+                clonedParams.add(param.clone());
+            }
+            autonomousConfig.put(configEntry.getKey(), clonedParams);
+        }
+        for(Map.Entry<String, List<ConfigParam>> configEntry : sourceForClone.teleopConfig.entrySet()) {
+            List<ConfigParam> clonedParams = new ArrayList<>();
+            for(ConfigParam param : configEntry.getValue()) {
+                clonedParams.add(param.clone());
+            }
+            teleopConfig.put(configEntry.getKey(), clonedParams);
+        }
+
         subsystemIdLookup.putAll(sourceForClone.subsystemIdLookup);
     }
 
@@ -163,6 +182,15 @@ public class HALConfig {
         }
     }
 
+    public void setConfig(Mode mode, String lookup, List<ConfigParam> configParams) {
+        if(mode == Mode.TELEOP) {
+            teleopConfig.put(lookup, configParams);
+        }
+        else {
+            autonomousConfig.put(lookup, configParams);
+        }
+    }
+
     @NotNull
     private List<ConfigParam> extractConfigFromSettings(@NotNull ProgramOptions opts) {
         List<ConfigParam> options = new ArrayList<>();
@@ -211,6 +239,8 @@ public class HALConfig {
             throw new DumpsterFireException("Program "+opModeClass.getSimpleName()+" can't be run without @TeleOp or @Autonomous");
         }
     }
+
+    //todo configset
 
     @Nullable
     public List<ConfigParam> getConfig(Mode mode, SubSystem subSystem) {
@@ -266,6 +296,85 @@ public class HALConfig {
 
         GLOBAL_INSTANCE.autonomousConfig.putAll(config.autonomousConfig);
         GLOBAL_INSTANCE.teleopConfig.putAll(config.teleopConfig);
+    }
+
+    public static void saveConfig(Mode mode, HALConfig config, String filepath) {
+        StringBuilder sb = new StringBuilder();
+        for(String subsystem : config.getSubsystemNames()) {
+            List<ConfigParam> params = config.getConfig(mode, subsystem);
+            params = params == null ? new ArrayList<>() : params;
+
+            for(ConfigParam param : params) {
+                sb.append(subsystem);
+                sb.append(':');
+                sb.append(param.name);
+                sb.append(':');
+                sb.append(param.currentOption);
+                if(param.usesGamepad) {
+                    sb.append(':');
+                    sb.append(param.currentGamepadOption);
+                }
+                sb.append("\r\n");
+            }
+        }
+
+        if(sb.length() > 2) {
+            sb.delete(sb.length() - 2, sb.length()); //removes trailing \r\n characters so there isn't a blank line at the end of the file
+        }
+
+        HALFileUtil.save(filepath, sb.toString());
+    }
+
+    public static HALConfig readConfig(Mode mode, String filepath) {
+        FileInputStream fis;
+
+        HALConfig outputConfig = HALConfig.getDefaultConfig();
+
+        try {
+            fis = new FileInputStream(filepath);
+
+            FileReader fReader;
+            BufferedReader bufferedReader;
+
+            //TODO: Make this a bit less jank. Right now throwing errors is perfectly fine here because that's how it fixes out of date config files.
+
+            try {
+                fReader = new FileReader(fis.getFD());
+                bufferedReader = new BufferedReader(fReader);
+
+                int i = 0;
+                String lastSubsystem = "\n";
+                String line;
+                while((line = bufferedReader.readLine()) != null) {
+                    String[] data = line.split(":");
+                    if(!data[0].equals(lastSubsystem)) {
+                        i = 0;
+                    }
+                    List<ConfigParam> params = outputConfig.getConfig(mode, data[0]);
+                    if(params != null && params.get(i).name.equals(data[1].trim())) {
+                        params.get(i).name = data[1].trim();
+                        params.get(i).currentOption = data[2].trim();
+                        if (params.get(i).usesGamepad) {
+                            params.get(i).currentGamepadOption = data[3].trim();
+                        }
+                        lastSubsystem = data[0];
+
+                        i++;
+                    }
+                }
+
+                bufferedReader.close();
+                fReader.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                fis.getFD().sync();
+                fis.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return outputConfig;
     }
 
     @Override

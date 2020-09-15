@@ -4,12 +4,13 @@ import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class BidirectionalMap<K,V> implements Map<K, V> {
+public class BidirectionalMap<K,V> implements Map<K, V>, Serializable {
 
     private Map<K,V> forwardMap;
     private Map<V,K> reverseMap;

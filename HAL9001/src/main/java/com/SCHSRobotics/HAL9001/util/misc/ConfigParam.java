@@ -3,7 +3,6 @@ package com.SCHSRobotics.HAL9001.util.misc;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotARealGamepadException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotAnAlchemistException;
 
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,10 +45,10 @@ public class ConfigParam {
     //The gamepad that the option is currently using.
     public String currentGamepadOption;
     //The list of possible gamepads for the option to use.
-    private static final String[] gamepadOptions = new String[] {"Gamepad 1", "Gamepad 2"};
-    private static final String[] boolOptions = new String[] {"noButton","a","b","x","y","dpad_left","dpad_right","dpad_up","dpad_down","left_bumper","right_bumper","bool_left_trigger","bool_right_trigger","left_stick_button","right_stick_button","bool_left_stick_x","bool_left_stick_y","bool_right_stick_x","bool_right_stick_y","bool_left_stick_x_left","bool_left_stick_x_right","bool_left_stick_y_up","bool_left_stick_y_down","bool_right_stick_x_left","bool_right_stick_x_right","bool_right_stick_y_up","bool_right_stick_y_down","back","start","guide"};
-    private static final String[] doubleOptions = new String[] {"noButton","left_stick_x","left_stick_y","right_stick_x","right_stick_y","left_trigger","right_trigger"};
-    private static final String[] vectorOptions = new String[] {"noButton","left_stick", "right_stick"};
+    public static final String[] GAMEPAD_OPTIONS = new String[] {"Gamepad 1", "Gamepad 2"};
+    public static final String[] BOOLEAN_BUTTON_OPTIONS = new String[] {"noButton","a","b","x","y","dpad_left","dpad_right","dpad_up","dpad_down","left_bumper","right_bumper","bool_left_trigger","bool_right_trigger","left_stick_button","right_stick_button","bool_left_stick_x","bool_left_stick_y","bool_right_stick_x","bool_right_stick_y","bool_left_stick_x_left","bool_left_stick_x_right","bool_left_stick_y_up","bool_left_stick_y_down","bool_right_stick_x_left","bool_right_stick_x_right","bool_right_stick_y_up","bool_right_stick_y_down","back","start","guide"};
+    public static final String[] DOUBLE_BUTTON_OPTIONS = new String[] {"noButton","left_stick_x","left_stick_y","right_stick_x","right_stick_y","left_trigger","right_trigger"};
+    public static final String[] VECTOR_BUTTON_OPTIONS = new String[] {"noButton","left_stick", "right_stick"};
 
 
     //A boolean value specifying if the option uses a gamepad.
@@ -79,7 +78,7 @@ public class ConfigParam {
 
         usesGamepad = true;
 
-        defaultGamepadOption = gamepadOptions[0];
+        defaultGamepadOption = GAMEPAD_OPTIONS[0];
         currentGamepadOption = this.defaultGamepadOption;
     }
 
@@ -92,7 +91,7 @@ public class ConfigParam {
      */
     public ConfigParam(@NotNull String name, @NotNull Button.BooleanInputs defaultOption, int gamepadDefault) {
         this.name = name;
-        options = new ArrayList<>(Arrays.asList(boolOptions));
+        options = new ArrayList<>(Arrays.asList(BOOLEAN_BUTTON_OPTIONS));
         this.defaultOption = defaultOption.name();
         currentOption = this.defaultOption;
 
@@ -107,7 +106,7 @@ public class ConfigParam {
             throw new NotARealGamepadException("Unless you are violating FTC rules, that isn't a real gamepad number!");
         }
 
-        defaultGamepadOption = gamepadOptions[gamepadDefault-1];
+        defaultGamepadOption = GAMEPAD_OPTIONS[gamepadDefault-1];
         currentGamepadOption = this.defaultGamepadOption;
     }
 
@@ -119,7 +118,7 @@ public class ConfigParam {
      */
     public ConfigParam(@NotNull String name, @NotNull Button.DoubleInputs defaultOption) {
         this.name = name;
-        options = new ArrayList<>(Arrays.asList(doubleOptions));
+        options = new ArrayList<>(Arrays.asList(DOUBLE_BUTTON_OPTIONS));
         this.defaultOption = defaultOption.name();
         currentOption = this.defaultOption;
 
@@ -130,7 +129,7 @@ public class ConfigParam {
 
         usesGamepad = true;
 
-        defaultGamepadOption = gamepadOptions[0];
+        defaultGamepadOption = GAMEPAD_OPTIONS[0];
         currentGamepadOption = this.defaultGamepadOption;
     }
 
@@ -143,7 +142,7 @@ public class ConfigParam {
      */
     public ConfigParam(@NotNull String name, @NotNull Button.DoubleInputs defaultOption, int gamepadDefault) {
         this.name = name;
-        options = new ArrayList<>(Arrays.asList(doubleOptions));
+        options = new ArrayList<>(Arrays.asList(DOUBLE_BUTTON_OPTIONS));
         this.defaultOption = defaultOption.name();
         currentOption = this.defaultOption;
 
@@ -158,7 +157,7 @@ public class ConfigParam {
             throw new NotARealGamepadException("Unless you are violating FTC rules, that isn't a real gamepad number!");
         }
 
-        defaultGamepadOption = gamepadOptions[gamepadDefault-1];
+        defaultGamepadOption = GAMEPAD_OPTIONS[gamepadDefault-1];
         currentGamepadOption = this.defaultGamepadOption;
     }
 
@@ -170,7 +169,7 @@ public class ConfigParam {
      */
     public ConfigParam(@NotNull String name, @NotNull Button.VectorInputs defaultOption) {
         this.name = name;
-        options = new ArrayList<>(Arrays.asList(vectorOptions));
+        options = new ArrayList<>(Arrays.asList(VECTOR_BUTTON_OPTIONS));
         this.defaultOption = defaultOption.name();
         currentOption = this.defaultOption;
 
@@ -181,7 +180,7 @@ public class ConfigParam {
 
         usesGamepad = true;
 
-        defaultGamepadOption = gamepadOptions[0];
+        defaultGamepadOption = GAMEPAD_OPTIONS[0];
         currentGamepadOption = this.defaultGamepadOption;
     }
 
@@ -194,7 +193,7 @@ public class ConfigParam {
      */
     public ConfigParam(@NotNull String name, @NotNull Button.VectorInputs defaultOption, int gamepadDefault) {
         this.name = name;
-        options = new ArrayList<>(Arrays.asList(vectorOptions));
+        options = new ArrayList<>(Arrays.asList(VECTOR_BUTTON_OPTIONS));
         this.defaultOption = defaultOption.name();
         currentOption = this.defaultOption;
 
@@ -205,7 +204,7 @@ public class ConfigParam {
 
         usesGamepad = true;
 
-        defaultGamepadOption = gamepadOptions[gamepadDefault-1];
+        defaultGamepadOption = GAMEPAD_OPTIONS[gamepadDefault-1];
         currentGamepadOption = this.defaultGamepadOption;
     }
 
@@ -429,26 +428,6 @@ public class ConfigParam {
 
     public String getDefaultGamepadOption() {
         return defaultGamepadOption;
-    }
-
-    @Contract(pure = true)
-    public static String[] getGamepadOptions() {
-        return gamepadOptions;
-    }
-
-    @Contract(pure = true)
-    public static String[] getBoolOptions() {
-        return boolOptions;
-    }
-
-    @Contract(pure = true)
-    public static String[] getDoubleOptions() {
-        return doubleOptions;
-    }
-
-    @Contract(pure = true)
-    public static String[] getVectorOptions() {
-        return vectorOptions;
     }
 
     @Override

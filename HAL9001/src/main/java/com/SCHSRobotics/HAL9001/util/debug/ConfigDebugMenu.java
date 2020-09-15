@@ -426,7 +426,7 @@ public class ConfigDebugMenu extends ScrollingListMenu {
                             throw new DumpsterFireException("Couldn't find options for configParam");
                         }
 
-                        lines.set(cursor.getY(), new GuiLine("#", currentParam.usesGamepad ? currentOptionName + " | " + currentOptionValue + " | " + ConfigParam.getGamepadOptions()[(Arrays.asList(ConfigParam.getGamepadOptions()).indexOf(currentGamepadOptionValue) + 1) % ConfigParam.getGamepadOptions().length] : currentOptionName + " | " + currentOptionValue));
+                        lines.set(cursor.getY(), new GuiLine("#", currentParam.usesGamepad ? currentOptionName + " | " + currentOptionValue + " | " + ConfigParam.GAMEPAD_OPTIONS[(Arrays.asList(ConfigParam.GAMEPAD_OPTIONS).indexOf(currentGamepadOptionValue) + 1) % ConfigParam.GAMEPAD_OPTIONS.length] : currentOptionName + " | " + currentOptionValue));
                     }
                 }
 
