@@ -74,7 +74,8 @@ var activeTableTab = "activeTableTab";
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
-<li><a href="#fields.inherited.from.class.com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#fields.inherited.from.class.com.SCHSRobotics.HAL9001.system.robot.SubSystem">Field</a>&nbsp;|&nbsp;
+</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
@@ -99,13 +100,18 @@ var activeTableTab = "activeTableTab";
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem</a></li>
+    <li><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+           title="class in com.SCHSRobotics.HAL9001.system.source.robot">com.SCHSRobotics.HAL9001.system.robot.SubSystem</a>
+    </li>
 <li>
 <ul class="inheritance">
-<li><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">com.SCHSRobotics.HAL9001.system.source.BaseRobot.VisionSubSystem</a></li>
+    <li>
+        <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html"
+           title="class in com.SCHSRobotics.HAL9001.system.source.robot">com.SCHSRobotics.HAL9001.system.robot.VisionSubSystem</a>
+    </li>
 <li>
 <ul class="inheritance">
-<li>com.SCHSRobotics.HAL9001.util.calib.AnglePIDTunerSystem</li>
+    <li>com.SCHSRobotics.HAL9001.system.robot.subsystems.calib.AnglePIDTunerSystem</li>
 </ul>
 </li>
 </ul>
@@ -118,8 +124,9 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <hr>
 <br>
-<pre>public class <span class="typeNameLabel">AnglePIDTunerSystem</span>
-extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">VisionSubSystem</a></pre>
+    <pre>public class <span class="typeNameLabel">AnglePIDTunerSystem</span>
+extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html"
+           title="class in com.SCHSRobotics.HAL9001.system.source.robot">VisionSubSystem</a></pre>
 <div class="block">A subsystem used to tune turn-to-angle PID controllers.</div>
 <dl>
 <dt><span class="simpleTagLabel">Since:</span></dt>
@@ -163,11 +170,17 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 </a>
 <h3>Field Summary</h3>
 <ul class="blockList">
-<li class="blockList"><a name="fields.inherited.from.class.com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem">
-<!--   -->
-</a>
-<h3>Fields inherited from class&nbsp;com.SCHSRobotics.HAL9001.system.source.BaseRobot.<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></h3>
-<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#robot">robot</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#usesConfig">usesConfig</a></code></li>
+    <li class="blockList"><a
+            name="fields.inherited.from.class.com.SCHSRobotics.HAL9001.system.robot.SubSystem">
+        <!--   -->
+    </a>
+        <h3>Fields inherited from class&nbsp;com.SCHSRobotics.HAL9001.system.source.BaseRobot.<a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></h3>
+        <code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#robot">robot</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#usesConfig">usesConfig</a></code>
+    </li>
 </ul>
 </li>
 </ul>
@@ -183,13 +196,18 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/AnglePIDTunerSystem.html#AnglePIDTunerSystem-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.util.misc.BaseParam-com.SCHSRobotics.HAL9001.util.control.PIDController-double-org.firstinspires.ftc.robotcore.external.navigation.AngleUnit-">AnglePIDTunerSystem</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-                   <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/BaseParam.html" title="interface in com.SCHSRobotics.HAL9001.util.misc">BaseParam</a>&nbsp;driveParams,
-                   <a href="../../../../../com/SCHSRobotics/HAL9001/util/control/PIDController.html" title="class in com.SCHSRobotics.HAL9001.util.control">PIDController</a>&nbsp;pidController,
-                   double&nbsp;setPoint,
-                   org.firstinspires.ftc.robotcore.external.navigation.AngleUnit&nbsp;angleUnit)</code>
-<div class="block">Constructor for AnglePIDTunerSystem.</div>
-</td>
+    <td class="colOne"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/calib/AnglePIDTunerSystem.html#AnglePIDTunerSystem-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.util.misc.BaseParam-com.SCHSRobotics.HAL9001.util.control.PIDController-double-org.firstinspires.ftc.robotcore.external.navigation.AngleUnit-">AnglePIDTunerSystem</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/BaseParam.html"
+           title="interface in com.SCHSRobotics.HAL9001.util.misc">BaseParam</a>&nbsp;driveParams,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/control/PIDController.html"
+           title="class in com.SCHSRobotics.HAL9001.util.control">PIDController</a>&nbsp;pidController,
+        double&nbsp;setPoint,
+        org.firstinspires.ftc.robotcore.external.navigation.AngleUnit&nbsp;angleUnit)</code>
+        <div class="block">Constructor for AnglePIDTunerSystem.</div>
+    </td>
 </tr>
 </table>
 </li>
@@ -244,18 +262,39 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.com.SCHSRobotics.HAL9001.system.source.BaseRobot.VisionSubSystem">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;com.SCHSRobotics.HAL9001.system.source.BaseRobot.<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">VisionSubSystem</a></h3>
-<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#getPriority--">getPriority</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#isEnabled--">isEnabled</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#onViewportTapped--">onViewportTapped</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#startVision--">startVision</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#stopVision--">stopVision</a></code></li>
+    <li class="blockList"><a
+            name="methods.inherited.from.class.com.SCHSRobotics.HAL9001.system.robot.VisionSubSystem">
+        <!--   -->
+    </a>
+        <h3>Methods inherited from class&nbsp;com.SCHSRobotics.HAL9001.system.source.BaseRobot.<a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">VisionSubSystem</a>
+        </h3>
+        <code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#getPriority--">getPriority</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#isEnabled--">isEnabled</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#onViewportTapped--">onViewportTapped</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#startVision--">startVision</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#stopVision--">stopVision</a></code>
+    </li>
 </ul>
 <ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;com.SCHSRobotics.HAL9001.system.source.BaseRobot.<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></h3>
-<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#initVars--">initVars</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitTime-long-">waitTime</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitTime-long-java.lang.Runnable-">waitTime</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitUntil-org.firstinspires.ftc.robotcore.external.Supplier-">waitUntil</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitUntil-org.firstinspires.ftc.robotcore.external.Supplier-java.lang.Runnable-">waitUntil</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitWhile-org.firstinspires.ftc.robotcore.external.Supplier-">waitWhile</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitWhile-org.firstinspires.ftc.robotcore.external.Supplier-java.lang.Runnable-">waitWhile</a></code></li>
+    <li class="blockList"><a
+            name="methods.inherited.from.class.com.SCHSRobotics.HAL9001.system.robot.SubSystem">
+        <!--   -->
+    </a>
+        <h3>Methods inherited from class&nbsp;com.SCHSRobotics.HAL9001.system.source.BaseRobot.<a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></h3>
+        <code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#initVars--">initVars</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitTime-long-">waitTime</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitTime-long-java.lang.Runnable-">waitTime</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitUntil-org.firstinspires.ftc.robotcore.external.Supplier-">waitUntil</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitUntil-org.firstinspires.ftc.robotcore.external.Supplier-java.lang.Runnable-">waitUntil</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitWhile-org.firstinspires.ftc.robotcore.external.Supplier-">waitWhile</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitWhile-org.firstinspires.ftc.robotcore.external.Supplier-java.lang.Runnable-">waitWhile</a></code>
+    </li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -278,15 +317,19 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="AnglePIDTunerSystem-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.util.misc.BaseParam-com.SCHSRobotics.HAL9001.util.control.PIDController-double-org.firstinspires.ftc.robotcore.external.navigation.AngleUnit-">
-<!--   -->
-</a>
+    <a name="AnglePIDTunerSystem-com.SCHSRobotics.HAL9001.system.source.robot.Robot-com.SCHSRobotics.HAL9001.util.misc.BaseParam-com.SCHSRobotics.HAL9001.util.control.PIDController-double-org.firstinspires.ftc.robotcore.external.navigation.AngleUnit-">
+        <!--   -->
+    </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>AnglePIDTunerSystem</h4>
-<pre>public&nbsp;AnglePIDTunerSystem(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-                           <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/BaseParam.html" title="interface in com.SCHSRobotics.HAL9001.util.misc">BaseParam</a>&nbsp;driveParams,
-                           <a href="../../../../../com/SCHSRobotics/HAL9001/util/control/PIDController.html" title="class in com.SCHSRobotics.HAL9001.util.control">PIDController</a>&nbsp;pidController,
+    <pre>public&nbsp;AnglePIDTunerSystem(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+                           <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/BaseParam.html"
+                              title="interface in com.SCHSRobotics.HAL9001.util.misc">BaseParam</a>&nbsp;driveParams,
+                           <a href="../../../../../com/SCHSRobotics/HAL9001/util/control/PIDController.html"
+                              title="class in com.SCHSRobotics.HAL9001.util.control">PIDController</a>&nbsp;pidController,
                            double&nbsp;setPoint,
                            org.firstinspires.ftc.robotcore.external.navigation.AngleUnit&nbsp;angleUnit)</pre>
 <div class="block">Constructor for AnglePIDTunerSystem.</div>
@@ -318,7 +361,12 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <div class="block">An abstract method containing the code that the subsystem runs when being initialized.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#init--">init</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></code></dd>
+    <dd><code><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#init--">init</a></code>&nbsp;in
+        class&nbsp;<code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></code>
+    </dd>
 </dl>
 </li>
 </ul>
@@ -333,7 +381,12 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <div class="block">An abstract method that contains code that runs in a loop on init.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#init_loop--">init_loop</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></code></dd>
+    <dd><code><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#init_loop--">init_loop</a></code>&nbsp;in
+        class&nbsp;<code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></code>
+    </dd>
 </dl>
 </li>
 </ul>
@@ -348,7 +401,12 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <div class="block">An abstract method containing the code that the subsystem runs when being start.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#start--">start</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></code></dd>
+    <dd><code><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#start--">start</a></code>&nbsp;in
+        class&nbsp;<code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></code>
+    </dd>
 </dl>
 </li>
 </ul>
@@ -363,7 +421,12 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <div class="block">An abstract method containing the code that the subsystem runs every loop in a teleop program.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#handle--">handle</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></code></dd>
+    <dd><code><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#handle--">handle</a></code>&nbsp;in
+        class&nbsp;<code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></code>
+    </dd>
 </dl>
 </li>
 </ul>
@@ -378,7 +441,12 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <div class="block">An abstract method containing the code that the subsystem runs when the program is stopped.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#stop--">stop</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></code></dd>
+    <dd><code><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#stop--">stop</a></code>&nbsp;in
+        class&nbsp;<code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></code>
+    </dd>
 </dl>
 </li>
 </ul>
@@ -393,7 +461,12 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <div class="block">An abstract function that runs every camera frame while vision is enabled.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#onCameraFrame-org.opencv.core.Mat-">onCameraFrame</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">VisionSubSystem</a></code></dd>
+    <dd><code><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#onCameraFrame-org.opencv.core.Mat-">onCameraFrame</a></code>&nbsp;in
+        class&nbsp;<code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">VisionSubSystem</a></code>
+    </dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>input</code> - The input camera frame.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -454,7 +527,9 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
-<li><a href="#fields.inherited.from.class.com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem">Field</a>&nbsp;|&nbsp;</li>
+    <li>
+        <a href="#fields.inherited.from.class.com.SCHSRobotics.HAL9001.system.robot.SubSystem">Field</a>&nbsp;|&nbsp;
+    </li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>

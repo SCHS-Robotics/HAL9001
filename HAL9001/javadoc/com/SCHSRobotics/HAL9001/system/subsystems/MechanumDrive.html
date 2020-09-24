@@ -74,7 +74,8 @@ var activeTableTab = "activeTableTab";
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
-<li><a href="#fields.inherited.from.class.com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#fields.inherited.from.class.com.SCHSRobotics.HAL9001.system.robot.SubSystem">Field</a>&nbsp;|&nbsp;
+</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
@@ -99,10 +100,12 @@ var activeTableTab = "activeTableTab";
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem</a></li>
+    <li><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+           title="class in com.SCHSRobotics.HAL9001.system.source.robot">com.SCHSRobotics.HAL9001.system.robot.SubSystem</a>
+    </li>
 <li>
 <ul class="inheritance">
-<li>com.SCHSRobotics.HAL9001.system.subsystems.MechanumDrive</li>
+    <li>com.SCHSRobotics.HAL9001.system.robot.subsystems.MechanumDrive</li>
 </ul>
 </li>
 </ul>
@@ -113,8 +116,9 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <hr>
 <br>
-<pre>public class <span class="typeNameLabel">MechanumDrive</span>
-extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></pre>
+    <pre>public class <span class="typeNameLabel">MechanumDrive</span>
+extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+           title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></pre>
 <div class="block">A built in mechanum drive class with 7 drive modes.</div>
 <dl>
 <dt><span class="simpleTagLabel">Since:</span></dt>
@@ -174,11 +178,17 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 </a>
 <h3>Field Summary</h3>
 <ul class="blockList">
-<li class="blockList"><a name="fields.inherited.from.class.com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem">
-<!--   -->
-</a>
-<h3>Fields inherited from class&nbsp;com.SCHSRobotics.HAL9001.system.source.BaseRobot.<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></h3>
-<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#robot">robot</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#usesConfig">usesConfig</a></code></li>
+    <li class="blockList"><a
+            name="fields.inherited.from.class.com.SCHSRobotics.HAL9001.system.robot.SubSystem">
+        <!--   -->
+    </a>
+        <h3>Fields inherited from class&nbsp;com.SCHSRobotics.HAL9001.system.source.BaseRobot.<a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></h3>
+        <code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#robot">robot</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#usesConfig">usesConfig</a></code>
+    </li>
 </ul>
 </li>
 </ul>
@@ -194,36 +204,56 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#MechanumDrive-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.system.subsystems.MechanumDrive.Params-">MechanumDrive</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-             <a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.Params.html" title="class in com.SCHSRobotics.HAL9001.system.subsystems">MechanumDrive.Params</a>&nbsp;params)</code>
-<div class="block">A constructor for the mechanum drive that takes parameters as input.</div>
-</td>
+    <td class="colOne"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#MechanumDrive-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.system.robot.subsystems.MechanumDrive.Params-">MechanumDrive</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.Params.html"
+           title="class in com.SCHSRobotics.HAL9001.system.subsystems">MechanumDrive.Params</a>&nbsp;params)</code>
+        <div class="block">A constructor for the mechanum drive that takes parameters as input.
+        </div>
+    </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#MechanumDrive-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.system.subsystems.MechanumDrive.SpecificParams-boolean-">MechanumDrive</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-             <a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.SpecificParams.html" title="class in com.SCHSRobotics.HAL9001.system.subsystems">MechanumDrive.SpecificParams</a>&nbsp;params,
-             boolean&nbsp;usingSpecific)</code>
-<div class="block">A constructor for the mechanum drive that takes parameters as input and uses config.</div>
-</td>
+    <td class="colOne"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#MechanumDrive-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.system.robot.subsystems.MechanumDrive.SpecificParams-boolean-">MechanumDrive</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.SpecificParams.html"
+           title="class in com.SCHSRobotics.HAL9001.system.subsystems">MechanumDrive.SpecificParams</a>&nbsp;params,
+        boolean&nbsp;usingSpecific)</code>
+        <div class="block">A constructor for the mechanum drive that takes parameters as input and
+            uses config.
+        </div>
+    </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#MechanumDrive-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-java.lang.String-java.lang.String-java.lang.String-java.lang.String-">MechanumDrive</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-             java.lang.String&nbsp;topLeft,
-             java.lang.String&nbsp;topRight,
-             java.lang.String&nbsp;botLeft,
-             java.lang.String&nbsp;botRight)</code>
-<div class="block">A constructor for MechanumDrive that uses config and default settings.</div>
-</td>
+    <td class="colOne"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#MechanumDrive-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-java.lang.String-java.lang.String-java.lang.String-java.lang.String-">MechanumDrive</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+        java.lang.String&nbsp;topLeft,
+        java.lang.String&nbsp;topRight,
+        java.lang.String&nbsp;botLeft,
+        java.lang.String&nbsp;botRight)</code>
+        <div class="block">A constructor for MechanumDrive that uses config and default settings.
+        </div>
+    </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#MechanumDrive-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-java.lang.String-java.lang.String-java.lang.String-java.lang.String-double-">MechanumDrive</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-             java.lang.String&nbsp;topLeft,
-             java.lang.String&nbsp;topRight,
-             java.lang.String&nbsp;botLeft,
-             java.lang.String&nbsp;botRight,
-             double&nbsp;encodersPerMeter)</code>
-<div class="block">A constructor for MechanumDrive that uses config and encoders per meter.</div>
-</td>
+    <td class="colOne"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#MechanumDrive-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-java.lang.String-java.lang.String-java.lang.String-java.lang.String-double-">MechanumDrive</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+        java.lang.String&nbsp;topLeft,
+        java.lang.String&nbsp;topRight,
+        java.lang.String&nbsp;botLeft,
+        java.lang.String&nbsp;botRight,
+        double&nbsp;encodersPerMeter)</code>
+        <div class="block">A constructor for MechanumDrive that uses config and encoders per
+            meter.
+        </div>
+    </td>
 </tr>
 </table>
 </li>
@@ -248,78 +278,115 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#drive-com.SCHSRobotics.HAL9001.util.math.Vector-">drive</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v)</code>
-<div class="block">Makes the robot move.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#drive-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-">drive</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+            title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v)</code>
+        <div class="block">Makes the robot move.</div>
+    </td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#drive-com.SCHSRobotics.HAL9001.util.math.Vector-boolean-">drive</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v,
-     boolean&nbsp;stabilityControl)</code>
-<div class="block">Makes the robot move.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#drive-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-boolean-">drive</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+            title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v,
+        boolean&nbsp;stabilityControl)</code>
+        <div class="block">Makes the robot move.</div>
+    </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#drive-com.SCHSRobotics.HAL9001.util.math.Vector-com.SCHSRobotics.HAL9001.util.math.Vector-">drive</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;leftVector,
-     <a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;rightVector)</code>
-<div class="block">Makes the robot move and/or turn.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#drive-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-">drive</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+            title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;leftVector,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+           title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;rightVector)</code>
+        <div class="block">Makes the robot move and/or turn.</div>
+    </td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#driveDistance-com.SCHSRobotics.HAL9001.util.math.Vector-double-com.SCHSRobotics.HAL9001.util.math.Units-">driveDistance</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v,
-             double&nbsp;distance,
-             <a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Units.html" title="enum in com.SCHSRobotics.HAL9001.util.math">Units</a>&nbsp;unit)</code>
-<div class="block">Makes the robot drive a specified distance in a specified direction.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#driveDistance-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-double-com.SCHSRobotics.HAL9001.util.math.Units-">driveDistance</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+            title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v,
+        double&nbsp;distance,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Units.html"
+           title="enum in com.SCHSRobotics.HAL9001.util.math">Units</a>&nbsp;unit)</code>
+        <div class="block">Makes the robot drive a specified distance in a specified direction.
+        </div>
+    </td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#driveDistance-com.SCHSRobotics.HAL9001.util.math.Vector-double-com.SCHSRobotics.HAL9001.util.math.Units-boolean-">driveDistance</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v,
-             double&nbsp;distance,
-             <a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Units.html" title="enum in com.SCHSRobotics.HAL9001.util.math">Units</a>&nbsp;unit,
-             boolean&nbsp;stabilityControl)</code>
-<div class="block">Makes the robot move a certain distance.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#driveDistance-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-double-com.SCHSRobotics.HAL9001.util.math.Units-boolean-">driveDistance</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+            title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v,
+        double&nbsp;distance,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Units.html"
+           title="enum in com.SCHSRobotics.HAL9001.util.math">Units</a>&nbsp;unit,
+        boolean&nbsp;stabilityControl)</code>
+        <div class="block">Makes the robot move a certain distance.</div>
+    </td>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#driveEncoders-com.SCHSRobotics.HAL9001.util.math.Vector-double-">driveEncoders</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v,
-             double&nbsp;encoders)</code>
-<div class="block">Drive a certain number of encoder ticks.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#driveEncoders-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-double-">driveEncoders</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+            title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v,
+        double&nbsp;encoders)</code>
+        <div class="block">Drive a certain number of encoder ticks.</div>
+    </td>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#driveEncoders-com.SCHSRobotics.HAL9001.util.math.Vector-double-boolean-">driveEncoders</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v,
-             double&nbsp;encoders,
-             boolean&nbsp;stabilityControl)</code>
-<div class="block">Drive a certain number of encoder ticks.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#driveEncoders-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-double-boolean-">driveEncoders</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+            title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v,
+        double&nbsp;encoders,
+        boolean&nbsp;stabilityControl)</code>
+        <div class="block">Drive a certain number of encoder ticks.</div>
+    </td>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#driveTime-com.SCHSRobotics.HAL9001.util.math.Vector-long-">driveTime</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v,
-         long&nbsp;timeMs)</code>
-<div class="block">Makes the robot move for a certain amount of time.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#driveTime-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-long-">driveTime</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+            title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v,
+        long&nbsp;timeMs)</code>
+        <div class="block">Makes the robot move for a certain amount of time.</div>
+    </td>
 </tr>
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#driveTime-com.SCHSRobotics.HAL9001.util.math.Vector-long-boolean-">driveTime</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v,
-         long&nbsp;timeMs,
-         boolean&nbsp;stabilityControl)</code>
-<div class="block">Makes the robot move for a certain amount of time.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#driveTime-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-long-boolean-">driveTime</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+            title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v,
+        long&nbsp;timeMs,
+        boolean&nbsp;stabilityControl)</code>
+        <div class="block">Makes the robot move for a certain amount of time.</div>
+    </td>
 </tr>
 <tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#driveTime-com.SCHSRobotics.HAL9001.util.math.Vector-com.SCHSRobotics.HAL9001.util.math.Vector-long-">driveTime</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;leftVector,
-         <a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;rightVector,
-         long&nbsp;timeMs)</code>
-<div class="block">Drive method for driving for a certain amount of time with matthew drive.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#driveTime-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-long-">driveTime</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+            title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;leftVector,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+           title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;rightVector,
+        long&nbsp;timeMs)</code>
+        <div class="block">Drive method for driving for a certain amount of time with matthew
+            drive.
+        </div>
+    </td>
 </tr>
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code>int</code></td>
@@ -532,9 +599,12 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 </tr>
 <tr id="i45" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#setDriveMode-com.SCHSRobotics.HAL9001.system.subsystems.MechanumDrive.DriveType-">setDriveMode</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.DriveType.html" title="enum in com.SCHSRobotics.HAL9001.system.subsystems">MechanumDrive.DriveType</a>&nbsp;driveType)</code>
-<div class="block">Updates the mechanum drive's mode.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#setDriveMode-com.SCHSRobotics.HAL9001.system.robot.subsystems.MechanumDrive.DriveType-">setDriveMode</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.DriveType.html"
+            title="enum in com.SCHSRobotics.HAL9001.system.subsystems">MechanumDrive.DriveType</a>&nbsp;driveType)</code>
+        <div class="block">Updates the mechanum drive's mode.</div>
+    </td>
 </tr>
 <tr id="i46" class="altColor">
 <td class="colFirst"><code>void</code></td>
@@ -620,69 +690,101 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 </tr>
 <tr id="i59" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#turnAndMove-com.SCHSRobotics.HAL9001.util.math.Vector-double-">turnAndMove</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v,
-           double&nbsp;turnPower)</code>
-<div class="block">Turn and move at the same time.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#turnAndMove-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-double-">turnAndMove</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+            title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v,
+        double&nbsp;turnPower)</code>
+        <div class="block">Turn and move at the same time.</div>
+    </td>
 </tr>
 <tr id="i60" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#turnAndMove-com.SCHSRobotics.HAL9001.util.math.Vector-com.SCHSRobotics.HAL9001.util.math.Vector-">turnAndMove</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;left,
-           <a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;right)</code>
-<div class="block">Turns and moves at the same time.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#turnAndMove-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-">turnAndMove</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+            title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;left,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+           title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;right)</code>
+        <div class="block">Turns and moves at the same time.</div>
+    </td>
 </tr>
 <tr id="i61" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#turnAndMoveDistance-com.SCHSRobotics.HAL9001.util.math.Vector-double-double-com.SCHSRobotics.HAL9001.util.math.Units-">turnAndMoveDistance</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v,
-                   double&nbsp;turnPower,
-                   double&nbsp;distance,
-                   <a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Units.html" title="enum in com.SCHSRobotics.HAL9001.util.math">Units</a>&nbsp;unit)</code>
-<div class="block">Turn and move at the same time for a certain distance.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#turnAndMoveDistance-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-double-double-com.SCHSRobotics.HAL9001.util.math.Units-">turnAndMoveDistance</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+            title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v,
+        double&nbsp;turnPower,
+        double&nbsp;distance,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Units.html"
+           title="enum in com.SCHSRobotics.HAL9001.util.math">Units</a>&nbsp;unit)</code>
+        <div class="block">Turn and move at the same time for a certain distance.</div>
+    </td>
 </tr>
 <tr id="i62" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#turnAndMoveDistance-com.SCHSRobotics.HAL9001.util.math.Vector-com.SCHSRobotics.HAL9001.util.math.Vector-double-double-com.SCHSRobotics.HAL9001.util.math.Units-">turnAndMoveDistance</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;leftVector,
-                   <a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;rightVector,
-                   double&nbsp;distanceLeft,
-                   double&nbsp;distanceRight,
-                   <a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Units.html" title="enum in com.SCHSRobotics.HAL9001.util.math">Units</a>&nbsp;unit)</code>
-<div class="block">Drive method for driving for a certain distance with matthew drive.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#turnAndMoveDistance-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-double-double-com.SCHSRobotics.HAL9001.util.math.Units-">turnAndMoveDistance</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+            title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;leftVector,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+           title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;rightVector,
+        double&nbsp;distanceLeft,
+        double&nbsp;distanceRight,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Units.html"
+           title="enum in com.SCHSRobotics.HAL9001.util.math">Units</a>&nbsp;unit)</code>
+        <div class="block">Drive method for driving for a certain distance with matthew drive.</div>
+    </td>
 </tr>
 <tr id="i63" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#turnAndMoveEncoders-com.SCHSRobotics.HAL9001.util.math.Vector-double-double-">turnAndMoveEncoders</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v,
-                   double&nbsp;turnPower,
-                   double&nbsp;encoders)</code>
-<div class="block">Turn and move at the same time for a certain amount of encoder ticks.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#turnAndMoveEncoders-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-double-double-">turnAndMoveEncoders</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+            title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v,
+        double&nbsp;turnPower,
+        double&nbsp;encoders)</code>
+        <div class="block">Turn and move at the same time for a certain amount of encoder ticks.
+        </div>
+    </td>
 </tr>
 <tr id="i64" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#turnAndMoveEncoders-com.SCHSRobotics.HAL9001.util.math.Vector-com.SCHSRobotics.HAL9001.util.math.Vector-double-double-">turnAndMoveEncoders</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;leftVector,
-                   <a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;rightVector,
-                   double&nbsp;encodersLeft,
-                   double&nbsp;encodersRight)</code>
-<div class="block">Turn and move at the same time for a certain amount of encoder ticks.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#turnAndMoveEncoders-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-double-double-">turnAndMoveEncoders</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+            title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;leftVector,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+           title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;rightVector,
+        double&nbsp;encodersLeft,
+        double&nbsp;encodersRight)</code>
+        <div class="block">Turn and move at the same time for a certain amount of encoder ticks.
+        </div>
+    </td>
 </tr>
 <tr id="i65" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#turnAndMoveTime-com.SCHSRobotics.HAL9001.util.math.Vector-double-long-">turnAndMoveTime</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v,
-               double&nbsp;turnPower,
-               long&nbsp;timeMs)</code>
-<div class="block">Turn and move at the same time for a certain amount of time.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#turnAndMoveTime-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-double-long-">turnAndMoveTime</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+            title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;v,
+        double&nbsp;turnPower,
+        long&nbsp;timeMs)</code>
+        <div class="block">Turn and move at the same time for a certain amount of time.</div>
+    </td>
 </tr>
 <tr id="i66" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#turnAndMoveTime-com.SCHSRobotics.HAL9001.util.math.Vector-com.SCHSRobotics.HAL9001.util.math.Vector-long-">turnAndMoveTime</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;leftVector,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html" title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;rightVector,
-               long&nbsp;timeMs)</code>
-<div class="block">Turn and move at the same time for a certain amount of time.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.html#turnAndMoveTime-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-com.SCHSRobotics.HAL9001.util.math.quantities.Vector-long-">turnAndMoveTime</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+            title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;leftVector,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/math/Vector.html"
+           title="class in com.SCHSRobotics.HAL9001.util.math">Vector</a>&nbsp;rightVector,
+        long&nbsp;timeMs)</code>
+        <div class="block">Turn and move at the same time for a certain amount of time.</div>
+    </td>
 </tr>
 <tr id="i67" class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -721,11 +823,22 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;com.SCHSRobotics.HAL9001.system.source.BaseRobot.<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></h3>
-<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#initVars--">initVars</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitTime-long-">waitTime</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitTime-long-java.lang.Runnable-">waitTime</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitUntil-org.firstinspires.ftc.robotcore.external.Supplier-">waitUntil</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitUntil-org.firstinspires.ftc.robotcore.external.Supplier-java.lang.Runnable-">waitUntil</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitWhile-org.firstinspires.ftc.robotcore.external.Supplier-">waitWhile</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitWhile-org.firstinspires.ftc.robotcore.external.Supplier-java.lang.Runnable-">waitWhile</a></code></li>
+    <li class="blockList"><a
+            name="methods.inherited.from.class.com.SCHSRobotics.HAL9001.system.robot.SubSystem">
+        <!--   -->
+    </a>
+        <h3>Methods inherited from class&nbsp;com.SCHSRobotics.HAL9001.system.source.BaseRobot.<a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></h3>
+        <code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#initVars--">initVars</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitTime-long-">waitTime</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitTime-long-java.lang.Runnable-">waitTime</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitUntil-org.firstinspires.ftc.robotcore.external.Supplier-">waitUntil</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitUntil-org.firstinspires.ftc.robotcore.external.Supplier-java.lang.Runnable-">waitUntil</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitWhile-org.firstinspires.ftc.robotcore.external.Supplier-">waitWhile</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitWhile-org.firstinspires.ftc.robotcore.external.Supplier-java.lang.Runnable-">waitWhile</a></code>
+    </li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -748,14 +861,17 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="MechanumDrive-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.system.subsystems.MechanumDrive.Params-">
-<!--   -->
-</a>
+    <a name="MechanumDrive-com.SCHSRobotics.HAL9001.system.source.robot.Robot-com.SCHSRobotics.HAL9001.system.robot.subsystems.MechanumDrive.Params-">
+        <!--   -->
+    </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>MechanumDrive</h4>
-<pre>public&nbsp;MechanumDrive(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-                     <a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.Params.html" title="class in com.SCHSRobotics.HAL9001.system.subsystems">MechanumDrive.Params</a>&nbsp;params)</pre>
+    <pre>public&nbsp;MechanumDrive(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+                     <a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.Params.html"
+                        title="class in com.SCHSRobotics.HAL9001.system.subsystems">MechanumDrive.Params</a>&nbsp;params)</pre>
 <div class="block">A constructor for the mechanum drive that takes parameters as input.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -764,14 +880,17 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 </dl>
 </li>
 </ul>
-<a name="MechanumDrive-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.system.subsystems.MechanumDrive.SpecificParams-boolean-">
-<!--   -->
-</a>
+    <a name="MechanumDrive-com.SCHSRobotics.HAL9001.system.source.robot.Robot-com.SCHSRobotics.HAL9001.system.robot.subsystems.MechanumDrive.SpecificParams-boolean-">
+        <!--   -->
+    </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>MechanumDrive</h4>
-<pre>public&nbsp;MechanumDrive(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-                     <a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.SpecificParams.html" title="class in com.SCHSRobotics.HAL9001.system.subsystems">MechanumDrive.SpecificParams</a>&nbsp;params,
+    <pre>public&nbsp;MechanumDrive(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+                     <a href="../../../../../com/SCHSRobotics/HAL9001/system/subsystems/MechanumDrive.SpecificParams.html"
+                        title="class in com.SCHSRobotics.HAL9001.system.subsystems">MechanumDrive.SpecificParams</a>&nbsp;params,
                      boolean&nbsp;usingSpecific)</pre>
 <div class="block">A constructor for the mechanum drive that takes parameters as input and uses config.</div>
 <dl>
@@ -782,13 +901,15 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 </dl>
 </li>
 </ul>
-<a name="MechanumDrive-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-java.lang.String-java.lang.String-java.lang.String-java.lang.String-">
-<!--   -->
-</a>
+    <a name="MechanumDrive-com.SCHSRobotics.HAL9001.system.source.robot.Robot-java.lang.String-java.lang.String-java.lang.String-java.lang.String-">
+        <!--   -->
+    </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>MechanumDrive</h4>
-<pre>public&nbsp;MechanumDrive(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
+    <pre>public&nbsp;MechanumDrive(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
                      java.lang.String&nbsp;topLeft,
                      java.lang.String&nbsp;topRight,
                      java.lang.String&nbsp;botLeft,
@@ -804,13 +925,15 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 </dl>
 </li>
 </ul>
-<a name="MechanumDrive-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-java.lang.String-java.lang.String-java.lang.String-java.lang.String-double-">
-<!--   -->
-</a>
+    <a name="MechanumDrive-com.SCHSRobotics.HAL9001.system.source.robot.Robot-java.lang.String-java.lang.String-java.lang.String-java.lang.String-double-">
+        <!--   -->
+    </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>MechanumDrive</h4>
-<pre>public&nbsp;MechanumDrive(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
+    <pre>public&nbsp;MechanumDrive(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
                      java.lang.String&nbsp;topLeft,
                      java.lang.String&nbsp;topRight,
                      java.lang.String&nbsp;botLeft,
@@ -847,7 +970,12 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <div class="block">An abstract method containing the code that the subsystem runs when being initialized.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#init--">init</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></code></dd>
+    <dd><code><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#init--">init</a></code>&nbsp;in
+        class&nbsp;<code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></code>
+    </dd>
 </dl>
 </li>
 </ul>
@@ -862,7 +990,12 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <div class="block">An abstract method that contains code that runs in a loop on init.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#init_loop--">init_loop</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></code></dd>
+    <dd><code><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#init_loop--">init_loop</a></code>&nbsp;in
+        class&nbsp;<code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></code>
+    </dd>
 </dl>
 </li>
 </ul>
@@ -877,7 +1010,12 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <div class="block">An abstract method containing the code that the subsystem runs when being start.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#start--">start</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></code></dd>
+    <dd><code><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#start--">start</a></code>&nbsp;in
+        class&nbsp;<code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></code>
+    </dd>
 </dl>
 </li>
 </ul>
@@ -892,7 +1030,12 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <div class="block">An abstract method containing the code that the subsystem runs every loop in a teleop program.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#handle--">handle</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></code></dd>
+    <dd><code><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#handle--">handle</a></code>&nbsp;in
+        class&nbsp;<code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></code>
+    </dd>
 </dl>
 </li>
 </ul>
@@ -907,7 +1050,12 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <div class="block">An abstract method containing the code that the subsystem runs when the program is stopped.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#stop--">stop</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></code></dd>
+    <dd><code><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#stop--">stop</a></code>&nbsp;in
+        class&nbsp;<code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></code>
+    </dd>
 </dl>
 </li>
 </ul>
@@ -1463,9 +1611,9 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 </dl>
 </li>
 </ul>
-<a name="setDriveMode-com.SCHSRobotics.HAL9001.system.subsystems.MechanumDrive.DriveType-">
-<!--   -->
-</a>
+    <a name="setDriveMode-com.SCHSRobotics.HAL9001.system.robot.subsystems.MechanumDrive.DriveType-">
+        <!--   -->
+    </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>setDriveMode</h4>
@@ -2004,7 +2152,9 @@ public static&nbsp;<a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Co
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
-<li><a href="#fields.inherited.from.class.com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem">Field</a>&nbsp;|&nbsp;</li>
+    <li>
+        <a href="#fields.inherited.from.class.com.SCHSRobotics.HAL9001.system.robot.SubSystem">Field</a>&nbsp;|&nbsp;
+    </li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>

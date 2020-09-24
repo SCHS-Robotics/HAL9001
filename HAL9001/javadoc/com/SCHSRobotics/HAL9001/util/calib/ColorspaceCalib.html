@@ -74,7 +74,8 @@ var activeTableTab = "activeTableTab";
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
-<li><a href="#fields.inherited.from.class.com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#fields.inherited.from.class.com.SCHSRobotics.HAL9001.system.robot.SubSystem">Field</a>&nbsp;|&nbsp;
+</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
@@ -99,13 +100,18 @@ var activeTableTab = "activeTableTab";
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem</a></li>
+    <li><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+           title="class in com.SCHSRobotics.HAL9001.system.source.robot">com.SCHSRobotics.HAL9001.system.robot.SubSystem</a>
+    </li>
 <li>
 <ul class="inheritance">
-<li><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">com.SCHSRobotics.HAL9001.system.source.BaseRobot.VisionSubSystem</a></li>
+    <li>
+        <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html"
+           title="class in com.SCHSRobotics.HAL9001.system.source.robot">com.SCHSRobotics.HAL9001.system.robot.VisionSubSystem</a>
+    </li>
 <li>
 <ul class="inheritance">
-<li>com.SCHSRobotics.HAL9001.util.calib.ColorspaceCalib</li>
+    <li>com.SCHSRobotics.HAL9001.system.robot.subsystems.calib.ColorspaceCalib</li>
 </ul>
 </li>
 </ul>
@@ -118,8 +124,9 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <hr>
 <br>
-<pre>public class <span class="typeNameLabel">ColorspaceCalib</span>
-extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">VisionSubSystem</a></pre>
+    <pre>public class <span class="typeNameLabel">ColorspaceCalib</span>
+extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html"
+           title="class in com.SCHSRobotics.HAL9001.system.source.robot">VisionSubSystem</a></pre>
 <div class="block">A calibration subsystem used to find good colorspace ranges for color detection algorithms.</div>
 <dl>
 <dt><span class="simpleTagLabel">Since:</span></dt>
@@ -171,11 +178,17 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 </a>
 <h3>Field Summary</h3>
 <ul class="blockList">
-<li class="blockList"><a name="fields.inherited.from.class.com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem">
-<!--   -->
-</a>
-<h3>Fields inherited from class&nbsp;com.SCHSRobotics.HAL9001.system.source.BaseRobot.<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></h3>
-<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#robot">robot</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#usesConfig">usesConfig</a></code></li>
+    <li class="blockList"><a
+            name="fields.inherited.from.class.com.SCHSRobotics.HAL9001.system.robot.SubSystem">
+        <!--   -->
+    </a>
+        <h3>Fields inherited from class&nbsp;com.SCHSRobotics.HAL9001.system.source.BaseRobot.<a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></h3>
+        <code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#robot">robot</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#usesConfig">usesConfig</a></code>
+    </li>
 </ul>
 </li>
 </ul>
@@ -191,97 +204,173 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.html#ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-">ColorspaceCalib</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot)</code>
-<div class="block">Constructor that uses configuration to set everything.</div>
-</td>
+    <td class="colOne"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.html#ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-">ColorspaceCalib</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot)</code>
+        <div class="block">Constructor that uses configuration to set everything.</div>
+    </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.html#ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.calib.ColorspaceCalib.ColorSpace-">ColorspaceCalib</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XUp,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XDown,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YUp,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YDown,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZUp,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZDown,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;slowMode,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;changeLimit,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ColorSpace.html" title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ColorSpace</a>&nbsp;colorSpace)</code>
-<div class="block">Constructor that lets you set the keys.</div>
+    <td class="colOne"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.html#ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.system.robot.subsystems.calib.ColorspaceCalib.ColorSpace-">ColorspaceCalib</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XUp,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XDown,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YUp,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YDown,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZUp,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZDown,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;slowMode,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;changeLimit,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ColorSpace.html"
+           title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ColorSpace</a>&nbsp;colorSpace)</code>
+        <div class="block">Constructor that lets you set the keys.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.html#ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.calib.ColorspaceCalib.ColorSpace-com.SCHSRobotics.HAL9001.util.calib.ColorspaceCalib.ImageType-int-">ColorspaceCalib</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XUp,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XDown,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YUp,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YDown,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZUp,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZDown,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;slowMode,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;changeLimit,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ColorSpace.html" title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ColorSpace</a>&nbsp;colorSpace,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ImageType.html" title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ImageType</a>&nbsp;imageType,
+    <td class="colOne"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.html#ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.system.robot.subsystems.calib.ColorspaceCalib.ColorSpace-com.SCHSRobotics.HAL9001.system.robot.subsystems.calib.ColorspaceCalib.ImageType-int-">ColorspaceCalib</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XUp,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XDown,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YUp,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YDown,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZUp,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZDown,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;slowMode,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;changeLimit,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ColorSpace.html"
+           title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ColorSpace</a>&nbsp;colorSpace,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ImageType.html"
+           title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ImageType</a>&nbsp;imageType,
                int&nbsp;channelIdx)</code>
 <div class="block">Constructor that lets you set the keys and allows the user to specify if a single channel or multi-channel image is being filtered.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.html#ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-org.firstinspires.ftc.robotcore.external.Function-">ColorspaceCalib</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XUp,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XDown,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YUp,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YDown,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZUp,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZDown,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;slowMode,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;changeLimit,
-               org.firstinspires.ftc.robotcore.external.Function&lt;org.opencv.core.Mat,org.opencv.core.Mat&gt;&nbsp;converter)</code>
-<div class="block">Constructor that lets the user set the keys and lets the user input a custom color conversion function (RGB to custom).</div>
+    <td class="colOne"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.html#ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-org.firstinspires.ftc.robotcore.external.Function-">ColorspaceCalib</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XUp,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XDown,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YUp,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YDown,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZUp,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZDown,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;slowMode,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;changeLimit,
+        org.firstinspires.ftc.robotcore.external.Function&lt;org.opencv.core.Mat,org.opencv.core.Mat&gt;&nbsp;converter)</code>
+        <div class="block">Constructor that lets the user set the keys and lets the user input a
+            custom color conversion function (RGB to custom).
+        </div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.html#ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-org.firstinspires.ftc.robotcore.external.Function-com.SCHSRobotics.HAL9001.util.calib.ColorspaceCalib.ImageType-int-">ColorspaceCalib</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XUp,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XDown,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YUp,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YDown,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZUp,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZDown,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;slowMode,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;changeLimit,
-               org.firstinspires.ftc.robotcore.external.Function&lt;org.opencv.core.Mat,org.opencv.core.Mat&gt;&nbsp;converter,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ImageType.html" title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ImageType</a>&nbsp;imageType,
+    <td class="colOne"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.html#ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-org.firstinspires.ftc.robotcore.external.Function-com.SCHSRobotics.HAL9001.system.robot.subsystems.calib.ColorspaceCalib.ImageType-int-">ColorspaceCalib</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XUp,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XDown,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YUp,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YDown,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZUp,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZDown,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;slowMode,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;changeLimit,
+        org.firstinspires.ftc.robotcore.external.Function&lt;org.opencv.core.Mat,org.opencv.core.Mat&gt;&nbsp;converter,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ImageType.html"
+           title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ImageType</a>&nbsp;imageType,
                int&nbsp;channelIdx)</code>
 <div class="block">Constructor that lets the user set the keys, lets the user input a custom color conversion function (RGB to custom), and allows the user to specify if a single channel or multi-channel image is being filtered.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.html#ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.util.calib.ColorspaceCalib.ColorSpace-">ColorspaceCalib</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ColorSpace.html" title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ColorSpace</a>&nbsp;colorSpace)</code>
-<div class="block">Constructor that uses default keys.</div>
-</td>
+    <td class="colOne"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.html#ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.system.robot.subsystems.calib.ColorspaceCalib.ColorSpace-">ColorspaceCalib</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ColorSpace.html"
+           title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ColorSpace</a>&nbsp;colorSpace)</code>
+        <div class="block">Constructor that uses default keys.</div>
+    </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.html#ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.util.calib.ColorspaceCalib.ColorSpace-com.SCHSRobotics.HAL9001.util.calib.ColorspaceCalib.ImageType-int-">ColorspaceCalib</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ColorSpace.html" title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ColorSpace</a>&nbsp;colorSpace,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ImageType.html" title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ImageType</a>&nbsp;imageType,
-               int&nbsp;channelIdx)</code>
-<div class="block">Constructor that uses default keys and allows the user to specify the type of image being filtered.</div>
-</td>
+    <td class="colOne"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.html#ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.system.robot.subsystems.calib.ColorspaceCalib.ColorSpace-com.SCHSRobotics.HAL9001.system.robot.subsystems.calib.ColorspaceCalib.ImageType-int-">ColorspaceCalib</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ColorSpace.html"
+           title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ColorSpace</a>&nbsp;colorSpace,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ImageType.html"
+           title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ImageType</a>&nbsp;imageType,
+        int&nbsp;channelIdx)</code>
+        <div class="block">Constructor that uses default keys and allows the user to specify the
+            type of image being filtered.
+        </div>
+    </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.html#ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-org.firstinspires.ftc.robotcore.external.Function-">ColorspaceCalib</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-               org.firstinspires.ftc.robotcore.external.Function&lt;org.opencv.core.Mat,org.opencv.core.Mat&gt;&nbsp;converter)</code>
-<div class="block">Constructor that uses default keys and lets the user specify a custom function to convert from the RGB color space to an arbitrary custom colorspace.</div>
-</td>
+    <td class="colOne"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.html#ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-org.firstinspires.ftc.robotcore.external.Function-">ColorspaceCalib</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+        org.firstinspires.ftc.robotcore.external.Function&lt;org.opencv.core.Mat,org.opencv.core.Mat&gt;&nbsp;converter)</code>
+        <div class="block">Constructor that uses default keys and lets the user specify a custom
+            function to convert from the RGB color space to an arbitrary custom colorspace.
+        </div>
+    </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.html#ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-org.firstinspires.ftc.robotcore.external.Function-com.SCHSRobotics.HAL9001.util.calib.ColorspaceCalib.ImageType-int-">ColorspaceCalib</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-               org.firstinspires.ftc.robotcore.external.Function&lt;org.opencv.core.Mat,org.opencv.core.Mat&gt;&nbsp;converter,
-               <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ImageType.html" title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ImageType</a>&nbsp;imageType,
-               int&nbsp;channelIdx)</code>
-<div class="block">Constructor that uses default keys, lets the user input a custom color conversion function (RGB to custom), and allows the user to specify if a single channel or multi-channel image is being filtered.</div>
-</td>
+    <td class="colOne"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.html#ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-org.firstinspires.ftc.robotcore.external.Function-com.SCHSRobotics.HAL9001.system.robot.subsystems.calib.ColorspaceCalib.ImageType-int-">ColorspaceCalib</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+        org.firstinspires.ftc.robotcore.external.Function&lt;org.opencv.core.Mat,org.opencv.core.Mat&gt;&nbsp;converter,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ImageType.html"
+           title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ImageType</a>&nbsp;imageType,
+        int&nbsp;channelIdx)</code>
+        <div class="block">Constructor that uses default keys, lets the user input a custom color
+            conversion function (RGB to custom), and allows the user to specify if a single channel
+            or multi-channel image is being filtered.
+        </div>
+    </td>
 </tr>
 </table>
 </li>
@@ -366,18 +455,38 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.com.SCHSRobotics.HAL9001.system.source.BaseRobot.VisionSubSystem">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;com.SCHSRobotics.HAL9001.system.source.BaseRobot.<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">VisionSubSystem</a></h3>
-<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#getPriority--">getPriority</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#isEnabled--">isEnabled</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#onViewportTapped--">onViewportTapped</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#startVision--">startVision</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#stopVision--">stopVision</a></code></li>
+    <li class="blockList"><a
+            name="methods.inherited.from.class.com.SCHSRobotics.HAL9001.system.robot.VisionSubSystem">
+        <!--   -->
+    </a>
+        <h3>Methods inherited from class&nbsp;com.SCHSRobotics.HAL9001.system.source.BaseRobot.<a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">VisionSubSystem</a>
+        </h3>
+        <code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#getPriority--">getPriority</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#isEnabled--">isEnabled</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#onViewportTapped--">onViewportTapped</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#startVision--">startVision</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#stopVision--">stopVision</a></code>
+    </li>
 </ul>
 <ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;com.SCHSRobotics.HAL9001.system.source.BaseRobot.<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></h3>
-<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitTime-long-">waitTime</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitTime-long-java.lang.Runnable-">waitTime</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitUntil-org.firstinspires.ftc.robotcore.external.Supplier-">waitUntil</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitUntil-org.firstinspires.ftc.robotcore.external.Supplier-java.lang.Runnable-">waitUntil</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitWhile-org.firstinspires.ftc.robotcore.external.Supplier-">waitWhile</a>, <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitWhile-org.firstinspires.ftc.robotcore.external.Supplier-java.lang.Runnable-">waitWhile</a></code></li>
+    <li class="blockList"><a
+            name="methods.inherited.from.class.com.SCHSRobotics.HAL9001.system.robot.SubSystem">
+        <!--   -->
+    </a>
+        <h3>Methods inherited from class&nbsp;com.SCHSRobotics.HAL9001.system.source.BaseRobot.<a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></h3>
+        <code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitTime-long-">waitTime</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitTime-long-java.lang.Runnable-">waitTime</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitUntil-org.firstinspires.ftc.robotcore.external.Supplier-">waitUntil</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitUntil-org.firstinspires.ftc.robotcore.external.Supplier-java.lang.Runnable-">waitUntil</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitWhile-org.firstinspires.ftc.robotcore.external.Supplier-">waitWhile</a>,
+            <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#waitWhile-org.firstinspires.ftc.robotcore.external.Supplier-java.lang.Runnable-">waitWhile</a></code>
+    </li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -400,13 +509,15 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-">
-<!--   -->
-</a>
+    <a name="ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.robot.Robot-">
+        <!--   -->
+    </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>ColorspaceCalib</h4>
-<pre>public&nbsp;ColorspaceCalib(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot)</pre>
+    <pre>public&nbsp;ColorspaceCalib(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot)</pre>
 <div class="block">Constructor that uses configuration to set everything.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -414,14 +525,17 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 </dl>
 </li>
 </ul>
-<a name="ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.util.calib.ColorspaceCalib.ColorSpace-">
-<!--   -->
-</a>
+    <a name="ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.robot.Robot-com.SCHSRobotics.HAL9001.system.robot.subsystems.calib.ColorspaceCalib.ColorSpace-">
+        <!--   -->
+    </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>ColorspaceCalib</h4>
-<pre>public&nbsp;ColorspaceCalib(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ColorSpace.html" title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ColorSpace</a>&nbsp;colorSpace)</pre>
+    <pre>public&nbsp;ColorspaceCalib(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ColorSpace.html"
+                          title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ColorSpace</a>&nbsp;colorSpace)</pre>
 <div class="block">Constructor that uses default keys.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -430,15 +544,19 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 </dl>
 </li>
 </ul>
-<a name="ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.util.calib.ColorspaceCalib.ColorSpace-com.SCHSRobotics.HAL9001.util.calib.ColorspaceCalib.ImageType-int-">
-<!--   -->
-</a>
+    <a name="ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.robot.Robot-com.SCHSRobotics.HAL9001.system.robot.subsystems.calib.ColorspaceCalib.ColorSpace-com.SCHSRobotics.HAL9001.system.robot.subsystems.calib.ColorspaceCalib.ImageType-int-">
+        <!--   -->
+    </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>ColorspaceCalib</h4>
-<pre>public&nbsp;ColorspaceCalib(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ColorSpace.html" title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ColorSpace</a>&nbsp;colorSpace,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ImageType.html" title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ImageType</a>&nbsp;imageType,
+    <pre>public&nbsp;ColorspaceCalib(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ColorSpace.html"
+                          title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ColorSpace</a>&nbsp;colorSpace,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ImageType.html"
+                          title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ImageType</a>&nbsp;imageType,
                        int&nbsp;channelIdx)</pre>
 <div class="block">Constructor that uses default keys and allows the user to specify the type of image being filtered.</div>
 <dl>
@@ -450,13 +568,15 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 </dl>
 </li>
 </ul>
-<a name="ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-org.firstinspires.ftc.robotcore.external.Function-">
-<!--   -->
-</a>
+    <a name="ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.robot.Robot-org.firstinspires.ftc.robotcore.external.Function-">
+        <!--   -->
+    </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>ColorspaceCalib</h4>
-<pre>public&nbsp;ColorspaceCalib(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
+    <pre>public&nbsp;ColorspaceCalib(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
                        org.firstinspires.ftc.robotcore.external.Function&lt;org.opencv.core.Mat,org.opencv.core.Mat&gt;&nbsp;converter)</pre>
 <div class="block">Constructor that uses default keys and lets the user specify a custom function to convert from the RGB color space to an arbitrary custom colorspace.</div>
 <dl>
@@ -466,15 +586,18 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 </dl>
 </li>
 </ul>
-<a name="ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-org.firstinspires.ftc.robotcore.external.Function-com.SCHSRobotics.HAL9001.util.calib.ColorspaceCalib.ImageType-int-">
-<!--   -->
-</a>
+    <a name="ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.robot.Robot-org.firstinspires.ftc.robotcore.external.Function-com.SCHSRobotics.HAL9001.system.robot.subsystems.calib.ColorspaceCalib.ImageType-int-">
+        <!--   -->
+    </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>ColorspaceCalib</h4>
-<pre>public&nbsp;ColorspaceCalib(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
+    <pre>public&nbsp;ColorspaceCalib(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
                        org.firstinspires.ftc.robotcore.external.Function&lt;org.opencv.core.Mat,org.opencv.core.Mat&gt;&nbsp;converter,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ImageType.html" title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ImageType</a>&nbsp;imageType,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ImageType.html"
+                          title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ImageType</a>&nbsp;imageType,
                        int&nbsp;channelIdx)</pre>
 <div class="block">Constructor that uses default keys, lets the user input a custom color conversion function (RGB to custom), and allows the user to specify if a single channel or multi-channel image is being filtered.</div>
 <dl>
@@ -486,22 +609,33 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 </dl>
 </li>
 </ul>
-<a name="ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.calib.ColorspaceCalib.ColorSpace-">
-<!--   -->
-</a>
+    <a name="ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.robot.Robot-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.system.robot.subsystems.calib.ColorspaceCalib.ColorSpace-">
+        <!--   -->
+    </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>ColorspaceCalib</h4>
-<pre>public&nbsp;ColorspaceCalib(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XUp,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XDown,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YUp,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YDown,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZUp,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZDown,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;slowMode,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;changeLimit,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ColorSpace.html" title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ColorSpace</a>&nbsp;colorSpace)</pre>
+    <pre>public&nbsp;ColorspaceCalib(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XUp,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XDown,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YUp,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YDown,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZUp,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZDown,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;slowMode,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;changeLimit,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ColorSpace.html"
+                          title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ColorSpace</a>&nbsp;colorSpace)</pre>
 <div class="block">Constructor that lets you set the keys.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -518,23 +652,35 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 </dl>
 </li>
 </ul>
-<a name="ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.calib.ColorspaceCalib.ColorSpace-com.SCHSRobotics.HAL9001.util.calib.ColorspaceCalib.ImageType-int-">
-<!--   -->
-</a>
+    <a name="ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.robot.Robot-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.system.robot.subsystems.calib.ColorspaceCalib.ColorSpace-com.SCHSRobotics.HAL9001.system.robot.subsystems.calib.ColorspaceCalib.ImageType-int-">
+        <!--   -->
+    </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>ColorspaceCalib</h4>
-<pre>public&nbsp;ColorspaceCalib(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XUp,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XDown,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YUp,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YDown,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZUp,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZDown,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;slowMode,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;changeLimit,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ColorSpace.html" title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ColorSpace</a>&nbsp;colorSpace,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ImageType.html" title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ImageType</a>&nbsp;imageType,
+    <pre>public&nbsp;ColorspaceCalib(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XUp,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XDown,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YUp,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YDown,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZUp,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZDown,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;slowMode,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;changeLimit,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ColorSpace.html"
+                          title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ColorSpace</a>&nbsp;colorSpace,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ImageType.html"
+                          title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ImageType</a>&nbsp;imageType,
                        int&nbsp;channelIdx)</pre>
 <div class="block">Constructor that lets you set the keys and allows the user to specify if a single channel or multi-channel image is being filtered.</div>
 <dl>
@@ -554,21 +700,31 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 </dl>
 </li>
 </ul>
-<a name="ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-org.firstinspires.ftc.robotcore.external.Function-">
-<!--   -->
-</a>
+    <a name="ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.robot.Robot-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-org.firstinspires.ftc.robotcore.external.Function-">
+        <!--   -->
+    </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>ColorspaceCalib</h4>
-<pre>public&nbsp;ColorspaceCalib(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XUp,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XDown,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YUp,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YDown,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZUp,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZDown,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;slowMode,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;changeLimit,
+    <pre>public&nbsp;ColorspaceCalib(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XUp,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XDown,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YUp,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YDown,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZUp,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZDown,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;slowMode,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;changeLimit,
                        org.firstinspires.ftc.robotcore.external.Function&lt;org.opencv.core.Mat,org.opencv.core.Mat&gt;&nbsp;converter)</pre>
 <div class="block">Constructor that lets the user set the keys and lets the user input a custom color conversion function (RGB to custom).</div>
 <dl>
@@ -586,23 +742,34 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 </dl>
 </li>
 </ul>
-<a name="ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-org.firstinspires.ftc.robotcore.external.Function-com.SCHSRobotics.HAL9001.util.calib.ColorspaceCalib.ImageType-int-">
-<!--   -->
-</a>
+    <a name="ColorspaceCalib-com.SCHSRobotics.HAL9001.system.source.robot.Robot-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-org.firstinspires.ftc.robotcore.external.Function-com.SCHSRobotics.HAL9001.system.robot.subsystems.calib.ColorspaceCalib.ImageType-int-">
+        <!--   -->
+    </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ColorspaceCalib</h4>
-<pre>public&nbsp;ColorspaceCalib(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XUp,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XDown,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YUp,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YDown,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZUp,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZDown,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;slowMode,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;changeLimit,
+    <pre>public&nbsp;ColorspaceCalib(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XUp,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;XDown,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YUp,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;YDown,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZUp,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;ZDown,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;slowMode,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+                          title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;changeLimit,
                        org.firstinspires.ftc.robotcore.external.Function&lt;org.opencv.core.Mat,org.opencv.core.Mat&gt;&nbsp;converter,
-                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ImageType.html" title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ImageType</a>&nbsp;imageType,
+                       <a href="../../../../../com/SCHSRobotics/HAL9001/util/calib/ColorspaceCalib.ImageType.html"
+                          title="enum in com.SCHSRobotics.HAL9001.util.calib">ColorspaceCalib.ImageType</a>&nbsp;imageType,
                        int&nbsp;channelIdx)</pre>
 <div class="block">Constructor that lets the user set the keys, lets the user input a custom color conversion function (RGB to custom), and allows the user to specify if a single channel or multi-channel image is being filtered.</div>
 <dl>
@@ -641,7 +808,12 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <div class="block">An abstract method containing the code that the subsystem runs when being initialized.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#init--">init</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></code></dd>
+    <dd><code><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#init--">init</a></code>&nbsp;in
+        class&nbsp;<code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></code>
+    </dd>
 </dl>
 </li>
 </ul>
@@ -656,7 +828,12 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <div class="block">An abstract method that contains code that runs in a loop on init.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#init_loop--">init_loop</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></code></dd>
+    <dd><code><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#init_loop--">init_loop</a></code>&nbsp;in
+        class&nbsp;<code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></code>
+    </dd>
 </dl>
 </li>
 </ul>
@@ -671,7 +848,12 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <div class="block">An abstract method containing the code that the subsystem runs when being start.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#start--">start</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></code></dd>
+    <dd><code><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#start--">start</a></code>&nbsp;in
+        class&nbsp;<code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></code>
+    </dd>
 </dl>
 </li>
 </ul>
@@ -686,7 +868,12 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <div class="block">An abstract method containing the code that the subsystem runs every loop in a teleop program.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#handle--">handle</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></code></dd>
+    <dd><code><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#handle--">handle</a></code>&nbsp;in
+        class&nbsp;<code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></code>
+    </dd>
 </dl>
 </li>
 </ul>
@@ -701,7 +888,12 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <div class="block">An abstract method containing the code that the subsystem runs when the program is stopped.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#stop--">stop</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></code></dd>
+    <dd><code><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#stop--">stop</a></code>&nbsp;in
+        class&nbsp;<code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></code>
+    </dd>
 </dl>
 </li>
 </ul>
@@ -715,7 +907,12 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <div class="block">Blacks out pixels outside of the color space range and displays image on phones.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#onCameraFrame-org.opencv.core.Mat-">onCameraFrame</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">VisionSubSystem</a></code></dd>
+    <dd><code><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html#onCameraFrame-org.opencv.core.Mat-">onCameraFrame</a></code>&nbsp;in
+        class&nbsp;<code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/VisionSubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">VisionSubSystem</a></code>
+    </dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>inputFrame</code> - The input camera frame.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -775,7 +972,12 @@ extends <a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot
 <div class="block">Initializes values used in the rest of the program. Only used in the constructor.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#initVars--">initVars</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">SubSystem</a></code></dd>
+    <dd><code><a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html#initVars--">initVars</a></code>&nbsp;in
+        class&nbsp;<code><a
+                href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/SubSystem.html"
+                title="class in com.SCHSRobotics.HAL9001.system.source.robot">SubSystem</a></code>
+    </dd>
 </dl>
 </li>
 </ul>
@@ -847,7 +1049,9 @@ public static&nbsp;<a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Co
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
-<li><a href="#fields.inherited.from.class.com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem">Field</a>&nbsp;|&nbsp;</li>
+    <li>
+        <a href="#fields.inherited.from.class.com.SCHSRobotics.HAL9001.system.robot.SubSystem">Field</a>&nbsp;|&nbsp;
+    </li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>

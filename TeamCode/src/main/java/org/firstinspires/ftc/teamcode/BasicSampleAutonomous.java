@@ -2,10 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
 
-import com.SCHSRobotics.HAL9001.system.source.BaseRobot.BaseAutonomous;
-import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
-import com.SCHSRobotics.HAL9001.util.annotations.LinkTo;
-import com.SCHSRobotics.HAL9001.util.annotations.ProgramOptions;
+import com.SCHSRobotics.HAL9001.system.config.ProgramOptions;
+import com.SCHSRobotics.HAL9001.system.robot.BaseAutonomous;
+import com.SCHSRobotics.HAL9001.system.robot.LinkTo;
+import com.SCHSRobotics.HAL9001.system.robot.Robot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 //@StandAlone is not required but stops it from auto using configs from autonomous

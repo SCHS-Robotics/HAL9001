@@ -99,7 +99,9 @@ var activeTableTab = "activeTableTab";
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li><a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html" title="class in com.SCHSRobotics.HAL9001.system.source.GUI">com.SCHSRobotics.HAL9001.system.source.GUI.Cursor</a></li>
+<li><a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html"
+       title="class in com.SCHSRobotics.HAL9001.system.gui">com.SCHSRobotics.HAL9001.system.gui.old.Cursor</a>
+</li>
 <li>
 <ul class="inheritance">
 <li>com.SCHSRobotics.HAL9001.system.subsystems.cursors.ConfigCursor</li>
@@ -113,8 +115,9 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <hr>
 <br>
-<pre>public class <span class="typeNameLabel">ConfigCursor</span>
-extends <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html" title="class in com.SCHSRobotics.HAL9001.system.source.GUI">Cursor</a></pre>
+    <pre>public class <span class="typeNameLabel">ConfigCursor</span>
+extends <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html"
+           title="class in com.SCHSRobotics.HAL9001.system.gui">Cursor</a></pre>
 <div class="block">A cursor object used in config menus. Contains all the controls needed to use the config system.</div>
 <dl>
 <dt><span class="simpleTagLabel">Since:</span></dt>
@@ -182,11 +185,22 @@ extends <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cu
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="fields.inherited.from.class.com.SCHSRobotics.HAL9001.system.source.GUI.Cursor">
-<!--   -->
-</a>
-<h3>Fields inherited from class&nbsp;com.SCHSRobotics.HAL9001.system.source.GUI.<a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html" title="class in com.SCHSRobotics.HAL9001.system.source.GUI">Cursor</a></h3>
-<code><a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#blinkSpeedMs">blinkSpeedMs</a>, <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#cursorUpdated">cursorUpdated</a>, <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#doBlink">doBlink</a>, <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#forceCursorChar">forceCursorChar</a>, <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#menu">menu</a>, <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#x">x</a>, <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#y">y</a></code></li>
+    <li class="blockList"><a
+            name="fields.inherited.from.class.com.SCHSRobotics.HAL9001.system.gui.old.Cursor">
+        <!--   -->
+    </a>
+        <h3>Fields inherited from class&nbsp;com.SCHSRobotics.HAL9001.system.source.GUI.<a
+                href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html"
+                title="class in com.SCHSRobotics.HAL9001.system.gui">Cursor</a></h3>
+        <code><a
+                href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#blinkSpeedMs">blinkSpeedMs</a>,
+            <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#cursorUpdated">cursorUpdated</a>,
+            <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#doBlink">doBlink</a>,
+            <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#forceCursorChar">forceCursorChar</a>,
+            <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#menu">menu</a>,
+            <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#x">x</a>,
+            <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#y">y</a></code>
+    </li>
 </ul>
 </li>
 </ul>
@@ -202,34 +216,46 @@ extends <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cu
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../../com/SCHSRobotics/HAL9001/system/subsystems/cursors/ConfigCursor.html#ConfigCursor-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-int-">ConfigCursor</a></span>(<a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-            int&nbsp;blinkSpeedMs)</code>
-<div class="block">Constructor for config cursor.</div>
-</td>
+    <td class="colOne"><code><span class="memberNameLink"><a
+            href="../../../../../../com/SCHSRobotics/HAL9001/system/subsystems/cursors/ConfigCursor.html#ConfigCursor-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-int-">ConfigCursor</a></span>(<a
+            href="../../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+        int&nbsp;blinkSpeedMs)</code>
+        <div class="block">Constructor for config cursor.</div>
+    </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../../com/SCHSRobotics/HAL9001/system/subsystems/cursors/ConfigCursor.html#ConfigCursor-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-int-char-">ConfigCursor</a></span>(<a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-            int&nbsp;blinkSpeedMs,
-            char&nbsp;cursorIcon)</code>
-<div class="block">Constructor for config cursor.</div>
-</td>
+    <td class="colOne"><code><span class="memberNameLink"><a
+            href="../../../../../../com/SCHSRobotics/HAL9001/system/subsystems/cursors/ConfigCursor.html#ConfigCursor-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-int-char-">ConfigCursor</a></span>(<a
+            href="../../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+        int&nbsp;blinkSpeedMs,
+        char&nbsp;cursorIcon)</code>
+        <div class="block">Constructor for config cursor.</div>
+    </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../../com/SCHSRobotics/HAL9001/system/subsystems/cursors/ConfigCursor.html#ConfigCursor-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-int-int-int-">ConfigCursor</a></span>(<a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-            int&nbsp;x,
-            int&nbsp;y,
-            int&nbsp;blinkSpeedMs)</code>
-<div class="block">Constructor for config cursor.</div>
-</td>
+    <td class="colOne"><code><span class="memberNameLink"><a
+            href="../../../../../../com/SCHSRobotics/HAL9001/system/subsystems/cursors/ConfigCursor.html#ConfigCursor-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-int-int-int-">ConfigCursor</a></span>(<a
+            href="../../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+        int&nbsp;x,
+        int&nbsp;y,
+        int&nbsp;blinkSpeedMs)</code>
+        <div class="block">Constructor for config cursor.</div>
+    </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../../com/SCHSRobotics/HAL9001/system/subsystems/cursors/ConfigCursor.html#ConfigCursor-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-int-int-int-char-">ConfigCursor</a></span>(<a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
-            int&nbsp;x,
-            int&nbsp;y,
-            int&nbsp;blinkSpeedMs,
-            char&nbsp;cursorIcon)</code>
-<div class="block">Constructor for config cursor.</div>
-</td>
+    <td class="colOne"><code><span class="memberNameLink"><a
+            href="../../../../../../com/SCHSRobotics/HAL9001/system/subsystems/cursors/ConfigCursor.html#ConfigCursor-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-int-int-int-char-">ConfigCursor</a></span>(<a
+            href="../../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
+        int&nbsp;x,
+        int&nbsp;y,
+        int&nbsp;blinkSpeedMs,
+        char&nbsp;cursorIcon)</code>
+        <div class="block">Constructor for config cursor.</div>
+    </td>
 </tr>
 </table>
 </li>
@@ -248,16 +274,26 @@ extends <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cu
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/SCHSRobotics/HAL9001/system/subsystems/cursors/ConfigCursor.html#setInputs-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-com.SCHSRobotics.HAL9001.util.misc.Button-">setInputs</a></span>(<a href="../../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;up,
-         <a href="../../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;down,
-         <a href="../../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;left,
-         <a href="../../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;right,
-         <a href="../../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;select,
-         <a href="../../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;reverseSelect,
-         <a href="../../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;switchGamepad,
-         <a href="../../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;backButton)</code>
-<div class="block">Sets which buttons will be used to control the cursor.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../../com/SCHSRobotics/HAL9001/system/subsystems/cursors/ConfigCursor.html#setInputs-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-com.SCHSRobotics.HAL9001.util.control.Button-">setInputs</a></span>(<a
+            href="../../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+            title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;up,
+        <a href="../../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;down,
+        <a href="../../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;left,
+        <a href="../../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;right,
+        <a href="../../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;select,
+        <a href="../../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;reverseSelect,
+        <a href="../../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;switchGamepad,
+        <a href="../../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;backButton)</code>
+        <div class="block">Sets which buttons will be used to control the cursor.</div>
+    </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -273,11 +309,24 @@ extends <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cu
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.com.SCHSRobotics.HAL9001.system.source.GUI.Cursor">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;com.SCHSRobotics.HAL9001.system.source.GUI.<a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html" title="class in com.SCHSRobotics.HAL9001.system.source.GUI">Cursor</a></h3>
-<code><a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#getBlinkSpeedMs--">getBlinkSpeedMs</a>, <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#getCursorIcon--">getCursorIcon</a>, <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#getX--">getX</a>, <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#getY--">getY</a>, <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#setCursorIcon-char-">setCursorIcon</a>, <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#setDoBlink-boolean-">setDoBlink</a>, <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#setMenu-com.SCHSRobotics.HAL9001.system.source.GUI.Menu-">setMenu</a>, <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#setX-int-">setX</a>, <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#setY-int-">setY</a></code></li>
+    <li class="blockList"><a
+            name="methods.inherited.from.class.com.SCHSRobotics.HAL9001.system.gui.old.Cursor">
+        <!--   -->
+    </a>
+        <h3>Methods inherited from class&nbsp;com.SCHSRobotics.HAL9001.system.source.GUI.<a
+                href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html"
+                title="class in com.SCHSRobotics.HAL9001.system.gui">Cursor</a></h3>
+        <code><a
+                href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#getBlinkSpeedMs--">getBlinkSpeedMs</a>,
+            <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#getCursorIcon--">getCursorIcon</a>,
+            <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#getX--">getX</a>,
+            <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#getY--">getY</a>,
+            <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#setCursorIcon-char-">setCursorIcon</a>,
+            <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#setDoBlink-boolean-">setDoBlink</a>,
+            <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#setMenu-com.SCHSRobotics.HAL9001.system.source.GUI.Menu-">setMenu</a>,
+            <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#setX-int-">setX</a>,
+            <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#setY-int-">setY</a></code>
+    </li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -425,13 +474,15 @@ extends <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cu
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="ConfigCursor-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-int-int-int-char-">
-<!--   -->
-</a>
+    <a name="ConfigCursor-com.SCHSRobotics.HAL9001.system.source.robot.Robot-int-int-int-char-">
+        <!--   -->
+    </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>ConfigCursor</h4>
-<pre>public&nbsp;ConfigCursor(<a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
+    <pre>public&nbsp;ConfigCursor(<a
+            href="../../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
                     int&nbsp;x,
                     int&nbsp;y,
                     int&nbsp;blinkSpeedMs,
@@ -447,13 +498,15 @@ extends <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cu
 </dl>
 </li>
 </ul>
-<a name="ConfigCursor-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-int-char-">
-<!--   -->
-</a>
+    <a name="ConfigCursor-com.SCHSRobotics.HAL9001.system.source.robot.Robot-int-char-">
+        <!--   -->
+    </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>ConfigCursor</h4>
-<pre>public&nbsp;ConfigCursor(<a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
+    <pre>public&nbsp;ConfigCursor(<a
+            href="../../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
                     int&nbsp;blinkSpeedMs,
                     char&nbsp;cursorIcon)</pre>
 <div class="block">Constructor for config cursor.</div>
@@ -465,13 +518,15 @@ extends <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cu
 </dl>
 </li>
 </ul>
-<a name="ConfigCursor-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-int-">
-<!--   -->
-</a>
+    <a name="ConfigCursor-com.SCHSRobotics.HAL9001.system.source.robot.Robot-int-">
+        <!--   -->
+    </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>ConfigCursor</h4>
-<pre>public&nbsp;ConfigCursor(<a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
+    <pre>public&nbsp;ConfigCursor(<a
+            href="../../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
                     int&nbsp;blinkSpeedMs)</pre>
 <div class="block">Constructor for config cursor.</div>
 <dl>
@@ -481,13 +536,15 @@ extends <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cu
 </dl>
 </li>
 </ul>
-<a name="ConfigCursor-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-int-int-int-">
-<!--   -->
-</a>
+    <a name="ConfigCursor-com.SCHSRobotics.HAL9001.system.source.robot.Robot-int-int-int-">
+        <!--   -->
+    </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ConfigCursor</h4>
-<pre>public&nbsp;ConfigCursor(<a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot,
+    <pre>public&nbsp;ConfigCursor(<a
+            href="../../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot,
                     int&nbsp;x,
                     int&nbsp;y,
                     int&nbsp;blinkSpeedMs)</pre>
@@ -561,7 +618,11 @@ extends <a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cu
 <div class="block">Abstract method that runs when the cursor is updated every frame. Methods for controlling the cursor go here.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#update--">update</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html" title="class in com.SCHSRobotics.HAL9001.system.source.GUI">Cursor</a></code></dd>
+    <dd><code><a
+            href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html#update--">update</a></code>&nbsp;in
+        class&nbsp;<code><a
+                href="../../../../../../com/SCHSRobotics/HAL9001/system/source/GUI/Cursor.html"
+                title="class in com.SCHSRobotics.HAL9001.system.gui">Cursor</a></code></dd>
 </dl>
 </li>
 </ul>

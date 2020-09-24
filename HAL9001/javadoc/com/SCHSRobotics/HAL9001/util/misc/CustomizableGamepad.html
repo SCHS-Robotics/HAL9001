@@ -99,7 +99,7 @@ var activeTableTab = "activeTableTab";
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li>com.SCHSRobotics.HAL9001.util.misc.CustomizableGamepad</li>
+<li>com.SCHSRobotics.HAL9001.util.control.CustomizableGamepad</li>
 </ul>
 </li>
 </ul>
@@ -139,9 +139,12 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/CustomizableGamepad.html#CustomizableGamepad-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-">CustomizableGamepad</a></span>(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot)</code>
-<div class="block">Constructor for CustomizableGamepad.</div>
-</td>
+    <td class="colOne"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/misc/CustomizableGamepad.html#CustomizableGamepad-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-">CustomizableGamepad</a></span>(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot)</code>
+        <div class="block">Constructor for CustomizableGamepad.</div>
+    </td>
 </tr>
 </table>
 </li>
@@ -160,43 +163,55 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/CustomizableGamepad.html#addButton-java.lang.String-com.SCHSRobotics.HAL9001.util.misc.Button.BooleanInputs-int-">addButton</a></span>(java.lang.String&nbsp;buttonName,
-         <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.BooleanInputs.html" title="enum in com.SCHSRobotics.HAL9001.util.misc">Button.BooleanInputs</a>&nbsp;button,
-         int&nbsp;gamepadNumber)</code>
-<div class="block">Adds a boolean input/Button.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/misc/CustomizableGamepad.html#addButton-java.lang.String-com.SCHSRobotics.HAL9001.util.control.Button.BooleanInputs-int-">addButton</a></span>(java.lang.String&nbsp;buttonName,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.BooleanInputs.html"
+           title="enum in com.SCHSRobotics.HAL9001.util.misc">Button.BooleanInputs</a>&nbsp;button,
+        int&nbsp;gamepadNumber)</code>
+        <div class="block">Adds a boolean input/Button.</div>
+    </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/CustomizableGamepad.html#addButton-java.lang.String-com.SCHSRobotics.HAL9001.util.misc.Button.BooleanInputs-int-double-">addButton</a></span>(java.lang.String&nbsp;buttonName,
-         <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.BooleanInputs.html" title="enum in com.SCHSRobotics.HAL9001.util.misc">Button.BooleanInputs</a>&nbsp;button,
-         int&nbsp;gamepadNumber,
-         double&nbsp;deadzone)</code>
-<div class="block">Adds a boolean input/Button with deadzone.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/misc/CustomizableGamepad.html#addButton-java.lang.String-com.SCHSRobotics.HAL9001.util.control.Button.BooleanInputs-int-double-">addButton</a></span>(java.lang.String&nbsp;buttonName,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.BooleanInputs.html"
+           title="enum in com.SCHSRobotics.HAL9001.util.misc">Button.BooleanInputs</a>&nbsp;button,
+        int&nbsp;gamepadNumber,
+        double&nbsp;deadzone)</code>
+        <div class="block">Adds a boolean input/Button with deadzone.</div>
+    </td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/CustomizableGamepad.html#addButton-java.lang.String-com.SCHSRobotics.HAL9001.util.misc.Button.DoubleInputs-int-">addButton</a></span>(java.lang.String&nbsp;buttonName,
-         <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.DoubleInputs.html" title="enum in com.SCHSRobotics.HAL9001.util.misc">Button.DoubleInputs</a>&nbsp;button,
-         int&nbsp;gamepadNumber)</code>
-<div class="block">Adds a double input/Button.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/misc/CustomizableGamepad.html#addButton-java.lang.String-com.SCHSRobotics.HAL9001.util.control.Button.DoubleInputs-int-">addButton</a></span>(java.lang.String&nbsp;buttonName,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.DoubleInputs.html"
+           title="enum in com.SCHSRobotics.HAL9001.util.misc">Button.DoubleInputs</a>&nbsp;button,
+        int&nbsp;gamepadNumber)</code>
+        <div class="block">Adds a double input/Button.</div>
+    </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/CustomizableGamepad.html#addButton-java.lang.String-com.SCHSRobotics.HAL9001.util.misc.Button-">addButton</a></span>(java.lang.String&nbsp;buttonName,
-         <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;button)</code>
-<div class="block">Adds a input/Button.</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/misc/CustomizableGamepad.html#addButton-java.lang.String-com.SCHSRobotics.HAL9001.util.control.Button-">addButton</a></span>(java.lang.String&nbsp;buttonName,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;button)</code>
+        <div class="block">Adds a input/Button.</div>
+    </td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/CustomizableGamepad.html#addButton-java.lang.String-com.SCHSRobotics.HAL9001.util.misc.Button-double-">addButton</a></span>(java.lang.String&nbsp;buttonName,
-         <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html" title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;button,
-         double&nbsp;deadzone)</code>
-<div class="block">Adds a input/Button with deadzone (deadzone does nothing for double inputs).</div>
-</td>
+    <td class="colLast"><code><span class="memberNameLink"><a
+            href="../../../../../com/SCHSRobotics/HAL9001/util/misc/CustomizableGamepad.html#addButton-java.lang.String-com.SCHSRobotics.HAL9001.util.control.Button-double-">addButton</a></span>(java.lang.String&nbsp;buttonName,
+        <a href="../../../../../com/SCHSRobotics/HAL9001/util/misc/Button.html"
+           title="class in com.SCHSRobotics.HAL9001.util.misc">Button</a>&nbsp;button,
+        double&nbsp;deadzone)</code>
+        <div class="block">Adds a input/Button with deadzone (deadzone does nothing for double
+            inputs).
+        </div>
+    </td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
@@ -270,13 +285,15 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="CustomizableGamepad-com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot-">
-<!--   -->
-</a>
+    <a name="CustomizableGamepad-com.SCHSRobotics.HAL9001.system.source.robot.Robot-">
+        <!--   -->
+    </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>CustomizableGamepad</h4>
-<pre>public&nbsp;CustomizableGamepad(<a href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html" title="class in com.SCHSRobotics.HAL9001.system.source.BaseRobot">Robot</a>&nbsp;robot)</pre>
+    <pre>public&nbsp;CustomizableGamepad(<a
+            href="../../../../../com/SCHSRobotics/HAL9001/system/source/BaseRobot/Robot.html"
+            title="class in com.SCHSRobotics.HAL9001.system.source.robot">Robot</a>&nbsp;robot)</pre>
 <div class="block">Constructor for CustomizableGamepad.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -292,9 +309,9 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="addButton-java.lang.String-com.SCHSRobotics.HAL9001.util.misc.Button.DoubleInputs-int-">
-<!--   -->
-</a>
+    <a name="addButton-java.lang.String-com.SCHSRobotics.HAL9001.util.control.Button.DoubleInputs-int-">
+        <!--   -->
+    </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>addButton</h4>
@@ -310,9 +327,9 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="addButton-java.lang.String-com.SCHSRobotics.HAL9001.util.misc.Button.BooleanInputs-int-">
-<!--   -->
-</a>
+    <a name="addButton-java.lang.String-com.SCHSRobotics.HAL9001.util.control.Button.BooleanInputs-int-">
+        <!--   -->
+    </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>addButton</h4>
@@ -344,9 +361,9 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="addButton-java.lang.String-com.SCHSRobotics.HAL9001.util.misc.Button.BooleanInputs-int-double-">
-<!--   -->
-</a>
+    <a name="addButton-java.lang.String-com.SCHSRobotics.HAL9001.util.control.Button.BooleanInputs-int-double-">
+        <!--   -->
+    </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>addButton</h4>

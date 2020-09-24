@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
-import com.SCHSRobotics.HAL9001.system.source.BaseRobot.SubSystem;
-import com.SCHSRobotics.HAL9001.util.annotations.TeleopConfig;
-import com.SCHSRobotics.HAL9001.util.misc.ConfigData;
-import com.SCHSRobotics.HAL9001.util.misc.ConfigParam;
+import com.SCHSRobotics.HAL9001.system.config.ConfigData;
+import com.SCHSRobotics.HAL9001.system.config.ConfigParam;
+import com.SCHSRobotics.HAL9001.system.config.TeleopConfig;
+import com.SCHSRobotics.HAL9001.system.robot.Robot;
+import com.SCHSRobotics.HAL9001.system.robot.SubSystem;
 
 public class SubSystem1 extends SubSystem {
 

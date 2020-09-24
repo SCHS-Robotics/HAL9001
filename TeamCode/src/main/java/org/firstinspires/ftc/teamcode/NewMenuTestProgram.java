@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.SCHSRobotics.HAL9001.system.source.BaseRobot.BaseTeleop;
-import com.SCHSRobotics.HAL9001.system.tempmenupackage.HALGUI;
-import com.SCHSRobotics.HAL9001.system.tempmenupackage.TelemetryMenu;
-import com.SCHSRobotics.HAL9001.util.annotations.MainRobot;
-import com.SCHSRobotics.HAL9001.util.misc.Button;
+import com.SCHSRobotics.HAL9001.system.gui.HALGUI;
+import com.SCHSRobotics.HAL9001.system.gui.menus.TelemetryMenu;
+import com.SCHSRobotics.HAL9001.system.robot.BaseTeleop;
+import com.SCHSRobotics.HAL9001.system.robot.MainRobot;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "New Menu Test Program")
@@ -17,8 +16,8 @@ public class NewMenuTestProgram extends BaseTeleop {
 
     @Override
     protected void onStart() {
-        gui = HALGUI.getInstance();
-        gui.setup(robot, new Button<>(1, Button.BooleanInputs.x));
+        //gui = HALGUI.getInstance();
+        //gui.setup(robot, new Button<>(1, Button.BooleanInputs.x));
         /*
         Payload payload = new Payload()
                 .add(TextSelectionMenu.CHAR_SET_ID, Charset.ALPHANUMERIC_SPECIAL)
@@ -31,26 +30,26 @@ public class NewMenuTestProgram extends BaseTeleop {
                 .add(ConfigConstants.ROBOT_FILEPATH_ID, Environment.getExternalStorageDirectory().getPath()+"/System64"+"/robot_FakeDummyRobot");
 */
 
-        gui.addRootMenu(menu1);
-        gui.addRootMenu(menu2);
+        //gui.addRootMenu(menu1);
+        //gui.addRootMenu(menu2);
 
-        menu1.addData("test",1);
-        menu2.addLine("test2");
-        menu1.update();
-        menu2.update();
+        //menu1.addData("test",1);
+        //menu2.addLine("test2");
+        //menu1.update();
+        //menu2.update();
     }
 
     @Override
     protected void onUpdate() {
-        gui.renderCurrentMenu();
+        /*gui.renderCurrentMenu();
         waitTime(1000, () -> gui.renderCurrentMenu());
         menu2.addData("test",i);
         menu2.update();
-        i++;
+        i++;*/
     }
 
     @Override
     protected void onStop() {
-        gui.stop();
+        //gui.stop();
     }
 }

@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
-import com.SCHSRobotics.HAL9001.system.source.BaseRobot.VisionSubSystem;
+import com.SCHSRobotics.HAL9001.system.robot.Robot;
+import com.SCHSRobotics.HAL9001.system.robot.VisionSubSystem;
 
 import org.opencv.bioinspired.Bioinspired;
 import org.opencv.bioinspired.Retina;

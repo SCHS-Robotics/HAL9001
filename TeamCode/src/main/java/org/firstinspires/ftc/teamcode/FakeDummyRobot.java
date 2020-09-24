@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
+import com.SCHSRobotics.HAL9001.system.robot.Robot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 
