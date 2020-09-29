@@ -124,7 +124,7 @@ public class TankDrive extends SubSystem {
     @Override
     public void handle() {
         if(!inputs.checkNoButton(SPEEDMODEBUTTON)){
-            speedToggle.updateToggle((boolean) inputs.getInput(SPEEDMODEBUTTON));
+            speedToggle.updateToggle(inputs.getInput(SPEEDMODEBUTTON));
             if(speedToggle.getCurrentState()){
                 currentSpeedModeModifier = speedModeModifier;
             }
@@ -135,11 +135,11 @@ public class TankDrive extends SubSystem {
         //drives forward and turns at the same time
         if (turnAndMove) {
             if ((double) inputs.getInput(DRIVESTICK)!= 0 && (double) inputs.getInput(TURNSTICK) != 0) {
-                turnAndMove(new Vector2D((double) inputs.getInput(DRIVESTICK), (double) inputs.getInput(TURNSTICK)));
+                turnAndMove(new Vector2D(inputs.getInput(DRIVESTICK), inputs.getInput(TURNSTICK)));
             } else if ((double) inputs.getInput(DRIVESTICK) != 0) {
-                drive((double) inputs.getInput(DRIVESTICK));
+                drive(inputs.getInput(DRIVESTICK));
             } else if ((double) inputs.getInput(TURNSTICK)!= 0){
-                turn((double) inputs.getInput(TURNSTICK));
+                turn(inputs.getInput(TURNSTICK));
             } else {
                 stopMovement();
             }
@@ -147,9 +147,9 @@ public class TankDrive extends SubSystem {
         //drives forward and turns but not at the same time
         else {
             if ((double) inputs.getInput(TURNSTICK) != 0) {
-                turn((double) inputs.getInput(TURNSTICK));
+                turn(inputs.getInput(TURNSTICK));
             } else if ((double) inputs.getInput(DRIVESTICK) != 0) {
-                drive((double) inputs.getInput(DRIVESTICK));
+                drive(inputs.getInput(DRIVESTICK));
             } else {
                 stopMovement();
             }
@@ -212,9 +212,9 @@ public class TankDrive extends SubSystem {
      *
      * @param input - Sets direction and rotational speed. (X is left and right, Y is forward and backwards)
      */
-    public void turnAndMove(Vector2D input){
-        left.setPower(((input.x - input.y) * constantSpeedModifier) * currentSpeedModeModifier);
-        right.setPower(((input.x + input.y) * constantSpeedModifier) * currentSpeedModeModifier);
+    public void turnAndMove(Vector2D input) {
+        left.setPower(((input.getX() - input.getY()) * constantSpeedModifier) * currentSpeedModeModifier);
+        right.setPower(((input.getX() + input.getY()) * constantSpeedModifier) * currentSpeedModeModifier);
     }
 
     /**

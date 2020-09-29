@@ -1,143 +1,72 @@
 package com.SCHSRobotics.HAL9001.util.math.quantities;
 
-import org.jetbrains.annotations.NotNull;
+import com.SCHSRobotics.HAL9001.util.math.FakeNumpy;
+import com.SCHSRobotics.HAL9001.util.math.units.AngleUnits;
 
-/**
- * A class for doing mathematical operations on 2 dimensional vectors.
- *
- * @author Cole Savage, Level Up
- * @since 0.0.0
- * @version 1.0.0
- *
- * Creation Date: 7/11/17
- */
-@SuppressWarnings({"WeakerAccess","unused"})
-public class Vector2D {
+import static java.lang.Math.atan2;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 
-    /**
-     * Specifies the input coordinate format for the constructor.
-     */
-    public enum CoordinateType {
-        CARTESIAN, POLAR
+public class Vector2D extends BaseEuclideanVector<Vector2D> {
+    private static final Vector2D ZERO_VECTOR = new Vector2D(0, 0);
+
+    public Vector2D(Point2D start, Point2D end) {
+        super(FakeNumpy.subtract(end.coordinates, start.coordinates));
     }
 
-    //Properties of the vector.
-    public double x,y,r,theta;
+    public Vector2D(Point2D end) {
+        this(Point2D.getOrigin(), end);
+    }
 
-    /**
-     * Constructor for vector.
-     *
-     * @param inx The first input component.
-     * @param iny The second input component.
-     * @param inCoord The enum specifying the input format.
-     */
-    public Vector2D(double inx, double iny, @NotNull CoordinateType inCoord) {
-        if (inCoord == CoordinateType.CARTESIAN) {
-            this.x = inx;
-            this.y = iny;
-            this.r = Math.sqrt(Math.pow(inx,2)+Math.pow(iny,2));
+    public Vector2D(double x, double y) {
+        this(new Point2D(x, y));
+    }
 
-            this.theta = inx > 0 ? Math.atan(iny/inx) : inx < 0 ? Math.atan(iny/inx) + Math.PI : inx == 0 && iny > 0 ? Math.PI/2 : inx == 0 && iny < 0 ? -Math.PI/2 : 0;
-            this.theta = this.theta > 0 ? this.theta : this.theta + 2 * Math.PI; //To make everything positive, because I don't like negative angles as much
-            this.r = Math.sqrt(Math.pow(inx,2)+Math.pow(iny,2));
+    public Vector2D(double r, double theta, AngleUnits angleUnit) {
+        super(CoordinateSystem2D.POLAR.convertTo(CoordinateSystem2D.CARTESIAN).apply(new double[]{r, angleUnit.convertTo(AngleUnits.RADIANS).apply(theta)}));
+    }
+
+    private Vector2D(Vector2D v) {
+        components = v.components.clone();
+    }
+
+    public static Vector2D getZeroVector() {
+        return ZERO_VECTOR.clone();
+    }
+
+    public double getX() {
+        return components[0];
+    }
+
+    public double getY() {
+        return components[1];
+    }
+
+    public double getAngle() {
+        return atan2(getY(), getX());
+    }
+
+    public Vector2D rotate(double angle, AngleUnits angleUnit) {
+        if (!isZeroVector()) {
+            double theta = angleUnit.convertTo(AngleUnits.RADIANS).apply(angle);
+            double rotX = getX() * cos(theta) - getY() * sin(theta);
+            double rotY = getX() * sin(theta) + getY() * cos(theta);
+            components[0] = (double) Math.round(1e9 * rotX) / 1e9;
+            components[1] = (double) Math.round(1e9 * rotY) / 1e9;
         }
-        else if(inCoord == CoordinateType.POLAR) {
-            this.r = inx;
-            this.theta = iny;
-            this.x = inx*Math.cos(iny);
-            this.y = inx*Math.sin(iny);
-            this.theta = this.theta > 0 ? this.theta : this.theta + 2 * Math.PI; //To make everything positive, because I don't like negative angles as much
-        }
+        return this;
     }
 
-    /**
-     * Constructor for vector.
-     *
-     * @param inx The input x component.
-     * @param iny The input y component.
-     */
-    public Vector2D(double inx, double iny) {
-        this.x = inx;
-        this.y = iny;
-
-        this.theta = inx > 0 ? Math.atan(iny/inx) : inx < 0 ? Math.atan(iny/inx) + Math.PI : inx == 0 && iny > 0 ? Math.PI/2 : inx == 0 && iny < 0 ? -Math.PI/2 : 0;
-        this.theta = this.theta > 0 ? this.theta : this.theta + 2*Math.PI; //To make everything positive, because I don't like negative angles as much
-        this.r = Math.sqrt(Math.pow(inx,2)+Math.pow(iny,2));
+    public Vector2D rotate(double angle) {
+        return rotate(angle, AngleUnits.RADIANS);
     }
 
-    /**
-     * Rotates the vector components about the origin by an angle theta. The rotation angle must be in radians.
-     *
-     * @param theta The angle to rotate the vector in radians. Counterclockwise is positive, clockwise is negative.
-     */
-    public void rotate(double theta) {
-        if(!isZeroVector()) {
-            double rotx = this.x * Math.cos(theta) - this.y * Math.sin(theta);
-            double roty = this.x * Math.sin(theta) + this.y * Math.cos(theta);
-            this.x = rotx;
-            this.y = roty;
-
-            this.theta += theta;
-            this.theta = this.theta > 0 ? this.theta : this.theta + 2 * Math.PI; //To make everything positive, because I don't like negative angles as much
-        }
-    }
-
-    /**
-     * Returns if the current vector is the zero vector.
-     *
-     * @return Whether the x and y components of the vector both equal to 0.
-     */
-    public boolean isZeroVector() {
-        return (this.x == 0.0) && (this.y == 0.0);
-    }
-
-    /**
-     * Normalizes the vector to a specified length.
-     *
-     * @param length The length to normalize the vector to.
-     */
-    public void normalize(double length) {
-        if(!isZeroVector()) {
-            x = length * (x / r);
-            y = length * (y / r);
-            this.r = length;
-        }
-    }
-
-    public Vector2D unitVector() {
-        Vector2D x = clone();
-        x.normalize();
-        return x;
-    }
-
-    /**
-     * Normalizes the vector to a length of 1 unit (a unit vector).
-     */
-    public void normalize() {
-        normalize(1.0);
-    }
-
-    /**
-     * Multiply the vector by a scalar.
-     *
-     * @param scalar A constant number.
-     */
-    public void scalarMultiply(double scalar) {
-        this.normalize(scalar*r);
-    }
-
-    /**
-     * Performs a dot product with another vector.
-     *
-     * @param v The second vector.
-     * @return The dot product of this vector and v.
-     */
-    public double dotProduct(Vector2D v) {
-        return v.x*x + v.y*y;
+    public Vector3D cross(Vector2D vector) {
+        return new Vector3D(0, 0, this.getX() * vector.getY() + vector.getX() * this.getY());
     }
 
     @Override
     public Vector2D clone() {
-        return new Vector2D(x,y);
+        return new Vector2D(this);
     }
 }

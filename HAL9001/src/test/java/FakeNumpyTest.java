@@ -6,11 +6,11 @@ import org.junit.Test;
 /**
  * @// TODO: 12/22/2019
  */
-public class ArrayMathTest {
+public class FakeNumpyTest {
 
     @Test
     public void validateMaxTypeNonEmpty() {
-        Integer[] testArr = new Integer[] {-6,-5,-4,-3,-2,-1,0,0,1,1,2,3,4,5,6,6};
+        Integer[] testArr = new Integer[]{-6, -5, -4, -3, -2, -1, 0, 0, 1, 1, 2, 3, 4, 5, 6, 6};
         Integer expectedResult = 6;
         Assert.assertEquals(expectedResult, FakeNumpy.max(testArr));
     }

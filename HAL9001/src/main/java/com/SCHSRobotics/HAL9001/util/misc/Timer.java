@@ -1,6 +1,6 @@
 package com.SCHSRobotics.HAL9001.util.misc;
 
-import com.SCHSRobotics.HAL9001.util.constant.TimeUnit;
+import com.SCHSRobotics.HAL9001.util.math.units.TimeUnit;
 
 public class Timer {
     private long startTime;

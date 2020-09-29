@@ -20,8 +20,9 @@ import com.SCHSRobotics.HAL9001.util.exceptions.NotVectorInputException;
 import com.SCHSRobotics.HAL9001.util.functional_interfaces.BiFunction;
 import com.SCHSRobotics.HAL9001.util.math.EncoderToDistanceProcessor;
 import com.SCHSRobotics.HAL9001.util.math.FakeNumpy;
-import com.SCHSRobotics.HAL9001.util.math.Units;
 import com.SCHSRobotics.HAL9001.util.math.quantities.Vector2D;
+import com.SCHSRobotics.HAL9001.util.math.units.AngleUnits;
+import com.SCHSRobotics.HAL9001.util.math.units.DistanceUnit;
 import com.SCHSRobotics.HAL9001.util.misc.BaseParam;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -408,20 +409,18 @@ public class MechanumDrive extends SubSystem {
 
     @Override
     public void handle() {
-        speedModeToggle.updateToggle((boolean) inputs.getInput(SPEED_MODE));
-        turnSpeedModeToggle.updateToggle((boolean) inputs.getInput(TURN_SPEED_MODE));
+        speedModeToggle.updateToggle(inputs.getInput(SPEED_MODE));
+        turnSpeedModeToggle.updateToggle(inputs.getInput(TURN_SPEED_MODE));
 
         if (speedModeToggle.getCurrentState()) {
             currentSpeedModeMultiplier = slowModeMultiplier;
-        }
-        else {
+        } else {
             currentSpeedModeMultiplier = 1;
         }
 
-        if(turnSpeedModeToggle.getCurrentState()) {
+        if (turnSpeedModeToggle.getCurrentState()) {
             currentTurnSpeedModeMultiplier = slowTurnModeMultiplier;
-        }
-        else {
+        } else {
             currentTurnSpeedModeMultiplier = 1;
         }
 
@@ -430,9 +429,9 @@ public class MechanumDrive extends SubSystem {
         Vector2D left = inputs.getInput(LEFT_DRIVESTICK);
         Vector2D right = inputs.getInput(RIGHT_DRIVESTICK);
 
-        input.scalarMultiply(constantSpeedMultiplier * currentSpeedModeMultiplier);
-        left.scalarMultiply(constantSpeedMultiplier * currentSpeedModeMultiplier);
-        right.scalarMultiply(constantSpeedMultiplier * currentSpeedModeMultiplier);
+        input.multiply(constantSpeedMultiplier * currentSpeedModeMultiplier);
+        left.multiply(constantSpeedMultiplier * currentSpeedModeMultiplier);
+        right.multiply(constantSpeedMultiplier * currentSpeedModeMultiplier);
 
         Vector2D tta = inputs.getInput(TTA_STICK);
 
@@ -474,7 +473,7 @@ public class MechanumDrive extends SubSystem {
                 turnCorrection = turnPID.getCorrection(angleTurn);
 
                 if ((!tta.isZeroVector() || turnLeft || turnRight) && usesGyro) {
-                    turnPID.setSetpoint(useDegreesTurn ? Math.toDegrees(tta.theta) : tta.theta);
+                    turnPID.setSetpoint(useDegreesTurn ? Math.toDegrees(tta.getAngle()) : tta.getAngle());
                     stabilityPID.setSetpoint(angleStability);
                     correction = 0;
                     turnCorrection = 0;
@@ -484,28 +483,27 @@ public class MechanumDrive extends SubSystem {
                     turnAndMove(input, -turnCorrection - correction);
                 }
                 else if (turnLeft) {
-                    turnAndMove(input,-turnLeftPower*currentTurnSpeedModeMultiplier);
-                }
-                else {
-                    turnAndMove(input, turnRightPower*currentTurnSpeedModeMultiplier);
+                    turnAndMove(input, -turnLeftPower * currentTurnSpeedModeMultiplier);
+                } else {
+                    turnAndMove(input, turnRightPower * currentTurnSpeedModeMultiplier);
                 }
 
                 break;
 
             //Special driving mode requested by Matthew. Two joysticks, one controlling each side of the robot. Stability PID and turn to angle PID do not matter here.
             case MATTHEW:
-                left.scalarMultiply(Math.sqrt(2));
-                right.scalarMultiply(Math.sqrt(2));
+                left.multiply(Math.sqrt(2));
+                right.multiply(Math.sqrt(2));
 
                 left.rotate(-(PI / 4));
                 right.rotate(-(PI / 4));
 
                 if (!turnLeft && !turnRight) {
-                    double[] powersLeft = new double[] {left.x, left.y};
+                    double[] powersLeft = new double[]{left.getX(), left.getY()};
                     double maxLeft = FakeNumpy.max(FakeNumpy.abs(powersLeft));
                     FakeNumpy.divide(powersLeft, maxLeft > 1 ? maxLeft : 1);
 
-                    double[] powersRight = new double[] {right.x, right.y};
+                    double[] powersRight = new double[]{right.getX(), right.getY()};
                     double maxRight = FakeNumpy.max(FakeNumpy.abs(powersRight));
                     FakeNumpy.divide(powersLeft, maxRight > 1 ? maxRight : 1);
 
@@ -515,11 +513,11 @@ public class MechanumDrive extends SubSystem {
                     topRight.setPower(powersRight[1]);
                     botRight.setPower(powersRight[0]);
                 } else if (turnLeft) {
-                    double[] powersLeft = new double[] {left.x - turnLeftPower, left.y - (turnLeftPower*currentTurnSpeedModeMultiplier)};
+                    double[] powersLeft = new double[]{left.getX() - turnLeftPower, left.getY() - (turnLeftPower * currentTurnSpeedModeMultiplier)};
                     double maxLeft = FakeNumpy.max(FakeNumpy.abs(powersLeft));
                     FakeNumpy.divide(powersLeft, maxLeft > 1 ? maxLeft : 1);
 
-                    double[] powersRight = new double[] {right.x + turnLeftPower, right.y + (turnLeftPower*currentTurnSpeedModeMultiplier)};
+                    double[] powersRight = new double[]{right.getX() + turnLeftPower, right.getY() + (turnLeftPower * currentTurnSpeedModeMultiplier)};
                     double maxRight = FakeNumpy.max(FakeNumpy.abs(powersRight));
                     FakeNumpy.divide(powersLeft, maxRight > 1 ? maxRight : 1);
 
@@ -529,11 +527,11 @@ public class MechanumDrive extends SubSystem {
                     topRight.setPower(powersRight[1]);
                     botRight.setPower(powersRight[0]);
                 } else {
-                    double[] powersLeft = new double[] {left.x + turnRightPower, left.y + (turnRightPower*currentTurnSpeedModeMultiplier)};
+                    double[] powersLeft = new double[]{left.getX() + turnRightPower, left.getY() + (turnRightPower * currentTurnSpeedModeMultiplier)};
                     double maxLeft = FakeNumpy.max(FakeNumpy.abs(powersLeft));
                     FakeNumpy.divide(powersLeft, maxLeft > 1 ? maxLeft : 1);
 
-                    double[] powersRight = new double[] {right.x - turnRightPower, right.y - (turnRightPower*currentTurnSpeedModeMultiplier)};
+                    double[] powersRight = new double[]{right.getX() - turnRightPower, right.getY() - (turnRightPower * currentTurnSpeedModeMultiplier)};
                     double maxRight = FakeNumpy.max(FakeNumpy.abs(powersRight));
                     FakeNumpy.divide(powersLeft, maxRight > 1 ? maxRight : 1);
 
@@ -640,9 +638,9 @@ public class MechanumDrive extends SubSystem {
      * @param distanceRight The distance for the right side of the robot to travel.
      * @param unit          The unit that the distance is being provided in.
      */
-    public void turnAndMoveDistance(Vector2D leftVector, Vector2D rightVector, double distanceLeft, double distanceRight, Units unit) {
+    public void turnAndMoveDistance(Vector2D leftVector, Vector2D rightVector, double distanceLeft, double distanceRight, DistanceUnit unit) {
         EncoderToDistanceProcessor processor = new EncoderToDistanceProcessor(encodersPerMeter);
-        turnAndMoveEncoders(leftVector, rightVector, processor.getEncoderAmount(distanceLeft,unit), processor.getEncoderAmount(distanceRight,unit));
+        turnAndMoveEncoders(leftVector, rightVector, processor.getEncoderAmount(distanceLeft, unit), processor.getEncoderAmount(distanceRight, unit));
     }
 
     /**
@@ -657,51 +655,51 @@ public class MechanumDrive extends SubSystem {
      * @throws DumpsterFireException Throws this exception if you try and move negative encoder distances. Change the power to change direction.
      */
     public void turnAndMoveEncoders(@NotNull Vector2D leftVector, Vector2D rightVector, double encodersLeft, double encodersRight) {
-            if ((leftVector.isZeroVector() && encodersLeft != 0) || (rightVector.isZeroVector() && encodersRight != 0)) {
-                throw new InvalidMoveCommandException("You can't move anywhere if you aren't trying to move ;)");
+        if ((leftVector.isZeroVector() && encodersLeft != 0) || (rightVector.isZeroVector() && encodersRight != 0)) {
+            throw new InvalidMoveCommandException("You can't move anywhere if you aren't trying to move ;)");
+        }
+
+        if (encodersLeft < 0 || encodersRight < 0) {
+            throw new DumpsterFireException("Where you're going, you don't need roads! (distance must be positive)");
+        }
+
+        resetAllEncoders();
+
+        Vector2D leftDisplacement = new Vector2D(encodersLeft, leftVector.getAngle(), AngleUnits.RADIANS);
+        Vector2D rightDisplacement = new Vector2D(encodersRight, rightVector.getAngle(), AngleUnits.RADIANS);
+
+        leftVector.multiply(constantSpeedMultiplier * Math.sqrt(2));
+        rightVector.multiply(constantSpeedMultiplier * Math.sqrt(2));
+
+        leftVector.rotate(-(PI / 4));
+        rightVector.rotate(-(PI / 4));
+
+        double[] powersLeft = new double[]{leftVector.getX(), leftVector.getY()};
+        double maxLeft = FakeNumpy.max(FakeNumpy.abs(powersLeft));
+        FakeNumpy.divide(powersLeft, maxLeft > 1 ? maxLeft : 1);
+
+        double[] powersRight = new double[]{rightVector.getX(), rightVector.getY()};
+        double maxRight = FakeNumpy.max(FakeNumpy.abs(powersRight));
+        FakeNumpy.divide(powersLeft, maxRight > 1 ? maxRight : 1);
+
+        leftDisplacement.rotate(-(PI / 4));
+        rightDisplacement.rotate(-(PI / 4));
+
+        double thresh1Left = Math.abs(leftDisplacement.getX());
+        double thresh2Left = Math.abs(leftDisplacement.getY());
+
+        double thresh1Right = Math.abs(rightDisplacement.getX());
+        double thresh2Right = Math.abs(rightDisplacement.getY());
+
+        while (robot.opModeIsActive() && ((Math.abs(topLeft.getCurrentPosition()) < thresh1Left && Math.abs(botLeft.getCurrentPosition()) < thresh2Left) || (Math.abs(botRight.getCurrentPosition()) < thresh1Right && Math.abs(topRight.getCurrentPosition()) < thresh2Right))) {
+            if (Math.abs(topLeft.getCurrentPosition()) < thresh1Left && Math.abs(botLeft.getCurrentPosition()) < thresh2Left) {
+                topLeft.setPower(powersLeft[0]);
+                botLeft.setPower(powersLeft[1]);
+            } else {
+                topLeft.setPower(0);
+                botLeft.setPower(0);
             }
-
-            if (encodersLeft < 0 || encodersRight < 0) {
-                throw new DumpsterFireException("Where you're going, you don't need roads! (distance must be positive)");
-            }
-
-            resetAllEncoders();
-
-            Vector2D leftDisplacement = new Vector2D(encodersLeft, leftVector.theta, Vector2D.CoordinateType.POLAR);
-            Vector2D rightDisplacement = new Vector2D(encodersRight, rightVector.theta, Vector2D.CoordinateType.POLAR);
-
-            leftVector.scalarMultiply(constantSpeedMultiplier * Math.sqrt(2));
-            rightVector.scalarMultiply(constantSpeedMultiplier * Math.sqrt(2));
-
-            leftVector.rotate(-(PI / 4));
-            rightVector.rotate(-(PI / 4));
-
-            double[] powersLeft = new double[] {leftVector.x, leftVector.y};
-            double maxLeft = FakeNumpy.max(FakeNumpy.abs(powersLeft));
-            FakeNumpy.divide(powersLeft, maxLeft > 1 ? maxLeft : 1);
-
-            double[] powersRight = new double[] {rightVector.x, rightVector.y};
-            double maxRight = FakeNumpy.max(FakeNumpy.abs(powersRight));
-            FakeNumpy.divide(powersLeft, maxRight > 1 ? maxRight : 1);
-
-            leftDisplacement.rotate(-(PI / 4));
-            rightDisplacement.rotate(-(PI / 4));
-
-            double thresh1Left = Math.abs(leftDisplacement.x);
-            double thresh2Left = Math.abs(leftDisplacement.y);
-
-            double thresh1Right = Math.abs(rightDisplacement.x);
-            double thresh2Right = Math.abs(rightDisplacement.y);
-
-            while (robot.opModeIsActive() && ((Math.abs(topLeft.getCurrentPosition()) < thresh1Left && Math.abs(botLeft.getCurrentPosition()) < thresh2Left) || (Math.abs(botRight.getCurrentPosition()) < thresh1Right && Math.abs(topRight.getCurrentPosition()) < thresh2Right))) {
-                if (Math.abs(topLeft.getCurrentPosition()) < thresh1Left && Math.abs(botLeft.getCurrentPosition()) < thresh2Left) {
-                    topLeft.setPower(powersLeft[0]);
-                    botLeft.setPower(powersLeft[1]);
-                } else {
-                    topLeft.setPower(0);
-                    botLeft.setPower(0);
-                }
-                if (Math.abs(botRight.getCurrentPosition()) < thresh1Right && Math.abs(topRight.getCurrentPosition()) < thresh2Right) {
+            if (Math.abs(botRight.getCurrentPosition()) < thresh1Right && Math.abs(topRight.getCurrentPosition()) < thresh2Right) {
                     topRight.setPower(powersRight[1]);
                     botRight.setPower(powersRight[0]);
                 } else {
@@ -739,14 +737,14 @@ public class MechanumDrive extends SubSystem {
     /**
      * Turn and move at the same time for a certain distance.
      *
-     * @param v The velocity vector of the robot.
+     * @param v         The velocity vector of the robot.
      * @param turnPower The power to turn at.
-     * @param distance The distance to travel.
-     * @param unit The unit of distance.
+     * @param distance  The distance to travel.
+     * @param unit      The unit of distance.
      */
-    public void turnAndMoveDistance(Vector2D v, double turnPower, double distance, Units unit) {
+    public void turnAndMoveDistance(Vector2D v, double turnPower, double distance, DistanceUnit unit) {
         EncoderToDistanceProcessor processor = new EncoderToDistanceProcessor(encodersPerMeter);
-        turnAndMoveEncoders(v,turnPower,processor.getEncoderAmount(distance,unit));
+        turnAndMoveEncoders(v, turnPower, processor.getEncoderAmount(distance, unit));
     }
 
     /**
@@ -789,18 +787,18 @@ public class MechanumDrive extends SubSystem {
      */
     public void turnAndMove(@NotNull Vector2D v, double turnPower) {
         Vector2D vcpy = v.clone();
-        vcpy.scalarMultiply(Math.sqrt(2));
+        vcpy.multiply(Math.sqrt(2));
 
         switch(driveType) {
             case STANDARD:
             case STANDARD_TTA:
                 vcpy.rotate(-PI / 4);
-                setPower(vcpy.x + turnPower, vcpy.y - turnPower, vcpy.y + turnPower, vcpy.x - turnPower);
+                setPower(vcpy.getX() + turnPower, vcpy.getY() - turnPower, vcpy.getY() + turnPower, vcpy.getX() - turnPower);
                 break;
             case FIELD_CENTRIC:
             case FIELD_CENTRIC_TTA:
                 vcpy.rotate(-((PI / 4) + getCurrentAngle() + imuShift));
-                setPower(vcpy.x + turnPower, vcpy.y - turnPower, vcpy.y + turnPower, vcpy.x - turnPower);
+                setPower(vcpy.getX() + turnPower, vcpy.getY() - turnPower, vcpy.getY() + turnPower, vcpy.getX() - turnPower);
                 break;
         }
     }
@@ -813,17 +811,17 @@ public class MechanumDrive extends SubSystem {
      */
     public void drive(@NotNull Vector2D leftVector, @NotNull Vector2D rightVector) {
 
-        leftVector.scalarMultiply(constantSpeedMultiplier * Math.sqrt(2));
-        rightVector.scalarMultiply(constantSpeedMultiplier * Math.sqrt(2));
+        leftVector.multiply(constantSpeedMultiplier * Math.sqrt(2));
+        rightVector.multiply(constantSpeedMultiplier * Math.sqrt(2));
 
         leftVector.rotate(-(PI / 4));
         rightVector.rotate(-(PI / 4));
 
-        double[] powersLeft = new double[] {leftVector.x, leftVector.y};
+        double[] powersLeft = new double[]{leftVector.getX(), leftVector.getY()};
         double maxLeft = FakeNumpy.max(FakeNumpy.abs(powersLeft));
         FakeNumpy.divide(powersLeft, maxLeft > 1 ? maxLeft : 1);
 
-        double[] powersRight = new double[] {rightVector.x, rightVector.y};
+        double[] powersRight = new double[]{rightVector.getX(), rightVector.getY()};
         double maxRight = FakeNumpy.max(FakeNumpy.abs(powersRight));
         FakeNumpy.divide(powersLeft, maxRight > 1 ? maxRight : 1);
 
@@ -874,9 +872,9 @@ public class MechanumDrive extends SubSystem {
      * @param unit             The unit of distance the robot should travel.
      * @param stabilityControl Whether the robot should use stability control.
      */
-    public void driveDistance(Vector2D v, double distance, Units unit, boolean stabilityControl) {
+    public void driveDistance(Vector2D v, double distance, DistanceUnit unit, boolean stabilityControl) {
         EncoderToDistanceProcessor processor = new EncoderToDistanceProcessor(encodersPerMeter);
-        driveEncoders(v,processor.getEncoderAmount(distance,unit),stabilityControl);
+        driveEncoders(v, processor.getEncoderAmount(distance, unit), stabilityControl);
     }
 
     /**
@@ -886,7 +884,7 @@ public class MechanumDrive extends SubSystem {
      * @param distance The distance the robot should travel.
      * @param unit     The units of distance.
      */
-    public void driveDistance(Vector2D v, double distance, Units unit) {
+    public void driveDistance(Vector2D v, double distance, DistanceUnit unit) {
         driveDistance(v, distance, unit, false);
     }
 
@@ -908,7 +906,7 @@ public class MechanumDrive extends SubSystem {
             throw new DumpsterFireException("Where you're going, you don't need roads! (encoders must be positive)");
         }
 
-        Vector2D displacement = new Vector2D(encoders, v.theta, Vector2D.CoordinateType.POLAR);
+        Vector2D displacement = new Vector2D(encoders, v.getAngle(), AngleUnits.RADIANS);
 
         final Vector2D vcpy = v.clone();
         final boolean stabilityCtrl = stabilityControl;
@@ -928,8 +926,8 @@ public class MechanumDrive extends SubSystem {
 
                 displacement.rotate(-(PI / 4));
 
-                thresh1 = Math.abs(displacement.x);
-                thresh2 = Math.abs(displacement.y);
+                thresh1 = Math.abs(displacement.getX());
+                thresh2 = Math.abs(displacement.getY());
 
                 waitWhile(new Supplier<Boolean>() {
                               @Override
@@ -948,8 +946,8 @@ public class MechanumDrive extends SubSystem {
             case FIELD_CENTRIC:
                 displacement.rotate(-((PI / 4) + getCurrentAngle() + imuShift));
 
-                thresh1 = Math.abs(displacement.x);
-                thresh2 = Math.abs(displacement.y);
+                thresh1 = Math.abs(displacement.getX());
+                thresh2 = Math.abs(displacement.getY());
 
                 waitWhile(new Supplier<Boolean>() {
                               @Override
@@ -988,7 +986,7 @@ public class MechanumDrive extends SubSystem {
 
         Vector2D vcpy = v.clone();
 
-        vcpy.scalarMultiply(constantSpeedMultiplier * Math.sqrt(2));
+        vcpy.multiply(constantSpeedMultiplier * Math.sqrt(2));
 
         double correction = stabilityControl && usesGyro ? stabilityPID.getCorrection(getCurrentAngle(useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS)) : 0;
 
@@ -996,13 +994,13 @@ public class MechanumDrive extends SubSystem {
             case STANDARD_TTA:
             case STANDARD:
                 vcpy.rotate(-(PI / 4));
-                setPower(vcpy.x - correction, vcpy.y + correction, vcpy.y - correction, vcpy.x + correction);
+                setPower(vcpy.getX() - correction, vcpy.getY() + correction, vcpy.getY() - correction, vcpy.getX() + correction);
 
                 break;
             case FIELD_CENTRIC_TTA:
             case FIELD_CENTRIC:
                 vcpy.rotate(-((PI / 4) + getCurrentAngle() + imuShift));
-                setPower(vcpy.x - correction, vcpy.y + correction, vcpy.y - correction, vcpy.x + correction);
+                setPower(vcpy.getX() - correction, vcpy.getY() + correction, vcpy.getY() - correction, vcpy.getX() + correction);
                 break;
         }
     }
@@ -1032,13 +1030,13 @@ public class MechanumDrive extends SubSystem {
      * Turn a certain distance.
      *
      * @param turnPower The power to turn at.
-     * @param distance The distance to turn.
-     * @param unit The unit of distance.
+     * @param distance  The distance to turn.
+     * @param unit      The unit of distance.
      */
-    public void turnDistance(double turnPower, double distance, Units unit) {
+    public void turnDistance(double turnPower, double distance, DistanceUnit unit) {
         EncoderToDistanceProcessor processor = new EncoderToDistanceProcessor(encodersPerMeter);
-        double encoders = Math.abs(processor.getEncoderAmount(distance,unit));
-        turnEncoders(turnPower,encoders);
+        double encoders = Math.abs(processor.getEncoderAmount(distance, unit));
+        turnEncoders(turnPower, encoders);
     }
 
     /**

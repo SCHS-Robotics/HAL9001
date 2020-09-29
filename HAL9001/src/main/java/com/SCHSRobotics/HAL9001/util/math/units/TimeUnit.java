@@ -1,4 +1,4 @@
-package com.SCHSRobotics.HAL9001.util.constant;
+package com.SCHSRobotics.HAL9001.util.math.units;
 
 public enum TimeUnit {
     NANOSECONDS(1), MILLISECONDS(1e6), SECONDS(MILLISECONDS.nanoConversionFactor * 1000);

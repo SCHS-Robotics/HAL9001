@@ -1,4 +1,4 @@
-package com.SCHSRobotics.HAL9001.system.gui;
+package com.SCHSRobotics.HAL9001.util.misc;
 
 import org.jetbrains.annotations.NotNull;
 

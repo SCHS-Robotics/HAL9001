@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.system.gui;
 
+import com.SCHSRobotics.HAL9001.util.misc.UniqueID;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

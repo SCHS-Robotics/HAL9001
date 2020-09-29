@@ -17,7 +17,6 @@ import com.SCHSRobotics.HAL9001.util.control.Button;
 import com.SCHSRobotics.HAL9001.util.control.CustomizableGamepad;
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
-import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NothingToSeeHereException;
 import com.SCHSRobotics.HAL9001.util.misc.HALFileUtil;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -28,24 +27,22 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
-import org.openftc.easyopencv.OpenCvPipeline;
+import org.openftc.easyopencv.OpenCvInternalCamera2;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * An abstract class representing the physical robot.
@@ -60,13 +57,9 @@ import java.util.Queue;
  */
 @SuppressWarnings({"WeakerAccess"})
 public abstract class Robot {
-
     private static final String HAL_FILESYSTEM_ROOT = Environment.getExternalStorageDirectory().getPath() + "/System64";
 
-    //The name of the button used to cycle between vision pipelines.
-    private static final String VISION_CYCLE = "VisionCycler";
-    //The resolution of each camera frame.
-    private static Size cameraSize;
+    public static final String INTERNAL_CAMERA_ID = "Internal Camera", ALL_CAMERAS_ID = "All Cameras";
 
     private HALConfig globalConfig;
 
@@ -84,43 +77,83 @@ public abstract class Robot {
     public final Telemetry telemetry;
     //The hardwaremap used to map software representations of hardware to the actual hardware.
     public final HardwareMap hardwareMap;
-    //The camera used to get frames for computer vision.
-    private OpenCvCamera camera;
-    //The gamepad used to cycle between vision pipelines.
-    private final CustomizableGamepad visionCycler;
-    //Boolean values determining different camera states and parameters.
-    private boolean useViewport, pipelineSet, cameraStarted;
-    //The cameraMonitorViewId for displaying frames on the phone.
-    private int cameraMonitorViewId;
     //A list of Vision-Based subsystems.
     private List<VisionSubSystem> visionSubSystems;
+
+    private int internalCameraViewId;
+    private InternalCamera internalCameraData;
+    private OpenCvInternalCamera.CameraDirection internalCameraCurrentDirection;
+    private Field internalCameraField;
 
     /**
      * Constructor for robot.
      *
      * @param opMode The opmode the robot is currently running.
      */
-    public Robot(@NotNull OpMode opMode)
-    {
+    public Robot(@NotNull OpMode opMode) {
         this.opMode = opMode;
         telemetry = opMode.telemetry;
         hardwareMap = opMode.hardwareMap;
 
-        subSystems = new PriorityQueue<>();
+        subSystems = new LinkedBlockingQueue<>();
         visionSubSystems = new ArrayList<>();
-
-        useViewport = false;
-        pipelineSet = false;
-        cameraStarted = false;
-
-        visionCycler = new CustomizableGamepad(this);
-
-        cameraSize = new Size(320, 240);
-        cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
         globalConfig = HALConfig.getGlobalInstance();
 
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+
         gui = HALGUI.getInstance();
+
+        int numCamerasUsingViewport = 0;
+        List<Field> externalCameraFields = new ArrayList<>();
+
+        Field[] fields = this.getClass().getDeclaredFields();
+        for (Field f : fields) {
+            if (OpenCvCamera.class.isAssignableFrom(f.getType())) {
+                if (f.isAnnotationPresent(InternalCamera.class)) {
+                    ExceptionChecker.assertNull(internalCameraField, new DumpsterFireException("Must have a maximum of one defined internal camera. If you want to switch which internal camera you're using, use the appropriate method."));
+                    internalCameraData = f.getAnnotation(InternalCamera.class);
+                    internalCameraField = f;
+                    internalCameraCurrentDirection = internalCameraData.direction();
+                    numCamerasUsingViewport = internalCameraData.usesViewport() ? numCamerasUsingViewport + 1 : numCamerasUsingViewport;
+                } else if (f.isAnnotationPresent(ExternalCamera.class)) {
+                    ExternalCamera cameraData = f.getAnnotation(ExternalCamera.class);
+                    externalCameraFields.add(f);
+                    numCamerasUsingViewport = cameraData.usesViewport() ? numCamerasUsingViewport + 1 : numCamerasUsingViewport;
+                }
+            }
+        }
+
+        int cameraMonitorViewIdIdx = 0;
+        int[] cameraMonitorViewIds;
+        if (numCamerasUsingViewport > 1) {
+            cameraMonitorViewIds = OpenCvCameraFactory.getInstance().splitLayoutForMultipleViewports(cameraMonitorViewId, numCamerasUsingViewport, OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY);
+        } else {
+            cameraMonitorViewIds = new int[]{cameraMonitorViewId};
+        }
+
+        if (internalCameraField != null) {
+            InternalCamera cameraData = internalCameraField.getAnnotation(InternalCamera.class);
+            Size resolution = new Size(cameraData.resWidth(), cameraData.resHeight());
+            internalCameraViewId = cameraMonitorViewIds[cameraMonitorViewIdIdx];
+            CameraManager.addCamera(INTERNAL_CAMERA_ID, createCamera(internalCameraField, cameraData.usesViewport(), CameraType.INTERNAL, cameraData.direction(), INTERNAL_CAMERA_ID, internalCameraViewId), CameraType.INTERNAL, resolution);
+            if (cameraData.usesViewport()) {
+                cameraMonitorViewIdIdx++;
+            }
+        }
+
+        for (Field f : externalCameraFields) {
+            ExternalCamera cameraData = f.getAnnotation(ExternalCamera.class);
+            Size resolution = new Size(cameraData.resWidth(), cameraData.resHeight());
+
+            String id = cameraData.uniqueId().equals("") ? cameraData.configName() : cameraData.uniqueId();
+            ExceptionChecker.assertFalse(id.equals(INTERNAL_CAMERA_ID) || id.equals(ALL_CAMERAS_ID), new DumpsterFireException("Id for external webcam cannot match id of internal camera or the all cameras id. Those are reserved values."));
+
+            CameraManager.addCamera(id, createCamera(f, cameraData.usesViewport(), CameraType.EXTERNAL, null, cameraData.configName(), cameraMonitorViewIds[cameraMonitorViewIdIdx]), CameraType.EXTERNAL, resolution);
+            if (cameraData.usesViewport()) {
+                cameraMonitorViewIdIdx++;
+            }
+        }
     }
 
     /**
@@ -162,41 +195,12 @@ public abstract class Robot {
      *
      * @param cycleButton The button used to cycle through multiple menus in GUI.
      */
-    protected final void startGui(Button<Boolean> cycleButton) {
+    public final void startGui(Button<Boolean> cycleButton) {
         if (gui.isInitialized()) {
             gui.setCycleButton(cycleButton);
         } else {
             gui.setup(this, cycleButton);
         }
-    }
-
-    /**
-     * Enables the viewport for displaying frames for computer vision.
-     *
-     * @param cycleButton The button used to cycle between vision pipelines.
-     *
-     * @throws NotBooleanInputException Throws this exception if the button is not a boolean input.
-     */
-    protected final void enableViewport(@NotNull Button<Boolean> cycleButton) {
-        if(!useViewport) {
-            visionCycler.addButton(VISION_CYCLE, cycleButton);
-            useViewport = true;
-        }
-        else {
-            visionCycler.removeButton(VISION_CYCLE);
-            visionCycler.addButton(VISION_CYCLE, cycleButton);
-        }
-    }
-
-    /**
-     * Returns whether the viewport is enabled.
-     *
-     * @return Whether the viewport is enabled.
-     */
-    @Contract(pure = true)
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public final boolean isViewportEnabled() {
-        return useViewport;
     }
 
     /**
@@ -292,20 +296,23 @@ public abstract class Robot {
             subSystems.add(subSystem);
         }
 
-        if(useViewport) {
-            camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-        }
-        else {
-            camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
+        for (VisionSubSystem visionSubSystem : visionSubSystems) {
+            HALPipeline[] pipelines = visionSubSystem.getPipelines();
+            for (HALPipeline pipeline : pipelines) {
+                if (pipeline.getClass().isAnnotationPresent(Camera.class)) {
+                    Camera linkedCameraIdAnnotation = pipeline.getClass().getAnnotation(Camera.class);
+                    ExceptionChecker.assertNonNull(linkedCameraIdAnnotation, new DumpsterFireException("Linked camera id annotation for pipeline " + pipeline.getClass().getSimpleName() + " was null, this should be impossible."));
+                    String linkedCameraId = linkedCameraIdAnnotation.id();
+                    if (CameraManager.cameraExists(linkedCameraId)) {
+                        CameraManager.addPipeline(linkedCameraId, pipeline);
+                    } else if (linkedCameraId.equals(ALL_CAMERAS_ID)) {
+                        CameraManager.addPipelineToAll(pipeline);
+                    }
+                }
+            }
         }
 
-        if(enableVisionRequested()) {
-            camera.openCameraDevice();
-            camera.setPipeline(new Pipeline());
-            camera.startStreaming((int) Math.round(cameraSize.width),(int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
-            pipelineSet = true;
-            cameraStarted = true;
-        }
+        CameraManager.runPipelines();
     }
 
     /**
@@ -322,23 +329,6 @@ public abstract class Robot {
             subSystem.init_loop();
             subSystems.add(subSystem);
         }
-
-        boolean enableVision = enableVisionRequested();
-        if (enableVision && !pipelineSet) {
-            camera.openCameraDevice();
-            camera.setPipeline(new Pipeline());
-            camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
-            pipelineSet = true;
-            cameraStarted = true;
-        } else if (enableVision && !cameraStarted) {
-            camera.openCameraDevice();
-            camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
-            cameraStarted = true;
-        } else if (!enableVision && pipelineSet) {
-            camera.stopStreaming();
-            camera.closeCameraDevice();
-            cameraStarted = false;
-        }
     }
 
     /**
@@ -352,23 +342,6 @@ public abstract class Robot {
             SubSystem subSystem = subSystems.poll();
             subSystem.start();
             subSystems.add(subSystem);
-        }
-
-        boolean enableVision = enableVisionRequested();
-        if (enableVision && !pipelineSet) {
-            camera.openCameraDevice();
-            camera.setPipeline(new Pipeline());
-            camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
-            pipelineSet = true;
-            cameraStarted = true;
-        } else if (enableVision && !cameraStarted) {
-            camera.openCameraDevice();
-            camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
-            cameraStarted = true;
-        } else if (!enableVision && pipelineSet) {
-            camera.stopStreaming();
-            camera.closeCameraDevice();
-            cameraStarted = false;
         }
     }
 
@@ -386,23 +359,6 @@ public abstract class Robot {
             subSystem.handle();
             subSystems.add(subSystem);
         }
-
-        boolean enableVision = enableVisionRequested();
-        if (enableVision && !pipelineSet) {
-            camera.openCameraDevice();
-            camera.setPipeline(new Pipeline());
-            camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
-            pipelineSet = true;
-            cameraStarted = true;
-        } else if (enableVision && !cameraStarted) {
-            camera.openCameraDevice();
-            camera.startStreaming((int) Math.round(cameraSize.width), (int) Math.round(cameraSize.height), OpenCvCameraRotation.UPRIGHT);
-            cameraStarted = true;
-        } else if (!enableVision && pipelineSet) {
-            camera.stopStreaming();
-            camera.closeCameraDevice();
-            cameraStarted = false;
-        }
     }
 
     /**
@@ -418,12 +374,9 @@ public abstract class Robot {
             subSystems.add(subSystem);
         }
 
-        if (cameraStarted) {
-            camera.stopStreaming();
-            camera.closeCameraDevice();
-        }
-
         globalConfig.clearConfig();
+
+        CameraManager.resetManager();
     }
 
     /**
@@ -551,72 +504,46 @@ public abstract class Robot {
         return ((LinearOpMode) opMode).isStarted();
     }
 
-    /**
-     * Returns whether any vision subsystem has requested to enable their pipelines.
-     *
-     * @return Whether any vision subsystem has requested to enable their pipelines.
-     */
-    @Contract(pure = true)
-    private boolean enableVisionRequested() {
-        boolean anythingEnabled = false;
-        for(VisionSubSystem visionSubsystem : visionSubSystems) {
-            anythingEnabled |= visionSubsystem.isEnabled();
-        }
-        return anythingEnabled;
+    public final void reverseInternalCameraDirection() {
+        internalCameraCurrentDirection = internalCameraCurrentDirection == OpenCvInternalCamera.CameraDirection.FRONT ? OpenCvInternalCamera.CameraDirection.BACK : OpenCvInternalCamera.CameraDirection.FRONT;
+        CameraManager.stopInternalCamera();
+        OpenCvCamera newCamera = createCamera(internalCameraField, internalCameraData.usesViewport(), CameraType.INTERNAL, internalCameraCurrentDirection, INTERNAL_CAMERA_ID, internalCameraViewId);
+        CameraManager.overrideInternalCamera(newCamera);
     }
 
-    /**
-     * Sets the camera resolution. Only valid for specific values.
-     *
-     * @param width The frame width in pixels.
-     * @param height The frame height in pixels.
-     */
-    protected void setCameraSize(int width, int height) {
-        cameraSize = new Size(width, height);
+    public final OpenCvCamera getCamera(String cameraId) {
+        return CameraManager.getCamera(cameraId);
     }
 
-    /**
-     * A global vision pipeline that runs all the vision subsystem pipelines
-     * @TODO Make different cameras for pipelines that request it instead of all running them one after the other.
-     */
-    private class Pipeline extends OpenCvPipeline {
-
-        @Override
-        public Mat processFrame(Mat input) {
-            Mat returnMat = new Mat();
-            int activeMatIdx = -1;
-            int minPriority = Integer.MAX_VALUE;
-            for(VisionSubSystem visionSubsystem : visionSubSystems) {
-                if(visionSubsystem.getPriority() < minPriority && visionSubsystem.isEnabled()) {
-                    activeMatIdx = visionSubSystems.indexOf(visionSubsystem);
-                    minPriority = visionSubsystem.getPriority();
-                }
-            }
-
-            if(activeMatIdx == -1) {
-                returnMat = Mat.zeros((int) Math.round(cameraSize.width),(int) Math.round(cameraSize.height), CvType.CV_8UC3);
-            }
-            else {
-                for(VisionSubSystem visionSubsystem : visionSubSystems) {
-                    if(visionSubsystem.isEnabled()) {
-                        if(visionSubSystems.indexOf(visionSubsystem) == activeMatIdx) {
-                            returnMat = visionSubsystem.onCameraFrame(input.clone());
-                        }
-                        else {
-                            visionSubsystem.onCameraFrame(input.clone()).release();
-                        }
+    private OpenCvCamera createCamera(Field cameraField, boolean usesViewport, CameraType cameraType, OpenCvInternalCamera.CameraDirection direction, String cameraName, int cameraMonitorViewId) {
+        OpenCvCamera camera;
+        switch (cameraType) {
+            default:
+            case INTERNAL:
+                if (OpenCvInternalCamera2.class.isAssignableFrom(cameraField.getType())) {
+                    OpenCvInternalCamera2.CameraDirection direction2 = direction == OpenCvInternalCamera.CameraDirection.FRONT ? OpenCvInternalCamera2.CameraDirection.FRONT : OpenCvInternalCamera2.CameraDirection.BACK;
+                    if (usesViewport) {
+                        camera = OpenCvCameraFactory.getInstance().createInternalCamera2(direction2, cameraMonitorViewId);
+                    } else {
+                        camera = OpenCvCameraFactory.getInstance().createInternalCamera2(direction2);
+                    }
+                } else {
+                    if (usesViewport) {
+                        camera = OpenCvCameraFactory.getInstance().createInternalCamera(direction, cameraMonitorViewId);
+                    } else {
+                        camera = OpenCvCameraFactory.getInstance().createInternalCamera(direction);
                     }
                 }
-            }
-
-            return returnMat;
+                break;
+            case EXTERNAL:
+                if (usesViewport) {
+                    camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, cameraName), cameraMonitorViewId);
+                } else {
+                    camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, cameraName));
+                }
+                break;
         }
 
-        @Override
-        public void onViewportTapped() {
-            for(VisionSubSystem visionSubsystem : visionSubSystems) {
-                visionSubsystem.onViewportTapped();
-            }
-        }
+        return camera;
     }
 }

@@ -15,12 +15,12 @@ import com.SCHSRobotics.HAL9001.system.gui.viewelement.eventlistener.AdvancedLis
 import com.SCHSRobotics.HAL9001.system.gui.viewelement.eventlistener.EntireViewButton;
 import com.SCHSRobotics.HAL9001.system.gui.viewelement.eventlistener.EventListener;
 import com.SCHSRobotics.HAL9001.system.gui.viewelement.eventlistener.HandlesEvents;
-import com.SCHSRobotics.HAL9001.util.constant.TimeUnit;
 import com.SCHSRobotics.HAL9001.util.control.Button;
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.math.datastructures.MinHeap;
 import com.SCHSRobotics.HAL9001.util.math.datastructures.MultiElementMap;
+import com.SCHSRobotics.HAL9001.util.math.units.TimeUnit;
 import com.SCHSRobotics.HAL9001.util.misc.Timer;
 import com.qualcomm.robotcore.util.Range;
 

@@ -2,11 +2,12 @@ package com.SCHSRobotics.HAL9001.system.robot.subsystems.calib;
 
 import android.util.Log;
 
+import com.SCHSRobotics.HAL9001.system.robot.Camera;
+import com.SCHSRobotics.HAL9001.system.robot.HALPipeline;
 import com.SCHSRobotics.HAL9001.system.robot.Robot;
 import com.SCHSRobotics.HAL9001.system.robot.VisionSubSystem;
 import com.SCHSRobotics.HAL9001.util.control.Button;
 import com.SCHSRobotics.HAL9001.util.control.CustomizableGamepad;
-import com.SCHSRobotics.HAL9001.util.exceptions.ViewportDisabledException;
 
 import org.jetbrains.annotations.NotNull;
 import org.opencv.calib3d.Calib3d;
@@ -66,10 +67,6 @@ public class CameraCalib extends VisionSubSystem {
     public CameraCalib(@NotNull Robot robot, @NotNull Size chessboardSize) {
         super(robot);
 
-        if(!robot.isViewportEnabled()) {
-            throw new ViewportDisabledException("The camera viewport must be enabled for this program to run");
-        }
-
         inputs = new CustomizableGamepad(robot);
         inputs.addButton(CAPTURE, new Button(1, Button.BooleanInputs.x));
         inputs.addButton(DELETE_CAPTURE, new Button(1, Button.BooleanInputs.b));
@@ -112,7 +109,6 @@ public class CameraCalib extends VisionSubSystem {
 
     @Override
     public void start() {
-        startVision();
     }
 
     @Override
@@ -123,8 +119,8 @@ public class CameraCalib extends VisionSubSystem {
 
             Thread calibrate = new Thread() {
                 @Override
-                public void run(){
-                    reprojError = Calib3d.calibrateCamera(refPoints,capturePoints,new Size(width/2,height/2),intrinsic,distCoeffs,rvecs,tvecs);
+                public void run() {
+                    reprojError = Calib3d.calibrateCamera(refPoints, capturePoints, new Size(width / 2, height / 2), intrinsic, distCoeffs, rvecs, tvecs);
                     calibrated = true;
                 }
             };
@@ -148,56 +144,68 @@ public class CameraCalib extends VisionSubSystem {
     }
 
     @Override
-    public Mat onCameraFrame(@NotNull Mat inputFrame) {
-        Mat gray = new Mat();
+    protected HALPipeline[] getPipelines() {
+        return new HALPipeline[]{new CameraCalibPipeline()};
+    }
 
-        Imgproc.cvtColor(inputFrame,gray,Imgproc.COLOR_RGBA2GRAY);
-        Imgproc.resize(gray,gray,new Size(width/2,height/2));
-        inputFrame.release();
+    @Camera(id = Robot.ALL_CAMERAS_ID)
+    public class CameraCalibPipeline extends HALPipeline {
+        @Override
+        public boolean useViewport() {
+            return robot.isStarted();
+        }
 
-        if(!calibrationBegun) {
-            MatOfPoint2f corners = new MatOfPoint2f();
-            boolean found = Calib3d.findChessboardCorners(gray, size, corners, Calib3d.CALIB_CB_ADAPTIVE_THRESH | Calib3d.CALIB_CB_NORMALIZE_IMAGE | Calib3d.CALIB_CB_FAST_CHECK);
-            if (found) {
-                TermCriteria term = new TermCriteria(TermCriteria.EPS | TermCriteria.MAX_ITER, 40, 0.001);
+        @Override
+        public Mat processFrame(Mat input) {
+            Mat gray = new Mat();
 
-                Imgproc.cornerSubPix(gray, corners, new Size(5, 5), new Size(-1, -1), term);
+            Imgproc.cvtColor(input, gray, Imgproc.COLOR_RGBA2GRAY);
+            Imgproc.resize(gray, gray, new Size(width / 2, height / 2));
+            input.release();
 
-                Imgproc.cvtColor(gray, gray, Imgproc.COLOR_GRAY2RGB);
+            if (!calibrationBegun) {
+                MatOfPoint2f corners = new MatOfPoint2f();
+                boolean found = Calib3d.findChessboardCorners(gray, size, corners, Calib3d.CALIB_CB_ADAPTIVE_THRESH | Calib3d.CALIB_CB_NORMALIZE_IMAGE | Calib3d.CALIB_CB_FAST_CHECK);
+                if (found) {
+                    TermCriteria term = new TermCriteria(TermCriteria.EPS | TermCriteria.MAX_ITER, 40, 0.001);
 
-                Calib3d.drawChessboardCorners(gray, size, corners, true);
+                    Imgproc.cornerSubPix(gray, corners, new Size(5, 5), new Size(-1, -1), term);
 
-                if ((boolean) inputs.getInput(CAPTURE) && flag) {
-                    refPoints.add(refCoords);
-                    capturePoints.add(corners);
-                    flag = false;
-                } else if ((boolean) inputs.getInput(DELETE_CAPTURE) && refPoints.size() > 0 && flag) {
-                    refPoints.remove(refPoints.size() - 1);
-                    capturePoints.remove(capturePoints.size() - 1);
-                    flag = false;
-                } else if (!(boolean) inputs.getInput(CAPTURE) && !(boolean) inputs.getInput(DELETE_CAPTURE) && !flag) {
-                    flag = true;
+                    Imgproc.cvtColor(gray, gray, Imgproc.COLOR_GRAY2RGB);
+
+                    Calib3d.drawChessboardCorners(gray, size, corners, true);
+
+                    if ((boolean) inputs.getInput(CAPTURE) && flag) {
+                        refPoints.add(refCoords);
+                        capturePoints.add(corners);
+                        flag = false;
+                    } else if ((boolean) inputs.getInput(DELETE_CAPTURE) && refPoints.size() > 0 && flag) {
+                        refPoints.remove(refPoints.size() - 1);
+                        capturePoints.remove(capturePoints.size() - 1);
+                        flag = false;
+                    } else if (!(boolean) inputs.getInput(CAPTURE) && !(boolean) inputs.getInput(DELETE_CAPTURE) && !flag) {
+                        flag = true;
+                    }
+
+                    Log.wtf("test", "" + refPoints.size());
                 }
+            } else if (calibrated) {
+                Log.wtf("done", intrinsic.dump());
+                Log.wtf("done", "" + reprojError);
 
-                Log.wtf("test",""+refPoints.size());
+                Mat undistorted = new Mat();
+
+                Calib3d.undistort(gray, undistorted, intrinsic, distCoeffs);
+
+                Imgproc.resize(undistorted, undistorted, new Size(width, height));
+
+                return undistorted;
+
             }
+
+            Imgproc.resize(gray, gray, new Size(width, height));
+
+            return gray;
         }
-        else if(calibrated) {
-            Log.wtf("done",intrinsic.dump());
-            Log.wtf("done",""+reprojError);
-
-            Mat undistorted = new Mat();
-
-            Calib3d.undistort(gray,undistorted,intrinsic,distCoeffs);
-
-            Imgproc.resize(undistorted,undistorted,new Size(width,height));
-
-            return undistorted;
-
-        }
-
-        Imgproc.resize(gray,gray,new Size(width,height));
-
-        return gray;
     }
 }

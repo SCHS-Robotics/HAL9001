@@ -1,8 +1,8 @@
 package com.SCHSRobotics.HAL9001.system.gui.menus.configmenu;
 
-import com.SCHSRobotics.HAL9001.system.gui.UniqueID;
 import com.SCHSRobotics.HAL9001.system.gui.menus.TextSelectionMenu;
 import com.SCHSRobotics.HAL9001.util.control.Button;
+import com.SCHSRobotics.HAL9001.util.misc.UniqueID;
 
 /**
  * A static class to store the constant values used in the config system.

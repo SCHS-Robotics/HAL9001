@@ -35,7 +35,8 @@ public class SubSystem2 extends SubSystem {
     }
 
     @Override
-    public void handle(){}
+    public void handle() {
+    }
 
     @Override
     public void stop() {

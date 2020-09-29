@@ -1,8 +1,8 @@
 package com.SCHSRobotics.HAL9001.system.gui.event;
 
-import com.SCHSRobotics.HAL9001.util.constant.TimeUnit;
 import com.SCHSRobotics.HAL9001.util.control.Button;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
+import com.SCHSRobotics.HAL9001.util.math.units.TimeUnit;
 import com.SCHSRobotics.HAL9001.util.misc.Timer;
 
 import java.util.Queue;

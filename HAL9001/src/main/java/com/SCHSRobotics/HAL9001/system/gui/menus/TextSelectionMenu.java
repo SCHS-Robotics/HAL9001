@@ -3,7 +3,6 @@ package com.SCHSRobotics.HAL9001.system.gui.menus;
 import com.SCHSRobotics.HAL9001.system.gui.HALMenu;
 import com.SCHSRobotics.HAL9001.system.gui.Payload;
 import com.SCHSRobotics.HAL9001.system.gui.SelectionZone;
-import com.SCHSRobotics.HAL9001.system.gui.UniqueID;
 import com.SCHSRobotics.HAL9001.system.gui.event.DataPacket;
 import com.SCHSRobotics.HAL9001.system.gui.viewelement.TextElement;
 import com.SCHSRobotics.HAL9001.system.gui.viewelement.eventlistener.EntireViewButton;
@@ -13,6 +12,7 @@ import com.SCHSRobotics.HAL9001.util.control.Button;
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.misc.StringUtils;
+import com.SCHSRobotics.HAL9001.util.misc.UniqueID;
 
 import static java.lang.Math.min;
 

@@ -128,7 +128,7 @@ public class QuadWheelDrive extends SubSystem {
     @Override
     public void handle() {
         if(!inputs.checkNoButton(SPEEDMODEBUTTON)){
-            speedToggle.updateToggle((boolean) inputs.getInput(SPEEDMODEBUTTON));
+            speedToggle.updateToggle(inputs.getInput(SPEEDMODEBUTTON));
             if(speedToggle.getCurrentState()){
                 currentSpeedModeModifier = speedModeModifier;
             }
@@ -139,11 +139,11 @@ public class QuadWheelDrive extends SubSystem {
         //drives forward and turns at the same time
         if (turnAndMove) {
             if ((double) inputs.getInput(DRIVESTICK)!= 0 && (double) inputs.getInput(TURNSTICK) != 0) {
-                turnAndMove(new Vector2D((double) inputs.getInput(DRIVESTICK), (double) inputs.getInput(TURNSTICK)));
+                turnAndMove(new Vector2D(inputs.getInput(DRIVESTICK), inputs.getInput(TURNSTICK)));
             } else if ((double) inputs.getInput(DRIVESTICK) != 0) {
-                drive((double) inputs.getInput(DRIVESTICK));
+                drive(inputs.getInput(DRIVESTICK));
             } else if ((double) inputs.getInput(TURNSTICK)!= 0){
-                turn((double) inputs.getInput(TURNSTICK));
+                turn(inputs.getInput(TURNSTICK));
             } else {
                 stopMovement();
             }
@@ -151,9 +151,9 @@ public class QuadWheelDrive extends SubSystem {
         //drives forward and turns but not at the same time
         else {
             if ((double) inputs.getInput(TURNSTICK) != 0) {
-                turn((double) inputs.getInput(TURNSTICK));
+                turn(inputs.getInput(TURNSTICK));
             } else if ((double) inputs.getInput(DRIVESTICK) != 0) {
-                drive((double) inputs.getInput(DRIVESTICK));
+                drive(inputs.getInput(DRIVESTICK));
             } else {
                 stopMovement();
             }
@@ -228,11 +228,11 @@ public class QuadWheelDrive extends SubSystem {
      *
      * @param input A vector that determines linear/rotational speed and direction. First component is linear speed second is rotational speed (counterclockwise +)
      */
-    public void turnAndMove(Vector2D input){
-        botLeft.setPower(((input.x - input.y) * constantSpeedModifier) * currentSpeedModeModifier);
-        botRight.setPower(((input.x + input.y) * constantSpeedModifier) * currentSpeedModeModifier);
-        topLeft.setPower(((input.x - input.y) * constantSpeedModifier) * currentSpeedModeModifier);
-        topRight.setPower(((input.x + input.y) * constantSpeedModifier) * currentSpeedModeModifier);
+    public void turnAndMove(Vector2D input) {
+        botLeft.setPower(((input.getX() - input.getY()) * constantSpeedModifier) * currentSpeedModeModifier);
+        botRight.setPower(((input.getX() + input.getY()) * constantSpeedModifier) * currentSpeedModeModifier);
+        topLeft.setPower(((input.getX() - input.getY()) * constantSpeedModifier) * currentSpeedModeModifier);
+        topRight.setPower(((input.getX() + input.getY()) * constantSpeedModifier) * currentSpeedModeModifier);
     }
 
     /**

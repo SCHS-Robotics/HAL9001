@@ -16,6 +16,8 @@ public class NewMenuTestProgram extends BaseTeleop {
 
     @Override
     protected void onStart() {
+
+
         //gui = HALGUI.getInstance();
         //gui.setup(robot, new Button<>(1, Button.BooleanInputs.x));
         /*

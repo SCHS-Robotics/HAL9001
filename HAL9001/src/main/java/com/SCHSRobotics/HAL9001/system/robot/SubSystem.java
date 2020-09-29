@@ -15,9 +15,6 @@ import org.jetbrains.annotations.NotNull;
  * Creation Date: 2017
  */
 public abstract class SubSystem {
-
-    private static int globalId = 0;
-    private int id;
     //The robot the subsystem belongs to.
     protected Robot robot;
     //A boolean specifying whether or not the subsystem should use the configuration menu.
@@ -31,15 +28,7 @@ public abstract class SubSystem {
     public SubSystem(@NotNull Robot robot) {
         this.robot = robot;
         usesConfig = false;
-        id = globalId;
-        globalId++;
-        initVars();
     }
-
-    /**
-     * An overridable method that allows you to easily initialize variables at the beginning of every constructor for the subsystem.
-     */
-    protected void initVars() {}
 
     /**
      * An abstract method containing the code that the subsystem runs when being initialized.

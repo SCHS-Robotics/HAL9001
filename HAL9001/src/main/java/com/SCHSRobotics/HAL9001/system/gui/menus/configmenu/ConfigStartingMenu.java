@@ -142,6 +142,8 @@ public class ConfigStartingMenu extends HALMenu {
                                 .add(ConfigConstants.STANDALONE_MODE_ID, true)
                                 .add(ConfigConstants.SAVE_TO_AUTORUN_ID, true);
                         gui.inflate(new ConfigStartingMenu(newPayload));
+                    } else {
+                        gui.removeCurrentStack();
                     }
                 }));
         }

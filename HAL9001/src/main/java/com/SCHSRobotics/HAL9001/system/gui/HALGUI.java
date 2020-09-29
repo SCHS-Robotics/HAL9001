@@ -51,7 +51,7 @@ public class HALGUI {
     //The button used to cycle between menu keys.
     private Button<Boolean> cycleButton;
     //The toggle object used to correctly track button presses.
-    private Toggle cycleToggle;
+    private Toggle cycleToggle, clearToggle;
     //Singleton instance of the gui.
     private static HALGUI INSTANCE = new HALGUI();
 
@@ -61,7 +61,8 @@ public class HALGUI {
     /**
      * The private GUI constructor. Initializes the queues, the render timestamp, and the cycle toggle.
      */
-    private HALGUI() {}
+    private HALGUI() {
+    }
 
     /**
      * Gets the static instance of the gui.
@@ -89,6 +90,7 @@ public class HALGUI {
         forwardStack = new Stack<>();
         lastRenderTime = 0;
         cycleToggle = new Toggle(Toggle.ToggleTypes.trueOnceToggle, false);
+        clearToggle = new Toggle(Toggle.ToggleTypes.flipToggle, false);
         robot.telemetry.setMsTransmissionInterval(DEFAULT_HAL_TRANSMISSION_INTERVAL_MS);
         robot.telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
         GamepadEventGenerator.getInstance().reset();
@@ -154,7 +156,7 @@ public class HALGUI {
      * Renders the currently active menu.
      */
     public void renderCurrentMenu() {
-        if(!menuStacks.isEmpty()) {
+        if (isInitialized() && !menuStacks.isEmpty()) {
             boolean forceCursorUpdate = currentMenu.updateListeners();
 
             if (System.currentTimeMillis() - lastRenderTime >= currentMenu.getCursorBlinkSpeedMs() || forceCursorUpdate) {
@@ -173,6 +175,13 @@ public class HALGUI {
                 cursorControlQueue.add(cursorControlQueue.poll());
                 forwardStack.clear();
             }
+        } else if (isInitialized() && clearToggle.getCurrentState()) {
+
+            robot.telemetry.addLine("");
+            robot.telemetry.update();
+
+            clearToggle.updateToggle(false);
+            clearToggle.updateToggle(true);
         }
     }
 
@@ -227,9 +236,25 @@ public class HALGUI {
         forward(new Payload());
     }
 
+    public void removeCurrentStack() {
+        menuStacks.poll();
+        cursorControlQueue.poll();
+
+        forwardStack.clear();
+        currentStack = menuStacks.peek();
+
+        if (currentStack == null) {
+            clearToggle.updateToggle(true);
+        } else {
+            currentMenu = currentStack.peek();
+        }
+    }
+
     public void stop() {
-        robot.telemetry.setMsTransmissionInterval(DEFAULT_TRANSMISSION_INTERVAL_MS);
-        robot.telemetry.setDisplayFormat(Telemetry.DisplayFormat.CLASSIC);
+        if (robot != null) {
+            robot.telemetry.setMsTransmissionInterval(DEFAULT_TRANSMISSION_INTERVAL_MS);
+            robot.telemetry.setDisplayFormat(Telemetry.DisplayFormat.CLASSIC);
+        }
         currentStack = null;
         currentMenu = null;
         robot = null;
