@@ -17,3 +17,5 @@ jobs:
         java-version: 1.8
     - name: Build with Gradle
       run: bash ./gradlew build --stacktrace -x lint
+    - name: Run Unit Tests
+      run: ./gradlew test --stacktrace
