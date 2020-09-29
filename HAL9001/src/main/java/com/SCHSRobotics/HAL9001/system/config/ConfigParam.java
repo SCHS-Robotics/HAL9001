@@ -19,14 +19,17 @@ import java.util.Map;
  * A class for storing configuration options.
  *
  * @author Cole Savage, Level Up
- * @since 1.0.0
  * @version 1.0.0
- *
+ * @see HALConfig
+ * @see TeleopConfig
+ * @see AutonomousConfig
+ * @see com.SCHSRobotics.HAL9001.system.robot.Robot
+ * @see com.SCHSRobotics.HAL9001.system.robot.SubSystem
+ * <p>
  * Creation Date: 8/13/19
+ * @since 1.0.0
  */
-@SuppressWarnings("unused")
-public class ConfigParam {
-
+public final class ConfigParam {
     //The name of the option
     public String name;
     //The option's default value.
@@ -69,6 +72,8 @@ public class ConfigParam {
      *
      * @param name The name of the option.
      * @param defaultOption The default value of the option.
+     *
+     * @see Button
      */
     public ConfigParam(@NotNull String name, @NotNull Button.BooleanInputs defaultOption) {
         this(name, defaultOption, 1);
@@ -80,6 +85,8 @@ public class ConfigParam {
      * @param name The name of the option.
      * @param defaultOption The default value of the option.
      * @param gamepadDefault The default gamepad value.
+     *
+     * @see Button
      */
     public ConfigParam(@NotNull String name, @NotNull Button.BooleanInputs defaultOption, int gamepadDefault) {
         this.name = name;
@@ -107,6 +114,8 @@ public class ConfigParam {
      *
      * @param name The name of the option.
      * @param defaultOption The default value of the option.
+     *
+     * @see Button
      */
     public ConfigParam(@NotNull String name, @NotNull Button.DoubleInputs defaultOption) {
         this(name, defaultOption, 1);
@@ -118,6 +127,8 @@ public class ConfigParam {
      * @param name The name of the option.
      * @param defaultOption The default value of the option.
      * @param gamepadDefault The default gamepad value.
+     *
+     * @see Button
      */
     public ConfigParam(@NotNull String name, @NotNull Button.DoubleInputs defaultOption, int gamepadDefault) {
         this.name = name;
@@ -145,6 +156,8 @@ public class ConfigParam {
      *
      * @param name The name of the parameter.
      * @param defaultOption The parameter's default option.
+     *
+     * @see Button
      */
     public ConfigParam(@NotNull String name, @NotNull Button.VectorInputs defaultOption) {
         this(name, defaultOption, 1);
@@ -156,6 +169,8 @@ public class ConfigParam {
      * @param name The name of the parameter.
      * @param defaultOption The parameter's default option.
      * @param gamepadDefault The default gamepad setting.
+     *
+     * @see Button
      */
     public ConfigParam(@NotNull String name, @NotNull Button.VectorInputs defaultOption, int gamepadDefault) {
         this.name = name;
@@ -208,7 +223,7 @@ public class ConfigParam {
         this.defaultOption = defaultOption;
         currentOption = this.defaultOption;
 
-        vals = new ArrayList<Object>(Arrays.asList(options));
+        vals = new ArrayList<>(Arrays.asList(options));
 
         isBoolButton = false;
         isDoubleButton = false;
@@ -273,7 +288,7 @@ public class ConfigParam {
         this.defaultOption = defaultOption.name();
         currentOption = this.defaultOption;
 
-        vals = new ArrayList<Object>(Arrays.asList(defaultOption.getDeclaringClass().getEnumConstants()));
+        vals = new ArrayList<>(Arrays.asList(defaultOption.getDeclaringClass().getEnumConstants()));
 
         isBoolButton = false;
         isDoubleButton = false;
@@ -295,7 +310,7 @@ public class ConfigParam {
         this.defaultOption = defaultOption.name();
         currentOption = this.defaultOption;
 
-        vals = new ArrayList<Object>(Arrays.asList(enums));
+        vals = new ArrayList<>(Arrays.asList(enums));
 
         isBoolButton = false;
         isDoubleButton = false;
@@ -330,27 +345,6 @@ public class ConfigParam {
     }
 
     /**
-     * Converts the option to a button object if possible.
-     *
-     * @return The button representation of the option.
-     * @throws NotAnAlchemistException Throws this exception if it is not possible to convert the option into a button.
-     */
-    public Button<?> toButton() {
-        if (usesGamepad) {
-            if (isBoolButton) {
-                return new Button<Boolean>(currentGamepadOption.equals("Gamepad 1") ? 1 : currentGamepadOption.equals("Gamepad 2") ? 2 : -1, Button.BooleanInputs.valueOf(currentOption));
-            } else if (isDoubleButton) {
-                return new Button<Double>(currentGamepadOption.equals("Gamepad 1") ? 1 : currentGamepadOption.equals("Gamepad 2") ? 2 : -1, Button.DoubleInputs.valueOf(currentOption));
-            } else {
-                return new Button<Vector2D>(currentGamepadOption.equals("Gamepad 1") ? 1 : currentGamepadOption.equals("Gamepad 2") ? 2 : -1, Button.VectorInputs.valueOf(currentOption));
-            }
-        }
-        else {
-           throw new NotAnAlchemistException("I'm sorry, but I can't do that. This variable isn't a real button on the gamepad.");
-        }
-    }
-
-    /**
      * Generates a map linking the names of numbers to the actual numbers. Used for config.
      *
      * @param start The lowest possible configurable number.
@@ -358,6 +352,7 @@ public class ConfigParam {
      * @param increment How much to increment by.
      * @return A map linking the names of numbers to the actual numbers.
      */
+    @NotNull
     public static LinkedHashMap<String,Object> numberMap(double start, double end, double increment) {
         int multiplier = (int) Math.pow(10,(Double.toString(increment).substring(Double.toString(increment).indexOf('.')+1).length()));
         LinkedHashMap<String,Object> numMap = new LinkedHashMap<>();
@@ -376,27 +371,41 @@ public class ConfigParam {
      * @param increment How much to increment by.
      * @return A map linking the names of numbers to the actual numbers.
      */
-    public static LinkedHashMap<String,Object> numberMap(int start, int end, int increment) {
-        LinkedHashMap<String,Object> numMap = new LinkedHashMap<>();
-        for (int i = start; i < end ; i+= increment) {
+    @NotNull
+    public static LinkedHashMap<String, Object> numberMap(int start, int end, int increment) {
+        LinkedHashMap<String, Object> numMap = new LinkedHashMap<>();
+        for (int i = start; i < end; i += increment) {
             numMap.put(Integer.toString(i), i);
         }
-        numMap.put(Integer.toString(end),end);
+        numMap.put(Integer.toString(end), end);
         return numMap;
     }
 
-    public String getDefaultOption() {
-        return defaultOption;
-    }
-
-    public String getDefaultGamepadOption() {
-        return defaultGamepadOption;
+    /**
+     * Converts the option to a button object if possible.
+     *
+     * @return The button representation of the option.
+     * @throws NotAnAlchemistException Throws this exception if it is not possible to convert the option into a button.
+     * @see Button
+     */
+    public final Button<?> toButton() {
+        if (usesGamepad) {
+            if (isBoolButton) {
+                return new Button<Boolean>(currentGamepadOption.equals("Gamepad 1") ? 1 : currentGamepadOption.equals("Gamepad 2") ? 2 : -1, Button.BooleanInputs.valueOf(currentOption));
+            } else if (isDoubleButton) {
+                return new Button<Double>(currentGamepadOption.equals("Gamepad 1") ? 1 : currentGamepadOption.equals("Gamepad 2") ? 2 : -1, Button.DoubleInputs.valueOf(currentOption));
+            } else {
+                return new Button<Vector2D>(currentGamepadOption.equals("Gamepad 1") ? 1 : currentGamepadOption.equals("Gamepad 2") ? 2 : -1, Button.VectorInputs.valueOf(currentOption));
+            }
+        } else {
+            throw new NotAnAlchemistException("I'm sorry, but I can't do that. This variable isn't a real button on the gamepad.");
+        }
     }
 
     @Override
     @NotNull
     public String toString() {
-        return usesGamepad ? name+':'+currentOption+':'+currentGamepadOption : name+':'+currentOption;
+        return usesGamepad ? name + ':' + currentOption + ':' + currentGamepadOption : name + ':' + currentOption;
     }
 
     @Override

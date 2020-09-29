@@ -12,7 +12,6 @@ import com.SCHSRobotics.HAL9001.system.config.StandAlone;
 import com.SCHSRobotics.HAL9001.system.gui.HALGUI;
 import com.SCHSRobotics.HAL9001.system.gui.Payload;
 import com.SCHSRobotics.HAL9001.system.gui.menus.configmenu.ConfigConstants;
-import com.SCHSRobotics.HAL9001.system.gui.menus.configmenu.ConfigSelectionMode;
 import com.SCHSRobotics.HAL9001.system.gui.menus.configmenu.ConfigStartingMenu;
 import com.SCHSRobotics.HAL9001.util.control.Button;
 import com.SCHSRobotics.HAL9001.util.control.CustomizableGamepad;
@@ -21,7 +20,6 @@ import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.exceptions.NothingToSeeHereException;
 import com.SCHSRobotics.HAL9001.util.misc.HALFileUtil;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -45,6 +43,9 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import static com.SCHSRobotics.HAL9001.system.config.ConfigSelectionMode.AUTONOMOUS;
+import static com.SCHSRobotics.HAL9001.system.config.ConfigSelectionMode.TELEOP;
+
 /**
  * An abstract class representing the physical robot.
  *
@@ -67,7 +68,7 @@ public abstract class Robot {
     //A hashmap mapping the name of a subsystem to the actual subsystem object.
     private final Queue<SubSystem> subSystems;
     //The opmode the robot is running.
-    private OpMode opMode;
+    private HALProgram opMode;
     //The GUI the robot uses to render the menus.
     public HALGUI gui;
     //A boolean value specifying whether or not to use the config system.
@@ -91,7 +92,7 @@ public abstract class Robot {
      *
      * @param opMode The opmode the robot is currently running.
      */
-    public Robot(@NotNull OpMode opMode) {
+    public Robot(@NotNull HALProgram opMode) {
         this.opMode = opMode;
         telemetry = opMode.telemetry;
         hardwareMap = opMode.hardwareMap;
@@ -262,12 +263,12 @@ public abstract class Robot {
             HALFileUtil.createFile(robotRootConfigPath + configMetadataFullName);
 
             //create autonomous directory in robot folder
-            String autonomousFolder = robotRootConfigPath + ConfigSelectionMode.AUTONOMOUS.filepathExtension;
+            String autonomousFolder = robotRootConfigPath + AUTONOMOUS.filepathExtension;
             HALFileUtil.createDirectory(autonomousFolder);
             HALFileUtil.createFile(autonomousFolder + configMetadataFullName);
 
             //create teleop directory in robot folder
-            String teleopFolder = robotRootConfigPath + ConfigSelectionMode.TELEOP.filepathExtension;
+            String teleopFolder = robotRootConfigPath + TELEOP.filepathExtension;
             HALFileUtil.createDirectory(teleopFolder);
             HALFileUtil.createFile(teleopFolder + configMetadataFullName);
 
@@ -287,7 +288,7 @@ public abstract class Robot {
 
             Payload payload = new Payload()
                     .add(ConfigConstants.ROBOT_FILEPATH_ID, robotRootConfigPath)
-                    .add(ConfigConstants.SELECTION_MODE_ID, isAutonomous() ? ConfigSelectionMode.AUTONOMOUS : ConfigSelectionMode.TELEOP);
+                    .add(ConfigConstants.SELECTION_MODE_ID, isAutonomous() ? AUTONOMOUS : TELEOP);
 
             if (opMode.getClass().isAnnotationPresent(StandAlone.class)) {
                 payload.add(ConfigConstants.STANDALONE_MODE_ID, true);
@@ -401,7 +402,7 @@ public abstract class Robot {
      * @return A customizable gamepad containing the configured controls for that subsystem.
      */
     public final CustomizableGamepad pullControls(SubSystem subsystem) {
-        List<ConfigParam> configParams = globalConfig.getConfig(HALConfig.Mode.TELEOP, subsystem);
+        List<ConfigParam> configParams = globalConfig.getConfig(TELEOP, subsystem);
         ExceptionChecker.assertNonNull(configParams, new NullPointerException(subsystem+" is not present in teleopConfig"));
         CustomizableGamepad gamepad = new CustomizableGamepad(this);
         for (ConfigParam param : configParams) {
@@ -421,17 +422,17 @@ public abstract class Robot {
     @NotNull
     @Contract("_ -> new")
     public final ConfigData pullNonGamepad(SubSystem subsystem) {
-        List<ConfigParam> configParamsTeleop = globalConfig.getConfig(HALConfig.Mode.TELEOP, subsystem);
-        List<ConfigParam> configParamsAuto = globalConfig.getConfig(HALConfig.Mode.AUTONOMOUS, subsystem);
+        List<ConfigParam> configParamsTeleop = globalConfig.getConfig(TELEOP, subsystem);
+        List<ConfigParam> configParamsAuto = globalConfig.getConfig(AUTONOMOUS, subsystem);
 
-        if(configParamsAuto == null) {
+        if (configParamsAuto == null) {
             configParamsAuto = new ArrayList<>();
         }
-        if(configParamsTeleop == null) {
+        if (configParamsTeleop == null) {
             configParamsTeleop = new ArrayList<>();
         }
 
-        Map<String,Object> output = new HashMap<>();
+        Map<String, Object> output = new HashMap<>();
 
         for (ConfigParam param : configParamsAuto) {
             if (!param.usesGamepad) {
@@ -486,7 +487,7 @@ public abstract class Robot {
      */
     public final boolean opModeIsActive() {
         ExceptionChecker.assertTrue(isTeleop() || isAutonomous(), new DumpsterFireException("Program is not an instance of BaseAutonomous or BaseTeleop, cannot tell if its running. A lot of other things are probably broken too if you're seeing this."));
-        return ((LinearOpMode) opMode).opModeIsActive();
+        return opMode.opModeIsActive();
     }
 
     /**
@@ -496,7 +497,7 @@ public abstract class Robot {
      */
     public final boolean isStopRequested() {
         ExceptionChecker.assertTrue(isTeleop() || isAutonomous(), new DumpsterFireException("Program is not an instance of BaseAutonomous or BaseTeleop, cannot tell if its running. A lot of other things are probably broken too if you're seeing this."));
-        return ((LinearOpMode) opMode).isStopRequested();
+        return opMode.isStopRequested();
     }
 
     /**
@@ -506,7 +507,7 @@ public abstract class Robot {
      */
     public final boolean isStarted() {
         ExceptionChecker.assertTrue(isTeleop() || isAutonomous(), new DumpsterFireException("Program is not an instance of BaseAutonomous or BaseTeleop, cannot tell if its running. A lot of other things are probably broken too if you're seeing this."));
-        return ((LinearOpMode) opMode).isStarted();
+        return opMode.isStarted();
     }
 
     public final void reverseInternalCameraDirection() {
@@ -520,7 +521,7 @@ public abstract class Robot {
         return CameraManager.getCamera(cameraId);
     }
 
-    private OpenCvCamera createCamera(Field cameraField, boolean usesViewport, CameraType cameraType, OpenCvInternalCamera.CameraDirection direction, String cameraName, int cameraMonitorViewId) {
+    private OpenCvCamera createCamera(Field cameraField, boolean usesViewport, @NotNull CameraType cameraType, OpenCvInternalCamera.CameraDirection direction, String cameraName, int cameraMonitorViewId) {
         OpenCvCamera camera;
         switch (cameraType) {
             default:

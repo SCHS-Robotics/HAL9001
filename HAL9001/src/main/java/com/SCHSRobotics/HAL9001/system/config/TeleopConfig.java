@@ -10,10 +10,14 @@ import java.lang.annotation.Target;
  * A method annotation used to denote a method that specifies the teleop config options for a subsystem.
  *
  * @author Cole Savage, Level Up
- * @since 1.0.0
  * @version 1.0.0
- *
+ * @see AutonomousConfig
+ * @see HALConfig
+ * @see com.SCHSRobotics.HAL9001.system.robot.Robot
+ * @see com.SCHSRobotics.HAL9001.system.robot.SubSystem
+ * <p>
  * Creation Date: 8/18/19
+ * @since 1.0.0
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

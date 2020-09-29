@@ -1,6 +1,9 @@
 package com.SCHSRobotics.HAL9001.util.math.geometry;
 
+import android.util.Pair;
+
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
+import com.SCHSRobotics.HAL9001.util.exceptions.HALMathException;
 import com.SCHSRobotics.HAL9001.util.math.FakeNumpy;
 import com.SCHSRobotics.HAL9001.util.math.HALMathUtil;
 
@@ -11,18 +14,26 @@ import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Matrix {
 
+    public Matrix(double[]... vals) {
+        if (vals != null) this.vals = vals.clone();
+        else this.vals = new double[1][1];
+    }
+
     private final double[][] vals;
 
-    public Matrix(double[]... vals) {
-        if (vals != null) {
-            this.vals = vals.clone();
-        } else {
-            this.vals = new double[1][1];
-        }
+    public static Matrix identityMatrix(int size) {
+        ExceptionChecker.assertTrue(size > 1, new HALMathException("An identity matrix must be at least 2x2"));
+
+        Mat identityMatrixMat = Mat.eye(new Size(size, size), CvType.CV_64F);
+        Matrix identityMatrix = new Matrix();
+        identityMatrix.matToVals(identityMatrixMat);
+        return identityMatrix;
     }
 
     private Matrix(Matrix matrix) {
@@ -30,36 +41,6 @@ public class Matrix {
         for (int i = 0; i < matrix.getNumRows(); i++) {
             System.arraycopy(matrix.vals[i], 0, vals[i], 0, vals[i].length);
         }
-    }
-
-    public static Matrix identityMatrix(int rows, int cols) {
-        ExceptionChecker.assertTrue(rows > 1, new RuntimeException());
-        ExceptionChecker.assertTrue(cols > 1, new RuntimeException());
-
-        Mat identityMatrixMat = Mat.eye(new Size(rows, cols), CvType.CV_64F);
-        Matrix identityMatrix = new Matrix();
-        identityMatrix.matToVals(identityMatrixMat);
-        return identityMatrix;
-    }
-
-    public static Matrix zeroMatrix(int rows, int cols) {
-        ExceptionChecker.assertTrue(rows > 0, new RuntimeException());
-        ExceptionChecker.assertTrue(cols > 0, new RuntimeException());
-
-        Mat zeroMatrixMat = Mat.zeros(new Size(rows, cols), CvType.CV_64F);
-        Matrix zeroMatrix = new Matrix();
-        zeroMatrix.matToVals(zeroMatrixMat);
-        return zeroMatrix;
-    }
-
-    public static Matrix onesMatrix(int rows, int cols) {
-        ExceptionChecker.assertTrue(rows > 0, new RuntimeException());
-        ExceptionChecker.assertTrue(cols > 0, new RuntimeException());
-
-        Mat onesMatrixMat = Mat.ones(new Size(rows, cols), CvType.CV_64F);
-        Matrix onesMatrix = new Matrix();
-        onesMatrix.matToVals(onesMatrixMat);
-        return onesMatrix;
     }
 
     public void set(int row, int col, double value) {
@@ -74,34 +55,39 @@ public class Matrix {
         return vals[row].clone();
     }
 
+    public static Matrix zeroMatrix(int rows, int cols) {
+        ExceptionChecker.assertTrue(rows > 0, new HALMathException("Can't have 0 or negative amount of rows."));
+        ExceptionChecker.assertTrue(cols > 0, new HALMathException("Can't have 0 or negative amount of columns."));
+
+        Mat zeroMatrixMat = Mat.zeros(new Size(rows, cols), CvType.CV_64F);
+        Matrix zeroMatrix = new Matrix();
+        zeroMatrix.matToVals(zeroMatrixMat);
+        return zeroMatrix;
+    }
+
+    public static Matrix onesMatrix(int rows, int cols) {
+        ExceptionChecker.assertTrue(rows > 0, new HALMathException("Can't have 0 or negative amount of rows."));
+        ExceptionChecker.assertTrue(cols > 0, new HALMathException("Can't have 0 or negative amount of columns."));
+
+        Mat onesMatrixMat = Mat.ones(new Size(rows, cols), CvType.CV_64F);
+        Matrix onesMatrix = new Matrix();
+        onesMatrix.matToVals(onesMatrixMat);
+        return onesMatrix;
+    }
+
     public double[] getCol(int col) {
         double[] colArray = new double[getNumRows()];
-        for (int i = 0; i < getNumRows(); i++) {
-            colArray[i] = getRow(i)[col];
-        }
+        for (int i = 0; i < getNumRows(); i++) colArray[i] = getRow(i)[col];
         return colArray;
-    }
-
-    public void setRow(int rowNum, double[] row) {
-        ExceptionChecker.assertTrue(row.length == getNumCols(), new RuntimeException());
-        vals[rowNum] = row;
-    }
-
-    public void setCol(int colNum, double[] col) {
-        for (int i = 0; i < getNumRows(); i++) {
-            set(i, colNum, col[i]);
-        }
     }
 
     public int getNumRows() {
         return vals.length;
     }
 
-    public int getNumCols() {
-        if (this.getNumRows() == 0) {
-            return 0;
-        }
-        return vals[0].length;
+    public void setRow(int rowNum, double[] row) {
+        ExceptionChecker.assertTrue(row.length == getNumCols(), new HALMathException("New row length does not match matrix row length."));
+        vals[rowNum] = row;
     }
 
     public boolean isSquare() {
@@ -112,61 +98,74 @@ public class Matrix {
         return this.clone().transpose().equals(this);
     }
 
+    public void setCol(int colNum, double[] col) {
+        ExceptionChecker.assertTrue(col.length == getNumRows(), new HALMathException("New column length does not match matrix column length."));
+        for (int i = 0; i < getNumRows(); i++) set(i, colNum, col[i]);
+    }
+
+    public int getNumCols() {
+        if (this.getNumRows() == 0) return 0;
+        return vals[0].length;
+    }
+
     public boolean isPositiveDefinite() {
-        return false;
+        if (!isSymmetric()) return false;
+
+        boolean positiveEigenvalues = true;
+        double[] eigenvalues = eigenvalues();
+
+        for (double eigenvalue : eigenvalues) positiveEigenvalues &= eigenvalue > 0;
+        if (eigenvalues.length == 0) positiveEigenvalues = false;
+
+        return positiveEigenvalues;
     }
 
     public Matrix transpose() {
-        matToVals(valsToMat(CvType.CV_64F).t());
+        matToVals(valsToMat().t());
         return this;
     }
 
     public double trace() {
-        Mat mat = valsToMat(CvType.CV_64F);
+        Mat mat = valsToMat();
         Scalar trace = Core.trace(mat);
         mat.release();
         return trace.val[0];
-    }
-
-    public InverseMethod getOptimalInverseMethod() {
-        if (this.isPositiveDefinite()) {
-            return InverseMethod.CHOLESKY;
-        } else if (this.isSymmetric()) {
-            return InverseMethod.EIGEN;
-        } else if (this.isSquare()) {
-            return InverseMethod.LU;
-        } else {
-            return InverseMethod.SVD;
-        }
-    }
-
-    public Matrix invert(InverseMethod inverseMethod) {
-        switch (inverseMethod) {
-            case LU:
-                ExceptionChecker.assertTrue(isSquare(), new RuntimeException("LU decomposition method cannot be used on non-square matrices, use SVD instead to get a pseudo-inverse."));
-                break;
-            case EIGEN:
-                ExceptionChecker.assertTrue(isSquare(), new RuntimeException("LU decomposition method cannot be used on non-square matrices, use SVD instead to get a pseudo-inverse."));
-                ExceptionChecker.assertTrue(isSymmetric(), new RuntimeException("Eigen decomposition method cannot be used on non-symmetric matrices."));
-                break;
-            case CHOLESKY:
-                ExceptionChecker.assertTrue(isSquare(), new RuntimeException("LU decomposition method cannot be used on non-square matrices, use SVD instead to get a pseudo-inverse."));
-                ExceptionChecker.assertTrue(isSymmetric(), new RuntimeException("Eigen decomposition method cannot be used on non-symmetric matrices."));
-                ExceptionChecker.assertTrue(isPositiveDefinite(), new RuntimeException("Cholesky decomposition method cannot be used on non-positive-definite matrices."));
-                break;
-        }
-
-        matToVals(valsToMat(CvType.CV_64F).inv(inverseMethod.method));
-        return this;
     }
 
     public Matrix invert() {
         return invert(InverseMethod.LU);
     }
 
+    public InverseMethod getOptimalInverseMethod() {
+        if (this.isPositiveDefinite()) return InverseMethod.CHOLESKY;
+        else if (this.isSymmetric()) return InverseMethod.EIGEN;
+        else if (this.isSquare()) return InverseMethod.LU;
+        else return InverseMethod.SVD;
+    }
+
+    public Matrix invert(InverseMethod inverseMethod) {
+        switch (inverseMethod) {
+            case LU:
+                ExceptionChecker.assertTrue(isSquare(), new HALMathException("LU decomposition method cannot be used on non-square matrices, use SVD instead to get a pseudo-inverse."));
+                break;
+            case EIGEN:
+                ExceptionChecker.assertTrue(isSquare(), new HALMathException("LU decomposition method cannot be used on non-square matrices, use SVD instead to get a pseudo-inverse."));
+                ExceptionChecker.assertTrue(isSymmetric(), new HALMathException("Eigen decomposition method cannot be used on non-symmetric matrices."));
+                break;
+            case CHOLESKY:
+                ExceptionChecker.assertTrue(isSquare(), new HALMathException("LU decomposition method cannot be used on non-square matrices, use SVD instead to get a pseudo-inverse."));
+                ExceptionChecker.assertTrue(isSymmetric(), new HALMathException("Eigen decomposition method cannot be used on non-symmetric matrices."));
+                ExceptionChecker.assertTrue(isPositiveDefinite(), new HALMathException("Cholesky decomposition method cannot be used on non-positive-definite matrices."));
+                break;
+        }
+
+        matToVals(valsToMat().inv(inverseMethod.method));
+        return this;
+    }
+
     public Matrix multiply(Matrix matrix) {
-        Mat thisMat = valsToMat(CvType.CV_64F);
-        Mat thatMat = matrix.valsToMat(CvType.CV_64F);
+        Mat thisMat = valsToMat();
+        Mat thatMat = matrix.valsToMat();
         Mat emptyMat = new Mat();
         Mat dst = new Mat();
         Core.gemm(thisMat, thatMat, 1, emptyMat, 0, dst, 0);
@@ -178,8 +177,8 @@ public class Matrix {
     }
 
     public double determinant() {
-        ExceptionChecker.assertTrue(isSquare(), new RuntimeException("Matrix is not square, cannot take determinant."));
-        Mat thisMat = valsToMat(CvType.CV_64F);
+        ExceptionChecker.assertTrue(isSquare(), new HALMathException("Matrix is not square, cannot take determinant."));
+        Mat thisMat = valsToMat();
         double det = Core.determinant(thisMat);
         thisMat.release();
         return det;
@@ -200,14 +199,12 @@ public class Matrix {
     }
 
     public Matrix mask(Matrix mask) {
-        ExceptionChecker.assertTrue(this.getNumRows() == mask.getNumRows(), new RuntimeException());
-        ExceptionChecker.assertTrue(this.getNumCols() == mask.getNumCols(), new RuntimeException());
+        ExceptionChecker.assertTrue(this.getNumRows() == mask.getNumRows(), new HALMathException("Mask does not have the same number of rows as matrix being masked."));
+        ExceptionChecker.assertTrue(this.getNumCols() == mask.getNumCols(), new HALMathException("Mask does not have the same number of columns as matrix being masked."));
 
         for (int i = 0; i < mask.vals.length; i++) {
             for (int j = 0; j < mask.vals[0].length; j++) {
-                if (mask.vals[i][j] <= 0) {
-                    this.vals[i][j] = 0;
-                }
+                if (mask.vals[i][j] <= 0) this.vals[i][j] = 0;
             }
         }
 
@@ -221,9 +218,9 @@ public class Matrix {
         for (int currentRowNum = getNumRows() - 1; currentRowNum > 0; currentRowNum--) {
             double[] currentRowArray = getRow(currentRowNum);
             double val = currentRowArray[currentColNum];
-            if (val == 0) {
-                continue;
-            }
+
+            if (val == 0) continue;
+
             FakeNumpy.divide(currentRowArray, val);
             setRow(currentRowNum, currentRowArray);
             for (int row = 0; row < getNumRows(); row++) {
@@ -238,6 +235,10 @@ public class Matrix {
             currentColNum = HALMathUtil.mod(currentColNum, getNumCols());
         }
         return this;
+    }
+
+    public int nullity() {
+        return getNumCols() - rank();
     }
 
     public Matrix ref() {
@@ -258,9 +259,10 @@ public class Matrix {
                     break;
                 }
             }
-            if (!anyNonZero) continue;
-            FakeNumpy.divide(currentRowArray, currentRowArray[currentColNum]);
 
+            if (!anyNonZero) continue;
+
+            FakeNumpy.divide(currentRowArray, currentRowArray[currentColNum]);
             for (int row = 0; row < getNumRows(); row++) {
                 if (row != currentRowNum) {
                     double[] rowArray = getRow(row);
@@ -288,8 +290,26 @@ public class Matrix {
         return rank;
     }
 
-    public int nullity() {
-        return getNumCols() - rank();
+    public double[] eigenvalues() {
+        Mat thisMat = valsToMat();
+        Mat eigenvaluesMat = new Mat();
+
+        if (isSymmetric()) {
+            Core.eigen(thisMat, eigenvaluesMat);
+        } else {
+            Mat eigenVectors = new Mat();
+            Core.eigenNonSymmetric(thisMat, eigenvaluesMat, eigenVectors);
+            eigenVectors.release();
+        }
+        thisMat.release();
+
+        double[] eigenvalues = new double[eigenvaluesMat.rows()];
+        for (int i = 0; i < eigenvaluesMat.rows(); i++) {
+            eigenvalues[i] = HALMathUtil.floatingPointFix(eigenvaluesMat.get(i, 0)[0]);
+        }
+
+        eigenvaluesMat.release();
+        return eigenvalues;
     }
 
     public boolean isZeroMatrix() {
@@ -302,6 +322,53 @@ public class Matrix {
         return isZeroMatrix;
     }
 
+    public Matrix[] eigenvectors() {
+        Mat thisMat = valsToMat();
+        Mat eigenvaluesMat = new Mat();
+        Mat eigenvectorsMat = new Mat();
+
+        if (isSymmetric()) Core.eigen(thisMat, eigenvaluesMat, eigenvectorsMat);
+        else Core.eigenNonSymmetric(thisMat, eigenvaluesMat, eigenvectorsMat);
+
+        thisMat.release();
+        eigenvaluesMat.release();
+
+        Matrix[] eigenvectors = new Matrix[eigenvectorsMat.cols()];
+        for (int i = 0; i < eigenvectorsMat.rows(); i++) {
+            double[][] eigenvectorArray = new double[eigenvectorsMat.rows()][1];
+            for (int j = 0; j < eigenvectorsMat.rows(); j++) {
+                eigenvectorArray[j][0] = HALMathUtil.floatingPointFix(eigenvectorsMat.get(i, j)[0]);
+            }
+            eigenvectors[i] = new Matrix(eigenvectorArray);
+        }
+
+        eigenvectorsMat.release();
+        return eigenvectors;
+    }
+
+    public List<Pair<Double, Matrix>> eigenvectorsAndValues() {
+        Mat thisMat = valsToMat();
+        Mat eigenvaluesMat = new Mat();
+        Mat eigenvectorsMat = new Mat();
+
+        if (isSymmetric()) Core.eigen(thisMat, eigenvaluesMat, eigenvectorsMat);
+        else Core.eigenNonSymmetric(thisMat, eigenvaluesMat, eigenvectorsMat);
+        thisMat.release();
+
+        List<Pair<Double, Matrix>> eigenVectorValuePairs = new ArrayList<>();
+        for (int i = 0; i < eigenvectorsMat.rows(); i++) {
+            double[][] eigenvectorArray = new double[eigenvectorsMat.rows()][1];
+            for (int j = 0; j < eigenvectorsMat.rows(); j++) {
+                eigenvectorArray[j][0] = HALMathUtil.floatingPointFix(eigenvectorsMat.get(i, j)[0]);
+            }
+            eigenVectorValuePairs.add(new Pair<>(eigenvaluesMat.get(i, 0)[0], new Matrix(eigenvectorArray)));
+        }
+
+        eigenvaluesMat.release();
+        eigenvectorsMat.release();
+        return eigenVectorValuePairs;
+    }
+
     public boolean isIdentityMatrix() {
         if (!isSquare()) {
             return false;
@@ -310,21 +377,16 @@ public class Matrix {
         boolean isIdentity = true;
         for (int i = 0; i < vals.length; i++) {
             for (int j = 0; j < vals[0].length; j++) {
-                if (i == j) {
-                    isIdentity &= vals[i][j] == 1;
-                } else {
-                    isIdentity &= vals[i][j] == 0;
-                }
+                if (i == j) isIdentity &= vals[i][j] == 1;
+                else isIdentity &= vals[i][j] == 0;
             }
         }
         return isIdentity;
     }
 
-    private Mat valsToMat(int type) {
-        Mat mat = new Mat(this.getNumRows(), this.getNumCols(), type);
-        for (int i = 0; i < vals.length; i++) {
-            mat.put(i, 0, vals[i]);
-        }
+    private Mat valsToMat() {
+        Mat mat = new Mat(this.getNumRows(), this.getNumCols(), CvType.CV_64F);
+        for (int i = 0; i < vals.length; i++) mat.put(i, 0, vals[i]);
         return mat;
     }
 
@@ -380,11 +442,6 @@ public class Matrix {
         return false;
     }
 
-    @Override
-    public Matrix clone() {
-        return new Matrix(this);
-    }
-
     public enum InverseMethod {
         LU(Core.DECOMP_LU), //Gaussian elimination w/ optimal pivot
         SVD(Core.DECOMP_SVD), //Singular value decomposition
@@ -396,5 +453,10 @@ public class Matrix {
         InverseMethod(int method) {
             this.method = method;
         }
+    }
+
+    @Override
+    public Matrix clone() {
+        return new Matrix(this);
     }
 }

@@ -10,14 +10,22 @@ import java.lang.annotation.Target;
  * A class annotation used to easily put into place program configuration options.
  *
  * @author Cole Savage, Level Up
- * @since 1.0.6
  * @version 1.0.0
- *
+ * @see com.SCHSRobotics.HAL9001.system.robot.LinkTo
+ * @see HALConfig
+ * @see com.SCHSRobotics.HAL9001.system.robot.HALProgram
+ * <p>
  * Creation Date: 12/18/19
+ * @since 1.0.6
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface ProgramOptions {
+    /**
+     * A list of enum classes that are being used as configurable options for the attached opmode.
+     *
+     * @return A list of enum classes that are being used as configurable options for the attached opmode.
+     */
     Class<? extends Enum<?>>[] options();
 }

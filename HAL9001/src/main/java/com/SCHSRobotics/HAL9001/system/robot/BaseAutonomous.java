@@ -9,7 +9,6 @@ package com.SCHSRobotics.HAL9001.system.robot;
  *
  * Creation Date: 2017
  */
-@SuppressWarnings("unused")
 public abstract class BaseAutonomous extends HALProgram {
 
     /**

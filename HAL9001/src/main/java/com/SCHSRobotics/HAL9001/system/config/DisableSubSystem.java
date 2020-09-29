@@ -11,6 +11,9 @@ import java.lang.annotation.Target;
  *
  * @author Cole Savage, Level Up
  * @version 1.0.0
+ * @see ConfigLabel
+ * @see com.SCHSRobotics.HAL9001.system.robot.Robot
+ * @see com.SCHSRobotics.HAL9001.system.robot.SubSystem
  * <p>
  * Creation Date: 12/21/19
  * @since 1.0.6
