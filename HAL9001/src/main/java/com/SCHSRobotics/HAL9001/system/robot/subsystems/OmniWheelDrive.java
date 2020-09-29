@@ -20,9 +20,9 @@ import com.SCHSRobotics.HAL9001.util.exceptions.NotVectorInputException;
 import com.SCHSRobotics.HAL9001.util.functional_interfaces.BiFunction;
 import com.SCHSRobotics.HAL9001.util.math.EncoderToDistanceProcessor;
 import com.SCHSRobotics.HAL9001.util.math.FakeNumpy;
-import com.SCHSRobotics.HAL9001.util.math.quantities.Vector2D;
-import com.SCHSRobotics.HAL9001.util.math.units.AngleUnits;
-import com.SCHSRobotics.HAL9001.util.math.units.DistanceUnit;
+import com.SCHSRobotics.HAL9001.util.math.geometry.Vector2D;
+import com.SCHSRobotics.HAL9001.util.math.units.HALAngleUnit;
+import com.SCHSRobotics.HAL9001.util.math.units.HALDistanceUnit;
 import com.SCHSRobotics.HAL9001.util.misc.BaseParam;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -630,85 +630,104 @@ public class OmniWheelDrive extends SubSystem {
     }
 
     /**
-     * Drive method for driving for a certain distance with matthew drive.
+     * Teleop configuration settings.
      *
-     * @param leftVector    The left motor vector.
-     * @param rightVector   The right motor vector.
-     * @param distanceLeft  The distance for the left side of the robot to travel.
-     * @param distanceRight The distance for the right side of the robot to travel.
-     * @param unit          The unit that the distance is being provided in.
+     * @return The teleop configuration.
      */
-    public void turnAndMoveDistance(Vector2D leftVector, Vector2D rightVector, double distanceLeft, double distanceRight, DistanceUnit unit) {
-        EncoderToDistanceProcessor processor = new EncoderToDistanceProcessor(encodersPerMeter);
-        turnAndMoveEncoders(leftVector, rightVector, processor.getEncoderAmount(distanceLeft, unit), processor.getEncoderAmount(distanceRight, unit));
+    @NotNull
+    @Contract(" -> new")
+    @TeleopConfig
+    public static ConfigParam[] teleopConfig() {
+        if (useSpecific) {
+            return new ConfigParam[]{
+                    new ConfigParam("DriveType", DriveType.STANDARD),
+                    new ConfigParam(DRIVESTICK, Button.VectorInputs.right_stick),
+                    new ConfigParam(LEFT_DRIVESTICK, Button.VectorInputs.noButton),
+                    new ConfigParam(RIGHT_DRIVESTICK, Button.VectorInputs.noButton),
+                    new ConfigParam(TURNSTICK, Button.DoubleInputs.left_stick_x),
+                    new ConfigParam(TURN_LEFT, Button.BooleanInputs.noButton),
+                    new ConfigParam(TURN_RIGHT, Button.BooleanInputs.noButton),
+                    new ConfigParam(TTA_STICK, Button.VectorInputs.noButton),
+                    new ConfigParam(SPEED_MODE, Button.BooleanInputs.noButton),
+                    new ConfigParam(TURN_SPEED_MODE, Button.BooleanInputs.noButton),
+                    new ConfigParam("ReverseType", ReverseType.REVERSE_RIGHT),
+                    new ConfigParam("UseGyro", ConfigParam.BOOLEAN_MAP, false),
+                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), 1),
+                    new ConfigParam("MotorRunMode", new DcMotor.RunMode[]{
+                            DcMotor.RunMode.RUN_USING_ENCODER,
+                            DcMotor.RunMode.RUN_WITHOUT_ENCODER},
+                            DcMotor.RunMode.RUN_USING_ENCODER),
+                    new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE),
+                    new ConfigParam("InvertedHubs", ConfigParam.BOOLEAN_MAP, false)
+            };
+        } else {
+            return new ConfigParam[]{
+                    new ConfigParam("DriveType", DriveType.STANDARD),
+                    new ConfigParam(DRIVESTICK, Button.VectorInputs.right_stick),
+                    new ConfigParam(LEFT_DRIVESTICK, Button.VectorInputs.noButton),
+                    new ConfigParam(RIGHT_DRIVESTICK, Button.VectorInputs.noButton),
+                    new ConfigParam(TURNSTICK, Button.DoubleInputs.left_stick_x),
+                    new ConfigParam(TURN_LEFT, Button.BooleanInputs.noButton),
+                    new ConfigParam(TURN_RIGHT, Button.BooleanInputs.noButton),
+                    new ConfigParam(TTA_STICK, Button.VectorInputs.noButton),
+                    new ConfigParam(SPEED_MODE, Button.BooleanInputs.noButton),
+                    new ConfigParam(TURN_SPEED_MODE, Button.BooleanInputs.noButton),
+                    new ConfigParam("turnLeftPower", ConfigParam.numberMap(0, 1, 0.05), 0.3),
+                    new ConfigParam("turnRightPower", ConfigParam.numberMap(0, 1, 0.05), 0.3),
+                    new ConfigParam("ReverseType", ReverseType.REVERSE_RIGHT),
+                    new ConfigParam("UseGyro", ConfigParam.BOOLEAN_MAP, false),
+                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), 1),
+                    new ConfigParam("ConstantSpeedMultiplier", ConfigParam.numberMap(0, 10, 0.05), 1.0),
+                    new ConfigParam("SlowModeMultiplier", ConfigParam.numberMap(0, 10, 0.05), 1.0),
+                    new ConfigParam("ConstantTurnSpeedMultiplier", ConfigParam.numberMap(0, 10, 0.05), 1.0),
+                    new ConfigParam("SlowTurnModeMultiplier", ConfigParam.numberMap(0, 10, 0.05), 1.0),
+                    new ConfigParam("MotorRunMode", new DcMotor.RunMode[]{
+                            DcMotor.RunMode.RUN_USING_ENCODER,
+                            DcMotor.RunMode.RUN_WITHOUT_ENCODER},
+                            DcMotor.RunMode.RUN_USING_ENCODER),
+                    new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE),
+                    new ConfigParam("InvertedHubs", ConfigParam.BOOLEAN_MAP, false)
+            };
+        }
     }
 
     /**
-     * Turn and move at the same time for a certain amount of encoder ticks.
+     * Autonomous configuration settings.
      *
-     * @param leftVector The left motor vector.
-     * @param rightVector The right motor vector.
-     * @param encodersLeft The amount of encoders that the left side of the robot should travel.
-     * @param encodersRight The amount of encoders that the right side of the robot should travel.
-     *
-     * @throws InvalidMoveCommandException Throws this exception if you tried to move the robot in an impossible way. (ex: 0 power, move 2000 encoder ticks).
-     * @throws DumpsterFireException Throws this exception if you try and move negative encoder distances. Change the power to change direction.
+     * @return The teleop configuration.
      */
-    public void turnAndMoveEncoders(@NotNull Vector2D leftVector, Vector2D rightVector, double encodersLeft, double encodersRight) {
-        if ((leftVector.isZeroVector() && encodersLeft != 0) || (rightVector.isZeroVector() && encodersRight != 0)) {
-            throw new InvalidMoveCommandException("You can't move anywhere if you aren't trying to move ;)");
+    @NotNull
+    @Contract(" -> new")
+    @AutonomousConfig
+    public static ConfigParam[] autonomousConfig() {
+        if (useSpecific) {
+            return new ConfigParam[]{
+                    new ConfigParam("DriveType", DriveType.STANDARD),
+                    new ConfigParam("UseGyro", ConfigParam.BOOLEAN_MAP, false),
+                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), 1),
+                    new ConfigParam("MotorRunMode", new DcMotor.RunMode[]{
+                            DcMotor.RunMode.RUN_USING_ENCODER,
+                            DcMotor.RunMode.RUN_WITHOUT_ENCODER},
+                            DcMotor.RunMode.RUN_USING_ENCODER),
+                    new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE),
+                    new ConfigParam("ReverseType", ReverseType.REVERSE_RIGHT),
+                    new ConfigParam("InvertedHubs", ConfigParam.BOOLEAN_MAP, false)
+            };
+        } else {
+            return new ConfigParam[]{
+                    new ConfigParam("DriveType", DriveType.STANDARD),
+                    new ConfigParam("UseGyro", ConfigParam.BOOLEAN_MAP, false),
+                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), 1),
+                    new ConfigParam("ConstantSpeedMultiplier", ConfigParam.numberMap(0, 1, 0.05), 1.0),
+                    new ConfigParam("MotorRunMode", new DcMotor.RunMode[]{
+                            DcMotor.RunMode.RUN_USING_ENCODER,
+                            DcMotor.RunMode.RUN_WITHOUT_ENCODER},
+                            DcMotor.RunMode.RUN_USING_ENCODER),
+                    new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE),
+                    new ConfigParam("ReverseType", ReverseType.REVERSE_RIGHT),
+                    new ConfigParam("InvertedHubs", ConfigParam.BOOLEAN_MAP, false)
+            };
         }
-
-        if (encodersLeft < 0 || encodersRight < 0) {
-            throw new DumpsterFireException("Where you're going, you don't need roads! (distance must be positive)");
-        }
-
-        resetAllEncoders();
-
-        Vector2D leftDisplacement = new Vector2D(encodersLeft, leftVector.getAngle(), AngleUnits.RADIANS);
-        Vector2D rightDisplacement = new Vector2D(encodersRight, rightVector.getAngle(), AngleUnits.RADIANS);
-
-        leftVector.multiply(constantSpeedMultiplier * Math.sqrt(2));
-        rightVector.multiply(constantSpeedMultiplier * Math.sqrt(2));
-
-        leftVector.rotate(-(PI / 4));
-        rightVector.rotate(-(PI / 4));
-
-        double[] powersLeft = new double[]{leftVector.getX(), leftVector.getY()};
-        double maxLeft = FakeNumpy.max(FakeNumpy.abs(powersLeft));
-        FakeNumpy.divide(powersLeft, maxLeft > 1 ? maxLeft : 1);
-
-        double[] powersRight = new double[]{rightVector.getX(), rightVector.getY()};
-        double maxRight = FakeNumpy.max(FakeNumpy.abs(powersRight));
-        FakeNumpy.divide(powersLeft, maxRight > 1 ? maxRight : 1);
-
-        leftDisplacement.rotate(-(PI / 4));
-        rightDisplacement.rotate(-(PI / 4));
-
-        double thresh1Left = Math.abs(leftDisplacement.getX());
-        double thresh2Left = Math.abs(leftDisplacement.getY());
-
-        double thresh1Right = Math.abs(rightDisplacement.getX());
-        double thresh2Right = Math.abs(rightDisplacement.getY());
-
-        while (robot.opModeIsActive() && ((Math.abs(topLeft.getCurrentPosition()) < thresh1Left && Math.abs(botLeft.getCurrentPosition()) < thresh2Left) || (Math.abs(botRight.getCurrentPosition()) < thresh1Right && Math.abs(topRight.getCurrentPosition()) < thresh2Right))) {
-            if (Math.abs(topLeft.getCurrentPosition()) < thresh1Left && Math.abs(botLeft.getCurrentPosition()) < thresh2Left) {
-                topLeft.setPower(powersLeft[0]);
-                botLeft.setPower(powersLeft[1]);
-            } else {
-                topLeft.setPower(0);
-                botLeft.setPower(0);
-            }
-            if (Math.abs(botRight.getCurrentPosition()) < thresh1Right && Math.abs(topRight.getCurrentPosition()) < thresh2Right) {
-                topRight.setPower(powersRight[1]);
-                botRight.setPower(powersRight[0]);
-            } else {
-                topRight.setPower(0);
-                botRight.setPower(0);
-            }
-        }
-
-        stopAllMotors();
     }
 
     /**
@@ -735,16 +754,17 @@ public class OmniWheelDrive extends SubSystem {
     }
 
     /**
-     * Turn and move at the same time for a certain distance.
+     * Drive method for driving for a certain distance with matthew drive.
      *
-     * @param v         The velocity vector of the robot.
-     * @param turnPower The power to turn at.
-     * @param distance  The distance to travel.
-     * @param unit      The unit of distance.
+     * @param leftVector    The left motor vector.
+     * @param rightVector   The right motor vector.
+     * @param distanceLeft  The distance for the left side of the robot to travel.
+     * @param distanceRight The distance for the right side of the robot to travel.
+     * @param unit          The unit that the distance is being provided in.
      */
-    public void turnAndMoveDistance(Vector2D v, double turnPower, double distance, DistanceUnit unit) {
+    public void turnAndMoveDistance(Vector2D leftVector, Vector2D rightVector, double distanceLeft, double distanceRight, HALDistanceUnit unit) {
         EncoderToDistanceProcessor processor = new EncoderToDistanceProcessor(encodersPerMeter);
-        turnAndMoveEncoders(v, turnPower, processor.getEncoderAmount(distance, unit));
+        turnAndMoveEncoders(leftVector, rightVector, processor.getEncoderAmount(distanceLeft, unit), processor.getEncoderAmount(distanceRight, unit));
     }
 
     /**
@@ -865,6 +885,86 @@ public class OmniWheelDrive extends SubSystem {
     }
 
     /**
+     * Turn and move at the same time for a certain amount of encoder ticks.
+     *
+     * @param leftVector    The left motor vector.
+     * @param rightVector   The right motor vector.
+     * @param encodersLeft  The amount of encoders that the left side of the robot should travel.
+     * @param encodersRight The amount of encoders that the right side of the robot should travel.
+     * @throws InvalidMoveCommandException Throws this exception if you tried to move the robot in an impossible way. (ex: 0 power, move 2000 encoder ticks).
+     * @throws DumpsterFireException       Throws this exception if you try and move negative encoder distances. Change the power to change direction.
+     */
+    public void turnAndMoveEncoders(@NotNull Vector2D leftVector, Vector2D rightVector, double encodersLeft, double encodersRight) {
+        if ((leftVector.isZeroVector() && encodersLeft != 0) || (rightVector.isZeroVector() && encodersRight != 0)) {
+            throw new InvalidMoveCommandException("You can't move anywhere if you aren't trying to move ;)");
+        }
+
+        if (encodersLeft < 0 || encodersRight < 0) {
+            throw new DumpsterFireException("Where you're going, you don't need roads! (distance must be positive)");
+        }
+
+        resetAllEncoders();
+
+        Vector2D leftDisplacement = new Vector2D(encodersLeft, leftVector.getAngle(), HALAngleUnit.RADIANS);
+        Vector2D rightDisplacement = new Vector2D(encodersRight, rightVector.getAngle(), HALAngleUnit.RADIANS);
+
+        leftVector.multiply(constantSpeedMultiplier * Math.sqrt(2));
+        rightVector.multiply(constantSpeedMultiplier * Math.sqrt(2));
+
+        leftVector.rotate(-(PI / 4));
+        rightVector.rotate(-(PI / 4));
+
+        double[] powersLeft = new double[]{leftVector.getX(), leftVector.getY()};
+        double maxLeft = FakeNumpy.max(FakeNumpy.abs(powersLeft));
+        FakeNumpy.divide(powersLeft, maxLeft > 1 ? maxLeft : 1);
+
+        double[] powersRight = new double[]{rightVector.getX(), rightVector.getY()};
+        double maxRight = FakeNumpy.max(FakeNumpy.abs(powersRight));
+        FakeNumpy.divide(powersLeft, maxRight > 1 ? maxRight : 1);
+
+        leftDisplacement.rotate(-(PI / 4));
+        rightDisplacement.rotate(-(PI / 4));
+
+        double thresh1Left = Math.abs(leftDisplacement.getX());
+        double thresh2Left = Math.abs(leftDisplacement.getY());
+
+        double thresh1Right = Math.abs(rightDisplacement.getX());
+        double thresh2Right = Math.abs(rightDisplacement.getY());
+
+        while (robot.opModeIsActive() && ((Math.abs(topLeft.getCurrentPosition()) < thresh1Left && Math.abs(botLeft.getCurrentPosition()) < thresh2Left) || (Math.abs(botRight.getCurrentPosition()) < thresh1Right && Math.abs(topRight.getCurrentPosition()) < thresh2Right))) {
+            if (Math.abs(topLeft.getCurrentPosition()) < thresh1Left && Math.abs(botLeft.getCurrentPosition()) < thresh2Left) {
+                topLeft.setPower(powersLeft[0]);
+                botLeft.setPower(powersLeft[1]);
+            } else {
+                topLeft.setPower(0);
+                botLeft.setPower(0);
+            }
+            if (Math.abs(botRight.getCurrentPosition()) < thresh1Right && Math.abs(topRight.getCurrentPosition()) < thresh2Right) {
+                topRight.setPower(powersRight[1]);
+                botRight.setPower(powersRight[0]);
+            } else {
+                topRight.setPower(0);
+                botRight.setPower(0);
+            }
+        }
+
+        stopAllMotors();
+    }
+
+    /**
+     * Turn and move at the same time for a certain distance.
+     *
+     * @param v         The velocity vector of the robot.
+     * @param turnPower The power to turn at.
+     * @param distance  The distance to travel.
+     * @param unit      The unit of distance.
+     */
+    public void turnAndMoveDistance(Vector2D v, double turnPower, double distance, HALDistanceUnit unit) {
+        EncoderToDistanceProcessor processor = new EncoderToDistanceProcessor(encodersPerMeter);
+        turnAndMoveEncoders(v, turnPower, processor.getEncoderAmount(distance, unit));
+    }
+
+    /**
      * Makes the robot move a certain distance. Use this for any non-matthew drive mode.
      *
      * @param v                The direction and power that the robot should move at.
@@ -872,98 +972,9 @@ public class OmniWheelDrive extends SubSystem {
      * @param unit             The unit of distance the robot should travel.
      * @param stabilityControl Whether the robot should use stability control.
      */
-    public void driveDistance(Vector2D v, double distance, DistanceUnit unit, boolean stabilityControl) {
+    public void driveDistance(Vector2D v, double distance, HALDistanceUnit unit, boolean stabilityControl) {
         EncoderToDistanceProcessor processor = new EncoderToDistanceProcessor(encodersPerMeter);
         driveEncoders(v, processor.getEncoderAmount(distance, unit), stabilityControl);
-    }
-
-    /**
-     * Makes the robot drive a specified distance in a specified direction.
-     *
-     * @param v        The input velocity vector.
-     * @param distance The distance the robot should travel.
-     * @param unit     The units of distance.
-     */
-    public void driveDistance(Vector2D v, double distance, DistanceUnit unit) {
-        driveDistance(v, distance, unit, false);
-    }
-
-    /**
-     * Drive a certain number of encoder ticks.
-     *
-     * @param v The input velocity vector.
-     * @param encoders The amount of encoder ticks to travel.
-     * @param stabilityControl Whether or not to use the stability PID.
-     *
-     * @throws InvalidMoveCommandException Throws this exception if you tried to move the robot in an impossible way. (ex: 0 power, move 2000 encoder ticks).
-     * @throws DumpsterFireException Throws this exception if you try and move negative encoder distances. Change the power to change direction.
-     */
-    public void driveEncoders(@NotNull Vector2D v, double encoders, boolean stabilityControl) {
-        if (v.isZeroVector() && encoders != 0) {
-            throw new InvalidMoveCommandException("You can't move anywhere if you aren't trying to move ;)");
-        }
-        if (encoders < 0) {
-            throw new DumpsterFireException("Where you're going, you don't need roads! (encoders must be positive)");
-        }
-
-        Vector2D displacement = new Vector2D(encoders, v.getAngle(), AngleUnits.RADIANS);
-
-        final Vector2D vcpy = v.clone();
-        final boolean stabilityCtrl = stabilityControl;
-
-        final double thresh1;
-        final double thresh2;
-
-        final int[] initVals = getEncoderPos();
-
-        if (stabilityControl) {
-            stabilityPID.setSetpoint(getCurrentAngle(useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS));
-        }
-
-        switch (driveType) {
-            case STANDARD_TTA:
-            case STANDARD:
-
-                displacement.rotate(-(PI / 4));
-
-                thresh1 = Math.abs(displacement.getX());
-                thresh2 = Math.abs(displacement.getY());
-
-                waitWhile(new Supplier<Boolean>() {
-                              @Override
-                              public Boolean get() {
-                                  return Math.abs(getTopLeftEncoderPos() - initVals[0]) < thresh1 && Math.abs(getTopRightEncoderPos() - initVals[1]) < thresh2 && Math.abs(getBotLeftEncoderPos() - initVals[2]) < thresh2 && Math.abs(getBotRightEncoderPos() - initVals[3]) < thresh1;
-                              }
-                          },
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                drive(vcpy, stabilityCtrl);
-                            }
-                        });
-                break;
-            case FIELD_CENTRIC_TTA:
-            case FIELD_CENTRIC:
-                displacement.rotate(-((PI / 4) + getCurrentAngle() + imuShift));
-
-                thresh1 = Math.abs(displacement.getX());
-                thresh2 = Math.abs(displacement.getY());
-
-                waitWhile(new Supplier<Boolean>() {
-                              @Override
-                              public Boolean get() {
-                                  return Math.abs(getTopLeftEncoderPos() - initVals[0]) < thresh1 && Math.abs(getTopRightEncoderPos() - initVals[1]) < thresh2 && Math.abs(getBotLeftEncoderPos() - initVals[2]) < thresh2 && Math.abs(getBotRightEncoderPos() - initVals[3]) < thresh1;
-                              }
-                          },
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                drive(vcpy, stabilityCtrl);
-                            }
-                        });
-                break;
-        }
-        stopAllMotors();
     }
 
     /**
@@ -1027,16 +1038,14 @@ public class OmniWheelDrive extends SubSystem {
     }
 
     /**
-     * Turn a certain distance.
+     * Makes the robot drive a specified distance in a specified direction.
      *
-     * @param turnPower The power to turn at.
-     * @param distance  The distance to turn.
-     * @param unit      The unit of distance.
+     * @param v        The input velocity vector.
+     * @param distance The distance the robot should travel.
+     * @param unit     The units of distance.
      */
-    public void turnDistance(double turnPower, double distance, DistanceUnit unit) {
-        EncoderToDistanceProcessor processor = new EncoderToDistanceProcessor(encodersPerMeter);
-        double encoders = Math.abs(processor.getEncoderAmount(distance, unit));
-        turnEncoders(turnPower, encoders);
+    public void driveDistance(Vector2D v, double distance, HALDistanceUnit unit) {
+        driveDistance(v, distance, unit, false);
     }
 
     /**
@@ -1509,106 +1518,93 @@ public class OmniWheelDrive extends SubSystem {
     }
 
     /**
-     * Teleop configuration settings.
+     * Drive a certain number of encoder ticks.
      *
-     * @return The teleop configuration.
+     * @param v                The input velocity vector.
+     * @param encoders         The amount of encoder ticks to travel.
+     * @param stabilityControl Whether or not to use the stability PID.
+     * @throws InvalidMoveCommandException Throws this exception if you tried to move the robot in an impossible way. (ex: 0 power, move 2000 encoder ticks).
+     * @throws DumpsterFireException       Throws this exception if you try and move negative encoder distances. Change the power to change direction.
      */
-    @NotNull
-    @Contract(" -> new")
-    @TeleopConfig
-    public static ConfigParam[] teleopConfig() {
-        if(useSpecific) {
-            return new ConfigParam[]{
-                    new ConfigParam("DriveType", DriveType.STANDARD),
-                    new ConfigParam(DRIVESTICK, Button.VectorInputs.right_stick),
-                    new ConfigParam(LEFT_DRIVESTICK, Button.VectorInputs.noButton),
-                    new ConfigParam(RIGHT_DRIVESTICK, Button.VectorInputs.noButton),
-                    new ConfigParam(TURNSTICK, Button.DoubleInputs.left_stick_x),
-                    new ConfigParam(TURN_LEFT, Button.BooleanInputs.noButton),
-                    new ConfigParam(TURN_RIGHT, Button.BooleanInputs.noButton),
-                    new ConfigParam(TTA_STICK, Button.VectorInputs.noButton),
-                    new ConfigParam(SPEED_MODE, Button.BooleanInputs.noButton),
-                    new ConfigParam(TURN_SPEED_MODE, Button.BooleanInputs.noButton),
-                    new ConfigParam("ReverseType", ReverseType.REVERSE_RIGHT),
-                    new ConfigParam("UseGyro", ConfigParam.booleanMap, false),
-                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), 1),
-                    new ConfigParam("MotorRunMode", new DcMotor.RunMode[] {
-                            DcMotor.RunMode.RUN_USING_ENCODER,
-                            DcMotor.RunMode.RUN_WITHOUT_ENCODER},
-                            DcMotor.RunMode.RUN_USING_ENCODER),
-                    new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE),
-                    new ConfigParam("InvertedHubs", ConfigParam.booleanMap, false)
-            };
+    public void driveEncoders(@NotNull Vector2D v, double encoders, boolean stabilityControl) {
+        if (v.isZeroVector() && encoders != 0) {
+            throw new InvalidMoveCommandException("You can't move anywhere if you aren't trying to move ;)");
         }
-        else {
-            return new ConfigParam[]{
-                    new ConfigParam("DriveType", DriveType.STANDARD),
-                    new ConfigParam(DRIVESTICK, Button.VectorInputs.right_stick),
-                    new ConfigParam(LEFT_DRIVESTICK, Button.VectorInputs.noButton),
-                    new ConfigParam(RIGHT_DRIVESTICK, Button.VectorInputs.noButton),
-                    new ConfigParam(TURNSTICK, Button.DoubleInputs.left_stick_x),
-                    new ConfigParam(TURN_LEFT, Button.BooleanInputs.noButton),
-                    new ConfigParam(TURN_RIGHT, Button.BooleanInputs.noButton),
-                    new ConfigParam(TTA_STICK, Button.VectorInputs.noButton),
-                    new ConfigParam(SPEED_MODE, Button.BooleanInputs.noButton),
-                    new ConfigParam(TURN_SPEED_MODE, Button.BooleanInputs.noButton),
-                    new ConfigParam("turnLeftPower", ConfigParam.numberMap(0, 1, 0.05), 0.3),
-                    new ConfigParam("turnRightPower", ConfigParam.numberMap(0, 1, 0.05), 0.3),
-                    new ConfigParam("ReverseType", ReverseType.REVERSE_RIGHT),
-                    new ConfigParam("UseGyro", ConfigParam.booleanMap, false),
-                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), 1),
-                    new ConfigParam("ConstantSpeedMultiplier", ConfigParam.numberMap(0, 10, 0.05), 1.0),
-                    new ConfigParam("SlowModeMultiplier", ConfigParam.numberMap(0, 10, 0.05), 1.0),
-                    new ConfigParam("ConstantTurnSpeedMultiplier", ConfigParam.numberMap(0, 10, 0.05), 1.0),
-                    new ConfigParam("SlowTurnModeMultiplier", ConfigParam.numberMap(0, 10, 0.05), 1.0),
-                    new ConfigParam("MotorRunMode", new DcMotor.RunMode[] {
-                            DcMotor.RunMode.RUN_USING_ENCODER,
-                            DcMotor.RunMode.RUN_WITHOUT_ENCODER},
-                            DcMotor.RunMode.RUN_USING_ENCODER),
-                    new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE),
-                    new ConfigParam("InvertedHubs", ConfigParam.booleanMap, false)
-            };
+        if (encoders < 0) {
+            throw new DumpsterFireException("Where you're going, you don't need roads! (encoders must be positive)");
         }
+
+        Vector2D displacement = new Vector2D(encoders, v.getAngle(), HALAngleUnit.RADIANS);
+
+        final Vector2D vcpy = v.clone();
+        final boolean stabilityCtrl = stabilityControl;
+
+        final double thresh1;
+        final double thresh2;
+
+        final int[] initVals = getEncoderPos();
+
+        if (stabilityControl) {
+            stabilityPID.setSetpoint(getCurrentAngle(useDegreesStability ? AngleUnit.DEGREES : AngleUnit.RADIANS));
+        }
+
+        switch (driveType) {
+            case STANDARD_TTA:
+            case STANDARD:
+
+                displacement.rotate(-(PI / 4));
+
+                thresh1 = Math.abs(displacement.getX());
+                thresh2 = Math.abs(displacement.getY());
+
+                waitWhile(new Supplier<Boolean>() {
+                              @Override
+                              public Boolean get() {
+                                  return Math.abs(getTopLeftEncoderPos() - initVals[0]) < thresh1 && Math.abs(getTopRightEncoderPos() - initVals[1]) < thresh2 && Math.abs(getBotLeftEncoderPos() - initVals[2]) < thresh2 && Math.abs(getBotRightEncoderPos() - initVals[3]) < thresh1;
+                              }
+                          },
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                drive(vcpy, stabilityCtrl);
+                            }
+                        });
+                break;
+            case FIELD_CENTRIC_TTA:
+            case FIELD_CENTRIC:
+                displacement.rotate(-((PI / 4) + getCurrentAngle() + imuShift));
+
+                thresh1 = Math.abs(displacement.getX());
+                thresh2 = Math.abs(displacement.getY());
+
+                waitWhile(new Supplier<Boolean>() {
+                              @Override
+                              public Boolean get() {
+                                  return Math.abs(getTopLeftEncoderPos() - initVals[0]) < thresh1 && Math.abs(getTopRightEncoderPos() - initVals[1]) < thresh2 && Math.abs(getBotLeftEncoderPos() - initVals[2]) < thresh2 && Math.abs(getBotRightEncoderPos() - initVals[3]) < thresh1;
+                              }
+                          },
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                drive(vcpy, stabilityCtrl);
+                            }
+                        });
+                break;
+        }
+        stopAllMotors();
     }
 
     /**
-     * Autonomous configuration settings.
+     * Turn a certain distance.
      *
-     * @return The teleop configuration.
+     * @param turnPower The power to turn at.
+     * @param distance  The distance to turn.
+     * @param unit      The unit of distance.
      */
-    @NotNull
-    @Contract(" -> new")
-    @AutonomousConfig
-    public static ConfigParam[] autonomousConfig() {
-        if(useSpecific) {
-            return new ConfigParam[]{
-                    new ConfigParam("DriveType", DriveType.STANDARD),
-                    new ConfigParam("UseGyro", ConfigParam.booleanMap, false),
-                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), 1),
-                    new ConfigParam("MotorRunMode", new DcMotor.RunMode[] {
-                            DcMotor.RunMode.RUN_USING_ENCODER,
-                            DcMotor.RunMode.RUN_WITHOUT_ENCODER},
-                            DcMotor.RunMode.RUN_USING_ENCODER),
-                    new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE),
-                    new ConfigParam("ReverseType", ReverseType.REVERSE_RIGHT),
-                    new ConfigParam("InvertedHubs", ConfigParam.booleanMap, false)
-            };
-        }
-        else {
-            return new ConfigParam[]{
-                    new ConfigParam("DriveType", DriveType.STANDARD),
-                    new ConfigParam("UseGyro", ConfigParam.booleanMap, false),
-                    new ConfigParam("ImuNumber", ConfigParam.numberMap(1, 2, 1), 1),
-                    new ConfigParam("ConstantSpeedMultiplier", ConfigParam.numberMap(0, 1, 0.05), 1.0),
-                    new ConfigParam("MotorRunMode", new DcMotor.RunMode[] {
-                            DcMotor.RunMode.RUN_USING_ENCODER,
-                            DcMotor.RunMode.RUN_WITHOUT_ENCODER},
-                            DcMotor.RunMode.RUN_USING_ENCODER),
-                    new ConfigParam("MotorZeroPower", DcMotor.ZeroPowerBehavior.BRAKE),
-                    new ConfigParam("ReverseType", ReverseType.REVERSE_RIGHT),
-                    new ConfigParam("InvertedHubs", ConfigParam.booleanMap, false)
-            };
-        }
+    public void turnDistance(double turnPower, double distance, HALDistanceUnit unit) {
+        EncoderToDistanceProcessor processor = new EncoderToDistanceProcessor(encodersPerMeter);
+        double encoders = Math.abs(processor.getEncoderAmount(distance, unit));
+        turnEncoders(turnPower, encoders);
     }
 
     /**

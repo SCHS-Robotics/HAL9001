@@ -3,8 +3,8 @@ package com.SCHSRobotics.HAL9001.system.robot.subsystems;
 import com.SCHSRobotics.HAL9001.system.robot.Robot;
 import com.SCHSRobotics.HAL9001.util.control.Button;
 import com.SCHSRobotics.HAL9001.util.math.FakeNumpy;
-import com.SCHSRobotics.HAL9001.util.math.quantities.Vector2D;
-import com.SCHSRobotics.HAL9001.util.math.units.DistanceUnit;
+import com.SCHSRobotics.HAL9001.util.math.geometry.Vector2D;
+import com.SCHSRobotics.HAL9001.util.math.units.HALDistanceUnit;
 
 import org.firstinspires.ftc.robotcore.external.Supplier;
 import org.jetbrains.annotations.NotNull;
@@ -200,11 +200,11 @@ public abstract class HolomnicDriveTrain extends DriveTrain {
         }, runWhileProgram);
     }
 
-    public void turnDistance(double turnPower, double distance, DistanceUnit distanceUnit) {
+    public void turnDistance(double turnPower, double distance, HALDistanceUnit distanceUnit) {
         turnEncoders(turnPower, distProcessor.getEncoderAmount(distance, distanceUnit));
     }
 
-    public void turnDistance(double turnPower, double distance, DistanceUnit distanceUnit, Runnable runWhileProgram) {
+    public void turnDistance(double turnPower, double distance, HALDistanceUnit distanceUnit, Runnable runWhileProgram) {
         turnEncoders(turnPower, distProcessor.getEncoderAmount(distance, distanceUnit), runWhileProgram);
     }
 

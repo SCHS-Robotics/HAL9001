@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
  * Creation Date: 7/19/19
  * @since 1.0.0
  */
-public enum DistanceUnit {
+public enum HALDistanceUnit {
     MEGAMETERS(0.001, "MM"), MILLIMETERS(0.001, "mm"), CENTIMETERS(0.01, "cm"), METERS(1.0, "m"), INCH(0.0254, "in"), FOOTS(0.3048, "ft"), FEET(0.3048, "ft"), YARDS(0.9144, "yd"), MILES(1609.34, "mi"), TILES(0.6096, "Ti");
 
     //The number that you multiply by to get meters.
@@ -23,9 +23,9 @@ public enum DistanceUnit {
      * Constructor for Units.
      *
      * @param meterConversion The conversion factor used to convert that unit to meters.
-     * @param abbreviation The abbreviation of the unit.
+     * @param abbreviation    The abbreviation of the unit.
      */
-    DistanceUnit(double meterConversion, @NotNull String abbreviation) {
+    HALDistanceUnit(double meterConversion, @NotNull String abbreviation) {
         conversionFactor = meterConversion;
         this.abbreviation = abbreviation;
     }
@@ -38,7 +38,7 @@ public enum DistanceUnit {
      * @param toUnit   The unit to convert to.
      * @return The converted value.
      */
-    public static double convert(double input, @NotNull DistanceUnit fromUnit, @NotNull DistanceUnit toUnit) {
+    public static double convert(double input, @NotNull HALDistanceUnit fromUnit, @NotNull HALDistanceUnit toUnit) {
         double meters = input * fromUnit.conversionFactor;
         return meters / toUnit.conversionFactor;
     }

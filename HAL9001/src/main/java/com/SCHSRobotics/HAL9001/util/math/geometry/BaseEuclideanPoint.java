@@ -1,4 +1,4 @@
-package com.SCHSRobotics.HAL9001.util.math.quantities;
+package com.SCHSRobotics.HAL9001.util.math.geometry;
 
 import static java.lang.Math.sqrt;
 

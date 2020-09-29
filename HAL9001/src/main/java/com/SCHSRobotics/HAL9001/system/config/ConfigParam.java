@@ -3,6 +3,7 @@ package com.SCHSRobotics.HAL9001.system.config;
 import com.SCHSRobotics.HAL9001.util.control.Button;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotARealGamepadException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotAnAlchemistException;
+import com.SCHSRobotics.HAL9001.util.math.geometry.Vector2D;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,11 +27,6 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public class ConfigParam {
 
-    //A map mapping the words true and false to the booleans true and false.
-    public static Map<String, Object> booleanMap = new HashMap<String,Object>() {{
-        put("true",true);
-        put("false",false);
-    }};
     //The name of the option
     public String name;
     //The option's default value.
@@ -45,12 +41,21 @@ public class ConfigParam {
     private String defaultGamepadOption;
     //The gamepad that the option is currently using.
     public String currentGamepadOption;
-    //The list of possible gamepads for the option to use.
-    public static final String[] GAMEPAD_OPTIONS = new String[] {"Gamepad 1", "Gamepad 2"};
-    public static final String[] BOOLEAN_BUTTON_OPTIONS = new String[] {"noButton","a","b","x","y","dpad_left","dpad_right","dpad_up","dpad_down","left_bumper","right_bumper","bool_left_trigger","bool_right_trigger","left_stick_button","right_stick_button","bool_left_stick_x","bool_left_stick_y","bool_right_stick_x","bool_right_stick_y","bool_left_stick_x_left","bool_left_stick_x_right","bool_left_stick_y_up","bool_left_stick_y_down","bool_right_stick_x_left","bool_right_stick_x_right","bool_right_stick_y_up","bool_right_stick_y_down","back","start","guide"};
-    public static final String[] DOUBLE_BUTTON_OPTIONS = new String[] {"noButton","left_stick_x","left_stick_y","right_stick_x","right_stick_y","left_trigger","right_trigger"};
-    public static final String[] VECTOR_BUTTON_OPTIONS = new String[] {"noButton","left_stick", "right_stick"};
 
+    //List of possible gamepad options.
+    public static final String[] GAMEPAD_OPTIONS = new String[]{"Gamepad 1", "Gamepad 2"};
+    //List of possible boolean button options.
+    public static final String[] BOOLEAN_BUTTON_OPTIONS = new String[]{"noButton", "a", "b", "x", "y", "dpad_left", "dpad_right", "dpad_up", "dpad_down", "left_bumper", "right_bumper", "bool_left_trigger", "bool_right_trigger", "left_stick_button", "right_stick_button", "bool_left_stick_x", "bool_left_stick_y", "bool_right_stick_x", "bool_right_stick_y", "bool_left_stick_x_left", "bool_left_stick_x_right", "bool_left_stick_y_up", "bool_left_stick_y_down", "bool_right_stick_x_left", "bool_right_stick_x_right", "bool_right_stick_y_up", "bool_right_stick_y_down", "back", "start", "guide"};
+    //List of possible double button options.
+    public static final String[] DOUBLE_BUTTON_OPTIONS = new String[]{"noButton", "left_stick_x", "left_stick_y", "right_stick_x", "right_stick_y", "left_trigger", "right_trigger"};
+    //List of possible vector button options.
+    public static final String[] VECTOR_BUTTON_OPTIONS = new String[]{"noButton", "left_stick", "right_stick"};
+
+    //A map mapping the words true and false to the booleans true and false.
+    public static final Map<String, Object> BOOLEAN_MAP = new HashMap<String, Object>() {{
+        put("true", true);
+        put("false", false);
+    }};
 
     //A boolean value specifying if the option uses a gamepad.
     public boolean usesGamepad;
@@ -66,21 +71,7 @@ public class ConfigParam {
      * @param defaultOption The default value of the option.
      */
     public ConfigParam(@NotNull String name, @NotNull Button.BooleanInputs defaultOption) {
-        this.name = name;
-        String[] boolOptions = new String[] {"noButton","a","b","x","y","dpad_left","dpad_right","dpad_up","dpad_down","left_bumper","right_bumper","bool_left_trigger","bool_right_trigger","left_stick_button","right_stick_button","bool_left_stick_x","bool_left_stick_y","bool_right_stick_x","bool_right_stick_y","bool_left_stick_x_left","bool_left_stick_x_right","bool_left_stick_y_up","bool_left_stick_y_down","bool_right_stick_x_left","bool_right_stick_x_right","bool_right_stick_y_up","bool_right_stick_y_down","back","start","guide"};
-        options = new ArrayList<>(Arrays.asList(boolOptions));
-        this.defaultOption = defaultOption.name();
-        currentOption = this.defaultOption;
-
-        vals = new ArrayList<>();
-
-        isBoolButton = true;
-        isDoubleButton = false;
-
-        usesGamepad = true;
-
-        defaultGamepadOption = GAMEPAD_OPTIONS[0];
-        currentGamepadOption = this.defaultGamepadOption;
+        this(name, defaultOption, 1);
     }
 
     /**
@@ -118,20 +109,7 @@ public class ConfigParam {
      * @param defaultOption The default value of the option.
      */
     public ConfigParam(@NotNull String name, @NotNull Button.DoubleInputs defaultOption) {
-        this.name = name;
-        options = new ArrayList<>(Arrays.asList(DOUBLE_BUTTON_OPTIONS));
-        this.defaultOption = defaultOption.name();
-        currentOption = this.defaultOption;
-
-        vals = new ArrayList<>();
-
-        isBoolButton = false;
-        isDoubleButton = true;
-
-        usesGamepad = true;
-
-        defaultGamepadOption = GAMEPAD_OPTIONS[0];
-        currentGamepadOption = this.defaultGamepadOption;
+        this(name, defaultOption, 1);
     }
 
     /**
@@ -169,20 +147,7 @@ public class ConfigParam {
      * @param defaultOption The parameter's default option.
      */
     public ConfigParam(@NotNull String name, @NotNull Button.VectorInputs defaultOption) {
-        this.name = name;
-        options = new ArrayList<>(Arrays.asList(VECTOR_BUTTON_OPTIONS));
-        this.defaultOption = defaultOption.name();
-        currentOption = this.defaultOption;
-
-        vals = new ArrayList<>();
-
-        isBoolButton = false;
-        isDoubleButton = false;
-
-        usesGamepad = true;
-
-        defaultGamepadOption = GAMEPAD_OPTIONS[0];
-        currentGamepadOption = this.defaultGamepadOption;
+        this(name, defaultOption, 1);
     }
 
     /**
@@ -222,7 +187,7 @@ public class ConfigParam {
         this.defaultOption = defaultOption;
         currentOption = this.defaultOption;
 
-        vals = new ArrayList<Object>(options);
+        vals = new ArrayList<>(options);
 
         isBoolButton = false;
         isDoubleButton = false;
@@ -368,19 +333,16 @@ public class ConfigParam {
      * Converts the option to a button object if possible.
      *
      * @return The button representation of the option.
-     *
      * @throws NotAnAlchemistException Throws this exception if it is not possible to convert the option into a button.
      */
-    public Button toButton() {
-        if(usesGamepad) {
-            if(isBoolButton) {
-                return new Button(currentGamepadOption.equals("Gamepad 1") ? 1 : currentGamepadOption.equals("Gamepad 2") ? 2 : -1, Button.BooleanInputs.valueOf(currentOption));
-            }
-            else if(isDoubleButton){
-                return new Button(currentGamepadOption.equals("Gamepad 1") ? 1 : currentGamepadOption.equals("Gamepad 2") ? 2 : -1, Button.DoubleInputs.valueOf(currentOption));
-            }
-            else {
-                return new Button(currentGamepadOption.equals("Gamepad 1") ? 1 : currentGamepadOption.equals("Gamepad 2") ? 2 : -1, Button.VectorInputs.valueOf(currentOption));
+    public Button<?> toButton() {
+        if (usesGamepad) {
+            if (isBoolButton) {
+                return new Button<Boolean>(currentGamepadOption.equals("Gamepad 1") ? 1 : currentGamepadOption.equals("Gamepad 2") ? 2 : -1, Button.BooleanInputs.valueOf(currentOption));
+            } else if (isDoubleButton) {
+                return new Button<Double>(currentGamepadOption.equals("Gamepad 1") ? 1 : currentGamepadOption.equals("Gamepad 2") ? 2 : -1, Button.DoubleInputs.valueOf(currentOption));
+            } else {
+                return new Button<Vector2D>(currentGamepadOption.equals("Gamepad 1") ? 1 : currentGamepadOption.equals("Gamepad 2") ? 2 : -1, Button.VectorInputs.valueOf(currentOption));
             }
         }
         else {

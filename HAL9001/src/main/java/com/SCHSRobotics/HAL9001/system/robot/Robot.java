@@ -7,6 +7,7 @@ import com.SCHSRobotics.HAL9001.system.config.ConfigLabel;
 import com.SCHSRobotics.HAL9001.system.config.ConfigParam;
 import com.SCHSRobotics.HAL9001.system.config.DisableSubSystem;
 import com.SCHSRobotics.HAL9001.system.config.HALConfig;
+import com.SCHSRobotics.HAL9001.system.config.ProgramOptions;
 import com.SCHSRobotics.HAL9001.system.config.StandAlone;
 import com.SCHSRobotics.HAL9001.system.gui.HALGUI;
 import com.SCHSRobotics.HAL9001.system.gui.Payload;
@@ -153,6 +154,10 @@ public abstract class Robot {
             if (cameraData.usesViewport()) {
                 cameraMonitorViewIdIdx++;
             }
+        }
+
+        if (opMode.getClass().isAnnotationPresent(ProgramOptions.class)) {
+            globalConfig.addOpmode(opMode);
         }
     }
 
@@ -443,12 +448,12 @@ public abstract class Robot {
         return new ConfigData(output);
     }
 
-    public ConfigData pullProgramSettings() {
+    public ConfigData pullOpModeSettings() {
         List<ConfigParam> data = globalConfig.getConfig(opMode);
-        ExceptionChecker.assertNonNull(data, new NothingToSeeHereException(HALConfig.getOpModeName(opMode.getClass())+" settings are not part of the config."));
+        ExceptionChecker.assertNonNull(data, new NothingToSeeHereException(HALConfig.getOpModeName(opMode.getClass()) + " settings are not part of the config."));
 
         Map<String, Object> dataMap = new HashMap<>();
-        for(ConfigParam param : data) {
+        for (ConfigParam param : data) {
             dataMap.put(param.name, param.vals.get(param.options.indexOf(param.currentOption)));
         }
         return new ConfigData(dataMap);

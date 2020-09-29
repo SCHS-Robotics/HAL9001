@@ -20,7 +20,7 @@ import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.math.datastructures.MinHeap;
 import com.SCHSRobotics.HAL9001.util.math.datastructures.MultiElementMap;
-import com.SCHSRobotics.HAL9001.util.math.units.TimeUnit;
+import com.SCHSRobotics.HAL9001.util.math.units.HALTimeUnit;
 import com.SCHSRobotics.HAL9001.util.misc.Timer;
 import com.qualcomm.robotcore.util.Range;
 
@@ -94,7 +94,7 @@ public abstract class HALMenu {
         validButtons = new HashSet<>();
 
         blinkTimer = new Timer();
-        blinkTimer.start(cursorBlinkSpeedMs, TimeUnit.MILLISECONDS);
+        blinkTimer.start(cursorBlinkSpeedMs, HALTimeUnit.MILLISECONDS);
 
         selectionZone = initialSelectionZone();
         Class<? extends HALMenu> thisClass = getClass();
@@ -162,7 +162,7 @@ public abstract class HALMenu {
 
         //Generate gamepad events.
         Iterator<Button<?>> validButtonIterator = this.validButtons.iterator();
-        Button[] validButtons = new Button[this.validButtons.size()];
+        Button<?>[] validButtons = new Button[this.validButtons.size()];
         for (int i = 0; i < this.validButtons.size(); i++) {
             validButtons[i] = validButtonIterator.next();
         }
@@ -202,7 +202,7 @@ public abstract class HALMenu {
                 IF THE ORDER OF THESE CHECKS IS REVERSED THERE WILL BE ERRORS
                  */
                 boolean updatesUniversally = listener instanceof UniversalUpdater && ((UniversalUpdater) listener).updatesUniversally();
-                if(satisfiesCriteria && (!displayableElements.contains(listener) || displayableElements.indexOf(listener) == cursorY || updatesUniversally)) {
+                if ((satisfiesCriteria && (!displayableElements.contains(listener) || displayableElements.indexOf(listener) == cursorY || updatesUniversally)) || currentEvent instanceof LoopEvent) {
                     doCursorUpdate = listener.onEvent(currentEvent);
                 }
 

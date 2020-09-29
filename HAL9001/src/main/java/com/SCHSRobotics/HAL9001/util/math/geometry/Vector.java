@@ -1,6 +1,6 @@
-package com.SCHSRobotics.HAL9001.util.math.quantities;
+package com.SCHSRobotics.HAL9001.util.math.geometry;
 
-import com.SCHSRobotics.HAL9001.util.math.units.AngleUnits;
+import com.SCHSRobotics.HAL9001.util.math.units.HALAngleUnit;
 
 public interface Vector<V extends Vector<V>> {
     double[] getComponents();
@@ -13,7 +13,7 @@ public interface Vector<V extends Vector<V>> {
 
     double norm();
 
-    double angleTo(V vector, AngleUnits unit);
+    double angleTo(V vector, HALAngleUnit unit);
 
     V normalize();
 

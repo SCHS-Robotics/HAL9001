@@ -12,7 +12,7 @@ import com.SCHSRobotics.HAL9001.util.control.Button;
 import com.SCHSRobotics.HAL9001.util.control.CustomizableGamepad;
 import com.SCHSRobotics.HAL9001.util.control.Toggle;
 import com.SCHSRobotics.HAL9001.util.exceptions.ChannelDoesNotExistException;
-import com.SCHSRobotics.HAL9001.util.math.units.TimeUnit;
+import com.SCHSRobotics.HAL9001.util.math.units.HALTimeUnit;
 import com.SCHSRobotics.HAL9001.util.misc.Timer;
 import com.qualcomm.robotcore.util.Range;
 
@@ -222,7 +222,7 @@ public class ColorspaceCalib extends VisionSubSystem {
         upperLimit.updateToggle(changeLimit);
 
         if (incrementDecrementTimer.requiredTimeElapsed()) {
-            incrementDecrementTimer.start(delayMs, TimeUnit.MILLISECONDS);
+            incrementDecrementTimer.start(delayMs, HALTimeUnit.MILLISECONDS);
             if (upperLimit.getCurrentState()) {
                 if (inputs.getInput(X_INCREMENT)) {
                     x_upper += increment;

@@ -1,4 +1,4 @@
-package com.SCHSRobotics.HAL9001.util.math.quantities;
+package com.SCHSRobotics.HAL9001.util.math.geometry;
 
 public class Line<V extends Vector<V>, P extends BaseEuclideanPoint<V, P>> {
     protected P startPoint, endPoint;

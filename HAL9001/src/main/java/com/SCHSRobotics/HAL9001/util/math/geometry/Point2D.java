@@ -1,6 +1,6 @@
-package com.SCHSRobotics.HAL9001.util.math.quantities;
+package com.SCHSRobotics.HAL9001.util.math.geometry;
 
-import com.SCHSRobotics.HAL9001.util.math.units.AngleUnits;
+import com.SCHSRobotics.HAL9001.util.math.units.HALAngleUnit;
 
 public class Point2D extends BaseEuclideanPoint<Vector2D, Point2D> {
     private static final Point2D ORIGIN = new Point2D(0, 0);
@@ -26,8 +26,8 @@ public class Point2D extends BaseEuclideanPoint<Vector2D, Point2D> {
         this.theta = point.theta;
     }
 
-    public Point2D(double r, double theta, AngleUnits angleUnit) {
-        this(r, angleUnit.convertTo(AngleUnits.RADIANS).apply(theta), CoordinateSystem2D.POLAR);
+    public Point2D(double r, double theta, HALAngleUnit angleUnit) {
+        this(r, angleUnit.convertTo(HALAngleUnit.RADIANS).apply(theta), CoordinateSystem2D.POLAR);
     }
 
     public static Point2D getOrigin() {

@@ -1,6 +1,6 @@
-package com.SCHSRobotics.HAL9001.util.math.quantities;
+package com.SCHSRobotics.HAL9001.util.math.geometry;
 
-import com.SCHSRobotics.HAL9001.util.math.units.AngleUnits;
+import com.SCHSRobotics.HAL9001.util.math.units.HALAngleUnit;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -59,12 +59,12 @@ public abstract class BaseEuclideanVector<V extends BaseEuclideanVector<V>> impl
     }
 
     @Override
-    public double angleTo(V vector, AngleUnits angleUnit) {
-        return AngleUnits.RADIANS.convertTo(angleUnit).apply(acos(this.dot(vector) / (this.norm() * vector.norm())));
+    public double angleTo(V vector, HALAngleUnit angleUnit) {
+        return HALAngleUnit.RADIANS.convertTo(angleUnit).apply(acos(this.dot(vector) / (this.norm() * vector.norm())));
     }
 
     public double angleTo(V vector) {
-        return angleTo(vector, AngleUnits.RADIANS);
+        return angleTo(vector, HALAngleUnit.RADIANS);
     }
 
     @Override

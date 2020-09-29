@@ -1,6 +1,6 @@
 package com.SCHSRobotics.HAL9001.util.math;
 
-import com.SCHSRobotics.HAL9001.util.math.units.DistanceUnit;
+import com.SCHSRobotics.HAL9001.util.math.units.HALDistanceUnit;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +25,7 @@ public class EncoderToDistanceProcessor {
      * @param diameter Diameter of wheel.
      * @param unit     Units of the diameter.
      */
-    public EncoderToDistanceProcessor(double diameter, @NotNull DistanceUnit unit) {
+    public EncoderToDistanceProcessor(double diameter, @NotNull HALDistanceUnit unit) {
         encoderPerMeter = 1440 / (Math.PI * (diameter * unit.conversionFactor));
     }
 
@@ -36,7 +36,7 @@ public class EncoderToDistanceProcessor {
      * @param encoderPerRotation number of encoders per one rotation of the wheel.
      * @param unit               Units of the diameter.
      */
-    public EncoderToDistanceProcessor(double diameter, int encoderPerRotation, @NotNull DistanceUnit unit) {
+    public EncoderToDistanceProcessor(double diameter, int encoderPerRotation, @NotNull HALDistanceUnit unit) {
         encoderPerMeter = encoderPerRotation / (Math.PI * (diameter * unit.conversionFactor));
     }
 
@@ -55,7 +55,7 @@ public class EncoderToDistanceProcessor {
      * @param distance Distance wished to travel.
      * @param unit     Units of distance.
      */
-    public int getEncoderAmount(double distance, @NotNull DistanceUnit unit) {
+    public int getEncoderAmount(double distance, @NotNull HALDistanceUnit unit) {
         return (int) Math.round(unit.conversionFactor * distance * encoderPerMeter);
     }
 
@@ -65,7 +65,7 @@ public class EncoderToDistanceProcessor {
      * @param encoderAmount Amount of encoder.
      * @param unit          Units of returned distance.
      */
-    public double getDistanceFromEncoders(double encoderAmount, @NotNull DistanceUnit unit) {
-        return (encoderAmount / encoderPerMeter) *unit.conversionFactor;
+    public double getDistanceFromEncoders(double encoderAmount, @NotNull HALDistanceUnit unit) {
+        return (encoderAmount / encoderPerMeter) * unit.conversionFactor;
     }
 }

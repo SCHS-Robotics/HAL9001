@@ -43,7 +43,7 @@ public class BasicSampleTeleop extends BaseTeleop {
     //Not necessary to have this (you can delete it), basically if you want to do something special on start you would put it here
     @Override
     protected void onStart() {
-        setting = robot.pullProgramSettings();
+        setting = robot.pullOpModeSettings();
         a = setting.getData("Test", Test.class);
         b = setting.getData("Test2",Test2.class);
     }

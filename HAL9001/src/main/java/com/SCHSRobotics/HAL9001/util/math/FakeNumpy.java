@@ -721,14 +721,21 @@ public class FakeNumpy {
     }
 
     public static int[] absdiff(int[] list1, int[] list2) {
-        return abs(subtract(list1,list2));
+        return abs(subtract(list1, list2));
     }
 
     public static double average(double[] list) {
         double sum = 0;
-        for(double d : list) {
+        for (double d : list) {
             sum += d;
         }
-        return sum/list.length;
+        return sum / list.length;
+    }
+
+    public static double[] floatingPointFix(double[] list) {
+        for (int i = 0; i < list.length; i++) {
+            list[i] = HALMathUtil.floatingPointFix(list[i]);
+        }
+        return list;
     }
 }

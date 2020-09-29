@@ -1,4 +1,4 @@
-package com.SCHSRobotics.HAL9001.util.math.quantities;
+package com.SCHSRobotics.HAL9001.util.math.geometry;
 
 public interface Point<V extends Vector<V>, P extends Point<V, P>> {
     double[] getCoordinates();

@@ -1,6 +1,6 @@
-package com.SCHSRobotics.HAL9001.util.math.quantities;
+package com.SCHSRobotics.HAL9001.util.math.geometry;
 
-import com.SCHSRobotics.HAL9001.util.math.units.AngleUnits;
+import com.SCHSRobotics.HAL9001.util.math.units.HALAngleUnit;
 
 public class Vector3D extends BaseEuclideanVector<Vector3D> {
     private static final Vector3D ZERO_VECTOR = new Vector3D(0, 0, 0);
@@ -13,12 +13,12 @@ public class Vector3D extends BaseEuclideanVector<Vector3D> {
         this(x, y, z, CoordinateSystem3D.CARTESIAN);
     }
 
-    public Vector3D(double r, double theta, AngleUnits angleUnit, double z) {
-        this(r, angleUnit.convertTo(AngleUnits.RADIANS).apply(theta), z, CoordinateSystem3D.CYLINDRICAL);
+    public Vector3D(double r, double theta, HALAngleUnit angleUnit, double z) {
+        this(r, angleUnit.convertTo(HALAngleUnit.RADIANS).apply(theta), z, CoordinateSystem3D.CYLINDRICAL);
     }
 
-    public Vector3D(double rho, double phi, AngleUnits phiUnit, double theta, AngleUnits thetaUnit) {
-        this(rho, phiUnit.convertTo(AngleUnits.RADIANS).apply(phi), thetaUnit.convertTo(AngleUnits.RADIANS).apply(theta));
+    public Vector3D(double rho, double phi, HALAngleUnit phiUnit, double theta, HALAngleUnit thetaUnit) {
+        this(rho, phiUnit.convertTo(HALAngleUnit.RADIANS).apply(phi), thetaUnit.convertTo(HALAngleUnit.RADIANS).apply(theta));
     }
 
     private Vector3D(Vector3D v) {

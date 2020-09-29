@@ -127,8 +127,8 @@ public class HALGUI {
 
     public void inflate(HALMenu menu, Payload payload) {
         forwardStack.clear();
-        currentStack.push(currentMenu);
         currentMenu = menu;
+        currentStack.push(currentMenu);
         currentMenu.clearElements();
         currentMenu.addItem(cursorControlQueue.peek());
         currentMenu.init(payload);

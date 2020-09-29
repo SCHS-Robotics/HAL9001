@@ -5,7 +5,7 @@ import com.SCHSRobotics.HAL9001.util.exceptions.NotARealGamepadException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotDoubleInputException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotVectorInputException;
-import com.SCHSRobotics.HAL9001.util.math.quantities.Vector2D;
+import com.SCHSRobotics.HAL9001.util.math.geometry.Vector2D;
 
 import org.jetbrains.annotations.NotNull;
 

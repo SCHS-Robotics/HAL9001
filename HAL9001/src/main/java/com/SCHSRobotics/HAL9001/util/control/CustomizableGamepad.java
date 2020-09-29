@@ -6,7 +6,7 @@ import com.SCHSRobotics.HAL9001.system.robot.Robot;
 import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotAnAlchemistException;
-import com.SCHSRobotics.HAL9001.util.math.quantities.Vector2D;
+import com.SCHSRobotics.HAL9001.util.math.geometry.Vector2D;
 
 import org.jetbrains.annotations.NotNull;
 

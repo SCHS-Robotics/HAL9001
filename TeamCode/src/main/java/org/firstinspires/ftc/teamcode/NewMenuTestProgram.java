@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
+import com.SCHSRobotics.HAL9001.system.config.ConfigData;
+import com.SCHSRobotics.HAL9001.system.config.ProgramOptions;
 import com.SCHSRobotics.HAL9001.system.gui.HALGUI;
 import com.SCHSRobotics.HAL9001.system.gui.menus.TelemetryMenu;
 import com.SCHSRobotics.HAL9001.system.robot.BaseTeleop;
@@ -7,17 +11,13 @@ import com.SCHSRobotics.HAL9001.system.robot.MainRobot;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "New Menu Test Program")
+@ProgramOptions(options = NewMenuTestProgram.Options.class)
 public class NewMenuTestProgram extends BaseTeleop {
-    public @MainRobot FakeDummyRobot robot;
-    public HALGUI gui;
-    TelemetryMenu menu1 = new TelemetryMenu();
-    TelemetryMenu menu2 = new TelemetryMenu();
-    int i = 0;
-
     @Override
     protected void onStart() {
 
-
+        ConfigData opmodeData = robot.pullOpModeSettings();
+        Log.wtf("test", opmodeData.getData("Options", Options.class).name());
         //gui = HALGUI.getInstance();
         //gui.setup(robot, new Button<>(1, Button.BooleanInputs.x));
         /*
@@ -39,6 +39,17 @@ public class NewMenuTestProgram extends BaseTeleop {
         //menu2.addLine("test2");
         //menu1.update();
         //menu2.update();
+    }
+
+    public @MainRobot
+    FakeDummyRobot robot;
+    public HALGUI gui;
+    TelemetryMenu menu1 = new TelemetryMenu();
+    TelemetryMenu menu2 = new TelemetryMenu();
+    int i = 0;
+
+    enum Options {
+        LEFT, RIGHT, CENTER
     }
 
     @Override

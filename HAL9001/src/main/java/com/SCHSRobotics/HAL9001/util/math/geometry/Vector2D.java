@@ -1,7 +1,7 @@
-package com.SCHSRobotics.HAL9001.util.math.quantities;
+package com.SCHSRobotics.HAL9001.util.math.geometry;
 
 import com.SCHSRobotics.HAL9001.util.math.FakeNumpy;
-import com.SCHSRobotics.HAL9001.util.math.units.AngleUnits;
+import com.SCHSRobotics.HAL9001.util.math.units.HALAngleUnit;
 
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
@@ -22,8 +22,8 @@ public class Vector2D extends BaseEuclideanVector<Vector2D> {
         this(new Point2D(x, y));
     }
 
-    public Vector2D(double r, double theta, AngleUnits angleUnit) {
-        super(CoordinateSystem2D.POLAR.convertTo(CoordinateSystem2D.CARTESIAN).apply(new double[]{r, angleUnit.convertTo(AngleUnits.RADIANS).apply(theta)}));
+    public Vector2D(double r, double theta, HALAngleUnit angleUnit) {
+        super(CoordinateSystem2D.POLAR.convertTo(CoordinateSystem2D.CARTESIAN).apply(new double[]{r, angleUnit.convertTo(HALAngleUnit.RADIANS).apply(theta)}));
     }
 
     private Vector2D(Vector2D v) {
@@ -46,9 +46,9 @@ public class Vector2D extends BaseEuclideanVector<Vector2D> {
         return atan2(getY(), getX());
     }
 
-    public Vector2D rotate(double angle, AngleUnits angleUnit) {
+    public Vector2D rotate(double angle, HALAngleUnit angleUnit) {
         if (!isZeroVector()) {
-            double theta = angleUnit.convertTo(AngleUnits.RADIANS).apply(angle);
+            double theta = angleUnit.convertTo(HALAngleUnit.RADIANS).apply(angle);
             double rotX = getX() * cos(theta) - getY() * sin(theta);
             double rotY = getX() * sin(theta) + getY() * cos(theta);
             components[0] = (double) Math.round(1e9 * rotX) / 1e9;
@@ -58,7 +58,7 @@ public class Vector2D extends BaseEuclideanVector<Vector2D> {
     }
 
     public Vector2D rotate(double angle) {
-        return rotate(angle, AngleUnits.RADIANS);
+        return rotate(angle, HALAngleUnit.RADIANS);
     }
 
     public Vector3D cross(Vector2D vector) {

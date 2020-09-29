@@ -36,6 +36,11 @@ public class AutorunScreen extends HALMenu {
                     payload.add(ConfigConstants.STANDALONE_MODE_ID, true);
                     payload.add(ConfigConstants.SAVE_TO_AUTORUN_ID, true);
                     gui.inflate(new ConfigStartingMenu(payload));
+                })
+                .addBackgroundTask((DataPacket packet) -> {
+                    if (gui.getRobot().isStarted()) {
+                        gui.removeCurrentStack();
+                    }
                 }));
 
     }

@@ -14,7 +14,7 @@ import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.InvalidMoveCommandException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotBooleanInputException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotDoubleInputException;
-import com.SCHSRobotics.HAL9001.util.math.quantities.Vector2D;
+import com.SCHSRobotics.HAL9001.util.math.geometry.Vector2D;
 import com.SCHSRobotics.HAL9001.util.misc.BaseParam;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -603,7 +603,7 @@ public class QuadWheelDrive extends SubSystem {
                     new ConfigParam(DRIVESTICK, Button.DoubleInputs.left_stick_y),
                     new ConfigParam(TURNSTICK, Button.DoubleInputs.right_stick_x),
                     new ConfigParam(SPEEDMODEBUTTON, Button.BooleanInputs.noButton),
-                    new ConfigParam("Turn and Move", ConfigParam.booleanMap, true)
+                    new ConfigParam("Turn and Move", ConfigParam.BOOLEAN_MAP, true)
             };
         }
         else {
@@ -611,9 +611,9 @@ public class QuadWheelDrive extends SubSystem {
                     new ConfigParam(DRIVESTICK, Button.DoubleInputs.left_stick_y),
                     new ConfigParam(TURNSTICK, Button.DoubleInputs.right_stick_x),
                     new ConfigParam(SPEEDMODEBUTTON, Button.BooleanInputs.noButton),
-                    new ConfigParam("Turn and Move", ConfigParam.booleanMap, true),
-                    new ConfigParam("SpeedModeModifier", ConfigParam.numberMap(0,100, .05), 1.0),
-                    new ConfigParam("ConstantSpeedModifier", ConfigParam.numberMap(0,100, .05), 1.0)
+                    new ConfigParam("Turn and Move", ConfigParam.BOOLEAN_MAP, true),
+                    new ConfigParam("SpeedModeModifier", ConfigParam.numberMap(0, 100, .05), 1.0),
+                    new ConfigParam("ConstantSpeedModifier", ConfigParam.numberMap(0, 100, .05), 1.0)
             };
         }
     }

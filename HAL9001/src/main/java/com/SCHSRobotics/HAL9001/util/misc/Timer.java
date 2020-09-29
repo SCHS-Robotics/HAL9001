@@ -1,6 +1,6 @@
 package com.SCHSRobotics.HAL9001.util.misc;
 
-import com.SCHSRobotics.HAL9001.util.math.units.TimeUnit;
+import com.SCHSRobotics.HAL9001.util.math.units.HALTimeUnit;
 
 public class Timer {
     private long startTime;
@@ -16,17 +16,17 @@ public class Timer {
         startTime = System.nanoTime();
     }
 
-    public double getTimePassed(TimeUnit timeUnit) {
+    public double getTimePassed(HALTimeUnit timeUnit) {
         long timeNanos = System.nanoTime() - startTime;
-        return TimeUnit.convert(timeNanos, TimeUnit.NANOSECONDS, timeUnit);
+        return HALTimeUnit.convert(timeNanos, HALTimeUnit.NANOSECONDS, timeUnit);
     }
 
-    public void start(double duration, TimeUnit timeUnit) {
-        this.duration = TimeUnit.convert(duration, timeUnit, TimeUnit.NANOSECONDS);
+    public void start(double duration, HALTimeUnit timeUnit) {
+        this.duration = HALTimeUnit.convert(duration, timeUnit, HALTimeUnit.NANOSECONDS);
         startTime = System.nanoTime();
     }
 
-    public void start(long duration, TimeUnit timeUnit) {
+    public void start(long duration, HALTimeUnit timeUnit) {
         start((double) duration, timeUnit);
     }
 
@@ -35,6 +35,6 @@ public class Timer {
     }
 
     public boolean requiredTimeElapsed() {
-        return getTimePassed(TimeUnit.NANOSECONDS) > duration;
+        return getTimePassed(HALTimeUnit.NANOSECONDS) > duration;
     }
 }

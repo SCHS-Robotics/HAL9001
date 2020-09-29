@@ -171,6 +171,9 @@ public class HALFileUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return output.substring(0, output.length() - 1);
+        if (output.length() > 0) {
+            return output.substring(0, output.length() - 1);
+        }
+        return "";
     }
 }

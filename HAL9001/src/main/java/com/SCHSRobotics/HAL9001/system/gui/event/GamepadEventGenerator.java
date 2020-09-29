@@ -4,7 +4,7 @@ import com.SCHSRobotics.HAL9001.system.gui.HALGUI;
 import com.SCHSRobotics.HAL9001.util.control.Button;
 import com.SCHSRobotics.HAL9001.util.control.CustomizableGamepad;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
-import com.SCHSRobotics.HAL9001.util.math.units.TimeUnit;
+import com.SCHSRobotics.HAL9001.util.math.units.HALTimeUnit;
 import com.SCHSRobotics.HAL9001.util.misc.Timer;
 
 import java.util.HashMap;
@@ -55,7 +55,7 @@ public class GamepadEventGenerator {
                 }
                 if (currentValue && timer.requiredTimeElapsed()) {
                     Event.injectEvent(new WhileClickEvent(priority, booleanButton));
-                    timer.start(WHILE_CLICKED_WAIT_TIME_MS, TimeUnit.MILLISECONDS);
+                    timer.start(WHILE_CLICKED_WAIT_TIME_MS, HALTimeUnit.MILLISECONDS);
                 }
 
                 lastState.put(booleanButton, currentValue);

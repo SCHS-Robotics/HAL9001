@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
 
-import com.SCHSRobotics.HAL9001.util.math.units.TimeUnit;
+import com.SCHSRobotics.HAL9001.util.math.units.HALTimeUnit;
 import com.SCHSRobotics.HAL9001.util.misc.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -33,7 +33,7 @@ public class MonospaceTest extends LinearOpMode {
 
 
         Timer timer = new Timer();
-        timer.start(10, TimeUnit.SECONDS);
+        timer.start(10, HALTimeUnit.SECONDS);
         while (!timer.requiredTimeElapsed() && !isStopRequested()) ;
     }
 

@@ -1,7 +1,7 @@
 package com.SCHSRobotics.HAL9001.system.robot.subsystems;
 
 import com.SCHSRobotics.HAL9001.system.robot.Robot;
-import com.SCHSRobotics.HAL9001.util.math.quantities.Vector2D;
+import com.SCHSRobotics.HAL9001.util.math.geometry.Vector2D;
 
 import org.jetbrains.annotations.NotNull;
 

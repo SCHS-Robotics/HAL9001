@@ -1,4 +1,4 @@
-package com.SCHSRobotics.HAL9001.util.math.quantities;
+package com.SCHSRobotics.HAL9001.util.math.geometry;
 
 import org.firstinspires.ftc.robotcore.external.function.Function;
 

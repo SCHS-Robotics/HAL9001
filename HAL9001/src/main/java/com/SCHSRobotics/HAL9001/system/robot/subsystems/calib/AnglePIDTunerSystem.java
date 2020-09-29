@@ -14,7 +14,7 @@ import com.SCHSRobotics.HAL9001.util.control.CustomizableGamepad;
 import com.SCHSRobotics.HAL9001.util.control.PIDController;
 import com.SCHSRobotics.HAL9001.util.control.Toggle;
 import com.SCHSRobotics.HAL9001.util.exceptions.GuiNotPresentException;
-import com.SCHSRobotics.HAL9001.util.math.units.TimeUnit;
+import com.SCHSRobotics.HAL9001.util.math.units.HALTimeUnit;
 import com.SCHSRobotics.HAL9001.util.misc.BaseParam;
 import com.SCHSRobotics.HAL9001.util.misc.Grapher;
 import com.SCHSRobotics.HAL9001.util.misc.Timer;
@@ -168,7 +168,7 @@ public class AnglePIDTunerSystem extends VisionSubSystem {
         }
 
         if (loopTimer.requiredTimeElapsed()) {
-            loopTimer.start(delayMs, TimeUnit.MILLISECONDS);
+            loopTimer.start(delayMs, HALTimeUnit.MILLISECONDS);
 
             if (inputs.getInput(P_INCREMENT)) {
                 kp += increment;

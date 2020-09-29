@@ -22,7 +22,6 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -34,46 +33,41 @@ import java.util.Map;
 import java.util.Set;
 
 //3/17/20
-public class HALConfig implements Serializable {
+
+public class HALConfig {
 
     private static HALConfig GLOBAL_INSTANCE = new HALConfig();
     private static HALConfig DEFAULT_CONFIG = new HALConfig();
 
-    private Map<String, List<ConfigParam>> autonomousConfig, teleopConfig;
+    private Map<String, List<ConfigParam>> autonomousConfig = new HashMap<>(), teleopConfig = new HashMap<>();
     //maps name to id (reverse is id to name)
-    private BidirectionalMap<String, String> subsystemIdLookup;
-    private BidirectionalMap<SubSystem, String> subSystemNameLookup;
-    private List<String> opModeRegister;
+    private BidirectionalMap<String, String> subsystemIdLookup = new BidirectionalMap<>();
+    private BidirectionalMap<SubSystem, String> subSystemNameLookup = new BidirectionalMap<>();
 
     public enum Mode {
         AUTONOMOUS, TELEOP
     }
 
     public HALConfig() {
-        autonomousConfig = new HashMap<>();
-        teleopConfig = new HashMap<>();
-        subsystemIdLookup = new BidirectionalMap<>();
-
-        //todo add to cloneable
-        subSystemNameLookup = new BidirectionalMap<>();
-        opModeRegister = new ArrayList<>();
     }
 
     private HALConfig(HALConfig sourceForClone) {
-        this();
-        for(Map.Entry<String, List<ConfigParam>> configEntry : sourceForClone.autonomousConfig.entrySet()) {
+        for (Map.Entry<String, List<ConfigParam>> configEntry : sourceForClone.autonomousConfig.entrySet()) {
             List<ConfigParam> clonedParams = new ArrayList<>();
             for(ConfigParam param : configEntry.getValue()) {
                 clonedParams.add(param.clone());
             }
             autonomousConfig.put(configEntry.getKey(), clonedParams);
         }
-        for(Map.Entry<String, List<ConfigParam>> configEntry : sourceForClone.teleopConfig.entrySet()) {
+        for (Map.Entry<String, List<ConfigParam>> configEntry : sourceForClone.teleopConfig.entrySet()) {
             List<ConfigParam> clonedParams = new ArrayList<>();
-            for(ConfigParam param : configEntry.getValue()) {
+            for (ConfigParam param : configEntry.getValue()) {
                 clonedParams.add(param.clone());
             }
             teleopConfig.put(configEntry.getKey(), clonedParams);
+        }
+        for (Map.Entry<SubSystem, String> subSystemEntry : sourceForClone.subSystemNameLookup.entrySet()) {
+            subSystemNameLookup.put(subSystemEntry.getKey(), subSystemEntry.getValue());
         }
 
         subsystemIdLookup.putAll(sourceForClone.subsystemIdLookup);
@@ -134,7 +128,7 @@ public class HALConfig implements Serializable {
     }
 
     public void addOpmode(@NotNull OpMode opMode) {
-        addOpmode(opMode,new ArrayList<String>());
+        addOpmode(opMode, new ArrayList<>());
     }
 
     private void addOpmode(@NotNull OpMode opMode, @NotNull List<String> visitedOpmodes) {
@@ -144,7 +138,7 @@ public class HALConfig implements Serializable {
         Mode programMode = getOpModeType(opModeClass);
         String name = getOpModeName(opModeClass);
 
-        opModeRegister.add(name);
+        //opModeRegister.add(name);
         visitedOpmodes.add(name);
         if(opModeClass.isAnnotationPresent(ProgramOptions.class)) {
             ProgramOptions options = opModeClass.getAnnotation(ProgramOptions.class);
@@ -237,8 +231,6 @@ public class HALConfig implements Serializable {
             throw new DumpsterFireException("Program "+opModeClass.getSimpleName()+" can't be run without @TeleOp or @Autonomous");
         }
     }
-
-    //todo configset
 
     @Nullable
     public List<ConfigParam> getConfig(Mode mode, SubSystem subSystem) {
