@@ -20,6 +20,7 @@ import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
 import com.SCHSRobotics.HAL9001.util.exceptions.NothingToSeeHereException;
 import com.SCHSRobotics.HAL9001.util.misc.HALFileUtil;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -68,7 +69,7 @@ public abstract class Robot {
     //A hashmap mapping the name of a subsystem to the actual subsystem object.
     private final Queue<SubSystem> subSystems;
     //The opmode the robot is running.
-    private HALProgram opMode;
+    private OpMode opMode;
     //The GUI the robot uses to render the menus.
     public HALGUI gui;
     //A boolean value specifying whether or not to use the config system.
@@ -92,7 +93,7 @@ public abstract class Robot {
      *
      * @param opMode The opmode the robot is currently running.
      */
-    public Robot(@NotNull HALProgram opMode) {
+    public Robot(@NotNull OpMode opMode) {
         this.opMode = opMode;
         telemetry = opMode.telemetry;
         hardwareMap = opMode.hardwareMap;
@@ -487,7 +488,7 @@ public abstract class Robot {
      */
     public final boolean opModeIsActive() {
         ExceptionChecker.assertTrue(isTeleop() || isAutonomous(), new DumpsterFireException("Program is not an instance of BaseAutonomous or BaseTeleop, cannot tell if its running. A lot of other things are probably broken too if you're seeing this."));
-        return opMode.opModeIsActive();
+        return ((LinearOpMode) opMode).opModeIsActive();
     }
 
     /**
@@ -497,7 +498,7 @@ public abstract class Robot {
      */
     public final boolean isStopRequested() {
         ExceptionChecker.assertTrue(isTeleop() || isAutonomous(), new DumpsterFireException("Program is not an instance of BaseAutonomous or BaseTeleop, cannot tell if its running. A lot of other things are probably broken too if you're seeing this."));
-        return opMode.isStopRequested();
+        return ((LinearOpMode) opMode).isStopRequested();
     }
 
     /**
@@ -507,7 +508,7 @@ public abstract class Robot {
      */
     public final boolean isStarted() {
         ExceptionChecker.assertTrue(isTeleop() || isAutonomous(), new DumpsterFireException("Program is not an instance of BaseAutonomous or BaseTeleop, cannot tell if its running. A lot of other things are probably broken too if you're seeing this."));
-        return opMode.isStarted();
+        return ((LinearOpMode) opMode).isStarted();
     }
 
     public final void reverseInternalCameraDirection() {

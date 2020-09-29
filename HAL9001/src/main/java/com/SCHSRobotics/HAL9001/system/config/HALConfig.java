@@ -368,10 +368,12 @@ public final class HALConfig {
      * @param opMode The opmode to add.
      * @throws InvalidLinkException Throws this exception when a destination specified in a LinkTo annotation does not link to a real opmode.
      * @see com.SCHSRobotics.HAL9001.system.robot.HALProgram
+     * @see OpMode
+     * @see com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
      * @see LinkTo
      * @see ProgramOptions
      */
-    public final void addOpmode(@NotNull HALProgram opMode) {
+    public final void addOpmode(@NotNull OpMode opMode) {
         addOpmode(opMode, new ArrayList<>());
     }
 
@@ -382,10 +384,12 @@ public final class HALConfig {
      * @param visitedOpmodes The list of linked opmodes that have already been added.
      * @throws InvalidLinkException Throws this exception when a destination specified in a LinkTo annotation does not link to a real opmode.
      * @see com.SCHSRobotics.HAL9001.system.robot.HALProgram
+     * @see OpMode
+     * @see com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
      * @see LinkTo
      * @see ProgramOptions
      */
-    private void addOpmode(@NotNull HALProgram opMode, @NotNull List<String> visitedOpmodes) {
+    private void addOpmode(@NotNull OpMode opMode, @NotNull List<String> visitedOpmodes) {
 
         Class<? extends OpMode> opModeClass = opMode.getClass();
 
@@ -504,10 +508,12 @@ public final class HALConfig {
      * @return The list of config params associated with the given opmode.
      * @see ConfigSelectionMode
      * @see HALProgram
+     * @see OpMode
+     * @see com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
      */
     @Nullable
-    public List<ConfigParam> getConfig(@NotNull HALProgram opMode) {
-        Class<? extends HALProgram> opModeClass = opMode.getClass();
+    public List<ConfigParam> getConfig(@NotNull OpMode opMode) {
+        Class<? extends OpMode> opModeClass = opMode.getClass();
         return getConfig(getOpModeType(opModeClass), getOpModeName(opModeClass));
     }
 
