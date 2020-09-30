@@ -3,8 +3,8 @@ package com.SCHSRobotics.HAL9001.system.robot;
 import android.util.Log;
 
 import com.SCHSRobotics.HAL9001.util.control.AutoTransitioner;
-import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
-import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
+import com.SCHSRobotics.HAL9001.util.math.units.HALTimeUnit;
+import com.SCHSRobotics.HAL9001.util.misc.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -14,15 +14,31 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
+/**
+ * The base class for all HAL programs.
+ * <p>
+ * Creation Date: 5/17/20
+ *
+ * @author Cole Savage, Level Up
+ * @version 1.0.0
+ * @see BaseAutonomous
+ * @see BaseTeleop
+ * @see Robot
+ * @see LinearOpMode
+ * @since 1.1.0
+ */
 public abstract class HALProgram extends LinearOpMode {
     //The robot running the opmode.
     private Robot robot;
 
     /**
-     * An abstract method that is used to instantiate the robot.
+     * A method that is used to instantiate the robot.
      *
      * @return The robot being used in the opmode.
+     *
+     * @see Robot
      */
     protected Robot buildRobot() {
         return null;
@@ -53,30 +69,28 @@ public abstract class HALProgram extends LinearOpMode {
         try {
             Method m = this.getClass().getDeclaredMethod("buildRobot");
             buildRobotPresent = true;
-        }
-        catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException e) {
             buildRobotPresent = false;
         }
 
         //If buildRobot is present, build the robot, otherwise, build the robot from main robot.
         try {
-            if (buildRobotPresent) {
-                robot = buildRobot();
-            } else {
+            if (buildRobotPresent) robot = buildRobot();
+            else {
                 Field[] fields = this.getClass().getDeclaredFields();
                 for (Field field : fields) {
                     if (field.isAnnotationPresent(MainRobot.class) && Robot.class.isAssignableFrom(field.getType())) {
                         try {
                             robot = (Robot) field.getType().getConstructor(OpMode.class).newInstance(this);
                         } catch (NoSuchMethodException ex) {
-                            throw new DumpsterFireException("Your robot does not have a constructor only taking an opmode as input, use buildRobot instead.");
+                            throw new NoSuchMethodException("Your robot does not have a constructor only taking an opmode as input, use buildRobot instead.");
                         } catch (IllegalAccessException ex) {
-                            throw new DumpsterFireException("Your robot's constructor is not public, :(");
+                            throw new IllegalAccessException("Your robot's constructor is not public, :(");
                         }
                         try {
                             field.set(this, robot);
                         } catch (IllegalAccessException e) {
-                            throw new DumpsterFireException("Your robot isn't public, and so @MainRobot won't work. The program can't access it. SHARE!!!!");
+                            throw new IllegalAccessException("Your robot isn't public, and so @MainRobot won't work. The program can't access it. SHARE!!!!");
                         }
                     }
                 }
@@ -84,14 +98,12 @@ public abstract class HALProgram extends LinearOpMode {
 
             //Set up link to next program
             if (this.getClass().isAnnotationPresent(LinkTo.class)) {
-                LinkTo link = this.getClass().getAnnotation(LinkTo.class);
-                ExceptionChecker.assertNonNull(link, new NullPointerException("If you are seeing this, Java broke, and your problem isn't fixable. Good luck!"));
+                LinkTo link = Objects.requireNonNull(this.getClass().getAnnotation(LinkTo.class));
                 if (link.auto_transition()) {
                     AutoTransitioner.transitionOnStop(this, link.destination());
                 }
             }
-        }
-        catch(Throwable ex){
+        } catch(Throwable ex){
             errorLoop(ex);
         }
     }
@@ -114,6 +126,8 @@ public abstract class HALProgram extends LinearOpMode {
      * Gets the robot running the program.
      *
      * @return The robot running this program.
+     *
+     * @see Robot
      */
     @Contract(pure = true)
     protected final Robot getRobot() {
@@ -124,12 +138,13 @@ public abstract class HALProgram extends LinearOpMode {
      * Waits for a specified number of milliseconds.
      *
      * @param millis The number of milliseconds to wait.
+     *
+     * @see Timer
      */
     protected final void waitTime(long millis) {
-        long stopTime = System.currentTimeMillis() + millis;
-        while (robot.opModeIsActive() && System.currentTimeMillis() < stopTime) {
-            sleep(1);
-        }
+        Timer timer = new Timer();
+        timer.start(millis, HALTimeUnit.MILLISECONDS);
+        while (robot.opModeIsActive() && !timer.requiredTimeElapsed()) sleep(1);
     }
 
     /**
@@ -137,10 +152,14 @@ public abstract class HALProgram extends LinearOpMode {
      *
      * @param millis The number of milliseconds to wait.
      * @param runner The code to run each loop while waiting.
+     *
+     * @see Timer
+     * @see Runnable
      */
     protected final void waitTime(long millis, @NotNull Runnable runner) {
-        long stopTime = System.currentTimeMillis() + millis;
-        while (robot.opModeIsActive() && System.currentTimeMillis() < stopTime) {
+        Timer timer = new Timer();
+        timer.start(millis, HALTimeUnit.MILLISECONDS);
+        while (robot.opModeIsActive() && !timer.requiredTimeElapsed()) {
             runner.run();
             sleep(1);
         }
@@ -150,11 +169,11 @@ public abstract class HALProgram extends LinearOpMode {
      * Waits until a condition returns true.
      *
      * @param condition The boolean condition that must be true in order for the program to stop waiting.
+     *
+     * @see Supplier
      */
     protected final void waitUntil(@NotNull Supplier<Boolean> condition) {
-        while (robot.opModeIsActive() && !condition.get()) {
-            sleep(1);
-        }
+        while (robot.opModeIsActive() && !condition.get()) sleep(1);
     }
 
     /**
@@ -162,6 +181,9 @@ public abstract class HALProgram extends LinearOpMode {
      *
      * @param condition The boolean condition that must be true in order for the program to stop waiting.
      * @param runner The code to run each loop while waiting.
+     *
+     * @see Supplier
+     * @see Runnable
      */
     protected final void waitUntil(@NotNull Supplier<Boolean> condition, @NotNull Runnable runner) {
         while (robot.opModeIsActive() && !condition.get()) {
@@ -174,11 +196,11 @@ public abstract class HALProgram extends LinearOpMode {
      * Waits while a condition is true.
      *
      * @param condition The boolean condition that must become false for the program to stop waiting.
+     *
+     * @see Supplier
      */
     protected final void waitWhile(@NotNull Supplier<Boolean> condition) {
-        while (robot.opModeIsActive() && condition.get()) {
-            sleep(1);
-        }
+        while (robot.opModeIsActive() && condition.get()) sleep(1);
     }
 
     /**
@@ -186,6 +208,9 @@ public abstract class HALProgram extends LinearOpMode {
      *
      * @param condition The boolean condition that must become false for the program to stop waiting.
      * @param runner The code to run each loop while waiting.
+     *
+     * @see Supplier
+     * @see Runnable
      */
     protected final void waitWhile(@NotNull Supplier<Boolean> condition, @NotNull Runnable runner) {
         while (robot.opModeIsActive() && condition.get()) {

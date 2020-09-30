@@ -4,6 +4,8 @@ import com.SCHSRobotics.HAL9001.util.control.Button;
 
 /**
  * The base class for all ClickEvents.
+ * <p>
+ * Creation Date: 5/17/20
  *
  * @param <T> The type of button associated with the given ClickEvent.
  * @author Cole Savage, Level Up
@@ -16,8 +18,6 @@ import com.SCHSRobotics.HAL9001.util.control.Button;
  * @see com.SCHSRobotics.HAL9001.system.gui.viewelement.eventlistener.ViewButton
  * @see com.SCHSRobotics.HAL9001.system.gui.viewelement.eventlistener.EntireViewButton
  * @see Button
- * <p>
- * Creation Date: 5/17/20
  * @since 1.1.0
  */
 public abstract class ClickEvent<T extends Button<?>> extends Event {

@@ -38,8 +38,11 @@ import java.util.Set;
 /**
  * A class for managing HAL's config system.
  *
+ * Creation Date: 3/17/20
+ *
  * @author Cole Savage, Level Up
  * @version 1.0.0
+ * @since 1.1.0
  * @see AutonomousConfig
  * @see TeleopConfig
  * @see ProgramOptions
@@ -51,9 +54,6 @@ import java.util.Set;
  * @see ConfigSelectionMode
  * @see com.SCHSRobotics.HAL9001.system.robot.Robot
  * @see com.SCHSRobotics.HAL9001.system.gui.menus.configmenu.ConfigStartingMenu
- * <p>
- * Creation Date: 3/17/20
- * @since 1.1.0
  */
 public final class HALConfig {
     //The tag used to identify this class in the log.

@@ -4,6 +4,8 @@ import com.SCHSRobotics.HAL9001.system.gui.HALMenu;
 
 /**
  * An event that is injected whenever the menu cursor blinks.
+ * <p>
+ * Creation Date: 5/17/20
  *
  * @author Cole Savage, Level Up
  * @version 1.0.0
@@ -11,8 +13,6 @@ import com.SCHSRobotics.HAL9001.system.gui.HALMenu;
  * @see HALMenu
  * @see com.SCHSRobotics.HAL9001.system.gui.HALGUI
  * @see com.SCHSRobotics.HAL9001.system.gui.HALMenu.BlinkState
- * <p>
- * Creation Date: 5/17/20
  * @since 1.1.0
  */
 public class BlinkEvent extends Event {

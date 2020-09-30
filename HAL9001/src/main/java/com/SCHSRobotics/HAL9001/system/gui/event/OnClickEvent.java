@@ -4,6 +4,8 @@ import com.SCHSRobotics.HAL9001.util.control.Button;
 
 /**
  * An event that is injected whenever a boolean button is clicked.
+ * <p>
+ * Creation Date: 5/17/20
  *
  * @author Cole Savage, Level Up
  * @version 1.0.0
@@ -11,8 +13,6 @@ import com.SCHSRobotics.HAL9001.util.control.Button;
  * @see Event
  * @see GamepadEventGenerator
  * @see Button
- * <p>
- * Creation Date: 5/17/20
  * @since 1.1.0
  */
 public class OnClickEvent extends ClickEvent<Button<Boolean>> {

@@ -8,8 +8,12 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The base class for all Events.
  *
+ * Creation Date: 9/10/20
+ *
  * @author Cole Savage, Level Up
  * @version 1.0.0
+ * @since 1.1.0
+ *
  * @see ClickEvent
  * @see OnClickEvent
  * @see WhileClickEvent
@@ -21,9 +25,6 @@ import org.jetbrains.annotations.Nullable;
  * @see com.SCHSRobotics.HAL9001.util.math.datastructures.Heap
  * @see MaxHeap
  * @see Comparable
- * <p>
- * Creation Date: 9/10/20
- * @since 1.1.0
  */
 public abstract class Event implements Comparable<Event> {
     //The static event heap that stores the order in which injected events are extracted. Highest priority events are kept at the top of the heap.

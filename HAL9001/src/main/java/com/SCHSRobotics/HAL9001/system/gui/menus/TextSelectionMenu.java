@@ -10,7 +10,7 @@ import com.SCHSRobotics.HAL9001.system.gui.viewelement.eventlistener.ViewButton;
 import com.SCHSRobotics.HAL9001.util.constant.Charset;
 import com.SCHSRobotics.HAL9001.util.control.Button;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
-import com.SCHSRobotics.HAL9001.util.exceptions.HALConfigException;
+import com.SCHSRobotics.HAL9001.util.exceptions.HALGUIException;
 import com.SCHSRobotics.HAL9001.util.misc.StringUtils;
 import com.SCHSRobotics.HAL9001.util.misc.UniqueID;
 
@@ -20,6 +20,8 @@ import static java.lang.Math.min;
 
 /**
  * A HAL menu used for entering text via the gamepad as a form of user input.
+ * <p>
+ * Creation Date: 9/10/20
  *
  * @author Cole Savage, Level Up
  * @version 1.0.0
@@ -32,8 +34,6 @@ import static java.lang.Math.min;
  * @see Payload
  * @see Charset
  * @see SelectionZone
- * <p>
- * Creation Date: 9/10/20
  * @since 1.1.0
  */
 public class TextSelectionMenu extends HALMenu {
@@ -143,12 +143,12 @@ public class TextSelectionMenu extends HALMenu {
      *
      * @param inputText The formatted input string with a single selected character.
      * @return The index of the selected character within the given formatted string.
-     * @throws HALConfigException Throws this exception when the provided string does not have any "indicator characters" that denote the position of the selected character.
+     * @throws HALGUIException Throws this exception when the provided string does not have any "indicator characters" that denote the position of the selected character.
      */
     private static int getCurrentSelectedCharIdx(@NotNull String inputText) {
         int selectedIdx = inputText.indexOf(UNDERLINE_CHAR) - 1;
         if (selectedIdx == -2) selectedIdx = inputText.indexOf('_');
-        ExceptionChecker.assertFalse(selectedIdx == -1, new HALConfigException("No indicator characters found in input string, we lost your place in the input string somehow :("));
+        ExceptionChecker.assertFalse(selectedIdx == -1, new HALGUIException("No indicator characters found in input string, we lost your place in the input string somehow :("));
         return selectedIdx;
     }
 

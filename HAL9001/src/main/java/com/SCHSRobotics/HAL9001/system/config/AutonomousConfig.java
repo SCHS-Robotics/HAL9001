@@ -8,6 +8,8 @@ import java.lang.annotation.Target;
 
 /**
  * A method annotation used to denote a method that specifies the autonomous config options for a subsystem.
+ * <p>
+ * Creation Date: 8/18/19
  *
  * @author Cole Savage, Level Up
  * @version 1.0.0
@@ -15,8 +17,6 @@ import java.lang.annotation.Target;
  * @see HALConfig
  * @see com.SCHSRobotics.HAL9001.system.robot.Robot
  * @see com.SCHSRobotics.HAL9001.system.robot.SubSystem
- * <p>
- * Creation Date: 8/18/19
  * @since 1.0.0
  */
 @Documented

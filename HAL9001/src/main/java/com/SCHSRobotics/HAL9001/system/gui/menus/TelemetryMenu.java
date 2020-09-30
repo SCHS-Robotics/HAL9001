@@ -12,6 +12,8 @@ import java.util.List;
 
 /**
  * A HAL Menu mimicking the normal built-in telemetry class. Has all the advantages of the HAL gui, however. This includes menu switching.
+ * <p>
+ * Creation Date: 9/11/20
  *
  * @author Cole Savage, Level Up
  * @version 1.0.0
@@ -20,8 +22,6 @@ import java.util.List;
  * @see TextElement
  * @see SelectionZone
  * @see Payload
- * <p>
- * Creation Date: 9/11/20
  * @since 1.1.0
  */
 public class TelemetryMenu extends HALMenu {

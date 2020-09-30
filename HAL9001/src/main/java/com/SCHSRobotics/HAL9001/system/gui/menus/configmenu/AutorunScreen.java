@@ -13,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * The screen that gets displayed when the config system is automatically running a specific config file
+ * <p>
+ * Creation Date: 9/14/20
  *
  * @author Cole Savage, Level Up
  * @version 1.0.0
@@ -25,8 +27,6 @@ import org.jetbrains.annotations.NotNull;
  * @see Payload
  * @see SelectionZone
  * @see com.SCHSRobotics.HAL9001.system.robot.Robot
- * <p>
- * Creation Date: 9/14/20
  * @since 1.1.0
  */
 public class AutorunScreen extends HALMenu {

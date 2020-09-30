@@ -8,14 +8,14 @@ import java.lang.annotation.Target;
 
 /**
  * A class annotation used to easily put into place program configuration options.
+ * <p>
+ * Creation Date: 12/18/19
  *
  * @author Cole Savage, Level Up
  * @version 1.0.0
  * @see com.SCHSRobotics.HAL9001.system.robot.LinkTo
  * @see HALConfig
  * @see com.SCHSRobotics.HAL9001.system.robot.HALProgram
- * <p>
- * Creation Date: 12/18/19
  * @since 1.0.6
  */
 @Documented

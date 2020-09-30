@@ -2,17 +2,20 @@ package com.SCHSRobotics.HAL9001.system.robot;
 
 /**
  * An abstract class used to more easily create teleop programs
+ * <p>
+ * Creation Date: 2017
  *
  * @author Andrew Liang, Level Up
- * @since 0.0.0
  * @version 1.0.0
- *
- * Creation Date: 2017
+ * @see HALProgram
+ * @see BaseAutonomous
+ * @see Robot
+ * @since 0.0.0
  */
 public abstract class BaseTeleop extends HALProgram {
 
     /**
-     * An abstract method that is used to instantiate the robot.
+     * A method that is used to instantiate the robot.
      *
      * @return The robot being used in the opmode.
      */
@@ -21,13 +24,13 @@ public abstract class BaseTeleop extends HALProgram {
     }
 
     /**
-     * Method that runs when the robot is started. It is not an abstract method so that it does not have to be implemented if it
+     * A method that runs when the robot is started. It is not an abstract method so that it does not have to be implemented if it
      * is unneeded.
      */
     protected void onStart() {}
 
     /**
-     * Method that runs every loop cycle. It is not an abstract method so that it does not have to be implemented if it
+     * A method that runs every loop cycle. It is not an abstract method so that it does not have to be implemented if it
      * is unneeded.
      */
     protected void onUpdate() {}

@@ -2,14 +2,14 @@ package com.SCHSRobotics.HAL9001.system.gui.viewelement;
 
 /**
  * An interface for view elements that can modify the behavior of the cursor.
- *
- * @author Cole Savage, Level Up
- * @since 1.1.0
- * @version 1.1.0
- *
+ * <p>
  * Creation Date: 4/29/20
  *
+ * @author Cole Savage, Level Up
+ * @version 1.1.0
  * @see ViewElement
+ * @see com.SCHSRobotics.HAL9001.system.gui.HALMenu
+ * @since 1.1.0
  */
 public interface CursorConfigurable {
 

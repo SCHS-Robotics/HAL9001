@@ -22,8 +22,12 @@ import java.util.Objects;
 /**
  * A menu used to select the desired configuration options for a given subsystem.
  *
+ * Creation Date: 9/11/20
+ *
  * @author Cole Savage, Level Up
  * @version 1.0.0
+ * @since 1.1.0
+ *
  * @see ConfigConstants
  * @see ConfigSelectionMenu
  * @see ConfigStartingMenu
@@ -35,9 +39,6 @@ import java.util.Objects;
  * @see Payload
  * @see HALConfig
  * @see DynamicSelectionZone
- * <p>
- * Creation Date: 9/11/20
- * @since 1.1.0
  */
 @DynamicSelectionZone(pattern = {true})
 public class ConfigureSubSystemMenu extends HALMenu {

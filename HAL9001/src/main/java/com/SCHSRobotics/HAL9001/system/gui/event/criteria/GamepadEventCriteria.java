@@ -9,6 +9,8 @@ import java.util.Set;
 
 /**
  * A type of EventCriteria designed specifically for ClickEvents. The criteria is satisfied if the ClickEvent has a button in the list of valid buttons.
+ * <p>
+ * Creation Date: 9/10/20
  *
  * @param <T> The specific type of click event this criteria is assocated with.
  * @param <S> The type of button this criteria is associated with.
@@ -20,8 +22,6 @@ import java.util.Set;
  * @see Button
  * @see com.SCHSRobotics.HAL9001.system.gui.HALMenu
  * @see com.SCHSRobotics.HAL9001.system.gui.HALGUI
- * <p>
- * Creation Date: 9/10/20
  * @since 1.1.0
  */
 public class GamepadEventCriteria<T extends ClickEvent<?>, S extends Button<?>> extends EventCriteria<T> {

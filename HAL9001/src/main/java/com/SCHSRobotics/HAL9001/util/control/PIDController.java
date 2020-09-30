@@ -7,12 +7,12 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * A PID controller class with multiple modes.
+ * <p>
+ * Creation Date: 7/17/19
  *
  * @author Cole Savage, Level Up
- * @since 1.0.0
  * @version 1.0.0
- *
- * Creation Date: 7/17/19
+ * @since 1.0.0
  */
 @SuppressWarnings("unused")
 public class PIDController {
@@ -55,14 +55,11 @@ public class PIDController {
      * @param kp Proportional control coefficient
      * @param ki Integral control coefficient
      * @param kd Derivative control coefficient
+     *
+     * @see BiFunction
      */
     public PIDController(double kp, double ki, double kd) {
-        this(kp, ki, kd, new BiFunction<Double, Double, Double>() {
-            @Override
-            public Double apply(Double target, Double current) {
-                return target-current;
-            }
-        }, Type.STANDARD);
+        this(kp, ki, kd, (target, current) -> target - current, Type.STANDARD);
     }
 
     /**
@@ -72,6 +69,8 @@ public class PIDController {
      * @param ki Integral control coefficient
      * @param kd Derivative control coefficient
      * @param errorFunction Specified error function to use for control
+     *
+     * @see BiFunction
      */
     public PIDController(double kp, double ki, double kd, @NotNull BiFunction<Double,Double,Double> errorFunction) {
         this(kp,ki,kd,errorFunction, Type.STANDARD);
@@ -84,16 +83,13 @@ public class PIDController {
      * @param ki Integral control coefficient.
      * @param kd Derivative control coefficient.
      * @param type Type of control system to use.
+     *
+     * @see BiFunction
      */
     public PIDController(double kp, double ki, double kd, @NotNull Type type) {
-        this(kp,ki,kd,new BiFunction<Double, Double, Double>() {
-            @Override
-            public Double apply(Double target, Double current) {
-                return target-current;
-            }
-        },type);
+        this(kp, ki, kd, (target, current) -> target - current, type);
     }
-    
+
     /**
      * Constructor for specified error function and type of control in addition to specified coefficients.
      *
@@ -102,6 +98,8 @@ public class PIDController {
      * @param kd Derivative control coefficient
      * @param errorFunction Specified error function to use for control
      * @param type Type of control system to use
+     *
+     * @see BiFunction
      */
     public PIDController(double kp, double ki, double kd, @NotNull BiFunction<Double,Double,Double> errorFunction, @NotNull Type type) {
         this.kp = kp;
@@ -121,6 +119,8 @@ public class PIDController {
      * @param kd Derivative control coefficient.
      * @param kf Feedforward control coefficient.
      * @param errorFunction Specified error function to use for control.
+     *
+     * @see BiFunction
      */
     public PIDController(double kp, double ki, double kd, double kf, @NotNull BiFunction<Double,Double,Double> errorFunction) {
         this(kp,ki,kd,kf,errorFunction, Type.FEED_FORWARD);
@@ -134,16 +134,13 @@ public class PIDController {
      * @param kd Derivative control coefficient.
      * @param kf Feedforward control coefficient.
      * @param type The type of the PID(F) controller.
+     *
+     * @see BiFunction
      */
     public PIDController(double kp, double ki, double kd, double kf, @NotNull Type type) {
-        this(kp,ki,kd,kf,new BiFunction<Double, Double, Double>() {
-            @Override
-            public Double apply(Double target, Double current) {
-                return target-current;
-            }
-        },type);
+        this(kp, ki, kd, kf, (target, current) -> target - current, type);
     }
-    
+
     /**
      * Constructor for PIDF controller with default error function.
      *
@@ -151,16 +148,13 @@ public class PIDController {
      * @param ki Integral control coefficient.
      * @param kd Derivative control coefficient.
      * @param kf Feedforward control coefficient.
+     *
+     * @see BiFunction
      */
     public PIDController(double kp, double ki, double kd, double kf) {
-        this(kp,ki,kd,kf,new BiFunction<Double, Double, Double>() {
-            @Override
-            public Double apply(Double target, Double current) {
-                return target-current;
-            }
-        }, Type.FEED_FORWARD);
+        this(kp, ki, kd, kf, (target, current) -> target - current, Type.FEED_FORWARD);
     }
-    
+
     /**
      * Constructor for PID(F) controller with adjustable/overrideable type and custom error function.
      *
@@ -170,6 +164,8 @@ public class PIDController {
      * @param kf Feedforward control coefficient.
      * @param errorFunction Specified error function to use for control.
      * @param type The type of the PID(F) controller.
+     *
+     * @see BiFunction
      */
     public PIDController(double kp, double ki, double kd, double kf, @NotNull BiFunction<Double,Double,Double> errorFunction, @NotNull Type type) {
         this.kp = kp;
@@ -327,34 +323,70 @@ public class PIDController {
                 lastState = current;
                 lastUpdate = System.currentTimeMillis();
 
-                return Math.abs(error) > deadband ? Range.clip(P + I + D,clampLower,clampUpper) : 0;
+                return Math.abs(error) > deadband ? Range.clip(P + I + D, clampLower, clampUpper) : 0;
         }
     }
-    
+
+    /**
+     * Gets the current error of the PID controller.
+     *
+     * @param current The current value of the measured variable.
+     * @return The current error of the PID controller.
+     */
     public double getError(double current) {
         return errorFunction.apply(setpoint, current);
     }
 
+    /**
+     * Gets Kp.
+     *
+     * @return Kp.
+     */
     public double getKp() {
         return kp;
     }
 
+    /**
+     * Gets Ki.
+     *
+     * @return Ki.
+     */
     public double getKi() {
         return ki;
     }
 
+    /**
+     * Gets Kd.
+     *
+     * @return Kd.
+     */
     public double getKd() {
         return kd;
     }
 
+    /**
+     * Gets Kf.
+     *
+     * @return Kf.
+     */
     public double getKf() {
         return kf;
     }
 
+    /**
+     * Gets the tunings of the PID controller.
+     *
+     * @return An array of tunings. Normally it is formatted as {kp, ki, kd}, but if the controller is feedforward it will be formatted as {kp, ki, kd, kf}.
+     */
     public double[] getTunings() {
-        return type == Type.FEED_FORWARD ? new double[] {kp, ki, kd, kf} : new double[] {kp, ki, kd};
+        return type == Type.FEED_FORWARD ? new double[]{kp, ki, kd, kf} : new double[]{kp, ki, kd};
     }
 
+    /**
+     * Get the PID controller's last output.
+     *
+     * @return The PID controller's last output.
+     */
     public double getLastOutput() {
         return lastOutput;
     }

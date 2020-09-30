@@ -14,6 +14,8 @@ import java.util.Objects;
 
 /**
  * A singleton class that generates all gamepad events. Currently only supports boolean buttons.
+ * <p>
+ * Creation Date: 9/10/20
  *
  * @author Cole Savage, Level Up
  * @version 1.0.0
@@ -24,8 +26,6 @@ import java.util.Objects;
  * @see Button
  * @see com.SCHSRobotics.HAL9001.system.gui.HALMenu
  * @see CustomizableGamepad
- * <p>
- * Creation Date: 9/10/20
  * @since 1.1.0
  */
 public final class GamepadEventGenerator {

@@ -20,8 +20,12 @@ import java.util.Set;
 /**
  * A menu used to select a specific subsystem to configure out a list of possible configurable subsystems.
  *
+ * Creation Date: 9/11/20
+ *
  * @author Cole Savage, Level Up
  * @version 1.0.0
+ * @since 1.1.0
+ *
  * @see ConfigConstants
  * @see ConfigSelectionMenu
  * @see ConfigStartingMenu
@@ -33,9 +37,6 @@ import java.util.Set;
  * @see Payload
  * @see HALConfig
  * @see DynamicSelectionZone
- * <p>
- * Creation Date: 9/11/20
- * @since 1.1.0
  */
 @DynamicSelectionZone(pattern = {true})
 public class SelectConfigurableSubsystemsMenu extends HALMenu {

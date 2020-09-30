@@ -17,6 +17,8 @@ import java.util.Map;
 
 /**
  * A class for storing configuration options.
+ * <p>
+ * Creation Date: 8/13/19
  *
  * @author Cole Savage, Level Up
  * @version 1.0.0
@@ -25,8 +27,6 @@ import java.util.Map;
  * @see AutonomousConfig
  * @see com.SCHSRobotics.HAL9001.system.robot.Robot
  * @see com.SCHSRobotics.HAL9001.system.robot.SubSystem
- * <p>
- * Creation Date: 8/13/19
  * @since 1.0.0
  */
 public final class ConfigParam {

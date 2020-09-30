@@ -10,6 +10,8 @@ import java.util.List;
 
 /**
  * A packet of EventCriteria for various events.
+ * <p>
+ * Creation Date: 5/17/20
  *
  * @author Cole Savage, Level Up
  * @version 1.0.0
@@ -18,8 +20,6 @@ import java.util.List;
  * @see com.SCHSRobotics.HAL9001.system.gui.HALMenu
  * @see com.SCHSRobotics.HAL9001.system.gui.HALGUI
  * @see Iterable
- * <p>
- * Creation Date: 5/17/20
  * @since 1.1.0
  */
 public final class CriteriaPacket implements Iterable<EventCriteria<?>> {

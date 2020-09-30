@@ -10,13 +10,13 @@ import java.util.Map;
 
 /**
  * A class for getting non-gamepad data out of the configuration system easily.
+ * <p>
+ * Creation Date: 12/8/19
  *
  * @author Cole Savage, Level Up
  * @version 1.0.0
  * @see HALConfig
  * @see ConfigParam
- * <p>
- * Creation Date: 12/8/19
  * @since 1.0.0
  */
 public final class ConfigData {

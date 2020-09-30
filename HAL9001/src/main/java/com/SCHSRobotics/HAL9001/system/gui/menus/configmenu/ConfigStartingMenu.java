@@ -19,8 +19,12 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The starting screen for the config system.
  *
+ * Creation Date: 9/11/20
+ *
  * @author Cole Savage, Level Up
  * @version 1.0.0
+ * @since 1.1.0
+ *
  * @see ConfigConstants
  * @see ConfigSelectionMenu
  * @see com.SCHSRobotics.HAL9001.system.gui.menus.TextSelectionMenu
@@ -31,9 +35,6 @@ import org.jetbrains.annotations.NotNull;
  * @see EntireViewButton
  * @see Payload
  * @see DynamicSelectionZone
- * <p>
- * Creation Date: 9/11/20
- * @since 1.1.0
  */
 @DynamicSelectionZone(pattern = {true})
 public class ConfigStartingMenu extends HALMenu {

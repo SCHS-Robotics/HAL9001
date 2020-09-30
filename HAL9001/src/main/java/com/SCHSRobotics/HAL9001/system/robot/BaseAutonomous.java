@@ -2,17 +2,20 @@ package com.SCHSRobotics.HAL9001.system.robot;
 
 /**
  * An abstract class used to more easily create opmodes.
+ * <p>
+ * Creation Date: 2017
  *
  * @author Andrew Liang, Level Up
- * @since 0.0.0
  * @version 1.0.0
- *
- * Creation Date: 2017
+ * @see HALProgram
+ * @see BaseTeleop
+ * @see Robot
+ * @since 0.0.0
  */
 public abstract class BaseAutonomous extends HALProgram {
 
     /**
-     * An abstract method that contains the code for the robot to run.
+     * A method that contains the code for the robot to run.
      */
     public abstract void main();
 

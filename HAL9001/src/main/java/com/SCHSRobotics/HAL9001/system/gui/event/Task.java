@@ -2,6 +2,8 @@ package com.SCHSRobotics.HAL9001.system.gui.event;
 
 /**
  * A functional interface used to allow EventListeners to run pieces of code when they are triggered.
+ * <p>
+ * Creation Date: 5/17/20
  *
  * @author Cole Savage, Level Up
  * @version 1.0.0
@@ -9,8 +11,6 @@ package com.SCHSRobotics.HAL9001.system.gui.event;
  * @see DataPacket
  * @see com.SCHSRobotics.HAL9001.system.gui.viewelement.eventlistener.EventListener
  * @see com.SCHSRobotics.HAL9001.system.gui.HALMenu
- * <p>
- * Creation Date: 5/17/20
  * @since 1.1.0
  */
 @FunctionalInterface

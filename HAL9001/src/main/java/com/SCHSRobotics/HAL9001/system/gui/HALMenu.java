@@ -9,71 +9,96 @@ import com.SCHSRobotics.HAL9001.system.gui.event.criteria.CriteriaPacket;
 import com.SCHSRobotics.HAL9001.system.gui.event.criteria.EventCriteria;
 import com.SCHSRobotics.HAL9001.system.gui.event.criteria.GamepadEventCriteria;
 import com.SCHSRobotics.HAL9001.system.gui.viewelement.CursorConfigurable;
-import com.SCHSRobotics.HAL9001.system.gui.viewelement.UniversalUpdater;
 import com.SCHSRobotics.HAL9001.system.gui.viewelement.ViewElement;
 import com.SCHSRobotics.HAL9001.system.gui.viewelement.eventlistener.AdvancedListener;
 import com.SCHSRobotics.HAL9001.system.gui.viewelement.eventlistener.EntireViewButton;
 import com.SCHSRobotics.HAL9001.system.gui.viewelement.eventlistener.EventListener;
 import com.SCHSRobotics.HAL9001.system.gui.viewelement.eventlistener.HandlesEvents;
+import com.SCHSRobotics.HAL9001.system.gui.viewelement.eventlistener.UniversalUpdater;
 import com.SCHSRobotics.HAL9001.util.control.Button;
-import com.SCHSRobotics.HAL9001.util.exceptions.DumpsterFireException;
 import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
+import com.SCHSRobotics.HAL9001.util.exceptions.HALGUIException;
 import com.SCHSRobotics.HAL9001.util.math.datastructures.MinHeap;
 import com.SCHSRobotics.HAL9001.util.math.datastructures.MultiElementMap;
 import com.SCHSRobotics.HAL9001.util.math.units.HALTimeUnit;
 import com.SCHSRobotics.HAL9001.util.misc.Timer;
 import com.qualcomm.robotcore.util.Range;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
 
-//4/29/20
+/**
+ * The base class for all HAL Menus.
+ * <p>
+ * Creation Date: 4/29/20
+ *
+ * @author Cole Savage, Level Up
+ * @version 1.1.0
+ * @see HALGUI
+ * @see SelectionZone
+ * @see ViewElement
+ * @see EventListener
+ * @since 1.1.0
+ */
 public abstract class HALMenu {
     //The maximum number of lines that can fit on the FTC driver station. This is a global constant.
     public static final int MAX_LINES_PER_SCREEN = 8;
 
-    protected HALGUI gui;
-    protected SelectionZone selectionZone;
-    protected Payload payload;
-
-    protected char cursorChar;
-    protected long cursorBlinkSpeedMs;
-    protected boolean doBlink;
+    //A lookup table mapping events to lists of event listeners.
+    public MultiElementMap<Class<? extends Event>, EventListener> listenerElementLookup;
+    //A boolean value specifying whether the menu should enforce the "max lines per screen" restriction.
     protected boolean enforceMaxLines;
+    //The HALGUI object being used to render this menu.
+    protected HALGUI gui;
+    //The menu's selection zone.
+    protected SelectionZone selectionZone;
+    //The menu's payload.
+    protected Payload payload;
+    //The character used to represent the cursor in the menu.
+    protected char cursorChar;
+    //The blink speed of the cursor in milliseconds.
+    protected long cursorBlinkSpeedMs;
+    //A boolean value specifying whether or not the cursor should blink.
+    protected boolean doBlink;
+    //A boolean value specifying whether or not the menu should request a forced cursor update.
+    private boolean doForceUpdateCursor;
 
     //The current "level" of screen in the menu. If the number of lines in the menu exceeds the maximum number, menuLevel will increase by one for every screen the menu takes up.
     private int menuLevel;
-    private int cursorX, cursorY;
-    private List<ViewElement> elements, displayableElements;
+    //A timer used to time when the cursor should blink.
     private Timer blinkTimer;
-    public MultiElementMap<Class<? extends Event>, EventListener> listenerElementLookup;
-    private boolean doForceUpdateCursor;
+    //The cursor x and y value.
+    private int cursorX, cursorY;
+    //The internal lists of view elements and displayable view elements.
+    private List<ViewElement> elements, displayableElements;
+    //A boolean value specifying whether or not the menu has a dynamic selection zone.
     private boolean dynamicSelectionZone;
+    //The dynamic selection zone annotation associated with this menu, if it has one.
     private DynamicSelectionZone dynamicSelectionZoneAnnotation;
 
+    //The set of all gamepad buttons used by the menu.
     private Set<Button<?>> validButtons;
-
-    public enum BlinkState {
-        ON, OFF;
-        public final BlinkState nextState() {
-            if(this == ON) {
-                return OFF;
-            }
-            else {
-                return ON;
-            }
-        }
-    }
+    //The current blink state of the cursor (ON or OFF).
     private BlinkState cursorBlinkState;
 
+    /**
+     * A base constructor for HAL Menu.
+     *
+     * @param payload The payload to run the menu with.
+     *
+     * @see Payload
+     * @see SelectionZone
+     */
     public HALMenu(Payload payload) {
         this.payload = payload;
 
@@ -96,53 +121,73 @@ public abstract class HALMenu {
         blinkTimer = new Timer();
         blinkTimer.start(cursorBlinkSpeedMs, HALTimeUnit.MILLISECONDS);
 
-        selectionZone = initialSelectionZone();
+        selectionZone = new SelectionZone(0, 0);
         Class<? extends HALMenu> thisClass = getClass();
         dynamicSelectionZone = thisClass.isAnnotationPresent(DynamicSelectionZone.class);
-        if(dynamicSelectionZone) {
+        if (dynamicSelectionZone)
             dynamicSelectionZoneAnnotation = thisClass.getAnnotation(DynamicSelectionZone.class);
-        }
-
     }
 
+    /**
+     * A base constructor for HAL Menu.
+     *
+     * @see Payload
+     * @see SelectionZone
+     */
     public HALMenu() {
         this(new Payload());
     }
 
+    /**
+     * Renders the menu.
+     *
+     * @see ViewElement
+     * @see EventListener
+     * @see HALGUI
+     */
     protected final void render() {
-        if(doForceUpdateCursor) {
+        if (doForceUpdateCursor) {
             cursorBlinkState = BlinkState.ON;
             blinkTimer.reset();
         }
 
-        if(enforceMaxLines) {
-            displayLines(menuLevel*MAX_LINES_PER_SCREEN, min(displayableElements.size(), (menuLevel+1)*MAX_LINES_PER_SCREEN));
-        }
-        else {
+        if (enforceMaxLines) {
+            displayLines(menuLevel * MAX_LINES_PER_SCREEN, min(displayableElements.size(), (menuLevel + 1) * MAX_LINES_PER_SCREEN));
+        } else {
             displayLines(0, elements.size());
         }
     }
 
+    /**
+     * Adds a view element to the internal list of view elements.
+     *
+     * @param element The view element to add.
+     * @see ViewElement
+     * @see HandlesEvents
+     */
+    @SuppressWarnings("unchecked")
     protected final void addItem(ViewElement element) {
         elements.add(element);
         String text = element.getText();
-        if(text != null) {
-            displayableElements.add(element);
-        }
-        if(element instanceof EventListener && element.getClass().isAnnotationPresent(HandlesEvents.class)) {
-            HandlesEvents eventAnnotation = element.getClass().getAnnotation(HandlesEvents.class);
-            ExceptionChecker.assertNonNull(eventAnnotation, new NullPointerException("Event annotation returned null. This should not be possible."));
+        if (text != null) displayableElements.add(element);
+
+        //Event listener must be annotated with @HandlesEvents in order to be interpreted as an event listener.
+        if (element instanceof EventListener && element.getClass().isAnnotationPresent(HandlesEvents.class)) {
+            HandlesEvents eventAnnotation = Objects.requireNonNull(element.getClass().getAnnotation(HandlesEvents.class));
             Class<? extends Event>[] eventClasses = eventAnnotation.events();
-            for(Class<? extends Event> eventClass : eventClasses) {
+
+            //Adds the listener under the classes of all the events it handles. All listeners are listed under LoopEvent.
+            for (Class<? extends Event> eventClass : eventClasses) {
                 listenerElementLookup.put(eventClass, (EventListener) element);
             }
             listenerElementLookup.put(LoopEvent.class, (EventListener) element);
 
-            if(element instanceof AdvancedListener) {
+            //If the view element is an advanced event listener, check if it has any gamepad criteria and add all buttons in its criteria to the set of used buttons.
+            if (element instanceof AdvancedListener) {
                 AdvancedListener advancedListener = (AdvancedListener) element;
                 CriteriaPacket eventCriteria = advancedListener.getCriteria();
-                for(EventCriteria<?> criteria : eventCriteria) {
-                    if(criteria instanceof GamepadEventCriteria) {
+                for (EventCriteria<?> criteria : eventCriteria) {
+                    if (criteria instanceof GamepadEventCriteria) {
                         GamepadEventCriteria<ClickEvent<Button<?>>, Button<?>> gamepadCriteria = (GamepadEventCriteria<ClickEvent<Button<?>>, Button<?>>) criteria;
                         Set<Button<?>> buttons = gamepadCriteria.getValidButtons();
                         validButtons.addAll(buttons);
@@ -150,11 +195,29 @@ public abstract class HALMenu {
                 }
             }
         }
-        if(dynamicSelectionZone && displayableElements.size() > selectionZone.getHeight()) {
+
+        //Adds a row in the selection zone based on the pattern set in @DynamicSelectionZone, if present.
+        if (dynamicSelectionZone && displayableElements.size() > selectionZone.getHeight()) {
             selectionZone.addRow(dynamicSelectionZoneAnnotation.pattern());
         }
     }
 
+    /**
+     * Updates all event listeners in the menu.
+     *
+     * @return Whether to update the cursor.
+     * @see Event
+     * @see LoopEvent
+     * @see BlinkEvent
+     * @see GamepadEventGenerator
+     * @see EventListener
+     * @see AdvancedListener
+     * @see EventCriteria
+     * @see CriteriaPacket
+     * @see UniversalUpdater
+     * @see CursorConfigurable
+     * @see HALGUI
+     */
     protected final boolean updateListeners() {
         Event.injectEvent(new LoopEvent());
 
@@ -175,31 +238,29 @@ public abstract class HALMenu {
         boolean anythingUpdatesCursor = false;
         boolean anythingRequestsNoBlink = false;
 
+        //Gets the next event, then gets all associated listeners.
         Event currentEvent = Event.getNextEvent();
         while (currentEvent != null) {
             List<EventListener> registeredListeners = listenerElementLookup.get(currentEvent.getClass());
-            registeredListeners = registeredListeners == null ? new ArrayList<>() : registeredListeners;
+            if(registeredListeners == null) registeredListeners = new ArrayList<>();
 
             for (EventListener listener : registeredListeners) {
                 boolean doCursorUpdate = false;
-
                 boolean satisfiesCriteria = false;
-                if(listener instanceof AdvancedListener) {
+                //If the event listener is an advanced listener, check if the event satisfies the criteria.
+                if (listener instanceof AdvancedListener) {
                     AdvancedListener advancedListener = (AdvancedListener) listener;
                     CriteriaPacket eventCriteria = advancedListener.getCriteria();
-                    for(EventCriteria<?> criteria : eventCriteria) {
+                    for (EventCriteria<?> criteria : eventCriteria) {
                         satisfiesCriteria |= criteria.satisfiesCriteria(currentEvent);
                     }
                 }
-                else {
-                    satisfiesCriteria = true;
-                }
+                //If the listener isn't an advanced listener, the event automatically satisfies the criteria.
+                else satisfiesCriteria = true;
 
                 /*
-                Short circuit evaluation, DO NOT CHANGE THE ORDER OF THINGS IN THE IF STATEMENT
-                if element is not displayable (i.e. entire-screen-related), skip second check
-                if element is displayable, check if element is on the same line as the cursor
-                IF THE ORDER OF THESE CHECKS IS REVERSED THERE WILL BE ERRORS
+                  If the listener satisfies the criteria and is either not in the list of displayable elements (takes up the entire screen) or on the same line as the cursor, pass the event listener the event.
+                  If the event is a loop event, override everything else and give the event listener the event.
                  */
                 boolean updatesUniversally = listener instanceof UniversalUpdater && ((UniversalUpdater) listener).updatesUniversally();
                 if ((satisfiesCriteria && (!displayableElements.contains(listener) || displayableElements.indexOf(listener) == cursorY || updatesUniversally)) || currentEvent instanceof LoopEvent) {
@@ -214,6 +275,7 @@ public abstract class HALMenu {
                 anythingUpdatesCursor |= doCursorUpdate;
             }
 
+            //Gets next event.
             currentEvent = Event.getNextEvent();
         }
 
@@ -221,22 +283,35 @@ public abstract class HALMenu {
         return anythingUpdatesCursor && !selectionZone.isZero();
     }
 
+    /**
+     * The init function for this menu.
+     *
+     * @param payload The payload to run this menu with.
+     * @see Payload
+     */
     protected abstract void init(Payload payload);
-    protected SelectionZone initialSelectionZone() {
-        return new SelectionZone(0,0);
-    }
 
-    protected final void displayLines(int startAt, int endAt){
-        ExceptionChecker.assertTrue(startAt >= 0, new DumpsterFireException("startAt must be greater than 0"));
-        ExceptionChecker.assertTrue(startAt < endAt, new DumpsterFireException("startAt must be less than endAt"));
-        ExceptionChecker.assertTrue(endAt <= displayableElements.size(), new DumpsterFireException("endAt must be less than or equal to the number of displayable view elements"));
-        for(int i = startAt; i < endAt; i++) {
+    /**
+     * Displays a specified section of lines.
+     *
+     * @param startAt The starting index of the lines to display (inclusive).
+     * @param endAt   The ending index of the lines to display (exclusive).
+     * @throws HALGUIException Throws this exception when startAt and endAt are given invalid ranges.
+     * @see ViewElement
+     * @see com.SCHSRobotics.HAL9001.system.robot.Robot
+     * @see org.firstinspires.ftc.robotcore.external.Telemetry
+     */
+    protected final void displayLines(int startAt, int endAt) {
+        ExceptionChecker.assertTrue(startAt >= 0, new HALGUIException("startAt must be greater than 0"));
+        ExceptionChecker.assertTrue(startAt < endAt, new HALGUIException("startAt must be less than endAt"));
+        ExceptionChecker.assertTrue(endAt <= displayableElements.size(), new HALGUIException("endAt must be less than or equal to the number of displayable view elements"));
+        for (int i = startAt; i < endAt; i++) {
             ViewElement displayableElement = displayableElements.get(i);
+
             String line = displayableElement.getText();
             String toDisplay = line;
-            if (cursorY == i) {
-                toDisplay = blinkCursor(line);
-            }
+            if (cursorY == i) toDisplay = blinkCursor(line);
+
             gui.getRobot().telemetry.addLine(toDisplay);
         }
     }
@@ -245,21 +320,23 @@ public abstract class HALMenu {
      * Causes the cursor to blink on a specified line.
      *
      * @param line - The line object where the cursor is currently located.
+     *
+     * @see BlinkState
      */
+    @NotNull
+    @Contract("_ -> new")
     private String blinkCursor(@NotNull String line) {
         char[] chars = line.toCharArray();
 
-        if(blinkTimer.requiredTimeElapsed()) {
+        if (blinkTimer.requiredTimeElapsed()) {
             cursorBlinkState = cursorBlinkState.nextState();
             blinkTimer.reset();
         }
 
         //if the cursor isn't supposed to blink, turn it off.
-        if(!doBlink) {
-            cursorBlinkState = BlinkState.OFF;
-        }
+        if (!doBlink) cursorBlinkState = BlinkState.OFF;
 
-        if(chars.length != 0) {
+        if (chars.length != 0) {
             char drawChar = cursorBlinkState == BlinkState.ON ? cursorChar : chars[cursorX];
             chars[cursorX] = drawChar;
         }
@@ -267,174 +344,298 @@ public abstract class HALMenu {
         return new String(chars);
     }
 
+    /**
+     * Clears all elements in the menu.
+     */
     protected final void clearElements() {
         elements.clear();
         displayableElements.clear();
         listenerElementLookup.clear();
     }
 
+    /**
+     * Moves the cursor up to the next available space in the selection zone. Uses a breadth first search algorithm.
+     *
+     * @see com.SCHSRobotics.HAL9001.util.math.datastructures.Heap
+     * @see MinHeap
+     * @see CursorLoc
+     * @see SelectionZone
+     */
     protected final void cursorUp() {
-        if(cursorY > 0) {
+        if (cursorY > 0) {
             MinHeap<CursorLoc> distanceHeap = new MinHeap<>();
+            //Move up to the next row (keep doing this until you either reach row 0 or find a row with a valid selection zone space).
             for (int virtualCursorY = cursorY - 1; virtualCursorY >= 0; virtualCursorY--) {
                 boolean validSpaceFound = false;
+                //Search the row and add each valid cursor location to the distance heap, keeping the value with the minimum distance on top.
                 for (int virtualCursorX = 0; virtualCursorX < min(selectionZone.getWidth(), displayableElements.get(virtualCursorY).getText().length()); virtualCursorX++) {
                     validSpaceFound |= selectionZone.isValidLocation(virtualCursorX, virtualCursorY);
                     if (selectionZone.isValidLocation(virtualCursorX, virtualCursorY)) {
                         distanceHeap.add(new CursorLoc(virtualCursorX, virtualCursorY));
                     }
                 }
-                if (validSpaceFound) {
-                    break;
-                }
+                if (validSpaceFound) break;
             }
+            //Get the cursor location with the lowest distance from the current cursor position.
             CursorLoc newPoint = distanceHeap.poll();
-            if(newPoint != null) {
+            if (newPoint != null) {
                 cursorX = newPoint.getX();
                 cursorY = newPoint.getY();
             }
         }
-        if(enforceMaxLines) {
-            //Floor Division
-            menuLevel = cursorY / MAX_LINES_PER_SCREEN;
-        }
+
+        //Floor Division
+        if (enforceMaxLines) menuLevel = cursorY / MAX_LINES_PER_SCREEN;
     }
 
+    /**
+     * Moves the cursor down to the next available space in the selection zone. Uses a breadth first search algorithm.
+     *
+     * @see com.SCHSRobotics.HAL9001.util.math.datastructures.Heap
+     * @see MinHeap
+     * @see CursorLoc
+     * @see SelectionZone
+     */
     protected final void cursorDown() {
-        if(cursorY < min(displayableElements.size(), selectionZone.getHeight()) - 1) {
+        if (cursorY < min(displayableElements.size(), selectionZone.getHeight()) - 1) {
             MinHeap<CursorLoc> distanceHeap = new MinHeap<>();
+            //Move down to the next row (keep doing this until you either reach the maximum valid row or find a row with a valid selection zone space).
             for (int virtualCursorY = cursorY + 1; virtualCursorY < min(selectionZone.getHeight(), displayableElements.size()); virtualCursorY++) {
                 boolean validSpaceFound = false;
+                //Search the row and add each valid cursor location to the distance heap, keeping the value with the minimum distance on top.
                 for (int virtualCursorX = 0; virtualCursorX < min(selectionZone.getWidth(), displayableElements.get(virtualCursorY).getText().length()); virtualCursorX++) {
                     validSpaceFound |= selectionZone.isValidLocation(virtualCursorX, virtualCursorY);
                     if (selectionZone.isValidLocation(virtualCursorX, virtualCursorY)) {
                         distanceHeap.add(new CursorLoc(virtualCursorX, virtualCursorY));
                     }
                 }
-                if (validSpaceFound) {
-                    break;
-                }
+                if (validSpaceFound) break;
             }
+            //Get the cursor location with the lowest distance from the current cursor position.
             CursorLoc newLoc = distanceHeap.poll();
-            if(newLoc != null) {
+            if (newLoc != null) {
                 cursorX = newLoc.getX();
                 cursorY = newLoc.getY();
             }
         }
 
-        if(enforceMaxLines) {
-            //Floor Division
-            menuLevel = cursorY / MAX_LINES_PER_SCREEN;
-        }
+        //Floor Division
+        if (enforceMaxLines) menuLevel = cursorY / MAX_LINES_PER_SCREEN;
     }
 
+    /**
+     * Moves the cursor left one space.
+     *
+     * @see SelectionZone
+     */
     protected final void cursorLeft() {
-        if(cursorX > 0) {
+        if (cursorX > 0) {
             int virtualCursorX = cursorX - 1;
+            //Keep moving the cursor left until it hits the side of the screen or a valid location is found.
             while (!selectionZone.isValidLocation(virtualCursorX, cursorY)) {
                 virtualCursorX--;
-                if(virtualCursorX == -1) {
-                    return;
-                }
+                if (virtualCursorX == -1) return;
             }
             cursorX = virtualCursorX;
         }
     }
 
+    /**
+     * Moves the cursor right one space.
+     *
+     * @see SelectionZone
+     */
     protected final void cursorRight() {
         int lineLength = displayableElements.get(cursorY).getText().length();
-        if(cursorX < min(selectionZone.getWidth(), lineLength) - 1) {
+        if (cursorX < min(selectionZone.getWidth(), lineLength) - 1) {
             int virtualCursorX = cursorX + 1;
+            //Keep moving the cursor right until it hits the end of the line or a valid location is found.
             while (!selectionZone.isValidLocation(virtualCursorX, cursorY)) {
                 virtualCursorX++;
-                if(virtualCursorX == min(selectionZone.getWidth(), lineLength)) {
-                    return;
-                }
+                if (virtualCursorX == min(selectionZone.getWidth(), lineLength)) return;
             }
             cursorX = virtualCursorX;
         }
     }
 
+    /**
+     * Sets the cursor to the given EntireViewButton.
+     *
+     * @param cursor The EntireViewButton that controls the cursor.
+     * @see EntireViewButton
+     * @see HALGUI
+     */
     protected final void setCursor(EntireViewButton cursor) {
         elements.set(0, cursor);
     }
 
+    /**
+     * Notify the menu to do a forced cursor update.
+     *
+     * @param doForceUpdateCursor Whether to do a forced cursor update.
+     * @see HALGUI
+     */
     protected final void notifyForceCursorUpdate(boolean doForceUpdateCursor) {
         this.doForceUpdateCursor = doForceUpdateCursor;
     }
 
+    /**
+     * Gets the menu's selection zone.
+     *
+     * @return The menu's selection zone.
+     * @see SelectionZone
+     */
     public final SelectionZone getSelectionZone() {
         return selectionZone;
     }
 
+    /**
+     * Gets the cursor's X value.
+     *
+     * @return The cursor's X value.
+     */
     public final int getCursorX() {
         return cursorX;
     }
 
-    public final int getCursorY() {
-        return cursorY;
-    }
-
-    protected final void setCursorPos(int x, int y) {
-        cursorY = Range.clip(y, 0, displayableElements.size() - 1);
-        if(enforceMaxLines) {
-            menuLevel = cursorY / MAX_LINES_PER_SCREEN;
-        }
-        cursorX = Range.clip(x, 0, displayableElements.get(y).getText().length() - 1);
-    }
-
+    /**
+     * Sets the cursor's x position.
+     *
+     * @param x The cursor's desired x position.
+     */
     protected final void setCursorX(int x) {
         setCursorPos(x, cursorY);
     }
 
+    /**
+     * Gets the cursor's Y value.
+     *
+     * @return The cursor's Y value.
+     */
+    public final int getCursorY() {
+        return cursorY;
+    }
+
+    /**
+     * Sets the cursor's y position.
+     *
+     * @param y The cursor's desired y position.
+     */
     protected final void setCursorY(int y) {
         setCursorPos(cursorX, y);
     }
 
+    /**
+     * Sets the cursor's x,y position.
+     *
+     * @param x The cursor's desired x position.
+     * @param y The cursor's desired y position.
+     */
+    protected final void setCursorPos(int x, int y) {
+        cursorY = Range.clip(y, 0, displayableElements.size() - 1);
+        if (enforceMaxLines) menuLevel = cursorY / MAX_LINES_PER_SCREEN;
+        cursorX = Range.clip(x, 0, displayableElements.get(y).getText().length() - 1);
+    }
+
+    /**
+     * Gets the character used to represent the cursor.
+     *
+     * @return The character used to represent the cursor.
+     */
     public final char getCursorChar() {
         return cursorChar;
     }
 
+    /**
+     * Gets the cursor blink speed of the menu.
+     *
+     * @return The cursor blink speed of the menu.
+     */
     public final long getCursorBlinkSpeedMs() {
         return cursorBlinkSpeedMs;
     }
 
+    /**
+     * An enum representing the current state of the cursor (ON or OFF).
+     */
+    public enum BlinkState {
+        ON, OFF;
+
+        /**
+         * Gets the next blink state.
+         *
+         * @return The next blink state.
+         */
+        public final BlinkState nextState() {
+            if (this == ON) return OFF;
+            else return ON;
+        }
+    }
+
+    /**
+     * A private class used to represent the location of the cursor in a way that allows different locations to be compared.
+     *
+     * @see Comparable
+     */
     private final class CursorLoc implements Comparable<CursorLoc> {
 
+        //The x and y position associated with this cursor location.
         private final int x, y;
+
+        /**
+         * The constructor for CursorLoc.
+         *
+         * @param x The x position associated with this cursor location.
+         * @param y The y position associated with this cursor location.
+         */
         private CursorLoc(int x, int y) {
             this.x = x;
             this.y = y;
         }
 
+        /**
+         * Gets the x position associated with this cursor location.
+         *
+         * @return The x position associated with this cursor location.
+         */
         public final int getX() {
             return x;
         }
 
+        /**
+         * Gets the y position associated with this cursor location.
+         *
+         * @return The y position associated with this cursor location.
+         */
         public final int getY() {
             return y;
         }
 
-        private int taxicabDistance(CursorLoc a, CursorLoc b) {
-            return abs(a.x-b.x) + abs(a.y - b.y);
+        /**
+         * Calculates the taxicab distance between this cursor location and another cursor location.
+         *
+         * @param otherLocation The other cursor location.
+         * @return The taxicab distance from this location to the other cursor location.
+         */
+        private int taxicabDistance(@NotNull CursorLoc otherLocation) {
+            return abs(this.x - otherLocation.x) + abs(this.y - otherLocation.y);
         }
 
         @Override
         public final int compareTo(CursorLoc loc) {
-            return taxicabDistance(this, new CursorLoc(cursorX, cursorY)) - taxicabDistance(loc, new CursorLoc(cursorX, cursorY));
+            return this.taxicabDistance(new CursorLoc(cursorX, cursorY)) - loc.taxicabDistance(new CursorLoc(cursorX, cursorY));
         }
 
         @Override
         @NotNull
         public final String toString() {
-            return "("+x+", "+y+")";
+            return "(" + x + ", " + y+")";
         }
 
         @Override
         public final boolean equals(Object obj) {
-            if(!(obj instanceof CursorLoc)) {
-                return false;
-            }
+            if(!(obj instanceof CursorLoc)) return false;
+
             CursorLoc loc = (CursorLoc) obj;
             return loc.x == x && loc.y == y;
         }

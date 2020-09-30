@@ -10,9 +10,11 @@ import org.firstinspires.ftc.robotcore.internal.opmode.OpModeManagerImpl;
  * after the autonomous period ends. To use AutoTransitioner, go to your OpMode/LinearOpMode,
  * and place the following line of code in your init() method or before your waitForStart()
  * (for OpMode and LinearOpMode, respectively):
- *      AutoTransitioner.transitionOnStop(this, "MainRobot Teleop");
+ * AutoTransitioner.transitionOnStop(this, "MainRobot Teleop");
  * Where 'MainRobot Teleop' is replaced with the NAME of your teleop program. See full documentation
  * on kno3.net/resources for more info.
+ *
+ * @see com.SCHSRobotics.HAL9001.system.robot.LinkTo
  */
 public class AutoTransitioner extends Thread {
     private static final AutoTransitioner INSTANCE = new AutoTransitioner(); //Create singleton instance

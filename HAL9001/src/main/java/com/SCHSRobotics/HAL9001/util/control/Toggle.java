@@ -4,12 +4,12 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * A toggle class used to add toggle switches.
+ * <p>
+ * Creation Date: 7/17/19
  *
  * @author Dylan Zueck, Crow Force
- * @since 1.0.0
  * @version 1.0.0
- *
- * Creation Date: 7/17/19
+ * @since 1.0.0
  */
 public class Toggle {
 
@@ -23,6 +23,8 @@ public class Toggle {
     public enum ToggleTypes{
           flipToggle, trueOnceToggle, trueOnceToggleAllowTurnOff, trueWhileHeldOnce
     }
+
+    //The type of toggle used in this specific toggle instance.
     private ToggleTypes toggleType;
     //Boolean values representing the current state of the toggle and whether the toggling button has been released.
     private boolean currentState, flag;

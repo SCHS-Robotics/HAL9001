@@ -16,8 +16,12 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A menu used to select a specific configuration file out of a list of all available configuration files.
  *
+ * Creation Date: 9/11/20
+ *
  * @author Cole Savage, Level Up
  * @version 1.0.0
+ * @since 1.1.0
+ *
  * @see ConfigConstants
  * @see ConfigStartingMenu
  * @see com.SCHSRobotics.HAL9001.system.gui.menus.TextSelectionMenu
@@ -29,9 +33,6 @@ import org.jetbrains.annotations.NotNull;
  * @see Payload
  * @see DynamicSelectionZone
  * @see HALFileUtil
- * <p>
- * Creation Date: 9/11/20
- * @since 1.1.0
  */
 @DynamicSelectionZone(pattern = {true})
 public class ConfigSelectionMenu extends HALMenu {

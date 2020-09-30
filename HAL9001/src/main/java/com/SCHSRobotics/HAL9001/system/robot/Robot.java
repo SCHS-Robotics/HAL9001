@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -48,26 +49,31 @@ import static com.SCHSRobotics.HAL9001.system.config.ConfigSelectionMode.AUTONOM
 import static com.SCHSRobotics.HAL9001.system.config.ConfigSelectionMode.TELEOP;
 
 /**
- * An abstract class representing the physical robot.
+ * An abstract class representing the physical robot. This class is the central hub for most of HAL.
+ * <p>
+ * Creation Date: 2017
  *
  * @author Andrew Liang, Level Up
  * @author Dylan Zueck, Crow Force
  * @author Cole Savage, Level Up
- * @since 0.0.0
  * @version 1.0.0
- *
- * Creation Date: 2017
+ * @see SubSystem
+ * @see VisionSubSystem
+ * @see HALProgram
+ * @see HALGUI
+ * @see HALConfig
+ * @since 0.0.0
  */
 @SuppressWarnings({"WeakerAccess"})
 public abstract class Robot {
-    private static final String HAL_FILESYSTEM_ROOT = Environment.getExternalStorageDirectory().getPath() + "/System64";
-
+    //The special camera ids associated with the internal camera and all cameras. All cameras is used to run a pipeline on all defined cameras simultaneously.
     public static final String INTERNAL_CAMERA_ID = "Internal Camera", ALL_CAMERAS_ID = "All Cameras";
-
-    private HALConfig globalConfig;
-
-    //A hashmap mapping the name of a subsystem to the actual subsystem object.
+    //The path to HAL's root config folder.
+    private static final String HAL_FILESYSTEM_ROOT = Environment.getExternalStorageDirectory().getPath() + "/System64";
+    //A queue of all added subsystems.
     private final Queue<SubSystem> subSystems;
+    //The global HAL config.
+    private HALConfig globalConfig;
     //The opmode the robot is running.
     private OpMode opMode;
     //The GUI the robot uses to render the menus.
@@ -80,18 +86,24 @@ public abstract class Robot {
     public final Telemetry telemetry;
     //The hardwaremap used to map software representations of hardware to the actual hardware.
     public final HardwareMap hardwareMap;
-    //A list of Vision-Based subsystems.
+    //A list of vision-Bbsed subsystems.
     private List<VisionSubSystem> visionSubSystems;
-
+    //The internal view id for the camera monitor.
     private int internalCameraViewId;
+    //The InternalCamera annotation data object, if present.
     private InternalCamera internalCameraData;
+    //The current direction of the internal camera (if it exists).
     private OpenCvInternalCamera.CameraDirection internalCameraCurrentDirection;
+    //The field in the robot class defining the internal camera.
     private Field internalCameraField;
 
     /**
      * Constructor for robot.
      *
      * @param opMode The opmode the robot is currently running.
+     *
+     * @see HALProgram
+     * @see HALGUI
      */
     public Robot(@NotNull OpMode opMode) {
         this.opMode = opMode;
@@ -110,41 +122,39 @@ public abstract class Robot {
         int numCamerasUsingViewport = 0;
         List<Field> externalCameraFields = new ArrayList<>();
 
+        //Gets all internal and ex
         Field[] fields = this.getClass().getDeclaredFields();
         for (Field f : fields) {
             if (OpenCvCamera.class.isAssignableFrom(f.getType())) {
                 if (f.isAnnotationPresent(InternalCamera.class)) {
-                    ExceptionChecker.assertNull(internalCameraField, new DumpsterFireException("Must have a maximum of one defined internal camera. If you want to switch which internal camera you're using, use the appropriate method."));
                     internalCameraData = f.getAnnotation(InternalCamera.class);
                     internalCameraField = f;
                     internalCameraCurrentDirection = internalCameraData.direction();
-                    numCamerasUsingViewport = internalCameraData.usesViewport() ? numCamerasUsingViewport + 1 : numCamerasUsingViewport;
+                    if (internalCameraData.usesViewport()) numCamerasUsingViewport++;
                 } else if (f.isAnnotationPresent(ExternalCamera.class)) {
-                    ExternalCamera cameraData = f.getAnnotation(ExternalCamera.class);
                     externalCameraFields.add(f);
-                    numCamerasUsingViewport = cameraData.usesViewport() ? numCamerasUsingViewport + 1 : numCamerasUsingViewport;
+                    if (internalCameraData.usesViewport()) numCamerasUsingViewport++;
                 }
             }
         }
 
+        //Split the camera viewport into chunks if necessary to accommodate multiple cameras.
         int cameraMonitorViewIdIdx = 0;
         int[] cameraMonitorViewIds;
-        if (numCamerasUsingViewport > 1) {
+        if (numCamerasUsingViewport > 1)
             cameraMonitorViewIds = OpenCvCameraFactory.getInstance().splitLayoutForMultipleViewports(cameraMonitorViewId, numCamerasUsingViewport, OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY);
-        } else {
-            cameraMonitorViewIds = new int[]{cameraMonitorViewId};
-        }
+        else cameraMonitorViewIds = new int[]{cameraMonitorViewId};
 
+        //Create the internal camera if it exists.
         if (internalCameraField != null) {
             InternalCamera cameraData = internalCameraField.getAnnotation(InternalCamera.class);
             Size resolution = new Size(cameraData.resWidth(), cameraData.resHeight());
             internalCameraViewId = cameraMonitorViewIds[cameraMonitorViewIdIdx];
             CameraManager.addCamera(INTERNAL_CAMERA_ID, createCamera(internalCameraField, cameraData.usesViewport(), CameraType.INTERNAL, cameraData.direction(), INTERNAL_CAMERA_ID, internalCameraViewId), CameraType.INTERNAL, resolution);
-            if (cameraData.usesViewport()) {
-                cameraMonitorViewIdIdx++;
-            }
+            if (cameraData.usesViewport()) cameraMonitorViewIdIdx++;
         }
 
+        //Create all external cameras.
         for (Field f : externalCameraFields) {
             ExternalCamera cameraData = f.getAnnotation(ExternalCamera.class);
             Size resolution = new Size(cameraData.resWidth(), cameraData.resHeight());
@@ -153,35 +163,33 @@ public abstract class Robot {
             ExceptionChecker.assertFalse(id.equals(INTERNAL_CAMERA_ID) || id.equals(ALL_CAMERAS_ID), new DumpsterFireException("Id for external webcam cannot match id of internal camera or the all cameras id. Those are reserved values."));
 
             CameraManager.addCamera(id, createCamera(f, cameraData.usesViewport(), CameraType.EXTERNAL, null, cameraData.configName(), cameraMonitorViewIds[cameraMonitorViewIdIdx]), CameraType.EXTERNAL, resolution);
-            if (cameraData.usesViewport()) {
-                cameraMonitorViewIdIdx++;
-            }
+            if (cameraData.usesViewport()) cameraMonitorViewIdIdx++;
         }
 
-        if (opMode.getClass().isAnnotationPresent(ProgramOptions.class)) {
+        //Adds opmode program options to the config.
+        if (opMode.getClass().isAnnotationPresent(ProgramOptions.class))
             globalConfig.addOpmode(opMode);
-        }
     }
 
     /**
      * Adds a subsystem to the robot's hashmap of subsystems and, if the subsystem uses config, load the default config.
      *
      * @param subSystem The subsystem object.
+     *
+     * @see SubSystem
+     * @see VisionSubSystem
+     * @see HALConfig
      */
     private void addSubSystem(String name, SubSystem subSystem) {
         subSystems.add(subSystem);
 
-        if(subSystem instanceof VisionSubSystem) {
-            visionSubSystems.add((VisionSubSystem) subSystem);
-        }
+        if (subSystem instanceof VisionSubSystem) visionSubSystems.add((VisionSubSystem) subSystem);
 
         if(subSystem.usesConfig) {
             boolean success = globalConfig.addSubSystem(name, subSystem);
             useConfig |= success;
 
-            if (success && !gui.isInitialized()) {
-                startGui(Button.noButtonBoolean);
-            }
+            if (success && !gui.isInitialized()) startGui(Button.noButtonBoolean);
         }
     }
 
@@ -201,19 +209,21 @@ public abstract class Robot {
      * Instantiates the GUI and allows the robot to use a GUI.
      *
      * @param cycleButton The button used to cycle through multiple menus in GUI.
+     *
+     * @see HALGUI
+     * @see Button
      */
     public final void startGui(Button<Boolean> cycleButton) {
-        if (gui.isInitialized()) {
-            gui.setCycleButton(cycleButton);
-        } else {
-            gui.setup(this, cycleButton);
-        }
+        if (gui.isInitialized()) gui.setCycleButton(cycleButton);
+        else gui.setup(this, cycleButton);
     }
 
     /**
      * Returns whether the robot has already been set up to use the GUI.
      *
      * @return Whether the GUI has been instantiated.
+     *
+     * @see HALGUI
      */
     @Contract(pure = true)
     public final boolean usesGUI() {
@@ -222,6 +232,12 @@ public abstract class Robot {
 
     /**
      * Runs all the initialization methods of every subsystem and the GUI. Also starts the config and creates the config file tree if needed.
+     *
+     * @see SubSystem
+     * @see VisionSubSystem
+     * @see CameraManager
+     * @see HALConfig
+     * @see HALGUI
      */
     public final void init()
     {
@@ -282,9 +298,10 @@ public abstract class Robot {
                     sb.append("\r\n");
                 }
             }
-            if (sb.length() > 2) {
-                sb.delete(sb.length() - 2, sb.length()); //removes trailing \r\n characters so there isn't a blank line at the end of the file
-            }
+
+            //removes trailing \r\n characters so there isn't a blank line at the end of the file
+            if (sb.length() > 2) sb.delete(sb.length() - 2, sb.length());
+
             HALFileUtil.save(robotRootConfigPath + configMetadataFullName, sb.toString());
 
             Payload payload = new Payload()
@@ -303,18 +320,20 @@ public abstract class Robot {
             subSystems.add(subSystem);
         }
 
+        //Links all HALPipeline classes to their associated cameras.
         for (VisionSubSystem visionSubSystem : visionSubSystems) {
             HALPipeline[] pipelines = visionSubSystem.getPipelines();
+
             for (HALPipeline pipeline : pipelines) {
                 if (pipeline.getClass().isAnnotationPresent(Camera.class)) {
-                    Camera linkedCameraIdAnnotation = pipeline.getClass().getAnnotation(Camera.class);
-                    ExceptionChecker.assertNonNull(linkedCameraIdAnnotation, new DumpsterFireException("Linked camera id annotation for pipeline " + pipeline.getClass().getSimpleName() + " was null, this should be impossible."));
+                    Camera linkedCameraIdAnnotation = Objects.requireNonNull(pipeline.getClass().getAnnotation(Camera.class));
+
                     String linkedCameraId = linkedCameraIdAnnotation.id();
-                    if (CameraManager.cameraExists(linkedCameraId)) {
+
+                    if (CameraManager.cameraExists(linkedCameraId))
                         CameraManager.addPipeline(linkedCameraId, pipeline);
-                    } else if (linkedCameraId.equals(ALL_CAMERAS_ID)) {
+                    else if (linkedCameraId.equals(ALL_CAMERAS_ID))
                         CameraManager.addPipelineToAll(pipeline);
-                    }
                 }
             }
         }
@@ -324,6 +343,9 @@ public abstract class Robot {
 
     /**
      * Runs methods in a loop during init. Runs all subsystem init_loop() methods and draws the configuration menu.
+     *
+     * @see SubSystem
+     * @see HALGUI
      */
     public final void init_loop() {
         this.gamepad1 = opMode.gamepad1;
@@ -340,6 +362,9 @@ public abstract class Robot {
 
     /**
      * Runs this method when the user presses the start button.
+     *
+     * @see SubSystem
+     * @see HALGUI
      */
     public final void onStart() {
         this.gamepad1 = opMode.gamepad1;
@@ -354,6 +379,9 @@ public abstract class Robot {
 
     /**
      * Runs subsystem handle() methods and GUI drawCurrentMenu() every frame in driver controlled programs.
+     *
+     * @see SubSystem
+     * @see HALGUI
      */
     public final void driverControlledUpdate() {
         this.gamepad1 = opMode.gamepad1;
@@ -370,6 +398,11 @@ public abstract class Robot {
 
     /**
      * Runs the stop functions for all subsystems and the GUI.
+     *
+     * @see SubSystem
+     * @see HALGUI
+     * @see HALConfig
+     * @see CameraManager
      */
     public final void stopAllComponents() {
 
@@ -390,6 +423,8 @@ public abstract class Robot {
      * Gets the opmode the robot is currently running.
      *
      * @return The opmode the robot is running.
+     *
+     * @see HALProgram
      */
     @Contract(pure = true)
     public final OpMode getOpMode() {
@@ -401,16 +436,25 @@ public abstract class Robot {
      *
      * @param subsystem The name of the subsystem to pull the gamepad controls for.
      * @return A customizable gamepad containing the configured controls for that subsystem.
+     *
+     * @see HALConfig
+     * @see ConfigParam
+     * @see CustomizableGamepad
+     * @see Button
+     * @see SubSystem
+     * @see com.SCHSRobotics.HAL9001.system.config.AutonomousConfig
+     * @see com.SCHSRobotics.HAL9001.system.config.TeleopConfig
      */
+    @NotNull
     public final CustomizableGamepad pullControls(SubSystem subsystem) {
         List<ConfigParam> configParams = globalConfig.getConfig(TELEOP, subsystem);
-        ExceptionChecker.assertNonNull(configParams, new NullPointerException(subsystem+" is not present in teleopConfig"));
+        ExceptionChecker.assertNonNull(configParams, new NullPointerException(subsystem + " is not present in teleopConfig"));
+
         CustomizableGamepad gamepad = new CustomizableGamepad(this);
-        for (ConfigParam param : configParams) {
-            if (param.usesGamepad) {
-                gamepad.addButton(param.name, param.toButton());
-            }
-        }
+
+        for (ConfigParam param : configParams)
+            if (param.usesGamepad) gamepad.addButton(param.name, param.toButton());
+
         return gamepad;
     }
 
@@ -419,6 +463,13 @@ public abstract class Robot {
      *
      * @param subsystem The name of the subsystem to get config from.
      * @return The non-gamepad configuration data for that subsystem.
+     *
+     * @see HALConfig
+     * @see ConfigParam
+     * @see ConfigData
+     * @see SubSystem
+     * @see com.SCHSRobotics.HAL9001.system.config.AutonomousConfig
+     * @see com.SCHSRobotics.HAL9001.system.config.TeleopConfig
      */
     @NotNull
     @Contract("_ -> new")
@@ -426,38 +477,40 @@ public abstract class Robot {
         List<ConfigParam> configParamsTeleop = globalConfig.getConfig(TELEOP, subsystem);
         List<ConfigParam> configParamsAuto = globalConfig.getConfig(AUTONOMOUS, subsystem);
 
-        if (configParamsAuto == null) {
-            configParamsAuto = new ArrayList<>();
-        }
-        if (configParamsTeleop == null) {
-            configParamsTeleop = new ArrayList<>();
-        }
+        if (configParamsAuto == null) configParamsAuto = new ArrayList<>();
+        if (configParamsTeleop == null) configParamsTeleop = new ArrayList<>();
 
         Map<String, Object> output = new HashMap<>();
 
-        for (ConfigParam param : configParamsAuto) {
-            if (!param.usesGamepad) {
+        for (ConfigParam param : configParamsAuto)
+            if (!param.usesGamepad)
                 output.put(param.name, param.vals.get(param.options.indexOf(param.currentOption)));
-            }
-        }
-
-        for (ConfigParam param : configParamsTeleop) {
-            if (!param.usesGamepad) {
+        for (ConfigParam param : configParamsTeleop)
+            if (!param.usesGamepad)
                 output.put(param.name, param.vals.get(param.options.indexOf(param.currentOption)));
-            }
-        }
 
         return new ConfigData(output);
     }
 
+    /**
+     * Gets the config settings for the currently running opmode.
+     *
+     * @return The config settings for the currently running opmode.
+     * @see HALConfig
+     * @see ConfigParam
+     * @see ConfigData
+     * @see HALProgram
+     * @see ProgramOptions
+     * @see LinkTo
+     */
     public ConfigData pullOpModeSettings() {
         List<ConfigParam> data = globalConfig.getConfig(opMode);
         ExceptionChecker.assertNonNull(data, new NothingToSeeHereException(HALConfig.getOpModeName(opMode.getClass()) + " settings are not part of the config."));
 
         Map<String, Object> dataMap = new HashMap<>();
-        for (ConfigParam param : data) {
+        for (ConfigParam param : data)
             dataMap.put(param.name, param.vals.get(param.options.indexOf(param.currentOption)));
-        }
+
         return new ConfigData(dataMap);
     }
 
@@ -465,6 +518,8 @@ public abstract class Robot {
      * Gets if the program the robot is running is a teleop program.
      *
      * @return Whether the program being run is a teleop program.
+     *
+     * @see HALProgram
      */
     @Contract(pure = true)
     public final boolean isTeleop() {
@@ -475,6 +530,8 @@ public abstract class Robot {
      * Gets if the program the robot is running is an autonomous program.
      *
      * @return Whether the program being run is an autonomous program.
+     *
+     * @see HALProgram
      */
     @Contract(pure = true)
     public final boolean isAutonomous() {
@@ -485,6 +542,8 @@ public abstract class Robot {
      * Gets whether the robot's current program is running.
      *
      * @return Whether the robot's current program is running.
+     *
+     * @see HALProgram
      */
     public final boolean opModeIsActive() {
         ExceptionChecker.assertTrue(isTeleop() || isAutonomous(), new DumpsterFireException("Program is not an instance of BaseAutonomous or BaseTeleop, cannot tell if its running. A lot of other things are probably broken too if you're seeing this."));
@@ -495,6 +554,8 @@ public abstract class Robot {
      * Gets whether the robot's current program has requested to be stopped.
      *
      * @return Whether the robot's current program has requested to be stopped.
+     *
+     * @see HALProgram
      */
     public final boolean isStopRequested() {
         ExceptionChecker.assertTrue(isTeleop() || isAutonomous(), new DumpsterFireException("Program is not an instance of BaseAutonomous or BaseTeleop, cannot tell if its running. A lot of other things are probably broken too if you're seeing this."));
@@ -505,23 +566,57 @@ public abstract class Robot {
      * Gets whether the robot's current program has been started.
      *
      * @return Whether the robot's current program has been started.
+     *
+     * @see HALProgram
      */
     public final boolean isStarted() {
         ExceptionChecker.assertTrue(isTeleop() || isAutonomous(), new DumpsterFireException("Program is not an instance of BaseAutonomous or BaseTeleop, cannot tell if its running. A lot of other things are probably broken too if you're seeing this."));
         return ((LinearOpMode) opMode).isStarted();
     }
 
+    /**
+     * Reverses the direction of the internal camera if present and set up.
+     *
+     * @see CameraManager
+     * \
+     */
     public final void reverseInternalCameraDirection() {
-        internalCameraCurrentDirection = internalCameraCurrentDirection == OpenCvInternalCamera.CameraDirection.FRONT ? OpenCvInternalCamera.CameraDirection.BACK : OpenCvInternalCamera.CameraDirection.FRONT;
-        CameraManager.stopInternalCamera();
-        OpenCvCamera newCamera = createCamera(internalCameraField, internalCameraData.usesViewport(), CameraType.INTERNAL, internalCameraCurrentDirection, INTERNAL_CAMERA_ID, internalCameraViewId);
-        CameraManager.overrideInternalCamera(newCamera);
+        if (internalCameraCurrentDirection != null) {
+            internalCameraCurrentDirection = internalCameraCurrentDirection == OpenCvInternalCamera.CameraDirection.FRONT ? OpenCvInternalCamera.CameraDirection.BACK : OpenCvInternalCamera.CameraDirection.FRONT;
+            CameraManager.stopInternalCamera();
+            OpenCvCamera newCamera = createCamera(internalCameraField, internalCameraData.usesViewport(), CameraType.INTERNAL, internalCameraCurrentDirection, INTERNAL_CAMERA_ID, internalCameraViewId);
+            CameraManager.overrideInternalCamera(newCamera);
+        }
     }
 
+    /**
+     * Gets the camera object associated with the given camera id.
+     *
+     * @param cameraId The camera id of the desired camera object.
+     * @return The camera object associated with the given camera id.
+     * @see CameraManager
+     * @see OpenCvCamera
+     */
     public final OpenCvCamera getCamera(String cameraId) {
         return CameraManager.getCamera(cameraId);
     }
 
+    /**
+     * Creates an OpenCVCamera using the given data.
+     *
+     * @param cameraField         The field object referring to the camera.
+     * @param usesViewport        Whether or not the camera uses the viewport.
+     * @param cameraType          The type of camera to create (INTERNAL or EXTERNAL).
+     * @param direction           The camera's direction (if it's an internal camera).
+     * @param cameraName          The camera's name (id).
+     * @param cameraMonitorViewId The camera monitor view id (if the camera uses the viewport).
+     * @return An OpenCVCamera created using the given data.
+     * @see OpenCvCamera
+     * @see CameraType
+     * @see OpenCvCamera
+     * @see OpenCvInternalCamera
+     * @see OpenCvInternalCamera2
+     */
     private OpenCvCamera createCamera(Field cameraField, boolean usesViewport, @NotNull CameraType cameraType, OpenCvInternalCamera.CameraDirection direction, String cameraName, int cameraMonitorViewId) {
         OpenCvCamera camera;
         switch (cameraType) {
@@ -529,25 +624,21 @@ public abstract class Robot {
             case INTERNAL:
                 if (OpenCvInternalCamera2.class.isAssignableFrom(cameraField.getType())) {
                     OpenCvInternalCamera2.CameraDirection direction2 = direction == OpenCvInternalCamera.CameraDirection.FRONT ? OpenCvInternalCamera2.CameraDirection.FRONT : OpenCvInternalCamera2.CameraDirection.BACK;
-                    if (usesViewport) {
+                    if (usesViewport)
                         camera = OpenCvCameraFactory.getInstance().createInternalCamera2(direction2, cameraMonitorViewId);
-                    } else {
+                    else
                         camera = OpenCvCameraFactory.getInstance().createInternalCamera2(direction2);
-                    }
                 } else {
-                    if (usesViewport) {
+                    if (usesViewport)
                         camera = OpenCvCameraFactory.getInstance().createInternalCamera(direction, cameraMonitorViewId);
-                    } else {
-                        camera = OpenCvCameraFactory.getInstance().createInternalCamera(direction);
-                    }
+                    else camera = OpenCvCameraFactory.getInstance().createInternalCamera(direction);
                 }
                 break;
             case EXTERNAL:
-                if (usesViewport) {
+                if (usesViewport)
                     camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, cameraName), cameraMonitorViewId);
-                } else {
+                else
                     camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, cameraName));
-                }
                 break;
         }
 

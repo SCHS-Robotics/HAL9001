@@ -8,14 +8,14 @@ import java.util.Set;
 
 /**
  * A packet of tasks. Used to easily run large classes of provided tasks.
+ * <p>
+ * Creation Date: 5/17/20
  *
  * @param <T> The type of object that will be used as a key to look up individual tasks.
  * @author Cole Savage, Level Up
  * @version 1.0.0
  * @see Task
  * @see MultiElementMap
- * <p>
- * Creation Date: 5/17/20
  * @since 1.1.0
  */
 public final class TaskPacket<T> {

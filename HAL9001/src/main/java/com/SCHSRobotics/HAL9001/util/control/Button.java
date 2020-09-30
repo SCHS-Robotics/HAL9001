@@ -11,17 +11,23 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * A class representing a button on the gamepad.
+ * <p>
+ * Creation Date: 7/20/19
  *
  * @author Dylan Zueck, Crow Force
+ * @version 1.3.0
+ * @see CustomizableGamepad
  * @since 1.0.0
- * @version 1.0.0
- *
- * Creation Date: 7/20/19
  */
-@SuppressWarnings({"WeakerAccess","unused"})
 public class Button<T> {
+    //A special constant boolean button that will always return false.
+    public static final Button<Boolean> noButtonBoolean = new Button<>(1, BooleanInputs.noButton);
+    //A special constant double button that will always return 0.0.
+    public static final Button<Double> noButtonDouble = new Button<>(1, DoubleInputs.noButton);
+    //A special constant vector button that will always return the zero vector.
+    public static final Button<Vector2D> noButtonVector = new Button<>(1, VectorInputs.noButton);
 
-    //IsBoolean is true if is is a boolean input button, isDouble is true if it is a double input button.
+    //isboolean is true if is is a boolean input button, isDouble is true if it is a double input button.
     private boolean isBoolean, isDouble, isVector;
     //Number of gamepad to use 1 or 2.
     private int gamepadNumber;
@@ -33,13 +39,6 @@ public class Button<T> {
     private VectorInputs vectorInput;
     //Deadzone to use for the boolean version of the double inputs.
     private double deadzone = 0;
-
-    private T type;
-
-    public static final Button<Boolean> noButtonBoolean = new Button<>(1, BooleanInputs.noButton);
-    public static final Button<Double> noButtonDouble = new Button<>(1, DoubleInputs.noButton);
-    public static final Button<Vector2D> noButtonVector = new Button<>(1, VectorInputs.noButton);
-
 
     /**
      * Represents the allowed input methods for controls that return double values.
@@ -74,6 +73,8 @@ public class Button<T> {
      *
      * @param gamepadNumber Number of gamepad this button will use.
      * @param inputName DoubleInput that this button will output.
+     * @throws NotDoubleInputException Throws this exception if you try and create a double button, but the generic type is not Double.
+     * @throws NotARealGamepadException Throws this exception if you do not enter 1 or 2 as a gamepad number, as FTC only allows a max of 2 gamepads.
      */
     public Button(int gamepadNumber, @NotNull DoubleInputs inputName){
         this(gamepadNumber,inputName,0.0);
@@ -85,6 +86,8 @@ public class Button<T> {
      * @param gamepadNumber Number of gamepad this button will use.
      * @param inputName DoubleInput that this button will output.
      * @param deadzone Double between 0 and 1 that sets the deadzone.
+     * @throws NotDoubleInputException Throws this exception if you try and create a double button, but the generic type is not Double.
+     * @throws NotARealGamepadException Throws this exception if you do not enter 1 or 2 as a gamepad number, as FTC only allows a max of 2 gamepads.
      */
     @SuppressWarnings("unchecked")
     public Button(int gamepadNumber, @NotNull DoubleInputs inputName, double deadzone){
@@ -108,6 +111,8 @@ public class Button<T> {
      *
      * @param gamepadNumber Number of gamepad this button will use.
      * @param inputName BooleanInput that this button will output.
+     * @throws NotBooleanInputException Throws this exception if you try and create a boolean button, but the generic type is not Boolean.
+     * @throws NotARealGamepadException Throws this exception if you do not enter 1 or 2 as a gamepad number, as FTC only allows a max of 2 gamepads.
      */
     public Button(int gamepadNumber, @NotNull BooleanInputs inputName){
         this(gamepadNumber, inputName, 0.0);
@@ -119,6 +124,8 @@ public class Button<T> {
      * @param gamepadNumber Number of gamepad this button will use.
      * @param inputName BooleanInput that this button will output.
      * @param deadzone Double between 0 and 1 that sets the deadzone.
+     * @throws NotBooleanInputException Throws this exception if you try and create a boolean button, but the generic type is not Boolean.
+     * @throws NotARealGamepadException Throws this exception if you do not enter 1 or 2 as a gamepad number, as FTC only allows a max of 2 gamepads.
      */
     @SuppressWarnings("unchecked")
     public Button(int gamepadNumber, @NotNull BooleanInputs inputName, double deadzone){
@@ -139,9 +146,11 @@ public class Button<T> {
 
     /**
      * Constructor for button that makes a vector button.
-     * 
+     *
      * @param gamepadNumber Number of gamepad this button will use.
-     *  @param inputName VectorInput that this button will output.
+     * @param inputName VectorInput that this button will output.
+     * @throws NotVectorInputException Throws this exception if you try and create a vector button, but the generic type is not Vector.
+     * @throws NotARealGamepadException Throws this exception if you do not enter 1 or 2 as a gamepad number, as FTC only allows a max of 2 gamepads.
      */
     @SuppressWarnings("unchecked")
     public Button(int gamepadNumber, @NotNull VectorInputs inputName){
@@ -162,36 +171,57 @@ public class Button<T> {
     /**
      * Returns the enum for this button.
      */
-    public Enum getInputEnum(){
-        if(isBoolean){
-            return booleanInput;
-        }
-        else if(isDouble){
-            return doubleInput;
-        }
-        else {
-            return vectorInput;
-        }
+    public Enum<?> getInputEnum() {
+        if (isBoolean) return booleanInput;
+        else if (isDouble) return doubleInput;
+        else return vectorInput;
     }
 
+    /**
+     * Gets whether the button is a boolean button.
+     *
+     * @return Whether the button is a boolean button.
+     */
     public boolean isBoolean() {
         return isBoolean;
     }
 
+    /**
+     * Gets whether the button is a double button.
+     *
+     * @return Whether the button is a double button.
+     */
     public boolean isDouble() {
         return isDouble;
     }
 
+    /**
+     * Gets whether the button is a vector button.
+     *
+     * @return Whether the button is a vector button.
+     */
     public boolean isVector() {
         return isVector;
     }
 
+    /**
+     * Gets the number of the gamepad that the button is using.
+     *
+     * @return The number of the gamepad that the button is using.
+     */
     public int getGamepadNumber() {
         return gamepadNumber;
     }
 
-    public double getDeadzone() {
-        return deadzone;
+    /**
+     * Sets the gamepad number of the button (must be 1 or 2).
+     *
+     * @param gamepadNumber Which gamepad the button will use.
+     * @throws NotARealGamepadException Throws this exception if you do not enter 1 or 2 as a gamepad number, as FTC only allows a max of 2 gamepads.
+     */
+    public void setGamepadNumber(int gamepadNumber) {
+        ExceptionChecker.assertTrue(gamepadNumber == 1 || gamepadNumber == 2, new NotARealGamepadException("You must use either gamepad 1 or gamepad 2."));
+        this.gamepadNumber = gamepadNumber;
     }
 
     /**
@@ -199,18 +229,22 @@ public class Button<T> {
      *
      * @param deadzone Double between 0 and 1 that sets the deadzone.
      */
-    public void setDeadzone(double deadzone){
+    public void setDeadzone(double deadzone) {
         this.deadzone = deadzone;
     }
 
-    public void setGamepadNumber(int gamepadNumber) {
-        ExceptionChecker.assertTrue(gamepadNumber == 1 || gamepadNumber == 2, new NotARealGamepadException("You must use either gamepad 1 or gamepad 2."));
-        this.gamepadNumber = gamepadNumber;
+    /**
+     * Gets the button's deadzone.
+     *
+     * @return The button's deadzone.
+     */
+    public double getDeadzone() {
+        return deadzone;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof Button<?>) {
+        if (obj instanceof Button<?>) {
             Button<?> button = (Button<?>) obj;
             return this.hashCode() == button.hashCode();
         }

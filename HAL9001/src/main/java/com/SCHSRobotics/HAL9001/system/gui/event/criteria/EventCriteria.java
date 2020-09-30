@@ -7,6 +7,8 @@ import org.jetbrains.annotations.Contract;
 
 /**
  * A set of criteria for a given event that the event must pass in order to be handled.
+ * <p>
+ * Creation Date: 9/10/20
  *
  * @param <T> The event the criteria is associated with.
  * @author Cole Savage, Level Up
@@ -15,8 +17,6 @@ import org.jetbrains.annotations.Contract;
  * @see CriteriaPacket
  * @see com.SCHSRobotics.HAL9001.system.gui.HALMenu
  * @see com.SCHSRobotics.HAL9001.system.gui.HALGUI
- * <p>
- * Creation Date: 9/10/20
  * @since 1.1.0
  */
 public class EventCriteria<T extends Event> {

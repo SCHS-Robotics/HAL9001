@@ -6,6 +6,8 @@ import com.SCHSRobotics.HAL9001.util.misc.UniqueID;
 
 /**
  * A static class to store the constant values used in the config system.
+ * <p>
+ * Creation Date: 9/11/20
  *
  * @author Cole Savage, Level Up
  * @version 1.0.0
@@ -16,8 +18,6 @@ import com.SCHSRobotics.HAL9001.util.misc.UniqueID;
  * @see ConfigureSubSystemMenu
  * @see SelectConfigurableSubsystemsMenu
  * @see AutorunScreen
- * <p>
- * Creation Date: 9/11/20
  * @since 1.1.0
  */
 public class ConfigConstants {

@@ -4,6 +4,8 @@ import com.SCHSRobotics.HAL9001.system.gui.viewelement.eventlistener.EventListen
 
 /**
  * A packet of data provided to EventListeners when they are triggered.
+ * <p>
+ * Creation Date: 9/17/20
  *
  * @author Cole Savage, Level Up
  * @version 1.0.0
@@ -12,8 +14,6 @@ import com.SCHSRobotics.HAL9001.system.gui.viewelement.eventlistener.EventListen
  * @see EventListener
  * @see Event
  * @see com.SCHSRobotics.HAL9001.system.gui.HALMenu
- * <p>
- * Creation Date: 9/17/20
  * @since 1.1.0
  */
 public final class DataPacket {
