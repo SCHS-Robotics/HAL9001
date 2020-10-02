@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.SCHSRobotics.HAL9001.system.source.BaseRobot.BaseTeleop;
-import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
+import com.SCHSRobotics.HAL9001.system.robot.BaseTeleop;
+import com.SCHSRobotics.HAL9001.system.robot.Robot;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 //@StandAlone is not required but stops it from auto using configs from autonomous

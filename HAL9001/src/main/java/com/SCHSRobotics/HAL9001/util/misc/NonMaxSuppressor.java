@@ -12,16 +12,16 @@ import java.util.List;
 /**
  * A class used to perform non-max suppression on a list of bounding boxes.
  * The algorithm is essentially a port of the Malisiewicz et al. method described in http://www.computervisionblog.com/2011/08/blazing-fast-nmsm-from-exemplar-svm.html.
+ * <p>
+ * Creation Date: 1/15/19
  *
  * @author Cole Savage, Level Up
- * @since 1.0.0
  * @version 1.0.0
- *
- * Creation Date: 1/15/19
+ * @since 1.0.0
  */
 @SuppressWarnings("unused")
 public class NonMaxSuppressor {
-
+    //Todo move helper functions to FakeNumpy
     //The area overlap threshold.
     private double thresh;
 
@@ -107,6 +107,7 @@ public class NonMaxSuppressor {
      * @param idxes The indexes of the bounding boxes to use to populate the list.
      * @return A list containing all the bounding boxes referenced by idxes.
      */
+    @NotNull
     private List<Rect> populateList(@NotNull List<Rect> boxes, @NotNull List<Integer> idxes) {
         List<Rect> output = new ArrayList<>();
         for(int idx : idxes) {
@@ -122,6 +123,7 @@ public class NonMaxSuppressor {
      * @param x The constant to add.
      * @return The original list where every value has a constant added.
      */
+    @NotNull
     @SuppressWarnings("SameParameterValue")
     private List<Double> addListConstant(@NotNull List<Double> lst, double x) {
         List<Double> output = new ArrayList<>();
@@ -138,6 +140,7 @@ public class NonMaxSuppressor {
      * @param lst2 The second list.
      * @return list1 list2.
      */
+    @NotNull
     private List<Double> subtractLists(@NotNull List<Double> lst1, @NotNull List<Double> lst2) {
         if(lst1.size() != lst2.size()) {
             throw new DumpsterFireException("Lists not the same size!");
@@ -157,6 +160,7 @@ public class NonMaxSuppressor {
      * @param mask The indexes that should be divided.
      * @return list1/list2 for the indexes in mask.
      */
+    @NotNull
     private List<Double> divideLists(@NotNull List<Double> lst1, @NotNull List<Double> lst2, @NotNull List<Integer> mask) {
         List<Double> output = new ArrayList<>();
         for (int i = 0; i < mask.size(); i++) {
@@ -172,6 +176,7 @@ public class NonMaxSuppressor {
      * @param lst2 The second list.
      * @return list1 * list2.
      */
+    @NotNull
     private List<Double> multiplyLists(@NotNull List<Double> lst1, @NotNull List<Double> lst2) {
         if(lst1.size() != lst2.size()) {
             throw new DumpsterFireException("Lists not the same size!");
@@ -207,6 +212,7 @@ public class NonMaxSuppressor {
      * @param mask A list of valid indexes for the max() operation to take place.
      * @return A list where all elements < x are replaced with x.
      */
+    @NotNull
     private List<Double> listMax(double x, @NotNull List<Double> lst, @NotNull List<Integer> mask) {
         List<Double> output = new ArrayList<>();
         for(int idx : mask) {
@@ -222,6 +228,7 @@ public class NonMaxSuppressor {
      * @param lst The list.
      * @return A list where all elements < x are replaced with x.
      */
+    @NotNull
     @SuppressWarnings("SameParameterValue")
     private List<Double> listMax(double x, @NotNull List<Double> lst) {
         List<Double> output = new ArrayList<>();
@@ -239,6 +246,7 @@ public class NonMaxSuppressor {
      * @param mask A list of valid indexes for the min() operation to take place.
      * @return A list where all elements > x are replaced with x.
      */
+    @NotNull
     private List<Double> listMin(double x, @NotNull List<Double> lst, @NotNull List<Integer> mask) {
         List<Double> output = new ArrayList<>();
         for(int idx : mask) {
@@ -253,6 +261,7 @@ public class NonMaxSuppressor {
      * @param input The input list.
      * @return A list of the indexes of each of the elements in the sorted list (in the sorted order).
      */
+    @NotNull
     private List<Integer> argsort(@NotNull List<Double> input) {
         List<Integer> output = new ArrayList<>();
         List<Double> cpy = new ArrayList<>(input);

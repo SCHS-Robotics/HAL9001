@@ -5,12 +5,14 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * An exception thrown if a channel in a color image does not exist.
+ * <p>
+ * Creation Date: 7/20/19
  *
  * @author Cole Savage, Level Up
- * @since 1.0.0
  * @version 1.0.0
- *
- * Creation Date: 7/20/19
+ * @see com.SCHSRobotics.HAL9001.system.robot.subsystems.calib.ColorspaceCalib
+ * @see RuntimeException
+ * @since 1.0.0
  */
 public class ChannelDoesNotExistException extends RuntimeException {
 

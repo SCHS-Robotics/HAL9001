@@ -14,6 +14,10 @@
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 
+repositories {
+    maven { url = "https://dl.bintray.com/first-tech-challenge/ftcsdk/" }
+}
+
 dependencies {
-    implementation project(path: ':HAL9001')
+    annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 }

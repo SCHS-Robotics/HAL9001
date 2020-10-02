@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.SCHSRobotics.HAL9001.system.source.BaseRobot.BaseTeleop;
-import com.SCHSRobotics.HAL9001.util.annotations.LinkTo;
-import com.SCHSRobotics.HAL9001.util.annotations.MainRobot;
-import com.SCHSRobotics.HAL9001.util.annotations.ProgramOptions;
-import com.SCHSRobotics.HAL9001.util.misc.ConfigData;
+import com.SCHSRobotics.HAL9001.system.config.ConfigData;
+import com.SCHSRobotics.HAL9001.system.config.ProgramOptions;
+import com.SCHSRobotics.HAL9001.system.robot.BaseTeleop;
+import com.SCHSRobotics.HAL9001.system.robot.LinkTo;
+import com.SCHSRobotics.HAL9001.system.robot.MainRobot;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 //@StandAlone is not required but stops it from auto using configs from autonomous
@@ -43,7 +43,7 @@ public class BasicSampleTeleop extends BaseTeleop {
     //Not necessary to have this (you can delete it), basically if you want to do something special on start you would put it here
     @Override
     protected void onStart() {
-        setting = robot.pullProgramSettings();
+        setting = robot.pullOpModeSettings();
         a = setting.getData("Test", Test.class);
         b = setting.getData("Test2",Test2.class);
     }

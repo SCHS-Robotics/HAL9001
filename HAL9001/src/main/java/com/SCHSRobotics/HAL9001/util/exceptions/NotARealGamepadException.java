@@ -4,12 +4,15 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * An exception that is thrown when someone tries to use an invalid gamepad to control the robot.
+ * <p>
+ * Creation Date: 7/21/19
  *
  * @author Cole Savage, Level Up
- * @since 1.0.0
  * @version 1.0.0
- *
- * Creation Date: 7/21/19
+ * @see com.SCHSRobotics.HAL9001.util.control.Button
+ * @see com.SCHSRobotics.HAL9001.util.control.CustomizableGamepad
+ * @see RuntimeException
+ * @since 1.0.0
  */
 public class NotARealGamepadException extends RuntimeException {
 

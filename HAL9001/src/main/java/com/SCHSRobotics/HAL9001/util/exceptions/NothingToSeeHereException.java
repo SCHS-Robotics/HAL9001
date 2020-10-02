@@ -3,13 +3,14 @@ package com.SCHSRobotics.HAL9001.util.exceptions;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * An exception thrown if an object is null that is not supposed to be null.
+ * An exception thrown if something needed is missing.
+ * <p>
+ * Creation Date: 10/9/19
  *
  * @author Cole Savage, Level Up
- * @since 1.0.0
  * @version 1.0.0
- *
- * Creation Date: 10/9/19
+ * @see RuntimeException
+ * @since 1.0.0
  */
 public class NothingToSeeHereException extends RuntimeException {
 

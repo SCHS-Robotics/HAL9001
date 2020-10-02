@@ -1,24 +1,28 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.SCHSRobotics.HAL9001.system.source.BaseRobot.Robot;
-import com.SCHSRobotics.HAL9001.system.source.BaseRobot.VisionSubSystem;
+import com.SCHSRobotics.HAL9001.system.robot.Camera;
+import com.SCHSRobotics.HAL9001.system.robot.HALPipeline;
+import com.SCHSRobotics.HAL9001.system.robot.Robot;
+import com.SCHSRobotics.HAL9001.system.robot.VisionSubSystem;
 
-import org.opencv.bioinspired.Bioinspired;
-import org.opencv.bioinspired.Retina;
 import org.opencv.core.Mat;
-import org.opencv.core.Size;
+
 
 public class TestVisionSystem extends VisionSubSystem {
 
-    Retina retina;
+    private boolean runVision = true;
 
     public TestVisionSystem(Robot robot) {
         super(robot);
     }
 
     @Override
+    protected HALPipeline[] getPipelines() {
+        return new HALPipeline[]{new TestPipeline()};
+    }
+
+    @Override
     public void init() {
-        retina = Retina.create(new Size(240,320),false, Bioinspired.RETINA_COLOR_BAYER,true);
     }
 
     @Override
@@ -28,7 +32,8 @@ public class TestVisionSystem extends VisionSubSystem {
 
     @Override
     public void start() {
-        startVision();
+        runVision = false;
+        robot.reverseInternalCameraDirection();
     }
 
     @Override
@@ -41,12 +46,16 @@ public class TestVisionSystem extends VisionSubSystem {
 
     }
 
-    @Override
-    public Mat onCameraFrame(Mat input) {
-        Mat test = new Mat(input.size(),input.type());
-        retina.applyFastToneMapping(input,test);
-        input.release();
-        return test;
-    }
+    @Camera(id = Robot.INTERNAL_CAMERA_ID)
+    public class TestPipeline extends HALPipeline {
+        @Override
+        public Mat processFrame(Mat input) {
+            return input;
+        }
 
+        @Override
+        public boolean useViewport() {
+            return runVision;
+        }
+    }
 }

@@ -1,2 +1,3 @@
-include ':FtcRobotController', ':HAL9001'
+include ':HAL9001'
+include ':FtcRobotController'
 include ':TeamCode'
