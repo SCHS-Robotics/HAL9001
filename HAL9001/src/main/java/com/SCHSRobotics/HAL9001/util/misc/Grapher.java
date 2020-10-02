@@ -17,14 +17,13 @@ import java.io.PrintStream;
 
 /**
  * A class for graphing functions on the phone in real time.
+ * <p>
+ * Creation Date: 8/3/19
  *
  * @author Cole Savage, Level Up
- * @since 1.0.0
  * @version 1.0.0
- *
- * Creation Date: 8/3/19
+ * @since 1.0.0
  */
-@SuppressWarnings("unused")
 public class Grapher {
 
     //The x and y data of the graph.
@@ -81,9 +80,14 @@ public class Grapher {
 
         snapshotNumber = 0;
 
-        frameSize = new Size(240,320);
+        frameSize = new Size(240, 320);
     }
 
+    /**
+     * Sets the grapher's frame size (resolution).
+     *
+     * @param size The grapher's frame size (resolution).
+     */
     public void setFrameSize(Size size) {
         frameSize = size;
     }
@@ -163,7 +167,6 @@ public class Grapher {
         return plot;
     }
 
-    //TODO may need updating
     /**
      * Save a snapshot of all the data currently on the graph.
      */

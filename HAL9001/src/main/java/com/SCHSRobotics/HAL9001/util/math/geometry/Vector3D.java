@@ -1,51 +1,216 @@
 package com.SCHSRobotics.HAL9001.util.math.geometry;
 
+import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
+import com.SCHSRobotics.HAL9001.util.exceptions.HALMathException;
+import com.SCHSRobotics.HAL9001.util.math.FakeNumpy;
 import com.SCHSRobotics.HAL9001.util.math.units.HALAngleUnit;
 
+import org.ejml.simple.SimpleMatrix;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * A 2D Vector class.
+ * <p>
+ * Creation Date: 5/27/20
+ *
+ * @author Cole Savage, Level Up
+ * @version 1.0.0
+ * @see Vector
+ * @see BaseEuclideanVector
+ * @see Vector2D
+ * @see Point3D
+ * @since 1.1.0
+ */
 public class Vector3D extends BaseEuclideanVector<Vector3D> {
+    //The zero vector for 3 dimensions.
     private static final Vector3D ZERO_VECTOR = new Vector3D(0, 0, 0);
 
-    public Vector3D(double a, double b, double c, CoordinateSystem3D coordinateSystem) {
-        super(coordinateSystem.convertTo(CoordinateSystem3D.CARTESIAN).apply(new double[]{a, b, c}));
+    /**
+     * A constructor for Vector3D.
+     *
+     * @param start The vector's start point.
+     * @param end The vector's end point.
+     *
+     * @see Point3D
+     * @see FakeNumpy
+     */
+    public Vector3D(@NotNull Point3D start, @NotNull Point3D end) {
+        super(FakeNumpy.subtract(end.coordinates, start.coordinates));
     }
 
+    /**
+     * A constructor for Vector3D. Assumes start point of the vector is the origin.
+     *
+     * @param end The vector's end point.
+     *
+     * @see Point3D
+     */
+    public Vector3D(Point3D end) {
+        this(Point3D.getOrigin(), end);
+    }
+
+    /**
+     * A constructor for Vector3D. Requires Cartesian components.
+     *
+     * @param x The x component.
+     * @param y The y component.
+     * @param z The z component.
+     *
+     * @see Point3D
+     */
     public Vector3D(double x, double y, double z) {
-        this(x, y, z, CoordinateSystem3D.CARTESIAN);
+        this(new Point3D(x, y, z));
     }
 
+    /**
+     * A constructor for Vector3D. Requires cylindrical components.
+     *
+     * @param r The r component.
+     * @param theta The theta component.
+     * @param angleUnit The units of the theta component.
+     * @param z The z component.
+     */
     public Vector3D(double r, double theta, HALAngleUnit angleUnit, double z) {
-        this(r, angleUnit.convertTo(HALAngleUnit.RADIANS).apply(theta), z, CoordinateSystem3D.CYLINDRICAL);
+        this(new Point3D(r, theta, angleUnit, z));
     }
 
+    /**
+     * A constructor for Vector3D. Requires spherical components.
+     *
+     * @param rho The rho component.
+     * @param phi The phi component.
+     * @param phiUnit The units of the phi component.
+     * @param theta The theta component.
+     * @param thetaUnit The units of the theta component.
+     */
     public Vector3D(double rho, double phi, HALAngleUnit phiUnit, double theta, HALAngleUnit thetaUnit) {
-        this(rho, phiUnit.convertTo(HALAngleUnit.RADIANS).apply(phi), thetaUnit.convertTo(HALAngleUnit.RADIANS).apply(theta));
+        this(new Point3D(rho, phi, phiUnit, theta, thetaUnit));
     }
 
-    private Vector3D(Vector3D v) {
+    /**
+     * A private Vector3D constructor used for cloning.
+     *
+     * @param v The vector to clone.
+     */
+    private Vector3D(@NotNull Vector3D v) {
         components = v.components;
     }
 
+    /**
+     * Converts a 3D vector in (cartesian) matrix form into a Vector3D object.
+     *
+     * @param inputMatrix The (cartesian) matrix form of a 3D vector. Can be a column matrix or a row matrix.
+     * @return The Vector3D representation of the given vector.
+     *
+     * @throws HALMathException Throws this exception if the input is not a vector matrix or if the input is not 3 dimensional.
+     */
+    @NotNull
+    @Contract("_ -> new")
+    public static Vector3D fromMatrix(@NotNull SimpleMatrix inputMatrix) {
+        ExceptionChecker.assertTrue(inputMatrix.isVector(), new HALMathException("Input matrix is not a vector matrix."));
+
+        SimpleMatrix vectorMatrix;
+        if (inputMatrix.numRows() == 1) vectorMatrix = inputMatrix.transpose();
+        else vectorMatrix = inputMatrix.copy();
+
+        ExceptionChecker.assertTrue(vectorMatrix.numRows() == CoordinateSystem3D.CARTESIAN.dimensionality(), new HALMathException("Input must be a 2D vector in matrix form."));
+
+        return new Vector3D(vectorMatrix.get(0, 0), vectorMatrix.get(1, 0), vectorMatrix.get(2, 0));
+    }
+
+    /**
+     * Gets the zero vector for 3 dimensions.
+     *
+     * @return The zero vector for 3 dimensions.
+     */
     public static Vector3D getZeroVector() {
         return ZERO_VECTOR.clone();
     }
 
-    public double getXComponent() {
+    /**
+     * Gets the vector's x component.
+     *
+     * @return The vector's x component.
+     */
+    public double getX() {
         return components[0];
     }
 
-    public double getYComponent() {
+    /**
+     * Gets the vector's y component.
+     *
+     * @return The vector's y component.
+     */
+    public double getY() {
         return components[1];
     }
 
-    public double getZComponent() {
+    /**
+     * Gets the vector's y component.
+     *
+     * @return The vector's y component.
+     */
+    public double getZ() {
         return components[2];
     }
 
-    public Vector3D cross(Vector3D vector) {
+    /**
+     * Gets the vector's r component.
+     *
+     * @return The vector's r component.
+     */
+    public double getR() {
+        return new Point3D(components[0], components[1], components[2]).getR();
+    }
+
+    /**
+     * Gets the vector's phi component (units are radians by default).
+     *
+     * @return The vector's phi component (units are radians by default).
+     */
+    public double getPhi() {
+        return getPhi(HALAngleUnit.RADIANS);
+    }
+
+    /**
+     * Gets the vector's phi component (units are radians by default).
+     *
+     * @return The vector's phi component (units are radians by default).
+     */
+    public double getPhi(HALAngleUnit angleUnit) {
+        return new Point3D(components[0], components[1], components[2]).getPhi(angleUnit);
+    }
+
+    /**
+     * Gets the vector's theta component (units are radians by default).
+     *
+     * @return The vector's theta component (units are radians by default).
+     */
+    public double getTheta() {
+        return getTheta(HALAngleUnit.RADIANS);
+    }
+
+    /**
+     * Gets the vector's theta component (units are radians by default).
+     *
+     * @return The vector's theta component (units are radians by default).
+     */
+    public double getTheta(HALAngleUnit angleUnit) {
+        return new Point3D(components[0], components[1], components[2]).getTheta(angleUnit);
+    }
+
+    /**
+     * Calculates the cross product of this vector with the given vector.
+     *
+     * @param vector The vector to multiply this vector by (cross product).
+     * @return The cross product of this vector with the given vector.
+     */
+    public Vector3D cross(@NotNull Vector3D vector) {
         return new Vector3D(
-                this.getYComponent() * vector.getZComponent() - this.getZComponent() * vector.getYComponent(),
-                this.getZComponent() * vector.getXComponent() - this.getXComponent() * vector.getZComponent(),
-                this.getXComponent() * vector.getYComponent() - this.getYComponent() * vector.getXComponent()
+                this.getY() * vector.getZ() - this.getZ() * vector.getY(),
+                this.getZ() * vector.getX() - this.getX() * vector.getZ(),
+                this.getX() * vector.getY() - this.getY() * vector.getX()
         );
     }
 

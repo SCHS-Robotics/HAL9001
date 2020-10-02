@@ -1,10 +1,18 @@
+import com.SCHSRobotics.HAL9001.util.exceptions.HALMathException;
 import com.SCHSRobotics.HAL9001.util.math.FakeNumpy;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * @// TODO: 12/22/2019
+ * Unit tests for the FakeNumpy math util class.
+ * <p>
+ * Creation Date: 12/22/19
+ *
+ * @author Cole Savage, Level Up
+ * @version 1.0.0
+ * @see FakeNumpy
+ * @since 1.0.6
  */
 public class FakeNumpyTest {
 
@@ -565,7 +573,6 @@ public class FakeNumpyTest {
         Assert.assertFalse(FakeNumpy.checkForDuplicates(testArr2));
     }
 
-    //-----
     @Test
     public void validateRemoveDuplicatesTypeNonEmpty() {
         Double[] testArr1 = new Double[] {0.0,1.0,2.0,3.0,4.0,5.0,6.0,6.0};
@@ -601,12 +608,175 @@ public class FakeNumpyTest {
 
     @Test
     public void validateRemoveDuplicatesTypeEmpty() {
-        Double[] testArr1 = new Double[] {};
-        Double[] expectedResult1 = new Double[] {};
-        Integer[] testArr2 = new Integer[] {};
-        Integer[] expectedResult2 = new Integer[] {};
+        Double[] testArr1 = new Double[]{};
+        Double[] expectedResult1 = new Double[]{};
+        Integer[] testArr2 = new Integer[]{};
+        Integer[] expectedResult2 = new Integer[]{};
 
         Assert.assertArrayEquals(expectedResult1, FakeNumpy.removeDuplicates(testArr1));
         Assert.assertArrayEquals(expectedResult2, FakeNumpy.removeDuplicates(testArr2));
+    }
+
+    @Test
+    public void validateAddDoubleArrayNormal() {
+        double[] array1 = new double[]{1.1, -1.5, 5.5, 10.3, 256.1, 29.6, -385};
+        double[] array2 = new double[]{56.1, 13.5, 214.5, 29.4, -12.1, -213.7, 0.0};
+
+        Assert.assertArrayEquals(FakeNumpy.add(array1, array2), new double[]{57.2, 12.0, 220, 39.7, 244.0, -184.1, -385.0}, 0.001f);
+    }
+
+    @Test(expected = HALMathException.class)
+    public void validateAddDoubleArrayDifferentSizes() {
+        double[] array1 = new double[]{1.1, -1.5, 5.5, 10.3, 256.1, 29.6};
+        double[] array2 = new double[]{56.1, 13.5, 214.5, 29.4, -12.1, -213.7, 0.0};
+
+        FakeNumpy.add(array1, array2);
+        FakeNumpy.add(array2, array1);
+    }
+
+    @Test
+    public void validateAddDoubleArrayEmpty() {
+        double[] array1 = new double[]{};
+        double[] array2 = new double[]{};
+
+        Assert.assertEquals(0, FakeNumpy.add(array1, array2).length);
+    }
+
+    @Test
+    public void validateAddIntegerArrayNormal() {
+        int[] array1 = new int[]{1, -1, 5, 10, 256, 29, -385};
+        int[] array2 = new int[]{56, 13, 214, 29, -12, -213, 0};
+
+        Assert.assertArrayEquals(FakeNumpy.add(array1, array2), new int[]{57, 12, 219, 39, 244, -184, -385});
+    }
+
+    @Test(expected = HALMathException.class)
+    public void validateAddIntegerArrayDifferentSizes() {
+        int[] array1 = new int[]{1, -1, 5, 10, 256, 29};
+        int[] array2 = new int[]{56, 13, 214, 29, -12, -213, 0};
+
+        FakeNumpy.add(array1, array2);
+    }
+
+    @Test
+    public void validateAddIntegerArrayEmpty() {
+        int[] array1 = new int[]{};
+        int[] array2 = new int[]{};
+
+        Assert.assertEquals(0, FakeNumpy.add(array1, array2).length);
+    }
+
+    @Test
+    public void validateSubtractDoubleArrayNormal() {
+        double[] array1 = new double[]{1.1, -1.5, 5.5, 10.3, 256.1, 29.6, -385};
+        double[] array2 = new double[]{56.1, 13.5, 214.5, 29.4, -12.1, -213.7, 0.0};
+
+        Assert.assertArrayEquals(FakeNumpy.subtract(array1, array2), new double[]{-55.0, -15.0, -209.0, -19.1, 268.2, 243.3, -385.0}, 0.001f);
+    }
+
+    @Test(expected = HALMathException.class)
+    public void validateSubtractDoubleArrayDifferentSizes() {
+        double[] array1 = new double[]{1.1, -1.5, 5.5, 10.3, 256.1, 29.6};
+        double[] array2 = new double[]{56.1, 13.5, 214.5, 29.4, -12.1, -213.7, 0.0};
+
+        FakeNumpy.subtract(array1, array2);
+    }
+
+    @Test
+    public void validateSubtractDoubleArrayEmpty() {
+        double[] array1 = new double[]{};
+        double[] array2 = new double[]{};
+
+        Assert.assertEquals(0, FakeNumpy.subtract(array1, array2).length);
+    }
+
+    @Test
+    public void validateSubtractIntegerArrayNormal() {
+        int[] array1 = new int[]{1, -1, 5, 10, 256, 29, -385};
+        int[] array2 = new int[]{56, 13, 214, 29, -12, -213, 0};
+
+        Assert.assertArrayEquals(FakeNumpy.subtract(array1, array2), new int[]{-55, -14, -209, -19, 268, 242, -385});
+    }
+
+    @Test(expected = HALMathException.class)
+    public void validateSubtractIntegerArrayDifferentSizes() {
+        int[] array1 = new int[]{1, -1, 5, 10, 256, 29};
+        int[] array2 = new int[]{56, 13, 214, 29, -12, -213, 0};
+
+        FakeNumpy.subtract(array1, array2);
+    }
+
+    @Test
+    public void validateSubtractIntegerArrayEmpty() {
+        int[] array1 = new int[]{};
+        int[] array2 = new int[]{};
+
+        Assert.assertEquals(0, FakeNumpy.subtract(array1, array2).length);
+    }
+
+    @Test
+    public void validateAbsDiffDoubleArrayNormal() {
+        double[] array1 = new double[]{1.1, -1.5, 5.5, 10.3, 256.1, 29.6, -385};
+        double[] array2 = new double[]{56.1, 13.5, 214.5, 29.4, -12.1, -213.7, 0.0};
+
+        Assert.assertArrayEquals(FakeNumpy.absdiff(array1, array2), new double[]{55.0, 15.0, 209.0, 19.1, 268.2, 243.3, 385.0}, 0.001f);
+    }
+
+    @Test(expected = HALMathException.class)
+    public void validateAbsDiffDoubleArrayDifferentSizes() {
+        double[] array1 = new double[]{1.1, -1.5, 5.5, 10.3, 256.1, 29.6};
+        double[] array2 = new double[]{56.1, 13.5, 214.5, 29.4, -12.1, -213.7, 0.0};
+
+        FakeNumpy.absdiff(array1, array2);
+    }
+
+    @Test
+    public void validateAbsDiffDoubleArrayEmpty() {
+        double[] array1 = new double[]{};
+        double[] array2 = new double[]{};
+
+        Assert.assertEquals(0, FakeNumpy.absdiff(array1, array2).length);
+    }
+
+    @Test
+    public void validateAbsDiffIntegerArrayNormal() {
+        int[] array1 = new int[]{1, -1, 5, 10, 256, 29, -385};
+        int[] array2 = new int[]{56, 13, 214, 29, -12, -213, 0};
+
+        Assert.assertArrayEquals(FakeNumpy.absdiff(array1, array2), new int[]{55, 14, 209, 19, 268, 242, 385});
+    }
+
+    @Test(expected = HALMathException.class)
+    public void validateAbsDiffIntegerArrayDifferentSizes() {
+        int[] array1 = new int[]{1, -1, 5, 10, 256, 29};
+        int[] array2 = new int[]{56, 13, 214, 29, -12, -213, 0};
+
+        FakeNumpy.absdiff(array1, array2);
+    }
+
+    @Test
+    public void validateAbsDiffIntegerArrayEmpty() {
+        int[] array1 = new int[]{};
+        int[] array2 = new int[]{};
+
+        Assert.assertEquals(0, FakeNumpy.absdiff(array1, array2).length);
+    }
+
+    @Test
+    public void validateFloatingPointFixNormal() {
+        double[] floatingPointErrorArray = new double[]{56.099999999999998733, 13.9999999999913, 214.999999999998, 29.999999999997, -12.999999999992, -213.9999999999999042, 0.999999999999999999994};
+
+        FakeNumpy.floatingPointFix(floatingPointErrorArray);
+
+        Assert.assertArrayEquals(floatingPointErrorArray, new double[]{56.1, 14.0, 215.0, 30.0, -13.0, -214.0, 1.0}, 0.0f);
+    }
+
+    @Test
+    public void validateFloatingPointFixEmpty() {
+        double[] floatingPointErrorArray = new double[]{};
+
+        FakeNumpy.floatingPointFix(floatingPointErrorArray);
+
+        Assert.assertEquals(0, floatingPointErrorArray.length);
     }
 }

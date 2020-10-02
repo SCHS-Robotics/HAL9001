@@ -4,12 +4,13 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * An exception that is thrown when things cannot be converted into other things or made out of nothing.
+ * <p>
+ * Creation Date: 7/19/19
  *
  * @author Cole Savage, Level Up
- * @since 1.0.0
  * @version 1.0.0
- *
- * Creation Date: 7/19/19
+ * @see RuntimeException
+ * @since 1.0.0
  */
 public class NotAnAlchemistException extends RuntimeException {
 

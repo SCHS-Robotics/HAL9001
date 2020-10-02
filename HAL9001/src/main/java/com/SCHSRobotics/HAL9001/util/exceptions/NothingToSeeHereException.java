@@ -4,11 +4,12 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * An exception thrown if something needed is missing.
+ * <p>
+ * Creation Date: 10/9/19
  *
  * @author Cole Savage, Level Up
  * @version 1.0.0
- * <p>
- * Creation Date: 10/9/19
+ * @see RuntimeException
  * @since 1.0.0
  */
 public class NothingToSeeHereException extends RuntimeException {

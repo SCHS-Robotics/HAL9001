@@ -1,12 +1,25 @@
 package com.SCHSRobotics.HAL9001.util.math.geometry;
 
 import org.firstinspires.ftc.robotcore.external.function.Function;
+import org.jetbrains.annotations.NotNull;
 
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.hypot;
 import static java.lang.Math.sin;
 
+/**
+ * An enum containing common 2D coordinate systems.
+ * <p>
+ * Creation Date: 5/27/20
+ *
+ * @author Cole Savage, Level Up
+ * @version 1.0.0
+ * @see CoordinateSystem
+ * @see CoordinateSystem3D
+ * @see Function
+ * @since 1.1.0
+ */
 public enum CoordinateSystem2D implements CoordinateSystem<CoordinateSystem2D> {
     CARTESIAN, POLAR;
 
@@ -15,11 +28,11 @@ public enum CoordinateSystem2D implements CoordinateSystem<CoordinateSystem2D> {
         return 2;
     }
 
+    @NotNull
     @Override
     public Function<double[], double[]> convertTo(CoordinateSystem2D coordinateSystem) {
-        if (this.equals(coordinateSystem)) {
-            return (double[] point) -> point;
-        } else if (this.equals(CARTESIAN)) {
+        if (this.equals(coordinateSystem)) return (double[] point) -> point;
+        else if (this.equals(CARTESIAN)) {
             return (double[] point) -> {
                 double x = point[0];
                 double y = point[1];

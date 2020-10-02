@@ -1,5 +1,7 @@
 package com.SCHSRobotics.HAL9001.util.math.geometry;
 
+import org.ejml.simple.SimpleMatrix;
+
 import static java.lang.Math.PI;
 import static java.lang.Math.acos;
 import static java.lang.Math.asin;
@@ -9,11 +11,23 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
 /**
+ * A Quaternion class.
+ * <p>
+ * Creation Date:
+ *
  * @author Jack Kinney, Level Up
+ * @version 1.0.0
+ * @since 1.1.0
  */
 public class Quaternion {
+    //The Quaternion's components.
     private double x, y, z, w;
 
+    /**
+     * A private constructor for Quaternion. Used for cloning.
+     *
+     * @param q The quaternion to clone.
+     */
     private Quaternion(Quaternion q) {
         this(q.x, q.y, q.z, q.w);
     }
@@ -61,10 +75,24 @@ public class Quaternion {
         return new Quaternion(q).normalize();
     }
 
-    public static Vector3D toEulerAngles(Quaternion q) {
+    /**
+     * Converts the given quaternion to Euler angles.
+     *
+     * @param q The quaternion to convert to Euler angles.
+     * @return The Euler angles representation of the quaternion.
+     */
+    public static double[] toEulerAngles(Quaternion q) {
         return new Quaternion(q).toEulerAngles();
     }
 
+    /**
+     * Converts a set of Euler angles to a quaternion.
+     *
+     * @param yaw   The yaw angle.
+     * @param pitch The pitch angle.
+     * @param roll  The roll angle.
+     * @return The quaternion representation of the given 3D orientation.
+     */
     public static Quaternion ToQuaternion(double yaw, double pitch, double roll) { // yaw (Z), pitch (Y), roll (X)
         // Abbreviations for the various angular functions
         double cy = cos(yaw * 0.5);
@@ -86,6 +114,12 @@ public class Quaternion {
         return sqrt(this.dot(this));
     }
 
+    /**
+     * Multiplies this quaternion by another quaternion
+     *
+     * @param q Thw quaternion to multiply by.
+     * @return This quaternion.
+     */
     public Quaternion multiply(Quaternion q) {
         //matrixs = null;
         double nw = w * q.w - x * q.x - y * q.y - z * q.z;
@@ -98,6 +132,12 @@ public class Quaternion {
         return this;
     }
 
+    /**
+     * Multiplies this quaternion by a constant.
+     *
+     * @param scale The constant to multiply by.
+     * @return This quaternion.
+     */
     public Quaternion multiply(double scale) {
         if (scale != 1) {
             //matrixs = null;
@@ -109,6 +149,12 @@ public class Quaternion {
         return this;
     }
 
+    /**
+     * Divides this quaternion by a constant.
+     *
+     * @param scale The constant to divide by.
+     * @return This quaternion.
+     */
     public Quaternion divide(double scale) {
         if (scale != 1) {
             //matrixs = null;
@@ -169,42 +215,23 @@ public class Quaternion {
     }
 
     /**
-     * Converts this Quaternion into a matrix, returning it as a float array.
+     * Converts this Quaternion into a matrix.
      */
-    public float[] toMatrix() {
-        float[] matrixs = new float[16];
-        toMatrix(matrixs);
-        return matrixs;
+    public SimpleMatrix toMatrix() {
+        return new SimpleMatrix(new double[][]{
+                {1.0 - (2.0 * ((y * y) + (z * z))), 2.0 * ((x * y) - (z * w)), 2.0 * ((x * z) + (y * w)), 0},
+                {2.0 * ((x * y) + (z * w)), 1.0 - (2.0 * ((x * x) + (z * z))), 2.0 * ((y * z) - (x * w)), 0},
+                {2.0 * ((x * z) - (y * w)), 2.0 * ((y * z) + (x * w)), 1.0 - (2.0 * ((x * x) + (y * y))), 0},
+                {0, 0, 0, 0}
+        });
     }
 
     /**
-     * Converts this Quaternion into a matrix, placing the values into the given array.
+     * Converts this quaternion to its Euler angle representation.
      *
-     * @param matrixs 16-length float array.
+     * @return The Euler angles representation of this orientation.
      */
-    private void toMatrix(float[] matrixs) {
-        matrixs[3] = 0.0f;
-        matrixs[7] = 0.0f;
-        matrixs[11] = 0.0f;
-        matrixs[12] = 0.0f;
-        matrixs[13] = 0.0f;
-        matrixs[14] = 0.0f;
-        matrixs[15] = 1.0f;
-
-        matrixs[0] = (float) (1.0f - (2.0f * ((y * y) + (z * z))));
-        matrixs[1] = (float) (2.0f * ((x * y) - (z * w)));
-        matrixs[2] = (float) (2.0f * ((x * z) + (y * w)));
-
-        matrixs[4] = (float) (2.0f * ((x * y) + (z * w)));
-        matrixs[5] = (float) (1.0f - (2.0f * ((x * x) + (z * z))));
-        matrixs[6] = (float) (2.0f * ((y * z) - (x * w)));
-
-        matrixs[8] = (float) (2.0f * ((x * z) - (y * w)));
-        matrixs[9] = (float) (2.0f * ((y * z) + (x * w)));
-        matrixs[10] = (float) (1.0f - (2.0f * ((x * x) + (y * y))));
-    }
-
-    public Vector3D toEulerAngles() {
+    public double[] toEulerAngles() {
         double sqw = w * w;
         double sqx = x * x;
         double sqy = y * y;
@@ -215,29 +242,29 @@ public class Quaternion {
         double test = x * y + y * w;
 
         // Store the Euler angles in radians
-        Vector3D pitchYawRoll;
+        double[] pitchYawRoll;
         if (test > 0.4999 * unit) {                             // 0.4999f OR 0.5f - EPSILON
             // Singularity at north pole
-            pitchYawRoll = new Vector3D(
+            pitchYawRoll = new double[]{
                     2 * atan2(x, w), // Yaw
-                    PI * 0.5,            // Pitch
-                    0                    // Roll
-            );
+                    PI * 0.5,        // Pitch
+                    0                // Roll
+            };
             return pitchYawRoll;
         } else if (test < -0.4999 * unit) {                       // -0.4999f OR -0.5f + EPSILON
             // Singularity at south pole
-            pitchYawRoll = new Vector3D(
+            pitchYawRoll = new double[]{
                     -2 * atan2(x, w), // Yaw
-                    -PI * 0.5,            // Pitch
-                    0                     // Roll
-            );
+                    -PI * 0.5,        // Pitch
+                    0                 // Roll
+            };
             return pitchYawRoll;
         } else {
-            pitchYawRoll = new Vector3D(
-                    atan2(2 * y * w - 2 * x * z, sqx - sqy - sqz + sqw),    // Yaw
-                    asin(2 * test / unit),                                          // Pitch
+            pitchYawRoll = new double[]{
+                    atan2(2 * y * w - 2 * x * z, sqx - sqy - sqz + sqw),  // Yaw
+                    asin(2 * test / unit),                                // Pitch
                     atan2(2 * x * w - 2 * y * z, -sqx + sqy - sqz + sqw)  // Roll
-            );
+            };
         }
 
         return pitchYawRoll;

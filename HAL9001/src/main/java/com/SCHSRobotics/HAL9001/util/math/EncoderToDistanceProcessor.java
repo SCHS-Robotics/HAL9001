@@ -6,14 +6,14 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * A calculator that calculates encoder ticks per meter and uses that to find.
+ * <p>
+ * Creation Date: 7/19/19
  *
  * @author Dylan Zueck, Crow Force
- * @since 1.0.0
  * @version 1.0.0
- *
- * Creation Date: 7/19/19
+ * @see HALDistanceUnit
+ * @since 1.0.0
  */
-@SuppressWarnings("unused")
 public class EncoderToDistanceProcessor {
 
     //Conversion of 1 encoder per meter.

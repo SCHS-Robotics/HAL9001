@@ -1,18 +1,34 @@
 package com.SCHSRobotics.HAL9001.util.math.geometry;
 
+import org.jetbrains.annotations.NotNull;
+
 import static java.lang.Math.sqrt;
 
-public abstract class BaseEuclideanPoint<V extends Vector<V>, P extends BaseEuclideanPoint<V, P>> implements Point<V, P> {
-
+/**
+ * The base class for all Euclidean points.
+ * <p>
+ * Creation Date: 5/27/20
+ *
+ * @param <V> The type of vector associated with this type of point.
+ * @param <P> This point class datatype.
+ * @author Cole Savage, Level Up
+ * @version 1.0.0
+ * @see Point
+ * @see Vector
+ * @see BaseEuclideanVector
+ * @since 1.1.0
+ */
+public abstract class BaseEuclideanPoint<V extends BaseEuclideanVector<V>, P extends BaseEuclideanPoint<V, P>> implements Point<V, P> {
+    //The coordinates of the point (cartesian).
     protected double[] coordinates;
 
+    /**
+     * The base constructor for Euclidean points.
+     *
+     * @param coordinates The coordinates of a point.
+     */
     public BaseEuclideanPoint(double... coordinates) {
         this.coordinates = coordinates;
-    }
-
-    @Override
-    public double[] getCoordinates() {
-        return coordinates;
     }
 
     @Override
@@ -24,27 +40,22 @@ public abstract class BaseEuclideanPoint<V extends Vector<V>, P extends BaseEucl
         return sqrt(dst);
     }
 
-    public double distanceTo(Line<V, P> line) {
+    /**
+     * Calculates the shortest distance from this point to a given line.
+     *
+     * @param line The line to calculate the distance to.
+     * @return The shortest distance from this point to the given line.
+     * @see Line
+     */
+    @SuppressWarnings("unchecked")
+    public double distanceTo(@NotNull Line<V, P> line) {
         return line.distanceTo((P) this);
     }
 
-    public abstract P clone();
-
-    /*
-    private static double[] unboxArray(Double[] array) {
-        double[] output = new double[array.length];
-        for (int i = 0; i < array.length; i++) {
-            output[i] = array[i];
-        }
-        return output;
-    }
-
-    private static Double[] boxArray(double[] array) {
-        Double[] output = new Double[array.length];
-        for (int i = 0; i < array.length; i++) {
-            output[i] = array[i];
-        }
-        return output;
-    }
+    /**
+     * Clones the point.
+     *
+     * @return A copy of this point.
      */
+    public abstract P clone();
 }

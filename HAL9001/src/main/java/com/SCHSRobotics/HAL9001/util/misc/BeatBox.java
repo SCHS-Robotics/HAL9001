@@ -14,15 +14,14 @@ import java.util.Random;
 
 /**
  * A class for managing, playing, and editing songs.
+ * <p>
+ * Creation Date: 8/10/19
  *
  * @author Dylan Zueck, Crow Force
  * @author Cole Savage, Level Up
- * @since 1.0.0
  * @version 1.0.0
- *
- * Creation Date: 8/10/19
+ * @since 1.0.0
  */
-@SuppressWarnings("unused")
 public class BeatBox {
 
     //A hashmap mapping song names to the actual song classes.
@@ -92,7 +91,7 @@ public class BeatBox {
      * Plays a random song from the list of songs.
      */
     public void playRandomSong(){
-        Collection songKeys = songs.values();
+        Collection<?> songKeys = songs.values();
         MediaPlayer[] songs = (MediaPlayer[]) songKeys.toArray();
         Random random = new Random();
         songs[random.nextInt(songs.length)].start();

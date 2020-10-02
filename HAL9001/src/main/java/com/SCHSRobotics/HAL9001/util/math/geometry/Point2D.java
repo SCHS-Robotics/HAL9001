@@ -2,88 +2,176 @@ package com.SCHSRobotics.HAL9001.util.math.geometry;
 
 import com.SCHSRobotics.HAL9001.util.math.units.HALAngleUnit;
 
-public class Point2D extends BaseEuclideanPoint<Vector2D, Point2D> {
-    private static final Point2D ORIGIN = new Point2D(0, 0);
-    double x, y;
-    double r, theta;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
-    public Point2D(double a, double b, CoordinateSystem2D coordinateSystem) {
+/**
+ * A 2D point class.
+ * <p>
+ * Creation Date: 5/27/20
+ *
+ * @author Cole Savage, Level Up
+ * @version 1.0.0
+ * @see BaseEuclideanPoint
+ * @see Vector2D
+ * @since 1.1.0
+ */
+public class Point2D extends BaseEuclideanPoint<Vector2D, Point2D> {
+
+    /**
+     * The most general constructor for Point2D. Works for both polar and cartesian.
+     *
+     * @param a The first coordinate.
+     * @param b The second coordinate.
+     * @param coordinateSystem The 2D coordinate system being used to create the point.
+     *
+     * @see CoordinateSystem
+     * @see CoordinateSystem2D
+     */
+    public Point2D(double a, double b, @NotNull CoordinateSystem2D coordinateSystem) {
         super(coordinateSystem.convertTo(CoordinateSystem2D.CARTESIAN).apply(new double[]{a, b}));
-        x = coordinates[0];
-        y = coordinates[1];
-        updatePolarValues(x, y);
     }
 
+    /**
+     * A simple Cartesian constructor for Point2D.
+     *
+     * @param x The x coordinate.
+     * @param y The y coordinate.
+     *
+     * @see CoordinateSystem
+     * @see CoordinateSystem2D
+     */
     public Point2D(double x, double y) {
         this(x, y, CoordinateSystem2D.CARTESIAN);
     }
 
-    private Point2D(Point2D point) {
-        this.coordinates = point.coordinates;
-        this.x = point.x;
-        this.y = point.y;
-        this.r = point.r;
-        this.theta = point.theta;
-    }
-
-    public Point2D(double r, double theta, HALAngleUnit angleUnit) {
+    /**
+     * A simple Polar constructor for Point2D.
+     *
+     * @param r The r value.
+     * @param theta The theta value.
+     * @param angleUnit The angle unit used to measure theta.
+     */
+    public Point2D(double r, double theta, @NotNull HALAngleUnit angleUnit) {
         this(r, angleUnit.convertTo(HALAngleUnit.RADIANS).apply(theta), CoordinateSystem2D.POLAR);
     }
 
+    /**
+     * Private Point2D constructor used for cloning.
+     *
+     * @param point The point to clone.
+     */
+    private Point2D(@NotNull Point2D point) {
+        this.coordinates = point.coordinates;
+    }
+
+    /**
+     * Gets a clone of the origin point.
+     *
+     * @return The origin point.
+     */
+    @NotNull
+    @Contract(" -> new")
     public static Point2D getOrigin() {
-        return ORIGIN.clone();
+        return new Point2D(0, 0);
     }
 
+    /**
+     * Gets the point's x value.
+     *
+     * @return The point's x value.
+     */
     public double getX() {
-        return x;
+        return coordinates[0];
     }
 
+    /**
+     * Sets the point's x value.
+     *
+     * @param x The new x value for the point.
+     */
     public void setX(double x) {
-        this.x = x;
         coordinates[0] = x;
-        updatePolarValues(x, y);
     }
 
+    /**
+     * Gets the point's y value.
+     *
+     * @return The point's y value.
+     */
     public double getY() {
-        return y;
+        return coordinates[1];
     }
 
+    /**
+     * Sets the point's y value.
+     *
+     * @param y The new y value for the point.
+     */
     public void setY(double y) {
-        this.y = y;
         coordinates[1] = y;
-        updatePolarValues(x, y);
     }
 
+    /**
+     * Gets the point's r value.
+     *
+     * @return The point's r value.
+     */
     public double getR() {
-        return r;
+        return CoordinateSystem2D.CARTESIAN.convertTo(CoordinateSystem2D.POLAR).apply(coordinates)[0];
     }
 
+    /**
+     * Sets the point's r value.
+     *
+     * @param r The point's new r value.
+     */
     public void setR(double r) {
-        this.r = r;
-        updateCartesianValues(r, theta);
+        double[] polarPoint = CoordinateSystem2D.CARTESIAN.convertTo(CoordinateSystem2D.POLAR).apply(coordinates);
+        polarPoint[0] = r;
+        coordinates = CoordinateSystem2D.POLAR.convertTo(CoordinateSystem2D.CARTESIAN).apply(polarPoint);
     }
 
+    /**
+     * Gets the point's theta value (default units are radians).
+     *
+     * @return The point's theta value (default units are radians).
+     */
     public double getTheta() {
-        return theta;
+        return getTheta(HALAngleUnit.RADIANS);
     }
 
+    /**
+     * Sets the points theta value (default units are radians).
+     *
+     * @param theta The new theta value (default units are radians).
+     */
     public void setTheta(double theta) {
-        this.theta = theta;
-        updateCartesianValues(r, theta);
+        setTheta(theta, HALAngleUnit.RADIANS);
     }
 
-    private void updateCartesianValues(double r, double theta) {
-        double[] cartesianPoint = CoordinateSystem2D.POLAR.convertTo(CoordinateSystem2D.CARTESIAN).apply(new double[]{r, theta});
-        x = cartesianPoint[0];
-        y = cartesianPoint[1];
-        coordinates[0] = x;
-        coordinates[1] = y;
+    /**
+     * Gets the point's theta value (default unit is radians).
+     *
+     * @param angleUnit The units of the returned angle.
+     * @return The point's theta value (default unit is radians).
+     */
+    public double getTheta(HALAngleUnit angleUnit) {
+        return HALAngleUnit.RADIANS.convertTo(angleUnit).apply(
+                CoordinateSystem2D.CARTESIAN.convertTo(CoordinateSystem2D.POLAR).apply(coordinates)[1]
+        );
     }
 
-    private void updatePolarValues(double x, double y) {
-        double[] polarPoint = CoordinateSystem2D.CARTESIAN.convertTo(CoordinateSystem2D.POLAR).apply(new double[]{x, y});
-        r = polarPoint[0];
-        theta = polarPoint[1];
+    /**
+     * Sets the points theta value (default units are radians).
+     *
+     * @param theta The new theta value (default units are radians).
+     * @param angleUnit The units of the given angle.
+     */
+    public void setTheta(double theta, @NotNull HALAngleUnit angleUnit) {
+        double[] polarPoint = CoordinateSystem2D.CARTESIAN.convertTo(CoordinateSystem2D.POLAR).apply(coordinates);
+        polarPoint[0] = angleUnit.convertTo(HALAngleUnit.RADIANS).apply(theta);
+        coordinates = CoordinateSystem2D.POLAR.convertTo(CoordinateSystem2D.CARTESIAN).apply(polarPoint);
     }
 
     @Override

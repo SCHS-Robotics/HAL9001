@@ -4,12 +4,13 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * An exception thrown if a GUI is needed, but is not present.
+ * <p>
+ * Creation Date: 8/31/19
  *
  * @author Dylan Zueck, Crow Force
- * @since 1.0.0
  * @version 1.0.0
- *
- * Creation Date: 8/31/19
+ * @see RuntimeException
+ * @since 1.0.0
  */
 public class GuiNotPresentException extends RuntimeException {
 

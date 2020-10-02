@@ -4,15 +4,24 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * An enum representing different common units of distance.
+ * <p>
+ * Creation Date: 7/19/19
  *
  * @author Cole Savage, Level Up
  * @version 1.0.0
- * <p>
- * Creation Date: 7/19/19
  * @since 1.0.0
  */
 public enum HALDistanceUnit {
-    MEGAMETERS(0.001, "MM"), MILLIMETERS(0.001, "mm"), CENTIMETERS(0.01, "cm"), METERS(1.0, "m"), INCH(0.0254, "in"), FOOTS(0.3048, "ft"), FEET(0.3048, "ft"), YARDS(0.9144, "yd"), MILES(1609.34, "mi"), TILES(0.6096, "Ti");
+    MILLIMETERS(0.001, "mm"),
+    MEGAMETERS(MILLIMETERS.conversionFactor, "MM"),
+    CENTIMETERS(0.01, "cm"),
+    METERS(1.0, "m"),
+    INCHES(0.0254, "in"),
+    FEET(0.3048, "ft"),
+    FOOTS(FEET.conversionFactor, FEET.abbreviation),
+    YARDS(0.9144, "yd"),
+    MILES(1609.34, "mi"),
+    TILES(0.6096, "Ti");
 
     //The number that you multiply by to get meters.
     public double conversionFactor;
