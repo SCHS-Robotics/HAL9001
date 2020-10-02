@@ -19,6 +19,7 @@ public class FakeNumpyTest {
     @Test
     public void validateMaxTypeNonEmpty() {
         Integer[] testArr = new Integer[]{-6, -5, -4, -3, -2, -1, 0, 0, 1, 1, 2, 3, 4, 5, 6, 6};
+
         Integer expectedResult = 6;
         Assert.assertEquals(expectedResult, FakeNumpy.max(testArr));
     }
@@ -608,15 +609,15 @@ public class FakeNumpyTest {
 
     @Test
     public void validateRemoveDuplicatesTypeEmpty() {
-        Double[] testArr1 = new Double[]{};
-        Double[] expectedResult1 = new Double[]{};
-        Integer[] testArr2 = new Integer[]{};
-        Integer[] expectedResult2 = new Integer[]{};
+        Double[] testArr1 = new Double[] {};
+        Double[] expectedResult1 = new Double[] {};
+        Integer[] testArr2 = new Integer[] {};
+        Integer[] expectedResult2 = new Integer[] {};
 
         Assert.assertArrayEquals(expectedResult1, FakeNumpy.removeDuplicates(testArr1));
         Assert.assertArrayEquals(expectedResult2, FakeNumpy.removeDuplicates(testArr2));
     }
-
+  
     @Test
     public void validateAddDoubleArrayNormal() {
         double[] array1 = new double[]{1.1, -1.5, 5.5, 10.3, 256.1, 29.6, -385};
