@@ -1,5 +1,8 @@
 package com.SCHSRobotics.HAL9001.util.math.geometry;
 
+import com.SCHSRobotics.HAL9001.util.exceptions.ExceptionChecker;
+import com.SCHSRobotics.HAL9001.util.exceptions.HALMathException;
+import com.SCHSRobotics.HAL9001.util.math.HALMathUtil;
 import com.SCHSRobotics.HAL9001.util.math.units.HALAngleUnit;
 
 import org.ejml.simple.SimpleMatrix;
@@ -8,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 
 import static java.lang.Math.acos;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
 /**
@@ -126,18 +131,82 @@ public abstract class BaseEuclideanVector<V extends BaseEuclideanVector<V>> impl
         return ontoVector.multiply(this.dot(ontoVector) / ontoVector.dot(ontoVector));
     }
 
-    @NotNull
-    @Override
-    public String toString() {
-        String componentArrayString = Arrays.toString(components);
-        return "<" + componentArrayString.substring(1, componentArrayString.length() - 1) + '>';
-    }
-
     @Override
     public SimpleMatrix toMatrix() {
         double[][] vectorMatrix = new double[components.length][1];
         for (int i = 0; i < components.length; i++) vectorMatrix[i] = new double[]{components[i]};
         return new SimpleMatrix(vectorMatrix);
+    }
+
+    /**
+     * Sets this vector object to the values contained in the given matrix vector. This is only used internally.
+     *
+     * @param inputMatrix THe matrix vector to set this vector to.
+     * @throws HALMathException Throws this exception if the input matrix is not a vector matrix or is of the wrong dimensionality.
+     */
+    protected final void setFromMatrix(@NotNull SimpleMatrix inputMatrix) {
+        ExceptionChecker.assertTrue(inputMatrix.isVector(), new HALMathException("Input matrix is not a vector matrix."));
+
+        SimpleMatrix vectorMatrix;
+        if (inputMatrix.numRows() == 1) vectorMatrix = inputMatrix.transpose();
+        else vectorMatrix = inputMatrix.copy();
+
+        ExceptionChecker.assertTrue(vectorMatrix.numRows() == components.length, new HALMathException("Input must be a " + components.length + "D vector in matrix form."));
+
+        for (int i = 0; i < components.length; i++) {
+            components[i] = HALMathUtil.floatingPointFix(vectorMatrix.get(i, 0));
+        }
+    }
+
+    /**
+     * Rotates an N dimensional vector on N-2 dimensional object defined by two given orthonormal axes vectors.
+     * Not very efficient, but works for all dimensions. Extensions of the base class may have more specialized rotation functions.
+     *
+     * @param u         The first vector defining the N-2 dimensional object.
+     * @param v         The second vector defining the N-2 dimensional object.
+     * @param angle     The angle to rotate.
+     * @param angleUnit The units of the angle (defaults to radians).
+     * @return This vector.
+     * @throws HALMathException Throws this exception of the given axes vectors are not orthonormal.
+     */
+    @SuppressWarnings("unchecked")
+    public final V rotate(@NotNull Axis<V> u, @NotNull Axis<V> v, double angle, @NotNull HALAngleUnit angleUnit) {
+        ExceptionChecker.assertTrue(u.getAxisVector().isNormalTo(v.getAxisVector()), new HALMathException("Vectors defining the rotation object must be orthonormal."));
+
+        SimpleMatrix uMatrix = u.getAxisVector().toMatrix();
+        SimpleMatrix vMatrix = v.getAxisVector().toMatrix();
+
+        SimpleMatrix a = vMatrix.mult(uMatrix.transpose()).minus(uMatrix.mult(vMatrix.transpose()));
+        SimpleMatrix b = uMatrix.mult(uMatrix.transpose()).plus(vMatrix.mult(vMatrix.transpose()));
+
+        double theta = angleUnit.convertTo(HALAngleUnit.RADIANS).apply(angle);
+
+        SimpleMatrix rotationMatrix = SimpleMatrix.identity(components.length).plus(a.scale(sin(theta))).plus(b.scale(cos(theta) - 1));
+        this.setFromMatrix(rotationMatrix.mult(this.toMatrix()));
+
+        return (V) this;
+    }
+
+
+    /**
+     * Rotates an N dimensional vector on N-2 dimensional object defined by two given orthonormal axes vectors.
+     * Not very efficient, but works for all dimensions. Extensions of the base class may have more specialized rotation functions.
+     *
+     * @param u     The first vector defining the N-2 dimensional object.
+     * @param v     The second vector defining the N-2 dimensional object.
+     * @param angle The angle to rotate (in radians).
+     * @return This vector.
+     * @throws HALMathException Throws this exception of the given axes vectors are not orthonormal.
+     */
+    public V rotate(Axis<V> u, Axis<V> v, double angle) {
+        return rotate(u, v, angle, HALAngleUnit.RADIANS);
+    }
+
+    @NotNull
+    @Override
+    public String toString() {
+        String componentArrayString = Arrays.toString(components);
+        return "<" + componentArrayString.substring(1, componentArrayString.length() - 1) + '>';
     }
 
     /**

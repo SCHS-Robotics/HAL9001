@@ -9,6 +9,9 @@ import org.ejml.simple.SimpleMatrix;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+
 /**
  * A 2D Vector class.
  * <p>
@@ -198,6 +201,40 @@ public class Vector3D extends BaseEuclideanVector<Vector3D> {
      */
     public double getTheta(HALAngleUnit angleUnit) {
         return new Point3D(components[0], components[1], components[2]).getTheta(angleUnit);
+    }
+
+    /**
+     * Rotates this vector counterclockwise around the given 3D axis by the given angle. (counterclockwise is positive, clockwise is negative)
+     *
+     * @param angle        The angle to rotate this vector by.
+     * @param angleUnit    The units of the given angle (units are radians by default).
+     * @param rotationAxis The axis to rotate around.
+     * @return This vector.
+     */
+    public Vector3D rotate(double angle, @NotNull HALAngleUnit angleUnit, @NotNull Axis3D rotationAxis) {
+        double theta = angleUnit.convertTo(HALAngleUnit.RADIANS).apply(angle);
+        double cosine = cos(theta);
+        double sine = sin(theta);
+        double oneMinusCosine = 1 - cosine;
+        double x = rotationAxis.getX(), y = rotationAxis.getY(), z = rotationAxis.getZ();
+        SimpleMatrix rotationMatrix = new SimpleMatrix(new double[][]{
+                {cosine - x * x * oneMinusCosine, x * y * oneMinusCosine - z * sine, y * sine + x * z * oneMinusCosine},
+                {z * sine + x * y * oneMinusCosine, cosine + y * y * oneMinusCosine, -x * sine + y * z * oneMinusCosine},
+                {-y * sine + x * z * oneMinusCosine, x * sine + y * z * oneMinusCosine, cosine + z * z * oneMinusCosine}
+        });
+        this.setFromMatrix(rotationMatrix.mult(this.toMatrix()));
+        return this;
+    }
+
+    /**
+     * Rotates this vector counterclockwise around the given 3D axis by the given angle. (counterclockwise is positive, clockwise is negative)
+     *
+     * @param angle        The angle to rotate this vector by.
+     * @param rotationAxis The axis to rotate around.
+     * @return This vector.
+     */
+    public Vector3D rotate(double angle, Axis3D rotationAxis) {
+        return rotate(angle, HALAngleUnit.RADIANS, rotationAxis);
     }
 
     /**
