@@ -5,6 +5,7 @@ import com.SCHSRobotics.HAL9001.util.exceptions.NotARealGamepadException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotAnAlchemistException;
 import com.SCHSRobotics.HAL9001.util.math.geometry.Vector2D;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
