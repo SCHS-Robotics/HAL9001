@@ -24,7 +24,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public final class HALTrackerAPI extends OpenCvPipeline {
     //A list of HALPipelines that do not use the viewport.
-    private final List<HALPipeline> nonDisplayablePipelines = new ArrayList<>();
+    private final List<HALPipeline> nonDisplayablePipelines = new ArrayList<>(), allPipelines = new ArrayList<>();
     //A queue of HALPipelines that do use the viewport. Only the one at the front of the queue is displayed.
     private final Queue<HALPipeline> displayablePipelines = new LinkedBlockingQueue<>();
 
@@ -32,7 +32,6 @@ public final class HALTrackerAPI extends OpenCvPipeline {
      * Adds a pipeline to the tracker.
      *
      * @param pipeline The pipeline to add.
-     *
      * @see HALPipeline
      */
     public final synchronized void addPipeline(@NotNull HALPipeline pipeline) {
@@ -50,12 +49,18 @@ public final class HALTrackerAPI extends OpenCvPipeline {
     public final synchronized void removePipeline(HALPipeline tracker) {
         nonDisplayablePipelines.remove(tracker);
         displayablePipelines.remove(tracker);
+        allPipelines.remove(tracker);
     }
 
     @Override
     public final synchronized Mat processFrame(Mat input) {
         //If no non-displayable or displayable pipelines are present, just return the input image.
         if (nonDisplayablePipelines.size() == 0 && displayablePipelines.size() == 0) return input;
+
+        //Remove all pipelines that have been stopped.
+        for (HALPipeline pipeline : allPipelines) {
+            if (pipeline.markedAsStopped) removePipeline(pipeline);
+        }
 
         //Go through all non-displayable pipelines. If one of them has changed to use the viewport, add it to the displayable pipelines queue.
         for (HALPipeline pipeline : new ArrayList<>(nonDisplayablePipelines)) {
@@ -64,6 +69,7 @@ public final class HALTrackerAPI extends OpenCvPipeline {
                 nonDisplayablePipelines.remove(pipeline);
             }
         }
+
         //Go through all displayable pipelines. If one of them has changed to now use the viewport, add it to the non-displayable pipelines list.
         for (HALPipeline pipeline : new LinkedBlockingQueue<>(displayablePipelines)) {
             if (!pipeline.useViewport()) {
@@ -85,7 +91,8 @@ public final class HALTrackerAPI extends OpenCvPipeline {
 
         //Run all other displayable pipelines, then run the non-displayable pipelines.
         for (HALPipeline pipeline : displayablePipelines)
-            if (!pipeline.equals(currentPipeline)) pipeline.processFrameInternal(input);
+            if (!pipeline.equals(currentPipeline))
+                pipeline.processFrameInternal(input);
         for (HALPipeline pipeline : nonDisplayablePipelines) pipeline.processFrameInternal(input);
 
         return returnMat;

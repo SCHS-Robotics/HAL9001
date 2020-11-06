@@ -21,6 +21,8 @@ import org.openftc.easyopencv.OpenCvTracker;
 public abstract class HALPipeline {
     //The local copy of the input image.
     private Mat mat = new Mat();
+    //Whether this pipeline has been stopped.
+    boolean markedAsStopped = false;
 
     /**
      * Whether the HALPipeline uses the viewport. This can change mid-program if needed.
@@ -49,5 +51,12 @@ public abstract class HALPipeline {
     protected final Mat processFrameInternal(@NotNull Mat input) {
         input.copyTo(mat);
         return processFrame(mat);
+    }
+
+    /**
+     * Stops this pipeline, removing it from the pipeline tracker permanently.
+     */
+    protected final void stop() {
+        markedAsStopped = true;
     }
 }
