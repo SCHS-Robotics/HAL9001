@@ -5,6 +5,7 @@ import com.SCHSRobotics.HAL9001.util.exceptions.NotARealGamepadException;
 import com.SCHSRobotics.HAL9001.util.exceptions.NotAnAlchemistException;
 import com.SCHSRobotics.HAL9001.util.math.geometry.Vector2D;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -152,7 +153,7 @@ public final class ConfigParam {
     }
 
     /**
-     * Constructor for ConfigParam that uses default settings for a Vector2D button.
+     * Constructor for ConfigParam that uses default settings for a Vector button.
      *
      * @param name The name of the parameter.
      * @param defaultOption The parameter's default option.
@@ -164,7 +165,7 @@ public final class ConfigParam {
     }
 
     /**
-     * Constructor for ConfigParam that uses default settings for a Vector2D button.
+     * Constructor for ConfigParam that uses default settings for a Vector button.
      *
      * @param name The name of the parameter.
      * @param defaultOption The parameter's default option.
@@ -331,6 +332,7 @@ public final class ConfigParam {
      * @param usesGamepad Whether or not the option uses the gamepad.
      * @param isBoolButton Whether or not the option is a boolean button on the gamepad.
      */
+    @Contract(pure = true)
     private ConfigParam(@NotNull String name, @NotNull List<String> options, @NotNull List<Object> vals, @NotNull String defaultOption, @NotNull String currentOption, @Nullable String defaultGamepadOption, @Nullable String currentGamepadOption, boolean usesGamepad, boolean isBoolButton, boolean isDoubleButton) {
         this.name = name;
         this.options = options;

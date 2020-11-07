@@ -158,8 +158,7 @@ public class AnglePIDTunerSystem extends VisionSubSystem {
 
     @Override
     public void handle() {
-        boolean slowMode = inputs.getInput(SLOWMODE);
-        slowModeToggle.updateToggle(slowMode);
+        slowModeToggle.updateToggle(inputs.getInput(SLOWMODE));
 
         if (slowModeToggle.getCurrentState()) {
             increment = 0.01;
