@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
  * @since 1.1.0
  */
 public class UniqueID {
-
     //The global identifier integer. Used to create unique ids so that they are REALLY unique to each implementation.
     private static int globalIdentifier = 0;
     //The local integer id associated with this unique id instance. Each instance of unique id will have its own unique local identifier.
