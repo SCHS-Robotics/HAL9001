@@ -73,9 +73,9 @@ public abstract class Robot {
     //A queue of all added subsystems.
     private final Queue<SubSystem> subSystems;
     //The global HAL config.
-    private HALConfig globalConfig;
+    private final HALConfig globalConfig;
     //The opmode the robot is running.
-    private OpMode opMode;
+    private final OpMode opMode;
     //The GUI the robot uses to render the menus.
     public HALGUI gui;
     //A boolean value specifying whether or not to use the config system.
@@ -87,7 +87,7 @@ public abstract class Robot {
     //The hardwaremap used to map software representations of hardware to the actual hardware.
     public final HardwareMap hardwareMap;
     //A list of vision-Bbsed subsystems.
-    private List<VisionSubSystem> visionSubSystems;
+    private final List<VisionSubSystem> visionSubSystems;
     //The internal view id for the camera monitor.
     private int internalCameraViewId;
     //The InternalCamera annotation data object, if present.
@@ -447,13 +447,16 @@ public abstract class Robot {
      */
     @NotNull
     public final CustomizableGamepad pullControls(SubSystem subsystem) {
-        List<ConfigParam> configParams = globalConfig.getConfig(TELEOP, subsystem);
-        ExceptionChecker.assertNonNull(configParams, new NullPointerException(subsystem + " is not present in teleopConfig"));
+        List<ConfigParam> configParams = globalConfig.getConfig(isAutonomous() ? AUTONOMOUS : TELEOP, subsystem);
+        ExceptionChecker.assertNonNull(configParams, new NullPointerException(subsystem + " does not have configurable controls."));
 
         CustomizableGamepad gamepad = new CustomizableGamepad(this);
 
-        for (ConfigParam param : configParams)
-            if (param.usesGamepad) gamepad.addButton(param.name, param.toButton());
+        for (ConfigParam param : configParams) {
+            if (param.usesGamepad) {
+                gamepad.addButton(param.name, param.toButton());
+            }
+        }
 
         return gamepad;
     }
@@ -474,20 +477,16 @@ public abstract class Robot {
     @NotNull
     @Contract("_ -> new")
     public final ConfigData pullNonGamepad(SubSystem subsystem) {
-        List<ConfigParam> configParamsTeleop = globalConfig.getConfig(TELEOP, subsystem);
-        List<ConfigParam> configParamsAuto = globalConfig.getConfig(AUTONOMOUS, subsystem);
-
-        if (configParamsAuto == null) configParamsAuto = new ArrayList<>();
-        if (configParamsTeleop == null) configParamsTeleop = new ArrayList<>();
+        List<ConfigParam> configParams = globalConfig.getConfig(isAutonomous() ? AUTONOMOUS : TELEOP, subsystem);
+        if (configParams == null) configParams = new ArrayList<>();
 
         Map<String, Object> output = new HashMap<>();
 
-        for (ConfigParam param : configParamsAuto)
-            if (!param.usesGamepad)
+        for (ConfigParam param : configParams) {
+            if (!param.usesGamepad) {
                 output.put(param.name, param.vals.get(param.options.indexOf(param.currentOption)));
-        for (ConfigParam param : configParamsTeleop)
-            if (!param.usesGamepad)
-                output.put(param.name, param.vals.get(param.options.indexOf(param.currentOption)));
+            }
+        }
 
         return new ConfigData(output);
     }
