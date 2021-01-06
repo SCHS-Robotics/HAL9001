@@ -5,6 +5,8 @@ import com.SCHSRobotics.HAL9001.system.config.ConfigParam;
 import com.SCHSRobotics.HAL9001.system.config.TeleopConfig;
 import com.SCHSRobotics.HAL9001.system.robot.Robot;
 import com.SCHSRobotics.HAL9001.system.robot.SubSystem;
+import com.SCHSRobotics.HAL9001.util.control.Button;
+import com.SCHSRobotics.HAL9001.util.control.CustomizableGamepad;
 
 public class SubSystem1 extends SubSystem {
 
@@ -16,6 +18,8 @@ public class SubSystem1 extends SubSystem {
     public SubSystem1(Robot robot) {
         super(robot);
         usesConfig = true;
+        CustomizableGamepad g = new CustomizableGamepad(robot);
+        g.addButton("", new Button<Boolean>(1, Button.BooleanInputs.a));
     }
 
     @Override
