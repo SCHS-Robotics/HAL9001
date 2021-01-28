@@ -1,8 +1,5 @@
 package com.SCHSRobotics.HAL9001.util.math.units;
 
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-
 /**
  * An enum representing common units of time.
  * <p>
@@ -14,20 +11,22 @@ import org.jetbrains.annotations.NotNull;
  * @since 1.1.0
  */
 public enum HALTimeUnit {
-    NANOSECONDS(1),
-    MILLISECONDS(1e6),
-    SECONDS(MILLISECONDS.nanoConversionFactor * 1000);
+    NANOSECONDS(1, "ns"),
+    MILLISECONDS(1e6, "ms"),
+    SECONDS(MILLISECONDS.nanoConversionFactor * 1000, "s");
 
+    public final String abbreviation;
     //The conversion factor to convert 1 unit of this time into nanoseconds.
-    private double nanoConversionFactor;
+    private final double nanoConversionFactor;
 
     /**
      * The constructor for HALTimeUnit.
      *
      * @param nanoConversionFactor The amount of nanoseconds in one unit of this time unit.
      */
-    HALTimeUnit(double nanoConversionFactor) {
+    HALTimeUnit(double nanoConversionFactor, String abbreviation) {
         this.nanoConversionFactor = nanoConversionFactor;
+        this.abbreviation = abbreviation;
     }
 
     /**
@@ -38,8 +37,7 @@ public enum HALTimeUnit {
      * @param toUnit   The desired unit of time.
      * @return The converted time.
      */
-    @Contract(pure = true)
-    public static double convert(double timeIn, @NotNull HALTimeUnit fromUnit, @NotNull HALTimeUnit toUnit) {
+    public static double convert(double timeIn, HALTimeUnit fromUnit, HALTimeUnit toUnit) {
         double timeInNanos = timeIn * fromUnit.nanoConversionFactor;
         return timeInNanos / toUnit.nanoConversionFactor;
     }
