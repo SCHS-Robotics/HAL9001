@@ -53,8 +53,8 @@ public abstract class Drivetrain extends SubSystem {
     protected CoordinateMode coordinateMode, localizerCoordinateMode;
     //The PID coefficients for the heading PID and the turn-to-angle PID.
     protected PIDCoefficients
-            headingCoefficients = new PIDCoefficients(2, 0, 0),
-            turnCoefficients = new PIDCoefficients(1, 0, 0);
+            headingCoefficients = new PIDCoefficients(0, 0, 0),
+            turnCoefficients = new PIDCoefficients(0, 0, 0);
     //The heading PID controller and the turn-to-angle PID controller.
     protected PIDFController
             headingController = new PIDFController(headingCoefficients),

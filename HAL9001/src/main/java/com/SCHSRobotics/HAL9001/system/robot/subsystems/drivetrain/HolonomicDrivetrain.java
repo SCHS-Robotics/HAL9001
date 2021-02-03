@@ -38,7 +38,7 @@ public abstract class HolonomicDrivetrain extends Drivetrain {
     protected double LATERAL_MULTIPLIER = 1;
 
     //The PID coefficients for the translational PID controller.
-    protected PIDCoefficients translationCoefficients = new PIDCoefficients(1, 0, 0);
+    protected PIDCoefficients translationCoefficients = new PIDCoefficients(0, 0, 0);
     //The translational PID controller.
     protected PIDFController translationController = new PIDFController(translationCoefficients);
     //The drivetrain's current driving mode (STANDARD/robot centric or FIELD_CENTRIC).

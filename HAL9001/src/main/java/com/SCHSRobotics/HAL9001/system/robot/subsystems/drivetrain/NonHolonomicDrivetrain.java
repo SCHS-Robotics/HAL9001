@@ -28,11 +28,11 @@ public abstract class NonHolonomicDrivetrain extends Drivetrain {
     //A weight that is applied to the drivetrain's velocity.
     protected double V_WEIGHT = 1;
     //The coefficients for the drivetrain's axial PID controller.
-    protected PIDCoefficients axialCoefficients = new PIDCoefficients(1, 0, 0);
+    protected PIDCoefficients axialCoefficients = new PIDCoefficients(0, 0, 0);
     //The drivetrain's axial PID controller.
     protected PIDFController axialController = new PIDFController(axialCoefficients);
     //The coefficients for the drivetrain's cross track PID controller.
-    protected PIDCoefficients crossTrackCoefficients = new PIDCoefficients(1, 0, 0);
+    protected PIDCoefficients crossTrackCoefficients = new PIDCoefficients(0, 0, 0);
     //The drivetrain's cross track PID controller.
     protected PIDFController crossTrackController = new PIDFController(crossTrackCoefficients);
 
