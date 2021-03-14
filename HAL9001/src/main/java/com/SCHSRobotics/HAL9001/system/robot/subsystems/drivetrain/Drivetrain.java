@@ -612,15 +612,6 @@ public abstract class Drivetrain extends SubSystem {
     }
 
     /**
-     * Uses the localizer to get an estimate of the drivetrain's velocity.
-     *
-     * @return An estimate of the drivetrain's velocity.
-     */
-    public final Pose2d getPoseVelocityEstimate() {
-        return localizer.getPoseVelocity();
-    }
-
-    /**
      * The method used to scale drivetrain velocities or turn speeds.
      */
     public enum SpeedScaleMethod {

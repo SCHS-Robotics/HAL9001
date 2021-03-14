@@ -4,7 +4,6 @@ import com.SCHSRobotics.HAL9001.util.math.units.HALAngleUnit;
 import com.SCHSRobotics.HAL9001.util.math.units.HALDistanceUnit;
 import com.SCHSRobotics.HAL9001.util.math.units.HALTimeUnit;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.path.Path;
 import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
@@ -217,8 +216,8 @@ public class HALTrajectory {
      *
      * @return The path object associated with this trajectory.
      */
-    public Path getPath() {
-        return trajectory.getPath(); //TODO HAL Path
+    public HALPath getPath() {
+        return new HALPath(trajectory.getPath(), coordinateMode);
     }
 
     /**

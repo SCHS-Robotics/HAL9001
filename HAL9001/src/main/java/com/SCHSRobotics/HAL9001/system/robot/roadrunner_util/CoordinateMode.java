@@ -1,6 +1,7 @@
 package com.SCHSRobotics.HAL9001.system.robot.roadrunner_util;
 
 import com.SCHSRobotics.HAL9001.util.functional_interfaces.Function;
+import com.SCHSRobotics.HAL9001.util.math.geometry.Vector2D;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 /**
@@ -37,6 +38,24 @@ public enum CoordinateMode {
             case ROADRUNNER:
                 if (coordinateMode == HAL) return converter;
                 else return (Pose2d pose) -> pose;
+        }
+    }
+
+    public Function<Vector2D, Vector2D> convertVectorTo(CoordinateMode coordinateMode) {
+        Function<Vector2D, Vector2D> vectorConverter = (Vector2D vector) -> {
+            Pose2d rawVectorPose = new Pose2d(vector.getX(), vector.getY());
+            Pose2d vectorPose = converter.apply(rawVectorPose);
+            return new Vector2D(vectorPose.getX(), vectorPose.getY());
+        };
+
+        switch (this) {
+            default:
+            case HAL:
+                if (coordinateMode == HAL) return (Vector2D vector) -> vector;
+                else return vectorConverter;
+            case ROADRUNNER:
+                if (coordinateMode == HAL) return vectorConverter;
+                else return (Vector2D vector) -> vector;
         }
     }
 }
