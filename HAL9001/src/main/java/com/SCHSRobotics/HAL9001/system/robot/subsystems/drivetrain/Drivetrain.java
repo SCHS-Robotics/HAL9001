@@ -96,7 +96,7 @@ public abstract class Drivetrain extends SubSystem {
         setAllMotorZeroPowerBehaviors(DcMotor.ZeroPowerBehavior.BRAKE);
         setAllMotorModes(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        robot.hardwareMap.voltageSensor.iterator().next();
+        batteryVoltageSensor = robot.hardwareMap.voltageSensor.iterator().next();
 
         turnController.setInputBounds(-PI, PI);
         headingController.setInputBounds(-PI, PI);
