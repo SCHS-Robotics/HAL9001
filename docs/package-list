@@ -9,8 +9,10 @@ com.SCHSRobotics.HAL9001.system.gui.menus.examplemenu
 com.SCHSRobotics.HAL9001.system.gui.viewelement
 com.SCHSRobotics.HAL9001.system.gui.viewelement.eventlistener
 com.SCHSRobotics.HAL9001.system.robot
-com.SCHSRobotics.HAL9001.system.robot.subsystems
+com.SCHSRobotics.HAL9001.system.robot.localizer
+com.SCHSRobotics.HAL9001.system.robot.roadrunner_util
 com.SCHSRobotics.HAL9001.system.robot.subsystems.calib
+com.SCHSRobotics.HAL9001.system.robot.subsystems.drivetrain
 com.SCHSRobotics.HAL9001.util.constant
 com.SCHSRobotics.HAL9001.util.control
 com.SCHSRobotics.HAL9001.util.exceptions
@@ -20,3 +22,6 @@ com.SCHSRobotics.HAL9001.util.math.datastructures
 com.SCHSRobotics.HAL9001.util.math.geometry
 com.SCHSRobotics.HAL9001.util.math.units
 com.SCHSRobotics.HAL9001.util.misc
+org.firstinspires.ftc.robotcontroller.external.samples
+org.firstinspires.ftc.robotcontroller.internal
+org.firstinspires.ftc.teamcode
