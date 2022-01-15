@@ -1,7 +1,6 @@
 package com.SCHSRobotics.HAL9001.util.math.units;
 
-import org.firstinspires.ftc.robotcore.external.function.Function;
-import org.jetbrains.annotations.NotNull;
+import com.SCHSRobotics.HAL9001.util.functional_interfaces.Function;
 
 /**
  * An angle unit class that allows for easy conversion from and to any angle unit.
@@ -21,7 +20,6 @@ public enum HALAngleUnit {
      * @param angleUnit The angle unit to convert to.
      * @return A function for converting from this angle unit to another angle unit.
      */
-    @NotNull
     public Function<Double, Double> convertTo(HALAngleUnit angleUnit) {
         if (this.equals(angleUnit)) return Double::doubleValue;
         else if (angleUnit.equals(RADIANS)) return Math::toRadians;

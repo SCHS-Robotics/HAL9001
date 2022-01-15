@@ -1,7 +1,5 @@
 package com.SCHSRobotics.HAL9001.util.math.units;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * An enum representing different common units of distance.
  * <p>
@@ -34,7 +32,7 @@ public enum HALDistanceUnit {
      * @param meterConversion The conversion factor used to convert that unit to meters.
      * @param abbreviation    The abbreviation of the unit.
      */
-    HALDistanceUnit(double meterConversion, @NotNull String abbreviation) {
+    HALDistanceUnit(double meterConversion, String abbreviation) {
         conversionFactor = meterConversion;
         this.abbreviation = abbreviation;
     }
@@ -47,7 +45,7 @@ public enum HALDistanceUnit {
      * @param toUnit   The unit to convert to.
      * @return The converted value.
      */
-    public static double convert(double input, @NotNull HALDistanceUnit fromUnit, @NotNull HALDistanceUnit toUnit) {
+    public static double convert(double input, HALDistanceUnit fromUnit, HALDistanceUnit toUnit) {
         double meters = input * fromUnit.conversionFactor;
         return meters / toUnit.conversionFactor;
     }
