@@ -122,7 +122,7 @@ public abstract class Robot {
         int numCamerasUsingViewport = 0;
         List<Field> externalCameraFields = new ArrayList<>();
 
-        //Gets all internal and ex
+        //Gets all internal and external cameras
         Field[] fields = this.getClass().getDeclaredFields();
         for (Field f : fields) {
             if (OpenCvCamera.class.isAssignableFrom(f.getType())) {
@@ -133,7 +133,8 @@ public abstract class Robot {
                     if (internalCameraData.usesViewport()) numCamerasUsingViewport++;
                 } else if (f.isAnnotationPresent(ExternalCamera.class)) {
                     externalCameraFields.add(f);
-                    if (internalCameraData.usesViewport()) numCamerasUsingViewport++;
+                    ExternalCamera externalCamera = f.getAnnotation(ExternalCamera.class);
+                    if(externalCamera.usesViewport()) numCamerasUsingViewport++;
                 }
             }
         }
