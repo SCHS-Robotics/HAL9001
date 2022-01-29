@@ -1,12 +1,9 @@
 dependencies {
-    compileOnly 'org.firstinspires.ftc:RobotCore:6.2.1'
-    compileOnly 'org.firstinspires.ftc:Hardware:6.2.1'
-    compileOnly 'org.firstinspires.ftc:FtcCommon:6.2.1'
+    compileOnly 'org.firstinspires.ftc:RobotCore:7.0.0'
+    compileOnly 'org.firstinspires.ftc:Hardware:7.0.0'
+    compileOnly 'org.firstinspires.ftc:FtcCommon:7.0.0'
 
-    implementation('org.openftc:easyopencv:1.4.1') {
-        exclude group: 'org.openftc', module: 'opencv-repackaged'
-    }
-    implementation 'io.github.schs-robotics:hal9001-opencv-repackaged:4.1.2-v1'
+    implementation 'org.openftc:easyopencv:1.5.1'
     implementation 'org.openftc:rev-extensions-2:1.2'
     implementation 'org.jetbrains:annotations:16.0.2'
 

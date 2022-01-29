@@ -14,8 +14,10 @@
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
+apply from: '../HAL9001/build.release.gradle'
 
 dependencies {
     implementation project(':FtcRobotController')
+    implementation project(path: ':HAL9001')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 }
